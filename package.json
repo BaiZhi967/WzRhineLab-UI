@@ -20,6 +20,7 @@
     "verify:packages": "node scripts/verify-packages.mjs",
     "api:report": "pnpm build:packages && node scripts/api-report.mjs",
     "api:check": "pnpm build:packages && node scripts/api-report.mjs --check",
-    "release:check": "pnpm check && pnpm api:check && pnpm verify:packages"
+    "release:check": "pnpm check && pnpm api:check && pnpm verify:packages",
+    "release:dry": "node scripts/release.mjs 0.1.0"
   }
 }
