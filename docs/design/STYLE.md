@@ -1,24 +1,30 @@
 # STYLE · 视觉样式与主题规范（Draft 0.1）
 
 ## 1. 基础色 / Semantic Tokens
-以下均为**本项目原创建议初始值**，不是游戏官方调色板。实现需通过 CSS 自定义属性使用，不得在组件中重复硬编码。
+以下均为**本项目原创值**，不是游戏官方调色板。实现需通过 CSS 自定义属性使用，不得在组件中重复硬编码。**权威值以 `packages/tokens/src/tokens.css` 为准**（完整角色与暗色值见该文件与 Showcase Foundations 页）；Sprint 01 的对比度校准见 [ADR-0003](../development/adr/0003-token-tuning-and-button-variants.md)。
 
-| token | 浅色建议值 | 含义 |
+| token | 浅色值 | 含义 |
 | --- | --- | --- |
 | `--rl-bg-canvas` | `#F3F2ED` | 页面底色 |
 | `--rl-bg-surface` | `#FCFBF7` | 内容表面 |
 | `--rl-bg-subtle` | `#E9E8E1` | 次级区域 |
+| `--rl-bg-inverse` | `#20251F` | 深墨填充（Primary 按钮） |
 | `--rl-fg-primary` | `#20251F` | 主文本 |
-| `--rl-fg-muted` | `#60685F` | 次级文本 |
-| `--rl-border-subtle` | `#CFD3CA` | 纯装饰分隔 |
-| `--rl-border-strong` | `#7B8579` | 必须识别的轮廓 |
-| `--rl-accent` | `#E56A32` | 品牌橙、重要操作填充 |
-| `--rl-accent-text` | `#AA431C` | 浅底强调文字 |
-| `--rl-accent-amber` | `#C89B45` | 档案辅助标记 |
-| `--rl-info` | `#226A84` | 信息反馈 |
-| `--rl-success` | `#23734A` | 确认完成 |
-| `--rl-danger` | `#B93430` | 高风险/错误 |
-| `--rl-warning` | `#925900` | 注意/警告 |
+| `--rl-fg-muted` | `#505850` | 次级文本 |
+| `--rl-fg-subtle` | `#5D655B` | 元信息 / 编号 |
+| `--rl-border-subtle` | `#DCDCD4` | 纯装饰分隔 |
+| `--rl-border-default` | `#C8CBC1` | 容器轮廓 |
+| `--rl-border-strong` | `#7B8579` | 必须识别的控件轮廓（≥3:1） |
+| `--rl-accent` | `#E56A32` | 研究橙信号、Accent 按钮填充 |
+| `--rl-accent-text` | `#A8421B` | 浅底强调文字 |
+| `--rl-accent-amber` | `#C89B45` | 档案辅助标记（装饰） |
+| `--rl-focus` | `#1F5AA8` | 焦点环（独立于品牌橙） |
+| `--rl-info` | `#1F6680` | 信息反馈 |
+| `--rl-success` | `#22704A` | 确认完成 |
+| `--rl-danger` | `#B12F2B` | 高风险/错误 |
+| `--rl-warning` | `#8A5400` | 注意/警告 |
+
+每个状态色另有 `*-subtle` 底色用于徽标；所有组件使用的前景/背景组合由 `packages/tokens/test` 在明、暗、系统三种主题下自动验证 WCAG 2.2 AA。
 
 **重要**：不要用白字叠在亮橙按钮上作为默认组合；优先使用主文本深色，明确通过对比度验收。badge/图标的语义必须附文字，不能只靠颜色。焦点色、选中背景、危险语义不能简单复用 brand 角色。
 

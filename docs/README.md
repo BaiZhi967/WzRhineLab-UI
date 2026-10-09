@@ -22,8 +22,11 @@
 - [研究摘要](research/RESEARCH-SUMMARY.md)
 - [研究参考链接](research/REFERENCES.md)
 - [视觉原件清单](research/ASSET-MANIFEST.md)
-- [交互底座 ADR](development/adr/0001-headless-primitives.md)
+- [ADR-0001 交互底座](development/adr/0001-headless-primitives.md)
+- [ADR-0002 源码直出导出与样式入口](development/adr/0002-source-exports-and-style-entry.md)
+- [ADR-0003 Token 对比度校准与 Button variant](development/adr/0003-token-tuning-and-button-variants.md)
+- [Sprint 01 验收记录](development/acceptance/2026-10-09-sprint-01.md)
 - [Windows 资源导入脚本](../scripts/import-visual-assets.ps1)
-- [原型源码](../apps/docs/src/App.tsx)
+- [Showcase 源码](../apps/docs/src/App.tsx)
 
-**注意**：先前不符合视觉规范的 SVG 草图已删除。八张高保真 PNG、八张 WebP 预览图及 PDF 原件需通过资源导入脚本上传，验收以 GitHub 实际文件为准。
+**视觉基线**：八张高保真 PNG 已入库于 `concepts/images/`（另有 WebP 预览与研究 PDF）。先前不符合视觉规范的 SVG 草图已删除，不再恢复。
