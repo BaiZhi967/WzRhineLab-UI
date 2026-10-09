@@ -586,7 +586,16 @@ body,
 .sc-narrow {
   display: grid;
   gap: var(--rl-space-3);
+  width: 100%;
   max-width: 280px;
+  min-width: 0;
+}
+
+/* A button inside a narrow column may shrink so its truncated label can ellipsize. */
+.sc-narrow > .rl-button,
+.sc-narrow > .rl-button .rl-button__content {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .sc-narrow--tight {
@@ -1181,6 +1190,69 @@ body,
   max-width: 440px;
 }
 
+/* ---------- Navigation & overlay pages ---------- */
+.sc-tabs-frame {
+  width: 100%;
+  max-width: 560px;
+  min-width: 0;
+}
+
+.sc-tab-panel {
+  display: grid;
+  gap: var(--rl-space-2);
+  padding: var(--rl-space-4);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-bg-surface);
+}
+
+.sc-rules {
+  display: grid;
+}
+
+.sc-rules li {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: var(--rl-space-3);
+  padding: var(--rl-space-3) 0;
+  border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
+  font: var(--rl-type-body-sm);
+}
+
+.sc-rules li::before {
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-caps);
+}
+
+.sc-rules li[data-kind='do']::before {
+  content: 'DO';
+  color: var(--rl-success);
+}
+
+.sc-rules li[data-kind='dont']::before {
+  content: "DON'T";
+  color: var(--rl-danger);
+}
+
+.sc-filter {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--rl-space-4);
+}
+
+.sc-filter__actions,
+.sc-filter__result {
+  grid-column: 1 / -1;
+}
+
+.sc-filter__result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rl-space-2);
+}
+
 /* ---------- Motion ---------- */
 .sc-easing {
   display: grid;
@@ -1447,7 +1519,8 @@ body,
   .sc-tone-row,
   .sc-compare,
   .sc-density-compare,
-  .sc-form {
+  .sc-form,
+  .sc-filter {
     grid-template-columns: minmax(0, 1fr);
   }
 

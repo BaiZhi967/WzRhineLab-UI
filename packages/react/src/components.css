@@ -123,10 +123,12 @@
   justify-content: center;
   gap: var(--rl-control-gap);
   min-width: 0;
+  max-width: 100%;
 }
 
 .rl-button__label {
   min-width: 0;
+  max-width: 100%;
   overflow-wrap: anywhere;
 }
 
@@ -320,6 +322,8 @@
 .rl-text[data-tone='info'] { --rl-text-tone: var(--rl-info); }
 
 .rl-text[data-truncate] {
+  display: block;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
