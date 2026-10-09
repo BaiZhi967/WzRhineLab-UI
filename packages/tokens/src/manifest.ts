@@ -159,6 +159,7 @@ export const densityTokens = [
   { token: '--rl-popover-width-lg', usage: '大号弹出面板宽度' },
   { token: '--rl-menu-min-width', usage: '菜单最小宽度' },
   { token: '--rl-toast-width', usage: '通知宽度' },
+  { token: '--rl-orbit-size', usage: '轨道示意图尺寸（展示效果）' },
 ] as const;
 
 /** Duration tokens in milliseconds. Source of truth for CSS (`--rl-motion-*`) and motion/react presets. */

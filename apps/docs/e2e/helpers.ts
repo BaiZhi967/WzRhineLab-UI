@@ -10,6 +10,7 @@ export const routes = [
   { name: 'text', hash: '/#/components/text' },
   { name: 'field', hash: '/#/components/field' },
   { name: 'motion', hash: '/#/motion' },
+  { name: 'effects', hash: '/#/motion/effects' },
   { name: 'tabs', hash: '/#/components/tabs' },
   { name: 'tooltip', hash: '/#/components/tooltip' },
   { name: 'dialog', hash: '/#/components/dialog' },

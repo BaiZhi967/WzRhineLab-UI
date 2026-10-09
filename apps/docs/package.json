@@ -26,6 +26,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.5.0",
+    "@wzrhine/effects": "workspace:*",
     "typescript": "^5.9.0",
     "vite": "^6.3.0"
   }

@@ -79,6 +79,7 @@
   --rl-popover-width-lg: 420px;
   --rl-menu-min-width: 200px;
   --rl-toast-width: 360px;
+  --rl-orbit-size: 240px;
 
   /* Stacking: popups live in the provider's portal node */
   --rl-z-overlay: 1000;
