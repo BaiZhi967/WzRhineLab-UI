@@ -22,8 +22,10 @@ import { SelectPage } from './pages/SelectPage';
 import { PopoverPage } from './pages/PopoverPage';
 import { MenuPage } from './pages/MenuPage';
 import { ToastPage } from './pages/ToastPage';
+import { ArchivePage } from './pages/ArchivePage';
+import { ScenariosPage } from './pages/ScenariosPage';
 
-const groups: RouteGroup[] = ['start', 'foundations', 'components', 'navigation', 'motion'];
+const groups: RouteGroup[] = ['start', 'foundations', 'components', 'navigation', 'archive', 'motion'];
 
 function Navigation({ current, onNavigate }: { current: RouteId; onNavigate?: () => void }) {
   return (
@@ -165,6 +167,10 @@ export default function App() {
         return <MenuPage />;
       case 'toast':
         return <ToastPage />;
+      case 'archive':
+        return <ArchivePage />;
+      case 'scenarios':
+        return <ScenariosPage />;
       default:
         return <OverviewPage />;
     }
@@ -231,7 +237,7 @@ export default function App() {
               <span className="sc-topbar__index">{route.index}</span>
               <span aria-hidden="true">/</span>
               <span>{groupLabels[route.group]}</span>
-              {(route.group === 'components' || route.group === 'navigation') && (
+              {(route.group === 'components' || route.group === 'navigation' || route.group === 'archive') && (
                 <>
                   <span aria-hidden="true">/</span>
                   <span>{route.label}</span>

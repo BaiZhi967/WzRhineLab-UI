@@ -117,7 +117,7 @@ export function MotionPage() {
   const [speed, setSpeed] = React.useState<Speed>('1');
   return (
     <div className="sc-page">
-      <PageHeader index="15" section="Motion" title="Motion Foundations">
+      <PageHeader index="18" section="Motion" title="Motion Foundations">
         <p>
           可解释、精确、克制、可中断。组件通过 <code>useRhineMotion()</code> 取用统一预设，系统「减少动态效果」或
           <code>&lt;MotionConfig reducedMotion&gt;</code> 生效时全部降级为即时变化。

@@ -17,6 +17,8 @@ export const routes = [
   { name: 'popover', hash: '/#/components/popover' },
   { name: 'menu', hash: '/#/components/menu' },
   { name: 'toast', hash: '/#/components/toast' },
+  { name: 'archive', hash: '/#/archive' },
+  { name: 'scenarios', hash: '/#/archive/scenarios' },
 ] as const;
 
 export const widths = [320, 390, 768, 1280, 1920] as const;

@@ -3,8 +3,12 @@
  * Imported by components.css; tokens only.
  */
 
+/* Visually hidden text stays in the accessibility tree. Pinned to the top-left of its containing
+   block so it can never extend a scroll container. */
 .rl-visually-hidden {
   position: absolute;
+  top: 0;
+  left: 0;
   width: var(--rl-border-width);
   height: var(--rl-border-width);
   margin: calc(var(--rl-border-width) * -1);
@@ -40,6 +44,11 @@
 
 .rl-meta[data-columns='2'] { --rl-meta-columns: 2; }
 .rl-meta[data-columns='3'] { --rl-meta-columns: 3; }
+
+/* Stacked items have no label column, so they fit in narrower columns. */
+.rl-meta[data-layout='stacked'] {
+  --rl-meta-min-column: calc(var(--rl-field-label-width) * 1.25);
+}
 
 .rl-meta__item {
   display: grid;
@@ -537,6 +546,9 @@
 
 /* ---------- DataTable ---------- */
 .rl-table-scroll {
+  /* Containing block for absolutely positioned descendants (visually hidden headers), so they
+     stay inside the scroll clip instead of widening the page. */
+  position: relative;
   max-width: 100%;
   min-width: 0;
   overflow-x: auto;
