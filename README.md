@@ -24,24 +24,36 @@ React 19 · TypeScript · Motion (`motion/react`) · CSS Variables / Semantic To
 
 
 ## 本地运行
-需要 Node.js 20+，并启用 Corepack / pnpm 10：
+需要 Node.js 20.19+，并启用 Corepack / pnpm 10：
 
 ```sh
 corepack enable
 pnpm install
-pnpm dev
-# 新终端里执行
-pnpm typecheck
-pnpm build
+pnpm dev            # Showcase：http://127.0.0.1:5173
+pnpm check          # typecheck + 单元测试 + 构建
+pnpm test:e2e       # Playwright：响应式截图、键盘、axe、减动（需本地 Chromium）
 ```
 
-Showcase 默认由 Vite 启动，本地浏览器访问终端输出的地址。本仓库当前只内置 Button、Surface、StatusBadge 三个原型组件，不应当作稳定版组件库发布。**上述命令尚未在有依赖环境下完成验收**，请按 [质量门禁](docs/development/QUALITY-GATES.md) 执行。
+首次运行 E2E 前如未安装浏览器：`pnpm --filter @wzrhine/showcase exec playwright install chromium`。
+
+在应用中使用组件时需显式导入样式（入口无 CSS 副作用，见 [ADR-0002](docs/development/adr/0002-source-exports-and-style-entry.md)）：
+
+```tsx
+import '@wzrhine/tokens/styles.css';
+import '@wzrhine/react/styles.css';
+import { Button } from '@wzrhine/react';
+
+<div className="rl-theme" data-rl-theme="light">
+  <Button variant="primary">保存记录</Button>
+</div>
+```
+
+当前内置 Button、IconButton、Surface、StatusBadge、Text、Field、Input 七个组件（交互底座为 Base UI，见 ADR-0001），包为 `private` 源码直出，不应当作稳定版组件库发布。
 
 ## 视觉原件与参考资料
-- [原始高保真 PNG 概念图索引](docs/concepts/README.md)：以此前生成的视觉概念图为唯一视觉参考，不再使用简化 SVG 草图。
-- [原始图片和研究 PDF 的完整清单](docs/research/ASSET-MANIFEST.md) 记录了应归档的 8 PNG / 8 WebP / 22 页 PDF。
-- 原件 ZIP 当前在本次 ChatGPT 对话作为可下载文件提供；由于 GitHub 二进制写入路径限制，**原始 PNG/PDF 尚未进入 GitHub**。Windows 用户可使用 [导入脚本](scripts/import-visual-assets.ps1) 校验 SHA-256 并向仓库提交。
-- [研究摘要](docs/research/RESEARCH-SUMMARY.md) 与 [参考链接](docs/research/REFERENCES.md) 已经入库。
+- [高保真 PNG 概念图索引](docs/concepts/README.md)：八张 PNG 已入库，为唯一视觉参考；不再使用简化 SVG 草图。
+- [原始图片和研究 PDF 清单](docs/research/ASSET-MANIFEST.md)：8 PNG / 8 WebP / 研究 PDF。
+- [研究摘要](docs/research/RESEARCH-SUMMARY.md) 与 [参考链接](docs/research/REFERENCES.md)。
 
 ## 设计与工程状态
-M0 基础设施是起始骨架，并非完成验收。根目录尚未选择源代码许可证，未配置自动 GitHub Actions（避免配额消耗），首次 npm 依赖与浏览器验收仍待执行。
+Sprint 01 已完成 M0 本地验收（install / typecheck / test / build / Playwright 均真实通过，记录见 [验收记录](docs/development/acceptance/2026-10-09-sprint-01.md)），并开始 M1-A。根目录尚未选择源代码许可证；未配置自动 GitHub Actions（避免配额消耗）。Firefox/WebKit、屏幕阅读器与 200% 缩放仍需人工验收。

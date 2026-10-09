@@ -1,8 +1,34 @@
 import * as React from 'react';
+import { cx } from '../utils/cx';
+
 export type StatusKind = 'neutral' | 'info' | 'success' | 'warning' | 'danger';
-export type StatusBadgeProps = React.ComponentPropsWithoutRef<'span'> & { status?: StatusKind };
+export type StatusBadgeSize = 'sm' | 'md';
+export type StatusBadgeAppearance = 'subtle' | 'outline';
+
+export type StatusBadgeProps = React.ComponentPropsWithoutRef<'span'> & {
+  /** Business status. Always paired with visible text; colour is never the only signal. */
+  status?: StatusKind;
+  size?: StatusBadgeSize;
+  /** `subtle` tints the background; `outline` keeps a neutral fill for dense tables. */
+  appearance?: StatusBadgeAppearance;
+};
+
 export const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(function StatusBadge(
-  { status = 'neutral', className = '', children, ...rest }, ref,
+  { status = 'neutral', size = 'md', appearance = 'subtle', className, children, ...rest },
+  ref,
 ) {
-  return <span {...rest} ref={ref} className={['rl-badge', className].filter(Boolean).join(' ')} data-slot="status-badge" data-status={status}><span className="rl-badge__dot" aria-hidden="true" />{children}</span>;
+  return (
+    <span
+      {...rest}
+      ref={ref}
+      className={cx('rl-badge', className)}
+      data-slot="status-badge"
+      data-status={status}
+      data-size={size}
+      data-appearance={appearance}
+    >
+      <span className="rl-badge__indicator" aria-hidden="true" />
+      <span className="rl-badge__label">{children}</span>
+    </span>
+  );
 });
