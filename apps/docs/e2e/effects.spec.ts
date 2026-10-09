@@ -80,13 +80,23 @@ test('reduced scan renders a static outline instead of the sweep animation', asy
   await setSettings(page, { motion: 'reduce' });
   await page.goto('/#/motion/effects');
   const card = page.getByRole('region', { name: 'In context' });
+  await expect(card.locator('.rl-scan')).toHaveAttribute('data-reduced', 'true');
+  // The reduced outline lives ~160ms; capture its computed style synchronously as it mounts.
+  const captured = page.evaluate(
+    () =>
+      new Promise<{ animation: string; shadow: string }>((resolve) => {
+        const observer = new MutationObserver(() => {
+          const line = document.querySelector('.rl-scan__line');
+          if (!line) return;
+          observer.disconnect();
+          const s = getComputedStyle(line);
+          resolve({ animation: s.animationName, shadow: s.boxShadow });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      }),
+  );
   await card.getByRole('button', { name: '重新扫描' }).click();
-  const line = card.locator('.rl-scan__line');
-  await expect(line).toHaveCount(1);
-  const style = await line.evaluate((el) => {
-    const s = getComputedStyle(el);
-    return { animation: s.animationName, shadow: s.boxShadow };
-  });
+  const style = await captured;
   expect(style.animation).toBe('none');
   expect(style.shadow).toContain('inset');
 });
