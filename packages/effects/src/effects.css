@@ -102,13 +102,25 @@
 }
 
 /* ---------- OrbitalDiagram ---------- */
-/* Diagram and legend sit side by side when both fit; otherwise the legend wraps below. */
+/* Diagram and legend sit side by side; the legend wraps below only when its column would be too
+   narrow to hold a label on one line (container query on the diagram's own width). */
+.rl-orbit-wrap {
+  container-type: inline-size;
+  min-width: 0;
+}
+
 .rl-orbit {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--rl-orbit-size)), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   gap: var(--rl-space-6);
   min-width: 0;
+}
+
+@container (min-width: 400px) {
+  .rl-orbit {
+    grid-template-columns: minmax(0, var(--rl-orbit-size)) minmax(0, 1fr);
+  }
 }
 
 .rl-orbit__svg {

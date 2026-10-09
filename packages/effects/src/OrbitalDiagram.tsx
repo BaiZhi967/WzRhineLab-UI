@@ -48,6 +48,7 @@ export function OrbitalDiagram({ nodes, rings = 3, center, animate = false, peri
   const radius = (ring: number) => 36 + (ring * (C - 48)) / Math.max(1, rings - 1);
 
   return (
+    <div className="rl-orbit-wrap">
     <div ref={ref} className={['rl-orbit', className].filter(Boolean).join(' ')} data-slot="orbital-diagram" data-spinning={spinning || undefined}>
       <svg className="rl-orbit__svg" viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden="true" focusable="false">
         <g className="rl-orbit__ticks">
@@ -96,6 +97,7 @@ export function OrbitalDiagram({ nodes, rings = 3, center, animate = false, peri
           </li>
         ))}
       </ul>
+    </div>
     </div>
   );
 }
