@@ -2,7 +2,7 @@
 
 > 初始计划，不代表已实现。每一里程碑均以验收结果关闭，不以文档标记代替执行证据。
 >
-> **进度（2026-10-09）**：M0 本地验收通过；M1-A、M1-B 已合并（PR #1、#2）。M2-A（RhineProvider、Tabs、Tooltip、Dialog、Select，PR #3）与 M2-B（Popover、Menu、Toast，叠加 PR）已实现并有测试，M2 核心产物齐全。M1/M2 退出门禁中的跨浏览器与屏幕阅读器验收仍未完成。
+> **进度（2026-10-09）**：M0 本地验收通过；M1-A、M1-B 已合并（PR #1、#2）。M2-A（RhineProvider、Tabs、Tooltip、Dialog、Select）已合并（PR #3）；M2-B（Popover、Menu、Toast，PR #4）已实现并有测试，M2 核心产物齐全。M1/M2 退出门禁中的跨浏览器与屏幕阅读器验收仍未完成。
 
 | 里程碑 | 目标 | 核心产物 | 退出门禁 |
 | --- | --- | --- | --- |
