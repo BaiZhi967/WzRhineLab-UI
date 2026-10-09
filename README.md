@@ -48,7 +48,7 @@ import { Button } from '@wzrhine/react';
 </div>
 ```
 
-当前只内置 Button、Surface、StatusBadge 三个组件，包为 `private` 源码直出，不应当作稳定版组件库发布。
+当前内置 Button、IconButton、Surface、StatusBadge、Text、Field、Input 七个组件（交互底座为 Base UI，见 ADR-0001），包为 `private` 源码直出，不应当作稳定版组件库发布。
 
 ## 视觉原件与参考资料
 - [高保真 PNG 概念图索引](docs/concepts/README.md)：八张 PNG 已入库，为唯一视觉参考；不再使用简化 SVG 草图。

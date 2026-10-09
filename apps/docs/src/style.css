@@ -496,6 +496,11 @@ body,
   grid-column: span 4;
 }
 
+/* Rows of independent short demos: each card ends at its own content. */
+.sc-specimen[data-align='start'] {
+  align-self: start;
+}
+
 .sc-specimen[data-span='two-thirds'] {
   grid-column: span 8;
 }
@@ -1146,17 +1151,28 @@ body,
 
 .sc-form {
   display: grid;
-  gap: var(--rl-space-6);
-  max-width: 440px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--rl-space-6) var(--rl-space-8);
+}
+
+.sc-form__title,
+.sc-form__actions {
+  grid-column: 1 / -1;
 }
 
 .sc-form__actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-end;
   gap: var(--rl-space-2);
   padding-top: var(--rl-space-4);
   border-top: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.sc-form__status {
+  margin-right: auto;
 }
 
 .sc-stack {
@@ -1383,6 +1399,7 @@ body,
 
   .sc-playground__controls {
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+    align-items: start;
     padding: 0 0 var(--rl-space-6);
     border-right: 0;
     border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
@@ -1429,7 +1446,8 @@ body,
 
   .sc-tone-row,
   .sc-compare,
-  .sc-density-compare {
+  .sc-density-compare,
+  .sc-form {
     grid-template-columns: minmax(0, 1fr);
   }
 

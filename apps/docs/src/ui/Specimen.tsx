@@ -35,14 +35,16 @@ interface SpecimenProps {
   /** One-line technical footnote: timing, tokens, constraints. */
   note?: React.ReactNode;
   span?: 'full' | 'half' | 'third' | 'two-thirds';
+  /** `start`: don't stretch to the row's tallest card (for rows of unrelated short demos). */
+  align?: 'stretch' | 'start';
   children: React.ReactNode;
 }
 
 /** Labelled showcase panel modelled on the concept-board specimen cards: index, title, body, technical note. */
-export function Specimen({ id, index, title, description, note, span = 'full', children }: SpecimenProps) {
+export function Specimen({ id, index, title, description, note, span = 'full', align = 'stretch', children }: SpecimenProps) {
   const headingId = `${id}-title`;
   return (
-    <section className="sc-specimen" data-span={span} aria-labelledby={headingId}>
+    <section className="sc-specimen" data-span={span} data-align={align} aria-labelledby={headingId}>
       <header className="sc-specimen__header">
         <h2 id={headingId} className="sc-specimen__title">
           {title}

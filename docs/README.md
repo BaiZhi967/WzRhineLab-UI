@@ -22,10 +22,12 @@
 - [研究摘要](research/RESEARCH-SUMMARY.md)
 - [研究参考链接](research/REFERENCES.md)
 - [视觉原件清单](research/ASSET-MANIFEST.md)
-- [ADR-0001 交互底座](development/adr/0001-headless-primitives.md)
+- [ADR-0001 交互底座 · Base UI（Accepted）](development/adr/0001-headless-primitives.md)
 - [ADR-0002 源码直出导出与样式入口](development/adr/0002-source-exports-and-style-entry.md)
 - [ADR-0003 Token 对比度校准与 Button variant](development/adr/0003-token-tuning-and-button-variants.md)
 - [Sprint 01 验收记录](development/acceptance/2026-10-09-sprint-01.md)
+- [M1-B 验收记录](development/acceptance/2026-10-09-m1b.md)
+- 组件文档：[Field & Input](components/field.md) · [IconButton · Text](components/icon-button-text.md)
 - [Windows 资源导入脚本](../scripts/import-visual-assets.ps1)
 - [Showcase 源码](../apps/docs/src/App.tsx)
 

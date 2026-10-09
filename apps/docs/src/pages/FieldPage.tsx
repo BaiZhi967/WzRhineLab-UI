@@ -20,7 +20,7 @@ function FieldPlayground() {
 
   const fieldProps = [
     `label="${label || '…'}"`,
-    'description="由归档系统分配，格式 ARC-0000。"',
+    'description="格式 ARC-0000。"',
     invalid && 'invalid',
     invalid && 'error="该编号已存在。"',
     required && 'required',
@@ -39,7 +39,7 @@ function FieldPlayground() {
     <Playground
       id="field-playground"
       title="Field + Input"
-      code={`<Field\n  ${fieldProps.join('\n  ')}\n>\n  <Input ${inputProps.join(' ')} />\n</Field>`}
+      code={`<Field\n  ${fieldProps.join('\n  ')}\n>\n  <Input\n    ${inputProps.join('\n    ')}\n  />\n</Field>`}
       controls={
         <>
           <Segmented
@@ -71,7 +71,7 @@ function FieldPlayground() {
       <div className="sc-field-frame">
         <Field
           label={label || '…'}
-          description="由归档系统分配，格式 ARC-0000。"
+          description="格式 ARC-0000。"
           error="该编号已存在。"
           invalid={invalid}
           required={required}
@@ -118,7 +118,7 @@ function RecordForm() {
         setState({ status: 'saving' });
       }}
     >
-      <h3 id="record-form-title" className="sc-subhead">
+      <h3 id="record-form-title" className="sc-subhead sc-form__title">
         新建样本记录（演示）
       </h3>
       <Field
@@ -141,6 +141,17 @@ function RecordForm() {
         <Input name="owner" readOnly defaultValue="示例研究员" />
       </Field>
       <div className="sc-form__actions">
+        <p className="sc-small sc-form__status" role="status">
+          {state.status === 'saving' && '正在保存…'}
+          {state.status === 'saved' && (
+            <>
+              <StatusBadge status="success" size="sm">
+                已保存
+              </StatusBadge>{' '}
+              {state.id}（演示，不写入任何后端）
+            </>
+          )}
+        </p>
         <Button type="reset" variant="ghost" onClick={() => setState({ status: 'idle' })}>
           重置
         </Button>
@@ -148,17 +159,6 @@ function RecordForm() {
           保存记录
         </Button>
       </div>
-      <p className="sc-small" role="status">
-        {state.status === 'saving' && '正在保存…'}
-        {state.status === 'saved' && (
-          <>
-            <StatusBadge status="success" size="sm">
-              已保存
-            </StatusBadge>{' '}
-            {state.id}（演示，不写入任何后端）
-          </>
-        )}
-      </p>
     </form>
   );
 }
@@ -178,12 +178,11 @@ export function FieldPage() {
           id="field-form"
           index="01"
           title="Validation flow"
-          span="half"
-          note="失焦时校验；只有修改过的必填项才报 valueMissing，提交时全部校验。保存期间按钮 loading，阻止重复提交。"
+          note="失焦时校验；必填项在修改后才报缺失，提交时全部校验。保存中按钮 loading，阻止重复提交。"
         >
           <RecordForm />
         </Specimen>
-        <Specimen id="field-states" index="02" title="States" span="half" note="readOnly 可聚焦可复制；disabled 移出 Tab 顺序。">
+        <Specimen id="field-states" index="02" title="States" span="third" align="start" note="readOnly 可聚焦可复制；disabled 移出 Tab 顺序。">
           <div className="sc-stack">
             <Field label="默认">
               <Input placeholder="输入内容" />
@@ -199,7 +198,7 @@ export function FieldPage() {
             </Field>
           </div>
         </Specimen>
-        <Specimen id="field-adornments" index="03" title="Adornments" span="half" note="前缀图标为装饰；后缀单位文字会被读屏作为描述读出。">
+        <Specimen id="field-adornments" index="03" title="Adornments" span="third" align="start" note="前缀图标为装饰；后缀单位文字会被读屏作为描述读出。">
           <div className="sc-stack">
             <Input aria-label="搜索档案" type="search" prefix={<Search />} placeholder="搜索档案编号或名称" />
             <Field label="温度">
@@ -207,7 +206,7 @@ export function FieldPage() {
             </Field>
           </div>
         </Specimen>
-        <Specimen id="field-inline" index="04" title="Inline layout" span="half" note="标签列宽 --rl-field-label-width；窄容器请使用 stacked。">
+        <Specimen id="field-inline" index="04" title="Inline layout" span="third" align="start" note="标签列宽 --rl-field-label-width；窄容器请使用 stacked。">
           <div className="sc-stack">
             <Field label="分类" layout="inline">
               <Input defaultValue="实验记录" />
