@@ -1459,6 +1459,26 @@ body,
   color: var(--rl-accent-text);
 }
 
+.sc-effect-card {
+  display: grid;
+  gap: var(--rl-space-1);
+  padding: var(--rl-space-3);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-bg-surface);
+}
+
+.sc-effect-reveal {
+  font: var(--rl-type-body-sm);
+}
+
+.sc-effect-panel {
+  padding: var(--rl-space-3) var(--rl-space-4);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-bg-surface);
+}
+
 /* ---------- Motion ---------- */
 .sc-easing {
   display: grid;

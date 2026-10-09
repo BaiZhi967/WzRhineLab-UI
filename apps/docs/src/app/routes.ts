@@ -29,6 +29,7 @@ export const routes = [
   { id: 'archive', path: '/archive', label: 'Archive patterns', group: 'archive', index: '16' },
   { id: 'scenarios', path: '/archive/scenarios', label: 'Acceptance scenarios', group: 'archive', index: '17' },
   { id: 'motion', path: '/motion', label: 'Motion', group: 'motion', index: '18' },
+  { id: 'effects', path: '/motion/effects', label: 'Showcase effects', group: 'motion', index: '19' },
 ] as const satisfies readonly RouteDef[];
 
 export type RouteId = (typeof routes)[number]['id'];

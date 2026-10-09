@@ -44,7 +44,11 @@ export function ArchiveReveal({ text, revealed, duration = 640, onSettled, conce
       if (progressRef.current !== target) settledRef.current?.(revealed);
       return;
     }
-    if (progressRef.current === target || !visible) return;
+    if (progressRef.current === target) return;
+    if (!visible) {
+      // Paused: settle nothing now; the effect re-runs (and resumes from the current progress) on visibility.
+      return;
+    }
     const total = timing.scale(duration);
     // Baseline comes from the first frame's own timestamp: rAF time and performance.now()
     // do not share an origin in every environment.

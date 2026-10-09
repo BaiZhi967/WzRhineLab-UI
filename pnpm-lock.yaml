@@ -47,6 +47,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.5.0
         version: 4.7.0(vite@6.4.4(@types/node@24.19.1))
+      '@wzrhine/effects':
+        specifier: workspace:*
+        version: link:../../packages/effects
       typescript:
         specifier: ^5.9.0
         version: 5.9.3

@@ -25,6 +25,11 @@ import { ToastPage } from './pages/ToastPage';
 import { ArchivePage } from './pages/ArchivePage';
 import { ScenariosPage } from './pages/ScenariosPage';
 
+// Optional effects package is code-split so the main Showcase chunk never includes it.
+const ShowcaseEffectsPage = React.lazy(() =>
+  import('./pages/ShowcaseEffectsPage').then((m) => ({ default: m.ShowcaseEffectsPage })),
+);
+
 const groups: RouteGroup[] = ['start', 'foundations', 'components', 'navigation', 'archive', 'motion'];
 
 function Navigation({ current, onNavigate }: { current: RouteId; onNavigate?: () => void }) {
@@ -171,6 +176,12 @@ export default function App() {
         return <ArchivePage />;
       case 'scenarios':
         return <ScenariosPage />;
+      case 'effects':
+        return (
+          <React.Suspense fallback={<p className="sc-small" role="status">正在加载展示效果…</p>}>
+            <ShowcaseEffectsPage />
+          </React.Suspense>
+        );
       default:
         return <OverviewPage />;
     }
