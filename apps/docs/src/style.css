@@ -389,9 +389,13 @@ body,
 .sc-field {
   display: grid;
   gap: var(--rl-space-2);
+  min-width: 0;
 }
 
+/* Firefox gives <input> a ~20ch intrinsic width; let it shrink to the column. */
 .sc-input {
+  width: 100%;
+  min-width: 0;
   min-height: var(--rl-control-height-md);
   padding: 0 var(--rl-space-3);
   border: var(--rl-border-width) solid var(--rl-border-strong);

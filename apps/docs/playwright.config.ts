@@ -4,7 +4,7 @@ const port = 4173;
 
 /**
  * Local-only browser acceptance. Runs against the production build (`vite preview`).
- * Chromium only for now; Firefox/WebKit are listed in ACCESSIBILITY.md as pending.
+ * `test:e2e` = Chromium; `test:e2e:all` = Chromium + Firefox + WebKit (browsers via `playwright install`).
  */
 export default defineConfig({
   testDir: './e2e',
@@ -18,7 +18,12 @@ export default defineConfig({
     trace: 'retain-on-failure',
     locale: 'zh-CN',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    // `pnpm test:e2e` runs Chromium only; `pnpm test:e2e:all` adds Firefox and WebKit.
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+  ],
   webServer: {
     command: `pnpm build && pnpm preview`,
     url: `http://127.0.0.1:${port}`,
