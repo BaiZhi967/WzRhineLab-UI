@@ -1,57 +1,256 @@
-/* Original research-inspired design tokens. Not official franchise colors. */
-/* Scoped to the host container; no global :root overrides. */
+/*
+ * WzRhineLab UI · Design tokens
+ * Original research-inspired values; not official franchise colours.
+ * Everything is scoped to `.rl-theme` containers so the host `:root` stays untouched.
+ * Token index: ./manifest.ts (kept in sync by tests).
+ */
+
+/* ---------- Static scales (theme independent) ---------- */
 .rl-theme {
-  --rl-bg-canvas: #f3f2ed;
-  --rl-bg-surface: #fcfbf7;
-  --rl-bg-subtle: #e9e8e1;
-  --rl-fg-primary: #20251f;
-  --rl-fg-muted: #60685f;
-  --rl-border-subtle: #cfd3ca;
-  --rl-border-strong: #7b8579;
-  --rl-accent: #e56a32;
-  --rl-accent-text: #aa431c;
-  --rl-accent-amber: #c89b45;
-  --rl-info: #226a84;
-  --rl-success: #23734a;
-  --rl-danger: #b93430;
-  --rl-warning: #925900;
-  --rl-focus: #aa431c;
-  --rl-font-body: Inter, 'Noto Sans SC', 'Source Han Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  --rl-font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
-  --rl-radius-sm: 3px;
-  --rl-radius-md: 6px;
+  /* Typography families */
+  --rl-font-body: Inter, 'Noto Sans SC', 'Source Han Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --rl-font-mono: 'IBM Plex Mono', 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+
+  /* Type roles: `font: var(--rl-type-*)` */
+  --rl-type-display: 600 36px/44px var(--rl-font-body);
+  --rl-type-heading-1: 600 28px/36px var(--rl-font-body);
+  --rl-type-heading-2: 600 22px/30px var(--rl-font-body);
+  --rl-type-heading-3: 600 18px/26px var(--rl-font-body);
+  --rl-type-body: 400 16px/24px var(--rl-font-body);
+  --rl-type-body-sm: 400 14px/21px var(--rl-font-body);
+  --rl-type-label: 600 14px/20px var(--rl-font-body);
+  --rl-type-label-sm: 600 13px/18px var(--rl-font-body);
+  --rl-type-meta: 500 12px/18px var(--rl-font-body);
+  --rl-type-mono: 500 12px/18px var(--rl-font-mono);
+  --rl-tracking-display: -0.02em;
+  --rl-tracking-caps: 0.12em;
+  --rl-tracking-mono: 0.04em;
+
+  /* Spacing: 4px base */
+  --rl-space-0: 0px;
   --rl-space-1: 4px;
   --rl-space-2: 8px;
   --rl-space-3: 12px;
   --rl-space-4: 16px;
   --rl-space-6: 24px;
   --rl-space-8: 32px;
+  --rl-space-12: 48px;
+  --rl-space-16: 64px;
+
+  /* Geometry */
+  --rl-radius-none: 0px;
+  --rl-radius-xs: 2px;
+  --rl-radius-sm: 4px;
+  --rl-radius-md: 6px;
+  --rl-radius-lg: 8px;
+  --rl-radius-round: 999px;
+  --rl-border-width: 1px;
+  --rl-border-width-strong: 2px;
+
+  /* Focus */
+  --rl-focus-width: 2px;
+  --rl-focus-offset: 2px;
+  --rl-focus-ring: var(--rl-focus-width) solid var(--rl-focus);
+
+  /* Density · comfortable (default) */
+  --rl-control-height-sm: 32px;
+  --rl-control-height-md: 40px;
+  --rl-control-height-lg: 48px;
+  --rl-control-padding-x-sm: var(--rl-space-3);
+  --rl-control-padding-x-md: var(--rl-space-4);
+  --rl-control-padding-x-lg: var(--rl-space-6);
+  --rl-control-gap: var(--rl-space-2);
+  --rl-surface-padding: var(--rl-space-6);
+  --rl-icon-size-sm: 14px;
+  --rl-icon-size-md: 16px;
+  --rl-icon-size-lg: 20px;
+
+  /* Motion · mirrored by packages/react/src/motion/presets.ts */
+  --rl-motion-instant: 0ms;
+  --rl-motion-press: 80ms;
   --rl-motion-fast: 120ms;
   --rl-motion-base: 200ms;
   --rl-motion-panel: 280ms;
+  --rl-motion-scene: 420ms;
+  --rl-motion-showcase: 700ms;
   --rl-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --rl-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --rl-ease-linear: linear;
+  --rl-motion-loop: 900ms;
+
+  font: var(--rl-type-body);
   color: var(--rl-fg-primary);
   background: var(--rl-bg-canvas);
-  font-family: var(--rl-font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.rl-theme[data-rl-density='compact'] {
+  --rl-control-height-sm: 28px;
+  --rl-control-height-md: 32px;
+  --rl-control-height-lg: 40px;
+  --rl-control-padding-x-sm: var(--rl-space-2);
+  --rl-control-padding-x-md: var(--rl-space-3);
+  --rl-control-padding-x-lg: var(--rl-space-4);
+  --rl-control-gap: 6px;
+  --rl-surface-padding: var(--rl-space-4);
+}
+
+/* ---------- Light theme (default) ---------- */
+.rl-theme {
+  --rl-bg-canvas: #f3f2ed;
+  --rl-bg-surface: #fcfbf7;
+  --rl-bg-subtle: #e9e8e1;
+  --rl-bg-raised: #ffffff;
+  --rl-bg-hover: #ecebe4;
+  --rl-bg-pressed: #e2e1d9;
+  --rl-bg-inverse: #20251f;
+  --rl-bg-disabled: #e6e5df;
+
+  --rl-fg-primary: #20251f;
+  --rl-fg-muted: #575f56;
+  --rl-fg-subtle: #666e64;
+  --rl-fg-inverse: #f7f6f1;
+  --rl-fg-on-accent: #20251f;
+  --rl-fg-disabled: #80857c;
+
+  --rl-border-subtle: #dcdcd4;
+  --rl-border-default: #c8cbc1;
+  --rl-border-strong: #7b8579;
+
+  --rl-accent: #e56a32;
+  --rl-accent-hover: #ee7c46;
+  --rl-accent-subtle: #fbe5d7;
+  --rl-accent-text: #a8421b;
+  --rl-accent-amber: #c89b45;
+
+  --rl-info: #1f6680;
+  --rl-info-subtle: #e2edf0;
+  --rl-success: #22704a;
+  --rl-success-subtle: #e1eee5;
+  --rl-warning: #8a5400;
+  --rl-warning-subtle: #f5ead5;
+  --rl-danger: #b12f2b;
+  --rl-danger-subtle: #f8e3e0;
+
+  --rl-focus: #1f5aa8;
+  --rl-inverse-hover: #343a33;
+
+  --rl-shadow-raised: 0 1px 2px rgb(32 37 31 / 0.06);
+  --rl-shadow-floating: 0 8px 24px rgb(32 37 31 / 0.12);
+
   color-scheme: light;
 }
+
+/* ---------- Dark theme ---------- */
 .rl-theme[data-rl-theme='dark'] {
   --rl-bg-canvas: #11181b;
   --rl-bg-surface: #1d272b;
   --rl-bg-subtle: #293338;
+  --rl-bg-raised: #233035;
+  --rl-bg-hover: #2a363b;
+  --rl-bg-pressed: #334146;
+  --rl-bg-inverse: #e6e9e2;
+  --rl-bg-disabled: #253034;
+
   --rl-fg-primary: #e6e9e2;
-  --rl-fg-muted: #b1bcbc;
-  --rl-border-subtle: #435156;
-  --rl-border-strong: #73898f;
-  --rl-accent: #e69a61;
-  --rl-accent-text: #ffb782;
-  --rl-focus: #ffb782;
-  --rl-info: #6ac4d6;
-  --rl-success: #77dba4;
-  --rl-danger: #ff8e87;
-  --rl-warning: #ffc17c;
+  --rl-fg-muted: #aeb8b6;
+  --rl-fg-subtle: #94a09e;
+  --rl-fg-inverse: #11181b;
+  --rl-fg-on-accent: #11181b;
+  --rl-fg-disabled: #75858a;
+
+  --rl-border-subtle: #2f3b40;
+  --rl-border-default: #435156;
+  --rl-border-strong: #7a8f94;
+
+  --rl-accent: #e9874f;
+  --rl-accent-hover: #f29b68;
+  --rl-accent-subtle: #3a2a20;
+  --rl-accent-text: #ffb07a;
+  --rl-accent-amber: #d4ad62;
+
+  --rl-info: #7cc7da;
+  --rl-info-subtle: #1a3540;
+  --rl-success: #82d6a4;
+  --rl-success-subtle: #173428;
+  --rl-warning: #f2c27a;
+  --rl-warning-subtle: #372d18;
+  --rl-danger: #ff9c93;
+  --rl-danger-subtle: #3d2323;
+
+  --rl-focus: #8db8f2;
+  --rl-inverse-hover: #cfd4cc;
+
+  --rl-shadow-raised: 0 1px 2px rgb(0 0 0 / 0.3);
+  --rl-shadow-floating: 0 8px 24px rgb(0 0 0 / 0.45);
+
   color-scheme: dark;
 }
+
+/* ---------- System theme: must mirror the dark block exactly (asserted by tests) ---------- */
+@media (prefers-color-scheme: dark) {
+  .rl-theme[data-rl-theme='system'] {
+    --rl-bg-canvas: #11181b;
+    --rl-bg-surface: #1d272b;
+    --rl-bg-subtle: #293338;
+    --rl-bg-raised: #233035;
+    --rl-bg-hover: #2a363b;
+    --rl-bg-pressed: #334146;
+    --rl-bg-inverse: #e6e9e2;
+    --rl-bg-disabled: #253034;
+
+    --rl-fg-primary: #e6e9e2;
+    --rl-fg-muted: #aeb8b6;
+    --rl-fg-subtle: #94a09e;
+    --rl-fg-inverse: #11181b;
+    --rl-fg-on-accent: #11181b;
+    --rl-fg-disabled: #75858a;
+
+    --rl-border-subtle: #2f3b40;
+    --rl-border-default: #435156;
+    --rl-border-strong: #7a8f94;
+
+    --rl-accent: #e9874f;
+    --rl-accent-hover: #f29b68;
+    --rl-accent-subtle: #3a2a20;
+    --rl-accent-text: #ffb07a;
+    --rl-accent-amber: #d4ad62;
+
+    --rl-info: #7cc7da;
+    --rl-info-subtle: #1a3540;
+    --rl-success: #82d6a4;
+    --rl-success-subtle: #173428;
+    --rl-warning: #f2c27a;
+    --rl-warning-subtle: #372d18;
+    --rl-danger: #ff9c93;
+    --rl-danger-subtle: #3d2323;
+
+    --rl-focus: #8db8f2;
+    --rl-inverse-hover: #cfd4cc;
+
+    --rl-shadow-raised: 0 1px 2px rgb(0 0 0 / 0.3);
+    --rl-shadow-floating: 0 8px 24px rgb(0 0 0 / 0.45);
+
+    color-scheme: dark;
+  }
+}
+
+/* ---------- Reduced motion: CSS durations collapse; JS motion is handled by motion/react ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .rl-theme { --rl-motion-fast: 0ms; --rl-motion-base: 0ms; --rl-motion-panel: 0ms; }
+  .rl-theme {
+    --rl-motion-press: 0ms;
+    --rl-motion-fast: 0ms;
+    --rl-motion-base: 0ms;
+    --rl-motion-panel: 0ms;
+    --rl-motion-scene: 0ms;
+    --rl-motion-showcase: 0ms;
+  }
+}
+.rl-theme[data-rl-motion='reduce'] {
+  --rl-motion-press: 0ms;
+  --rl-motion-fast: 0ms;
+  --rl-motion-base: 0ms;
+  --rl-motion-panel: 0ms;
+  --rl-motion-scene: 0ms;
+  --rl-motion-showcase: 0ms;
 }

@@ -7,9 +7,16 @@
     "**/*.css"
   ],
   "exports": {
+    ".": "./src/index.ts",
     "./styles.css": "./src/tokens.css"
   },
   "scripts": {
-    "typecheck": "node -e \"console.log('tokens: CSS-only package, skipped TS check')\""
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11"
   }
 }
