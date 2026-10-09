@@ -14,8 +14,9 @@ WzRhineLab-UI/
 │  ├─ tokens/          # CSS 变量、主题值、语义层
 │  ├─ react/           # React + TS 组件，无业务代码
 │  └─ effects/         # 可选展示动效与动效播放器（ADR-0004），react 包不依赖它
-└─ apps/
-   └─ docs/            # Vite 文档 / Showcase 的最小可运行原型
+├─ apps/
+│  └─ docs/            # Vite 文档 / Showcase；e2e/visual 为视觉回归基线
+└─ examples/           # M6 示例应用：archive-desk / host-embed / ssr-hydrate，只用公开入口
 ```
 
 ## 依赖规则
