@@ -6,7 +6,7 @@
 
 ## 当前阶段
 
-- **Stage 0 — Foundation**：目录与规范初始化；不声称已有成熟组件库。
+- **M6 — Release Candidate**：二十个组件、可选动效包、三个示例应用、冻结的主题 token 契约与视觉回归基线均已完成并有测试。**尚未发布到 npm**：需要维护者先选定许可证、创建 npm scope 并确认版本号（见 [M6 验收记录](docs/development/acceptance/2026-10-10-m6.md)）。
 - 规范入口：[docs/README.md](docs/README.md)、[DESIGN.md](DESIGN.md)、[docs/ROADMAP.md](docs/ROADMAP.md)。
 - 原型画板：[docs/concepts/README.md](docs/concepts/README.md)。
 
@@ -33,6 +33,8 @@ pnpm dev            # Showcase：http://127.0.0.1:5173
 pnpm check          # typecheck + 单元测试 + 构建
 pnpm test:e2e       # Playwright（Chromium）：响应式截图、键盘、axe、减动
 pnpm test:e2e:all   # 同一套件依次在 Chromium、Firefox、WebKit 上运行
+pnpm test:examples  # 三个示例应用的 E2E（test:examples:all 为三内核）
+pnpm test:visual    # 视觉回归基线；有意的视觉变更用 test:visual:update 更新
 pnpm release:check  # 发布门禁：check + API 漂移 + 许可证审计 + 临时项目安装验证
 ```
 
@@ -52,7 +54,9 @@ import { Button, RhineProvider } from '@wzrhine/react';
 
 `RhineProvider` 提供 `.rl-theme` 作用域、弹层挂载点、减动策略和通知队列（`useToast()`）；所有弹层组件都必须放在它内部才能拿到主题。
 
-当前内置 Button、IconButton、Surface、StatusBadge、Text、Field、Input、Tabs、Tooltip、Dialog、Select、Popover、Menu、Toast，以及档案组件 RecordHeader、MetadataList、ArchiveCard、StatusIndicator、Timeline、DataTable，共二十个组件和 `RhineProvider`（交互底座为 Base UI，见 ADR-0001）。包为 `private` 源码直出，不应当作稳定版组件库发布。
+当前内置 Button、IconButton、Surface、StatusBadge、Text、Field、Input、Tabs、Tooltip、Dialog、Select、Popover、Menu、Toast，以及档案组件 RecordHeader、MetadataList、ArchiveCard、StatusIndicator、Timeline、DataTable，共二十个组件和 `RhineProvider`（交互底座为 Base UI，见 ADR-0001）。三个包目前仍为 `private`，发布前请勿在外部项目中依赖。
+
+集成方式参考 [examples/](examples/README.md)：独立 SPA、嵌入非 React 旧页面、SSR 水合。从源码直出期升级请看 [UPGRADING.md](docs/development/UPGRADING.md)。
 
 ## 视觉原件与参考资料
 - [高保真 PNG 概念图索引](docs/concepts/README.md)：八张 PNG 已入库，为唯一视觉参考；不再使用简化 SVG 草图。
@@ -60,4 +64,4 @@ import { Button, RhineProvider } from '@wzrhine/react';
 - [研究摘要](docs/research/RESEARCH-SUMMARY.md) 与 [参考链接](docs/research/REFERENCES.md)。
 
 ## 设计与工程状态
-Sprint 01 已完成 M0 本地验收（install / typecheck / test / build / Playwright 均真实通过，记录见 [验收记录](docs/development/acceptance/2026-10-09-sprint-01.md)），并开始 M1-A。根目录尚未选择源代码许可证；未配置自动 GitHub Actions（避免配额消耗）。Chromium、Firefox、WebKit 的自动化验收已通过；屏幕阅读器、200% 缩放与真机仍需人工验收。
+M0–M6 每个里程碑都有验收记录（[docs/README.md](docs/README.md) 中列出），只记录真实执行过的命令。根目录尚未选择源代码许可证；未配置自动 GitHub Actions（避免配额消耗）。Chromium、Firefox、WebKit 的自动化验收已通过；屏幕阅读器、200% 缩放与真机仍需人工验收。

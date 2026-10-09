@@ -23,7 +23,9 @@
 ## G3 — Release
 - [ ] 公开许可证确认（**待维护者选定**），第三方字体/图片/图标权利核对（✅ `pnpm license:audit` → THIRD-PARTY-LICENSES.md）
 - [x] npm exports/CSS sideEffects/ESM 类型声明测试（`pnpm verify:packages`，M5）
-- [x] 示例与包版本匹配、changelog 更新（三个包同一版本线，各自 CHANGELOG）
+- [x] 示例与包版本匹配、changelog 更新（三个包同一版本线，各自 CHANGELOG；三个示例应用以 `workspace:*` 引用，`pnpm check` 构建它们）
+- [x] 视觉回归基线（`pnpm test:visual`，31 张，M6）与升级指南（[UPGRADING.md](UPGRADING.md)）
+- [x] 主题契约冻结（`@wzrhine/tokens` 的 `publicTokens`，测试保证与 CSS 一致，M6）
 - [x] 手动 CI（如获授权）与本地验收记录（未启用 CI；本地 `pnpm release:check` 与验收记录）
 - [x] semver 破坏性变更和迁移说明（CHANGELOG「破坏性」条目附迁移步骤；`pnpm api:check` 暴露 API 变化）
 

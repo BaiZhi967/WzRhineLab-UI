@@ -6,7 +6,7 @@ import { motionDurations } from '@wzrhine/tokens';
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 
-const cssFiles = ['../src/components.css', '../src/overlays.css', '../src/feedback.css', '../src/archive.css'];
+const cssFiles = ['../src/components.css', '../src/reset.css', '../src/overlays.css', '../src/feedback.css', '../src/archive.css'];
 const stripped = (path: string) =>
   read(path)
     .replace(/\/\*[\s\S]*?\*\//g, '')
@@ -61,6 +61,9 @@ describe('package boundary', () => {
 
   it('the single style entry imports every partial stylesheet', () => {
     const entry = read('../src/components.css');
+    // The host-isolation reset comes first so component rules win specificity ties.
+    expect(entry.indexOf("@import './reset.css';")).toBeGreaterThan(-1);
+    expect(entry.indexOf("@import './reset.css';")).toBeLessThan(entry.indexOf("@import './overlays.css';"));
     expect(entry).toMatch(/@import '\.\/overlays\.css';/);
     expect(entry).toMatch(/@import '\.\/feedback\.css';/);
     expect(entry).toMatch(/@import '\.\/archive\.css';/);

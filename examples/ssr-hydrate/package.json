@@ -1,0 +1,31 @@
+{
+  "name": "@wzrhine/example-ssr-hydrate",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "M6 example: server-rendered WzRhineLab UI page hydrated on the client, with hydration-mismatch detection.",
+  "scripts": {
+    "build": "tsc --noEmit -p tsconfig.json && vite build --outDir dist/client && vite build --ssr src/entry-server.tsx --outDir dist/server",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "preview": "node server.mjs",
+    "test:e2e": "playwright test --project=chromium",
+    "test:e2e:all": "playwright test"
+  },
+  "dependencies": {
+    "@wzrhine/react": "workspace:*",
+    "@wzrhine/tokens": "workspace:*",
+    "motion": "12.43.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
+    "@types/node": "24.19.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "4.7.0",
+    "typescript": "5.9.3",
+    "vite": "6.4.4"
+  }
+}

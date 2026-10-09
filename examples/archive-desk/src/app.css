@@ -1,0 +1,109 @@
+/* Archive desk example: app layout only. Component styling comes from the packages; values are tokens. */
+body {
+  margin: 0;
+}
+
+.desk-root {
+  min-height: 100vh;
+}
+
+.desk {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+.desk__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--rl-space-4);
+  padding: var(--rl-space-4) var(--rl-space-6);
+  border-bottom: var(--rl-border-width) solid var(--rl-border-default);
+  background: var(--rl-bg-surface);
+}
+
+.desk__bar h1 {
+  margin: 0;
+}
+
+.desk__bar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rl-space-3);
+}
+
+.desk__theme {
+  min-width: 0;
+}
+
+.desk__main {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--rl-space-6);
+  align-items: start;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--rl-space-6);
+  box-sizing: border-box;
+}
+
+.desk__list,
+.desk__detail {
+  display: grid;
+  gap: var(--rl-space-4);
+  min-width: 0;
+  padding: var(--rl-surface-padding);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-surface);
+}
+
+.desk__list-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--rl-space-3);
+}
+
+.desk__list-head h2,
+.desk__detail h3 {
+  margin: 0;
+}
+
+.desk__filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 180px);
+  gap: var(--rl-space-3);
+}
+
+.desk-form {
+  display: grid;
+  gap: var(--rl-space-4);
+}
+
+.desk-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--rl-space-2);
+}
+
+@media (max-width: 900px) {
+  .desk__main {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--rl-space-4);
+  }
+}
+
+@media (max-width: 520px) {
+  .desk__bar {
+    padding: var(--rl-space-4);
+  }
+
+  .desk__filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

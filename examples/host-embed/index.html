@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>宿主页面 · 嵌入示例</title>
+    <!--
+      A deliberately hostile legacy host stylesheet: global element rules, a universal
+      box-sizing reset, uppercase buttons, and custom properties with the same names as the
+      library's tokens declared on :root. The widget must look right regardless, and must not
+      change any of this host styling.
+    -->
+    <link rel="stylesheet" href="/host.css" />
+  </head>
+  <body>
+    <header class="host-header" id="host-header">
+      <strong>旧版门户</strong>
+      <nav aria-label="门户导航">
+        <a href="#">首页</a>
+        <a href="#">公告</a>
+      </nav>
+    </header>
+    <main class="host-main">
+      <h1>研究所门户（宿主页面）</h1>
+      <p id="host-copy">这是一张不使用 React 的旧页面。下方的挂件通过 <code>mountArchiveWidget()</code> 嵌入。</p>
+      <p>
+        <button type="button" id="host-button">宿主按钮</button>
+        <input id="host-input" placeholder="宿主输入框" aria-label="宿主输入框" />
+      </p>
+      <div class="host-controls" role="group" aria-label="挂件控制">
+        <button type="button" id="mount">挂载挂件</button>
+        <button type="button" id="unmount">卸载挂件</button>
+        <button type="button" id="toggle-theme">切换挂件主题</button>
+      </div>
+      <section class="host-slot" aria-label="挂件区域">
+        <div id="widget-a"></div>
+      </section>
+      <section class="host-slot host-slot--narrow" aria-label="窄挂件区域">
+        <div id="widget-b"></div>
+      </section>
+    </main>
+    <script type="module" src="/src/host.ts"></script>
+  </body>
+</html>

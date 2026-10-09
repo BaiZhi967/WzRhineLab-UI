@@ -1,0 +1,112 @@
+/*
+ * Legacy host stylesheet (deliberately hostile). Loaded before the widget and not under its
+ * control. The E2E suite asserts that the widget renders correctly inside this page and that
+ * none of these host rules change after the widget mounts.
+ */
+:root {
+  /* Same names as library tokens: must not leak into the widget, which scopes tokens to .rl-theme. */
+  --rl-accent: #ff00ff;
+  --rl-bg-canvas: #00ff00;
+  --rl-fg-primary: #0000ff;
+  --host-ink: #222222;
+}
+
+* {
+  box-sizing: content-box;
+}
+
+html {
+  font-size: 20px;
+}
+
+body {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 2;
+  color: var(--host-ink);
+  background: #fafafa;
+}
+
+h1, h2, h3 {
+  font-family: Impact, sans-serif;
+  text-transform: uppercase;
+  color: #8b0000;
+  margin: 1em 0;
+}
+
+p {
+  margin: 1.5em 0;
+}
+
+button {
+  padding: 10px 24px;
+  border: 3px solid #333333;
+  border-radius: 0;
+  background: #ffd700;
+  color: #333333;
+  font: bold 18px Georgia, serif;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+input {
+  padding: 12px;
+  border: 2px dashed #999999;
+  font-size: 18px;
+}
+
+a {
+  color: #8b0000;
+  font-weight: bold;
+}
+
+table, th, td {
+  border: 2px solid #8b0000;
+  padding: 16px;
+}
+
+ul, ol {
+  padding-left: 40px;
+}
+
+dl, dd {
+  margin: 1em 2em;
+}
+
+svg {
+  width: 48px;
+  height: 48px;
+}
+
+.host-header {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  padding: 12px 24px;
+  background: #333333;
+  color: #ffffff;
+}
+
+.host-header a {
+  color: #ffd700;
+  margin-right: 12px;
+}
+
+.host-main {
+  padding: 0 24px 48px;
+}
+
+.host-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.host-slot {
+  margin-top: 24px;
+  max-width: 960px;
+}
+
+.host-slot--narrow {
+  max-width: 340px;
+}
