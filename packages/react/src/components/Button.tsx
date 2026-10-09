@@ -1,7 +1,16 @@
 import * as React from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 
-export type ButtonProps = Omit<React.ComponentPropsWithoutRef<'button'>, 'disabled'> & {
+// motion.button redefines these handlers with gesture/animation signatures.
+type MotionConflictingProps =
+  | 'onDrag'
+  | 'onDragStart'
+  | 'onDragEnd'
+  | 'onAnimationStart'
+  | 'onAnimationEnd'
+  | 'onAnimationIteration';
+
+export type ButtonProps = Omit<React.ComponentPropsWithoutRef<'button'>, 'disabled' | MotionConflictingProps> & {
   variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'sm' | 'md';
   loading?: boolean;
