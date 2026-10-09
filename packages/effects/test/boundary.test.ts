@@ -1,9 +1,9 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const root = fileURLToPath(new URL('../..', import.meta.url));
+// Vitest runs with the package directory as cwd (also under `pnpm -r test`); `packages/` is one level up.
+const root = resolve(process.cwd(), '..');
 const read = (rel: string) => readFileSync(join(root, rel), 'utf8');
 
 function walk(dir: string): string[] {
