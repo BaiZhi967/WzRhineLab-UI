@@ -139,7 +139,11 @@ export const densityTokens = [
   { token: '--rl-control-padding-x-sm', usage: '小号控件水平内距' },
   { token: '--rl-control-padding-x-md', usage: '默认控件水平内距' },
   { token: '--rl-control-padding-x-lg', usage: '大号控件水平内距' },
+  { token: '--rl-control-gap', usage: '控件内图标与文字间距' },
   { token: '--rl-surface-padding', usage: '表面默认内距' },
+  { token: '--rl-badge-height-sm', usage: '小号徽标高度（非点击目标）' },
+  { token: '--rl-badge-height-md', usage: '默认徽标高度（非点击目标）' },
+  { token: '--rl-indicator-size', usage: '状态圆点' },
 ] as const;
 
 /** Duration tokens in milliseconds. Source of truth for CSS (`--rl-motion-*`) and motion/react presets. */

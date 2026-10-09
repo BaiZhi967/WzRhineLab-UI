@@ -64,6 +64,9 @@
   --rl-icon-size-sm: 14px;
   --rl-icon-size-md: 16px;
   --rl-icon-size-lg: 20px;
+  --rl-badge-height-sm: 20px;
+  --rl-badge-height-md: 24px;
+  --rl-indicator-size: 6px;
 
   /* Motion · mirrored by packages/react/src/motion/presets.ts */
   --rl-motion-instant: 0ms;
@@ -91,7 +94,7 @@
   --rl-control-padding-x-sm: var(--rl-space-2);
   --rl-control-padding-x-md: var(--rl-space-3);
   --rl-control-padding-x-lg: var(--rl-space-4);
-  --rl-control-gap: 6px;
+  --rl-control-gap: var(--rl-space-1);
   --rl-surface-padding: var(--rl-space-4);
 }
 

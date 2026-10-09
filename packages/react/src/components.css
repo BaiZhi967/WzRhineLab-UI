@@ -1,20 +1,295 @@
-.rl-theme, .rl-theme * { box-sizing: border-box; }
-.rl-button { appearance: none; border: 1px solid var(--rl-border-strong); border-radius: var(--rl-radius-sm); min-height: 40px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 600 14px/1.2 var(--rl-font-body); color: var(--rl-fg-primary); background: var(--rl-bg-surface); cursor: pointer; transition: background var(--rl-motion-fast) var(--rl-ease-out), border-color var(--rl-motion-fast) var(--rl-ease-out); }
-.rl-button[data-size='sm'] { min-height: 34px; padding: 0 12px; }
-.rl-button[data-variant='primary'] { background: var(--rl-accent); border-color: var(--rl-accent); color: #20251f; }
-.rl-button[data-variant='secondary'] { background: var(--rl-bg-surface); }
-.rl-button[data-variant='ghost'] { background: transparent; border-color: transparent; }
-.rl-button:not(:disabled):hover { filter: brightness(0.96); }
-.rl-button:focus-visible { outline: 2px solid var(--rl-focus); outline-offset: 3px; }
-.rl-button:disabled { opacity: .55; cursor: not-allowed; }
-.rl-button__spinner { width: 12px; height: 12px; display: inline-block; border: 2px solid currentColor; border-right-color: transparent; border-radius: 100%; animation: rl-spin 750ms linear infinite; }
-@keyframes rl-spin { to { transform: rotate(360deg); } }
-.rl-surface { padding: 24px; border: 1px solid var(--rl-border-subtle); background: var(--rl-bg-surface); border-radius: var(--rl-radius-sm); }
-.rl-surface[data-tone='subtle'] { background: var(--rl-bg-subtle); }
-.rl-badge { display: inline-flex; align-items: center; gap: 7px; padding: 5px 9px; border: 1px solid var(--rl-border-subtle); border-radius: 2px; color: var(--rl-fg-primary); background: var(--rl-bg-surface); font: 500 12px/1.1 var(--rl-font-body); }
-.rl-badge__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--rl-fg-muted); }
-.rl-badge[data-status='success'] .rl-badge__dot { background: var(--rl-success); }
-.rl-badge[data-status='info'] .rl-badge__dot { background: var(--rl-info); }
-.rl-badge[data-status='warning'] .rl-badge__dot { background: var(--rl-warning); }
-.rl-badge[data-status='danger'] .rl-badge__dot { background: var(--rl-danger); }
-@media (prefers-reduced-motion: reduce) { .rl-button__spinner { animation: none; border-right-color: currentColor; } }
+/*
+ * WzRhineLab UI · component styles
+ * Requires @wzrhine/tokens/styles.css and a `.rl-theme` ancestor.
+ * Only `rl-` classes are targeted; host elements and :root stay untouched.
+ * No literal colours, spacing or radii here: everything resolves to --rl-* tokens.
+ */
+
+:where(.rl-button, .rl-surface, .rl-badge),
+:where(.rl-button, .rl-surface, .rl-badge) *,
+:where(.rl-button, .rl-surface, .rl-badge) *::before,
+:where(.rl-button, .rl-surface, .rl-badge) *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- Button ---------- */
+.rl-button {
+  --rl-button-bg: var(--rl-bg-surface);
+  --rl-button-fg: var(--rl-fg-primary);
+  --rl-button-border: var(--rl-border-strong);
+  --rl-button-bg-hover: var(--rl-bg-hover);
+  --rl-button-bg-pressed: var(--rl-bg-pressed);
+  --rl-button-border-hover: var(--rl-fg-primary);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  max-width: 100%;
+  min-height: var(--rl-control-height-md);
+  padding: 0 var(--rl-control-padding-x-md);
+  margin: 0;
+  appearance: none;
+  border: var(--rl-border-width) solid var(--rl-button-border);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-button-bg);
+  color: var(--rl-button-fg);
+  font: var(--rl-type-label);
+  letter-spacing: 0;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--rl-motion-fast) var(--rl-ease-out),
+    border-color var(--rl-motion-fast) var(--rl-ease-out),
+    color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-button[data-size='sm'] {
+  min-height: var(--rl-control-height-sm);
+  padding: 0 var(--rl-control-padding-x-sm);
+  font: var(--rl-type-label-sm);
+}
+
+.rl-button[data-size='lg'] {
+  min-height: var(--rl-control-height-lg);
+  padding: 0 var(--rl-control-padding-x-lg);
+}
+
+.rl-button[data-variant='primary'] {
+  --rl-button-bg: var(--rl-bg-inverse);
+  --rl-button-fg: var(--rl-fg-inverse);
+  --rl-button-border: var(--rl-bg-inverse);
+  --rl-button-bg-hover: var(--rl-inverse-hover);
+  --rl-button-bg-pressed: var(--rl-inverse-hover);
+  --rl-button-border-hover: var(--rl-inverse-hover);
+}
+
+.rl-button[data-variant='accent'] {
+  --rl-button-bg: var(--rl-accent);
+  --rl-button-fg: var(--rl-fg-on-accent);
+  --rl-button-border: var(--rl-accent);
+  --rl-button-bg-hover: var(--rl-accent-hover);
+  --rl-button-bg-pressed: var(--rl-accent-hover);
+  --rl-button-border-hover: var(--rl-accent-hover);
+}
+
+.rl-button[data-variant='ghost'] {
+  --rl-button-bg: transparent;
+  --rl-button-border: transparent;
+  --rl-button-border-hover: transparent;
+}
+
+@media (hover: hover) {
+  .rl-button:not(:disabled, [aria-disabled='true']):hover {
+    background: var(--rl-button-bg-hover);
+    border-color: var(--rl-button-border-hover);
+  }
+}
+
+.rl-button:not(:disabled, [aria-disabled='true']):active {
+  background: var(--rl-button-bg-pressed);
+}
+
+.rl-button:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.rl-button:disabled {
+  --rl-button-bg: var(--rl-bg-disabled);
+  --rl-button-fg: var(--rl-fg-disabled);
+  --rl-button-border: var(--rl-border-default);
+  cursor: not-allowed;
+}
+
+.rl-button[data-variant='ghost']:disabled {
+  --rl-button-bg: transparent;
+  --rl-button-border: transparent;
+}
+
+.rl-button[data-loading] {
+  cursor: progress;
+}
+
+.rl-button__content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rl-control-gap);
+  min-width: 0;
+}
+
+.rl-button__label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.rl-button__icon {
+  display: inline-flex;
+  flex: none;
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+}
+
+.rl-button[data-size='sm'] .rl-button__icon {
+  width: var(--rl-icon-size-sm);
+  height: var(--rl-icon-size-sm);
+}
+
+.rl-button[data-size='lg'] .rl-button__icon {
+  width: var(--rl-icon-size-lg);
+  height: var(--rl-icon-size-lg);
+}
+
+.rl-button__icon > svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Spinner overlays the hidden label, so loading never changes the button width. */
+.rl-button__spinner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.rl-spinner {
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--rl-border-width-strong);
+}
+
+.rl-spinner__track {
+  opacity: 0.25;
+}
+
+.rl-spinner__arc {
+  stroke-dasharray: 28 100;
+  stroke-linecap: round;
+}
+
+/* Reduced motion: a static, fuller arc still reads as "in progress" next to aria-busy. */
+.rl-spinner[data-reduced] .rl-spinner__arc {
+  stroke-dasharray: 70 100;
+}
+
+/* ---------- Surface ---------- */
+.rl-surface {
+  display: block;
+  min-width: 0;
+  padding: var(--rl-surface-padding);
+  border: var(--rl-border-width) solid transparent;
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-surface);
+  color: var(--rl-fg-primary);
+}
+
+.rl-surface[data-bordered] {
+  border-color: var(--rl-border-subtle);
+}
+
+.rl-surface[data-tone='subtle'] {
+  background: var(--rl-bg-subtle);
+}
+
+.rl-surface[data-tone='raised'] {
+  background: var(--rl-bg-raised);
+  box-shadow: var(--rl-shadow-raised);
+}
+
+.rl-surface[data-padding='none'] {
+  padding: 0;
+}
+
+.rl-surface[data-padding='sm'] {
+  padding: var(--rl-space-4);
+}
+
+.rl-surface[data-padding='lg'] {
+  padding: var(--rl-space-8);
+}
+
+/* ---------- StatusBadge ---------- */
+.rl-badge {
+  --rl-badge-fg: var(--rl-fg-primary);
+  --rl-badge-bg: var(--rl-bg-subtle);
+  --rl-badge-border: transparent;
+  --rl-badge-indicator: var(--rl-fg-muted);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rl-space-2);
+  max-width: 100%;
+  min-height: var(--rl-badge-height-md);
+  padding: 0 var(--rl-space-2);
+  border: var(--rl-border-width) solid var(--rl-badge-border);
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-badge-bg);
+  color: var(--rl-badge-fg);
+  font: var(--rl-type-meta);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.rl-badge[data-size='sm'] {
+  min-height: var(--rl-badge-height-sm);
+  gap: var(--rl-space-1);
+}
+
+.rl-badge__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rl-badge[data-status='info'] { --rl-badge-fg: var(--rl-info); --rl-badge-bg: var(--rl-info-subtle); --rl-badge-indicator: var(--rl-info); }
+.rl-badge[data-status='success'] { --rl-badge-fg: var(--rl-success); --rl-badge-bg: var(--rl-success-subtle); --rl-badge-indicator: var(--rl-success); }
+.rl-badge[data-status='warning'] { --rl-badge-fg: var(--rl-warning); --rl-badge-bg: var(--rl-warning-subtle); --rl-badge-indicator: var(--rl-warning); }
+.rl-badge[data-status='danger'] { --rl-badge-fg: var(--rl-danger); --rl-badge-bg: var(--rl-danger-subtle); --rl-badge-indicator: var(--rl-danger); }
+
+.rl-badge[data-appearance='outline'] {
+  --rl-badge-fg: var(--rl-fg-primary);
+  --rl-badge-bg: var(--rl-bg-surface);
+  --rl-badge-border: var(--rl-border-default);
+}
+
+/* Indicator shape differs per status so the state is not conveyed by colour alone. */
+.rl-badge__indicator {
+  flex: none;
+  width: var(--rl-indicator-size);
+  height: var(--rl-indicator-size);
+  border-radius: var(--rl-radius-round);
+  background: var(--rl-badge-indicator);
+}
+
+.rl-badge[data-status='neutral'] .rl-badge__indicator {
+  background: transparent;
+  box-shadow: inset 0 0 0 var(--rl-border-width-strong) var(--rl-badge-indicator);
+}
+
+.rl-badge[data-status='warning'] .rl-badge__indicator {
+  border-radius: 0;
+  transform: rotate(45deg) scale(0.85);
+}
+
+.rl-badge[data-status='danger'] .rl-badge__indicator {
+  border-radius: 0;
+}
+
+/* ---------- Forced colours (Windows High Contrast) ---------- */
+@media (forced-colors: active) {
+  .rl-button { border-color: ButtonText; }
+  .rl-button:disabled { border-color: GrayText; color: GrayText; }
+  .rl-button:focus-visible { outline-color: Highlight; }
+  .rl-badge { border-color: CanvasText; }
+  .rl-badge__indicator { background: CanvasText; }
+  .rl-surface[data-bordered] { border-color: CanvasText; }
+}
