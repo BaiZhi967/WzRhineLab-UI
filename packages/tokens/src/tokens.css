@@ -1,0 +1,57 @@
+/* Original research-inspired design tokens. Not official franchise colors. */
+/* Scoped to the host container; no global :root overrides. */
+.rl-theme {
+  --rl-bg-canvas: #f3f2ed;
+  --rl-bg-surface: #fcfbf7;
+  --rl-bg-subtle: #e9e8e1;
+  --rl-fg-primary: #20251f;
+  --rl-fg-muted: #60685f;
+  --rl-border-subtle: #cfd3ca;
+  --rl-border-strong: #7b8579;
+  --rl-accent: #e56a32;
+  --rl-accent-text: #aa431c;
+  --rl-accent-amber: #c89b45;
+  --rl-info: #226a84;
+  --rl-success: #23734a;
+  --rl-danger: #b93430;
+  --rl-warning: #925900;
+  --rl-focus: #aa431c;
+  --rl-font-body: Inter, 'Noto Sans SC', 'Source Han Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --rl-font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  --rl-radius-sm: 3px;
+  --rl-radius-md: 6px;
+  --rl-space-1: 4px;
+  --rl-space-2: 8px;
+  --rl-space-3: 12px;
+  --rl-space-4: 16px;
+  --rl-space-6: 24px;
+  --rl-space-8: 32px;
+  --rl-motion-fast: 120ms;
+  --rl-motion-base: 200ms;
+  --rl-motion-panel: 280ms;
+  --rl-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--rl-fg-primary);
+  background: var(--rl-bg-canvas);
+  font-family: var(--rl-font-body);
+  color-scheme: light;
+}
+.rl-theme[data-rl-theme='dark'] {
+  --rl-bg-canvas: #11181b;
+  --rl-bg-surface: #1d272b;
+  --rl-bg-subtle: #293338;
+  --rl-fg-primary: #e6e9e2;
+  --rl-fg-muted: #b1bcbc;
+  --rl-border-subtle: #435156;
+  --rl-border-strong: #73898f;
+  --rl-accent: #e69a61;
+  --rl-accent-text: #ffb782;
+  --rl-focus: #ffb782;
+  --rl-info: #6ac4d6;
+  --rl-success: #77dba4;
+  --rl-danger: #ff8e87;
+  --rl-warning: #ffc17c;
+  color-scheme: dark;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rl-theme { --rl-motion-fast: 0ms; --rl-motion-base: 0ms; --rl-motion-panel: 0ms; }
+}

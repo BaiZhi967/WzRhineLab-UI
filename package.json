@@ -1,0 +1,16 @@
+{
+  "name": "wzrhine-ui-workspace",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@10.17.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @wzrhine/showcase dev",
+    "build": "pnpm --filter @wzrhine/showcase build",
+    "typecheck": "pnpm -r typecheck",
+    "preview": "pnpm --filter @wzrhine/showcase preview"
+  }
+}

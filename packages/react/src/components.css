@@ -1,0 +1,20 @@
+.rl-theme, .rl-theme * { box-sizing: border-box; }
+.rl-button { appearance: none; border: 1px solid var(--rl-border-strong); border-radius: var(--rl-radius-sm); min-height: 40px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 600 14px/1.2 var(--rl-font-body); color: var(--rl-fg-primary); background: var(--rl-bg-surface); cursor: pointer; transition: background var(--rl-motion-fast) var(--rl-ease-out), border-color var(--rl-motion-fast) var(--rl-ease-out); }
+.rl-button[data-size='sm'] { min-height: 34px; padding: 0 12px; }
+.rl-button[data-variant='primary'] { background: var(--rl-accent); border-color: var(--rl-accent); color: #20251f; }
+.rl-button[data-variant='secondary'] { background: var(--rl-bg-surface); }
+.rl-button[data-variant='ghost'] { background: transparent; border-color: transparent; }
+.rl-button:not(:disabled):hover { filter: brightness(0.96); }
+.rl-button:focus-visible { outline: 2px solid var(--rl-focus); outline-offset: 3px; }
+.rl-button:disabled { opacity: .55; cursor: not-allowed; }
+.rl-button__spinner { width: 12px; height: 12px; display: inline-block; border: 2px solid currentColor; border-right-color: transparent; border-radius: 100%; animation: rl-spin 750ms linear infinite; }
+@keyframes rl-spin { to { transform: rotate(360deg); } }
+.rl-surface { padding: 24px; border: 1px solid var(--rl-border-subtle); background: var(--rl-bg-surface); border-radius: var(--rl-radius-sm); }
+.rl-surface[data-tone='subtle'] { background: var(--rl-bg-subtle); }
+.rl-badge { display: inline-flex; align-items: center; gap: 7px; padding: 5px 9px; border: 1px solid var(--rl-border-subtle); border-radius: 2px; color: var(--rl-fg-primary); background: var(--rl-bg-surface); font: 500 12px/1.1 var(--rl-font-body); }
+.rl-badge__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--rl-fg-muted); }
+.rl-badge[data-status='success'] .rl-badge__dot { background: var(--rl-success); }
+.rl-badge[data-status='info'] .rl-badge__dot { background: var(--rl-info); }
+.rl-badge[data-status='warning'] .rl-badge__dot { background: var(--rl-warning); }
+.rl-badge[data-status='danger'] .rl-badge__dot { background: var(--rl-danger); }
+@media (prefers-reduced-motion: reduce) { .rl-button__spinner { animation: none; border-right-color: currentColor; } }
