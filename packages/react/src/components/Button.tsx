@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { fadePresence, pressScale, transition } from '../motion/presets';
-import { useRhineMotion } from '../motion/useRhineMotion';
-import { cx } from '../utils/cx';
+import { fadePresence, pressScale, transition } from '../motion/presets.js';
+import { useRhineMotion } from '../motion/useRhineMotion.js';
+import { cx } from '../utils/cx.js';
 
 // motion.button redefines these handlers with gesture/animation signatures.
 type MotionConflictingProps =

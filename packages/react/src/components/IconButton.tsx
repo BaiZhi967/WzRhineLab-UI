@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { motion } from 'motion/react';
-import { pressScale } from '../motion/presets';
-import { useRhineMotion } from '../motion/useRhineMotion';
-import { cx } from '../utils/cx';
-import type { ButtonSize } from './Button';
+import { pressScale } from '../motion/presets.js';
+import { useRhineMotion } from '../motion/useRhineMotion.js';
+import { cx } from '../utils/cx.js';
+import type { ButtonSize } from './Button.js';
 
 type MotionConflictingProps =
   | 'onDrag'

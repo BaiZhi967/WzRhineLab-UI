@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
-import { usePortalContainer, usePortalPending } from '../provider/portal';
-import type { StatusKind } from './StatusBadge';
+import { usePortalContainer, usePortalPending } from '../provider/portal.js';
+import type { StatusKind } from './StatusBadge.js';
 
 /**
  * Notifications on Base UI Toast (ADR-0001). The viewport is a polite live region (F6 jumps

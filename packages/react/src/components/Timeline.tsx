@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { cx } from '../utils/cx';
-import type { StatusKind } from './StatusBadge';
+import { cx } from '../utils/cx.js';
+import type { StatusKind } from './StatusBadge.js';
 
 /**
  * Chronological event log as an ordered list. Each event needs a real timestamp

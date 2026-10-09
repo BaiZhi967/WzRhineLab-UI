@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
-import { usePortalContainer } from '../provider/portal';
-import { cx } from '../utils/cx';
+import { usePortalContainer } from '../provider/portal.js';
+import { cx } from '../utils/cx.js';
 
 /**
  * Action menu on Base UI Menu (ADR-0001): menu / menuitem semantics, arrow-key roving focus,

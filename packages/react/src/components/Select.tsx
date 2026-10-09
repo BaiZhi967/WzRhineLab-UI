@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
-import { usePortalContainer } from '../provider/portal';
-import { cx } from '../utils/cx';
-import type { InputSize } from './Input';
+import { usePortalContainer } from '../provider/portal.js';
+import { cx } from '../utils/cx.js';
+import type { InputSize } from './Input.js';
 
 /**
  * Single-value select on Base UI Select (ADR-0001): combobox + listbox semantics, typeahead,

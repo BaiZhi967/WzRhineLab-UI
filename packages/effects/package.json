@@ -1,18 +1,43 @@
 {
   "name": "@wzrhine/effects",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
+  "description": "Optional showcase effects (decrypt reveal, scan, orbit) and a four-lane motion player for WzRhineLab UI.",
   "type": "module",
-  "description": "Optional showcase effects (decrypt reveal, scan, orbit) and the motion player. Never imported by @wzrhine/react.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BaiZhi967/WzRhineLab-UI.git",
+    "directory": "packages/effects"
+  },
   "sideEffects": [
     "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/effects.css"
   },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      },
+      "./styles.css": "./dist/effects.css",
+      "./package.json": "./package.json"
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts"
+  },
   "peerDependencies": {
-    "@wzrhine/react": "workspace:*",
+    "@wzrhine/react": "workspace:^",
     "motion": "^12.0.0",
     "react": "^18.2.0 || ^19.0.0",
     "react-dom": "^18.2.0 || ^19.0.0"
@@ -38,6 +63,8 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build": "node ../../scripts/build-package.mjs",
+    "prepack": "node ../../scripts/build-package.mjs"
   }
 }

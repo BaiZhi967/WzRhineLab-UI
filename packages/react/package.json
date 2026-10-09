@@ -1,14 +1,40 @@
 {
   "name": "@wzrhine/react",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
+  "description": "Accessible React components for research / archive interfaces, built on Base UI and motion/react.",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BaiZhi967/WzRhineLab-UI.git",
+    "directory": "packages/react"
+  },
   "sideEffects": [
     "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/components.css"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      },
+      "./styles.css": "./dist/components.css",
+      "./package.json": "./package.json"
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts"
   },
   "peerDependencies": {
     "motion": "^12.0.0",
@@ -37,6 +63,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "build": "node ../../scripts/build-package.mjs",
+    "prepack": "node ../../scripts/build-package.mjs"
   }
 }

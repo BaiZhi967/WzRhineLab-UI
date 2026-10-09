@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
-import { usePortalContainer } from '../provider/portal';
-import { cx } from '../utils/cx';
+import { usePortalContainer } from '../provider/portal.js';
+import { cx } from '../utils/cx.js';
 
 export type TooltipSide = 'top' | 'bottom' | 'left' | 'right';
 

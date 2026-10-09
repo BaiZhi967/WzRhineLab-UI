@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cx } from '../utils/cx';
+import { cx } from '../utils/cx.js';
 
 /**
  * Data table on a native <table>: real header cells, a caption, sortable columns that

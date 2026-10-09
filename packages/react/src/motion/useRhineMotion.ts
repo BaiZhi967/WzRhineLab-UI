@@ -1,6 +1,6 @@
 import { useReducedMotionConfig } from 'motion/react';
 import type { Transition } from 'motion/react';
-import { transition } from './presets';
+import { transition } from './presets.js';
 
 export type RhineTransitionName = keyof typeof transition;
 

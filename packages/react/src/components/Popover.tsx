@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Popover as BasePopover } from '@base-ui/react/popover';
-import { usePortalContainer } from '../provider/portal';
-import { cx } from '../utils/cx';
+import { usePortalContainer } from '../provider/portal.js';
+import { cx } from '../utils/cx.js';
 
 /**
  * Non-modal floating panel on Base UI Popover (ADR-0001). Unlike Tooltip it may hold

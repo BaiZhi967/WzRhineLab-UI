@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cx } from '../utils/cx';
+import { cx } from '../utils/cx.js';
 
 /**
  * Archive metadata as a semantic description list (<dl>). Values come from the caller's

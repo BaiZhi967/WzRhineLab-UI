@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Field as BaseField } from '@base-ui/react/field';
-import { cx } from '../utils/cx';
+import { cx } from '../utils/cx.js';
 
 /**
  * Form field built on Base UI Field (ADR-0001): label, description and error are

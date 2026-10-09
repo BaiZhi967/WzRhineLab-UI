@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useEffectTiming } from './clock';
-import { usePageVisible } from './usePageVisible';
+import { useEffectTiming } from './clock.js';
+import { usePageVisible } from './usePageVisible.js';
 
 /**
  * Single-pass scan line over a surface, triggered by the user (e.g. "re-scan"). Showcase effect:

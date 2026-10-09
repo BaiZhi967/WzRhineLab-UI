@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
-import { cx } from '../utils/cx';
+import { cx } from '../utils/cx.js';
 
 /**
  * Tabs on Base UI Tabs (ADR-0001): roving focus with arrow keys, Home/End, automatic

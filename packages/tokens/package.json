@@ -1,22 +1,50 @@
 {
   "name": "@wzrhine/tokens",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
+  "description": "Semantic design tokens (CSS custom properties) and a typed token manifest for WzRhineLab UI.",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BaiZhi967/WzRhineLab-UI.git",
+    "directory": "packages/tokens"
+  },
   "sideEffects": [
     "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/tokens.css"
   },
-  "scripts": {
-    "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run"
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      },
+      "./styles.css": "./dist/tokens.css",
+      "./package.json": "./package.json"
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts"
   },
   "devDependencies": {
     "@types/node": "24.19.1",
     "typescript": "5.9.3",
     "vitest": "4.1.11"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "build": "node ../../scripts/build-package.mjs",
+    "prepack": "node ../../scripts/build-package.mjs"
   }
 }
