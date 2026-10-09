@@ -13,15 +13,15 @@
 | `@floating-ui/dom` | 1.8.0 | MIT | @wzrhine/react |
 | `@floating-ui/react-dom` | 2.1.9 | MIT | @wzrhine/react |
 | `@floating-ui/utils` | 0.2.12 | MIT | @wzrhine/react |
-| `framer-motion` | 12.43.0 | MIT | @wzrhine/react |
+| `framer-motion` | 12.43.0 | MIT | @wzrhine/effects、@wzrhine/react |
 | `motion` | 12.43.0 | MIT | @wzrhine/effects、@wzrhine/react |
-| `motion-dom` | 12.43.0 | MIT | @wzrhine/react |
-| `motion-utils` | 12.39.0 | MIT | @wzrhine/react |
+| `motion-dom` | 12.43.0 | MIT | @wzrhine/effects、@wzrhine/react |
+| `motion-utils` | 12.39.0 | MIT | @wzrhine/effects、@wzrhine/react |
 | `react` | 19.3.0 | MIT | @wzrhine/effects、@wzrhine/react |
 | `react-dom` | 19.3.0 | MIT | @wzrhine/effects、@wzrhine/react |
 | `reselect` | 5.3.0 | MIT | @wzrhine/react |
-| `scheduler` | 0.28.0 | MIT | @wzrhine/react |
-| `tslib` | 2.8.1 | 0BSD | @wzrhine/react |
+| `scheduler` | 0.28.0 | MIT | @wzrhine/effects、@wzrhine/react |
+| `tslib` | 2.8.1 | 0BSD | @wzrhine/effects、@wzrhine/react |
 | `use-sync-external-store` | 1.7.0 | MIT | @wzrhine/react |
 
 ## 非代码素材

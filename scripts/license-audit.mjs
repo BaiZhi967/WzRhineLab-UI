@@ -27,12 +27,16 @@ function resolveDep(fromDir, dep) {
 function walk(pkgDir, via) {
   const pj = JSON.parse(readFileSync(join(pkgDir, 'package.json'), 'utf8'));
   const key = `${pj.name}@${pj.version}`;
-  if (seen.has(key)) {
-    seen.get(key).via.add(via);
-    return;
+  const existing = seen.get(key);
+  if (existing) {
+    // Already visited from this package: stop. From a new package: record it and keep descending
+    // so transitive dependencies credit every package that pulls them in.
+    if (existing.via.has(via)) return;
+    existing.via.add(via);
+  } else {
+    const license = typeof pj.license === 'string' ? pj.license : (pj.licenses ?? []).map((l) => l.type).join(' OR ') || 'UNKNOWN';
+    seen.set(key, { name: pj.name, version: pj.version, license, via: new Set([via]) });
   }
-  const license = typeof pj.license === 'string' ? pj.license : (pj.licenses ?? []).map((l) => l.type).join(' OR ') || 'UNKNOWN';
-  seen.set(key, { name: pj.name, version: pj.version, license, via: new Set([via]) });
   for (const dep of Object.keys(pj.dependencies ?? {})) {
     const found = resolveDep(pkgDir, dep);
     if (found) walk(found, via);
