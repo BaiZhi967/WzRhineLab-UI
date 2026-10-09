@@ -19,6 +19,9 @@ import { TabsPage } from './pages/TabsPage';
 import { TooltipPage } from './pages/TooltipPage';
 import { DialogPage } from './pages/DialogPage';
 import { SelectPage } from './pages/SelectPage';
+import { PopoverPage } from './pages/PopoverPage';
+import { MenuPage } from './pages/MenuPage';
+import { ToastPage } from './pages/ToastPage';
 
 const groups: RouteGroup[] = ['start', 'foundations', 'components', 'navigation', 'motion'];
 
@@ -156,6 +159,12 @@ export default function App() {
         return <DialogPage />;
       case 'select':
         return <SelectPage />;
+      case 'popover':
+        return <PopoverPage />;
+      case 'menu':
+        return <MenuPage />;
+      case 'toast':
+        return <ToastPage />;
       default:
         return <OverviewPage />;
     }

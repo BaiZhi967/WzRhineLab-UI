@@ -23,7 +23,10 @@ export const routes = [
   { id: 'tooltip', path: '/components/tooltip', label: 'Tooltip', group: 'navigation', index: '09' },
   { id: 'dialog', path: '/components/dialog', label: 'Dialog', group: 'navigation', index: '10' },
   { id: 'select', path: '/components/select', label: 'Select', group: 'navigation', index: '11' },
-  { id: 'motion', path: '/motion', label: 'Motion', group: 'motion', index: '12' },
+  { id: 'popover', path: '/components/popover', label: 'Popover', group: 'navigation', index: '12' },
+  { id: 'menu', path: '/components/menu', label: 'Menu', group: 'navigation', index: '13' },
+  { id: 'toast', path: '/components/toast', label: 'Toast', group: 'navigation', index: '14' },
+  { id: 'motion', path: '/motion', label: 'Motion', group: 'motion', index: '15' },
 ] as const satisfies readonly RouteDef[];
 
 export type RouteId = (typeof routes)[number]['id'];

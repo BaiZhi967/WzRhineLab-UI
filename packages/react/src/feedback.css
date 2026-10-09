@@ -116,7 +116,8 @@
 .rl-menu {
   min-width: max(var(--rl-menu-min-width), var(--anchor-width));
   max-width: var(--available-width);
-  max-height: min(var(--available-height), var(--rl-popup-max-height));
+  /* Menus are short command lists: only cap by available space so they rarely need to scroll. */
+  max-height: var(--available-height);
   overflow-y: auto;
   padding: var(--rl-space-1);
   border: var(--rl-border-width) solid var(--rl-border-default);
