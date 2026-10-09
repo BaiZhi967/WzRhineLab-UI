@@ -41,3 +41,20 @@ describe('public prop types', () => {
     void (<Surface as="button" />);
   });
 });
+
+describe('M1-B prop types', () => {
+  it('IconButton requires an accessible name', async () => {
+    const { IconButton, Text, Field, Input } = await import('../src');
+    void (<IconButton icon={null} label="关闭" />);
+    void (<IconButton icon={null} aria-labelledby="x" />);
+    // @ts-expect-error missing label / aria-labelledby
+    void (<IconButton icon={null} />);
+    // @ts-expect-error both naming strategies at once
+    void (<IconButton icon={null} label="a" aria-labelledby="b" />);
+    // @ts-expect-error unknown variant
+    void (<Text variant="huge" />);
+    // @ts-expect-error label is required on Field
+    void (<Field><Input /></Field>);
+    void (<Field label="x"><Input size="sm" mono /></Field>);
+  });
+});

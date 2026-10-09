@@ -34,6 +34,7 @@ export const colorGroups = [
       { name: '--rl-bg-inverse', role: '深墨填充' },
       { name: '--rl-inverse-hover', role: '深墨填充悬停' },
       { name: '--rl-bg-disabled', role: '禁用填充' },
+      { name: '--rl-bg-readonly', role: '只读字段' },
     ],
   },
   {
@@ -145,6 +146,7 @@ export const densityTokens = [
   { token: '--rl-badge-height-sm', usage: '小号徽标高度（非点击目标）' },
   { token: '--rl-badge-height-md', usage: '默认徽标高度（非点击目标）' },
   { token: '--rl-indicator-size', usage: '状态圆点' },
+  { token: '--rl-field-label-width', usage: '行内字段标签列宽' },
 ] as const;
 
 /** Duration tokens in milliseconds. Source of truth for CSS (`--rl-motion-*`) and motion/react presets. */
@@ -240,4 +242,12 @@ export const contrastPairs: readonly ContrastPair[] = [
   { fg: '--rl-focus', bg: '--rl-bg-canvas', level: 'non-text', usage: '焦点环 / 画布' },
   { fg: '--rl-focus', bg: '--rl-bg-surface', level: 'non-text', usage: '焦点环 / 表面' },
   { fg: '--rl-accent', bg: '--rl-bg-surface', level: 'non-text', usage: '信号标记 / 表面' },
+  { fg: '--rl-fg-primary', bg: '--rl-bg-readonly', level: 'text', usage: '只读字段值' },
+  { fg: '--rl-border-strong', bg: '--rl-bg-readonly', level: 'non-text', usage: '只读字段边界' },
+  { fg: '--rl-border-strong', bg: '--rl-bg-raised', level: 'non-text', usage: '控件边界 / 浮层' },
+  { fg: '--rl-fg-muted', bg: '--rl-bg-raised', level: 'text', usage: '次级文本 / 浮层' },
+  { fg: '--rl-fg-subtle', bg: '--rl-bg-raised', level: 'text', usage: '占位符 / 浮层' },
+  { fg: '--rl-danger', bg: '--rl-bg-surface', level: 'text', usage: '字段错误文本 / 表面' },
+  { fg: '--rl-danger', bg: '--rl-bg-canvas', level: 'text', usage: '字段错误文本 / 画布' },
+  { fg: '--rl-danger', bg: '--rl-bg-surface', level: 'non-text', usage: '无效字段边界' },
 ];

@@ -4,9 +4,13 @@ export const routes = [
   { name: 'overview', hash: '/#/' },
   { name: 'foundations', hash: '/#/foundations' },
   { name: 'button', hash: '/#/components/button' },
+  { name: 'icon-button', hash: '/#/components/icon-button' },
   { name: 'surface', hash: '/#/components/surface' },
   { name: 'status-badge', hash: '/#/components/status-badge' },
+  { name: 'text', hash: '/#/components/text' },
+  { name: 'field', hash: '/#/components/field' },
   { name: 'motion', hash: '/#/motion' },
+  { name: 'lab-overlays', hash: '/#/lab/overlays' },
 ] as const;
 
 export const widths = [320, 390, 768, 1280, 1920] as const;

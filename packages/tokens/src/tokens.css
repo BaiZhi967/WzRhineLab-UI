@@ -67,6 +67,7 @@
   --rl-badge-height-sm: 20px;
   --rl-badge-height-md: 24px;
   --rl-indicator-size: 6px;
+  --rl-field-label-width: 160px;
 
   /* Motion · mirrored by packages/react/src/motion/presets.ts */
   --rl-motion-instant: 0ms;
@@ -108,6 +109,7 @@
   --rl-bg-pressed: #e2e1d9;
   --rl-bg-inverse: #20251f;
   --rl-bg-disabled: #e6e5df;
+  --rl-bg-readonly: #efeee8;
 
   --rl-fg-primary: #20251f;
   --rl-fg-muted: #505850;
@@ -154,6 +156,7 @@
   --rl-bg-pressed: #334146;
   --rl-bg-inverse: #e6e9e2;
   --rl-bg-disabled: #253034;
+  --rl-bg-readonly: #182125;
 
   --rl-fg-primary: #e6e9e2;
   --rl-fg-muted: #aeb8b6;
@@ -201,6 +204,8 @@
     --rl-bg-pressed: #334146;
     --rl-bg-inverse: #e6e9e2;
     --rl-bg-disabled: #253034;
+    --rl-bg-readonly: #182125;
+  --rl-bg-readonly: #182125;
 
     --rl-fg-primary: #e6e9e2;
     --rl-fg-muted: #aeb8b6;

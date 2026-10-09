@@ -70,3 +70,31 @@ export const BrandMark = (p: IconProps) => (
     <path d="M3.5 9.5h17M9.5 9.5v11M14.5 14.5h6" />
   </Icon>
 );
+
+export const Pin = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M9 4h6l-1 5 3 3v2H7v-2l3-3-1-5ZM12 14v6" />
+  </Icon>
+);
+
+export const Grid = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="4" y="4" width="6.5" height="6.5" rx="1" />
+    <rect x="13.5" y="4" width="6.5" height="6.5" rx="1" />
+    <rect x="4" y="13.5" width="6.5" height="6.5" rx="1" />
+    <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1" />
+  </Icon>
+);
+
+export const Refresh = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3M19.5 4.5v4h-4" />
+  </Icon>
+);
+
+export const Search = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="11" cy="11" r="6.5" />
+    <path d="m16 16 4 4" />
+  </Icon>
+);

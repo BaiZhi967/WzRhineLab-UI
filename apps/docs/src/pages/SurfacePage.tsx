@@ -108,7 +108,7 @@ function SurfacePlayground() {
 export function SurfacePage() {
   return (
     <div className="sc-page">
-      <PageHeader index="03" section="Components / Layout" title="Surface">
+      <PageHeader index="04" section="Components / Layout" title="Surface">
         <p>
           内容容器。层级首先由底色明度表达，<code>raised</code> 才使用轻阴影。默认渲染 <code>&lt;section&gt;</code>，
           提供 <code>aria-labelledby</code> 时成为 region 地标；纯视觉分组请用 <code>as="div"</code>。

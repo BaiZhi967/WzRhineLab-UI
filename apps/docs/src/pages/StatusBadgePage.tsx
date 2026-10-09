@@ -73,7 +73,7 @@ function BadgePlayground() {
 export function StatusBadgePage() {
   return (
     <div className="sc-page">
-      <PageHeader index="04" section="Components / Data" title="StatusBadge">
+      <PageHeader index="05" section="Components / Data" title="StatusBadge">
         <p>
           业务状态标签。<code>status</code> 描述语义，与视觉 variant 分离。颜色从不单独承担含义：每个状态都有可见文字，指示器形状也随状态变化。
         </p>
