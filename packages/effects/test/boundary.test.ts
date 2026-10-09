@@ -47,7 +47,9 @@ describe('package boundary: effects stay optional', () => {
     const css = read('effects/src/effects.css').replace(/\/\*[\s\S]*?\*\//g, '');
     expect(css).not.toMatch(/#[0-9a-f]{3,8}\b/i);
     expect(css).not.toMatch(/\brgba?\(/i);
-    expect([...css.matchAll(/(?<![\w-])\d+(?:\.\d+)?px\b/g)].map((m) => m[0])).toEqual([]);
+    // Container-query conditions cannot read custom properties, so their thresholds are the only px allowed.
+    const withoutQueries = css.replace(/@container\s*\([^)]*\)/g, '');
+    expect([...withoutQueries.matchAll(/(?<![\w-])\d+(?:\.\d+)?px\b/g)].map((m) => m[0])).toEqual([]);
   });
 
   it('every effects animation has a reduced-motion override', () => {

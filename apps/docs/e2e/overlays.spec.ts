@@ -22,6 +22,8 @@ test.describe('Dialog', () => {
     const dialog = page.getByRole('dialog', { name: '确认归档' });
     await expect(dialog).toBeVisible();
     await expect(dialog).toHaveAccessibleDescription(/归档后记录变为只读/);
+    // Base UI moves initial focus on the next frame; under load a browser can lag a frame behind.
+    await expect.poll(() => dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true);
 
     const inside: boolean[] = [];
     for (let i = 0; i < 8; i += 1) {

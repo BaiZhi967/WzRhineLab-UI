@@ -1768,6 +1768,20 @@ body,
     grid-template-columns: minmax(0, 1fr);
   }
 
+  /* Stacked full-width groups: options share the track instead of leaving dead space inside the border. */
+  .sc-topbar__settings .sc-segmented__track {
+    display: flex;
+  }
+
+  .sc-topbar__settings .sc-segmented__option {
+    flex: 1;
+  }
+
+  .sc-topbar__settings .sc-segmented__option span {
+    width: 100%;
+    justify-content: center;
+  }
+
   .sc-rule {
     flex-direction: column;
     gap: var(--rl-space-1);

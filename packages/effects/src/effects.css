@@ -102,9 +102,10 @@
 }
 
 /* ---------- OrbitalDiagram ---------- */
+/* Diagram and legend sit side by side when both fit; otherwise the legend wraps below. */
 .rl-orbit {
   display: grid;
-  grid-template-columns: minmax(0, var(--rl-orbit-size)) minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--rl-orbit-size)), 1fr));
   align-items: center;
   gap: var(--rl-space-6);
   min-width: 0;
@@ -113,7 +114,9 @@
 .rl-orbit__svg {
   grid-column: 1;
   grid-row: 1;
+  justify-self: center;
   width: 100%;
+  max-width: var(--rl-orbit-size);
   height: auto;
   overflow: visible;
 }
@@ -177,6 +180,7 @@
 
 .rl-orbit__legend li {
   display: flex;
+  min-width: 0;
   align-items: baseline;
   gap: var(--rl-space-3);
   padding-bottom: var(--rl-space-2);
@@ -270,14 +274,29 @@
   color: var(--rl-fg-subtle);
 }
 
-/* Lanes: as many equal columns as fit at a readable minimum width; no breakpoint. */
+/* Lanes: 4 → 2 → 1 columns, never 3 + 1. Driven by the player's own width (container query).
+   Thresholds are the readable lane minimum (~200px) × columns + gaps. */
+.rl-player {
+  container-type: inline-size;
+}
+
 .rl-player__lanes {
+  --rl-lane-gap: var(--rl-space-3);
+
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--rl-field-label-width) * 1.5)), 1fr));
-  gap: var(--rl-space-3);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--rl-lane-gap);
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+@container (min-width: 420px) {
+  .rl-player__lanes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@container (min-width: 840px) {
+  .rl-player__lanes { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 .rl-player__lane {

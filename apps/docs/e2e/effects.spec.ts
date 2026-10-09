@@ -9,6 +9,19 @@ const revealPlayer = (page: import('@playwright/test').Page) => page.getByRole('
 const scanPlayer = (page: import('@playwright/test').Page) => page.getByRole('region', { name: 'ScanSurface' });
 
 test.describe('MotionPlayer', () => {
+  for (const width of [1920, 1280, 768, 390]) {
+    test(`lanes never leave a single orphan tile on a row · ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/#/motion/effects');
+      await expect(revealPlayer(page).locator('.rl-player__lane')).toHaveCount(4);
+      const tops = await revealPlayer(page)
+        .locator('.rl-player__lane')
+        .evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
+      const perRow = Object.values(tops.reduce<Record<number, number>>((acc, t) => ({ ...acc, [t]: (acc[t] ?? 0) + 1 }), {}));
+      expect([[4], [2, 2], [1, 1, 1, 1]].map(String)).toContain(String(perRow));
+    });
+  }
+
   test('shows the four MOTION.md lanes for each effect', async ({ page }) => {
     await page.goto('/#/motion/effects');
     for (const player of [revealPlayer(page), scanPlayer(page)]) {
@@ -56,12 +69,26 @@ test.describe('MotionPlayer', () => {
     await expect(lane.locator('.rl-scan__line')).toHaveCount(1);
     expect(await lane.locator('.rl-scan__line').evaluate((el) => getComputedStyle(el).pointerEvents)).toBe('none');
     expect(await lane.locator('.rl-scan__line').evaluate((el) => getComputedStyle(el).animationName)).toBe('rl-scan-sweep');
-    // Reduced lane uses a static outline, not the travelling sweep.
-    const reduced = player.locator('[data-lane="reduced"] .rl-scan__line');
-    if (await reduced.count()) expect(await reduced.evaluate((el) => getComputedStyle(el).animationName)).toBe('none');
+    // Reduced lane is flagged so CSS swaps the travelling sweep for a static outline (asserted below).
+    await expect(player.locator('[data-lane="reduced"] .rl-scan')).toHaveAttribute('data-reduced', 'true');
     await expect(lane.locator('.rl-scan__line')).toHaveCount(0, { timeout: 3000 });
     await expect(lane).toContainText('第 1 次');
   });
+});
+
+test('reduced scan renders a static outline instead of the sweep animation', async ({ page }) => {
+  await setSettings(page, { motion: 'reduce' });
+  await page.goto('/#/motion/effects');
+  const card = page.getByRole('region', { name: 'In context' });
+  await card.getByRole('button', { name: '重新扫描' }).click();
+  const line = card.locator('.rl-scan__line');
+  await expect(line).toHaveCount(1);
+  const style = await line.evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { animation: s.animationName, shadow: s.boxShadow };
+  });
+  expect(style.animation).toBe('none');
+  expect(style.shadow).toContain('inset');
 });
 
 test.describe('Effects in context', () => {
@@ -137,6 +164,9 @@ test.describe('Effects in context', () => {
       await revealPlayer(page).getByRole('button', { name: '播放' }).click();
       await scanPlayer(page).getByRole('button', { name: '播放' }).click();
       await page.waitForTimeout(1200);
+      // Return to the top so sticky chrome is captured in place in the full-page screenshot.
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.mouse.click(1, 1);
       await page.screenshot({ path: `test-results/screens/1280-effects-played-${theme}.png`, fullPage: true });
       const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
       expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
