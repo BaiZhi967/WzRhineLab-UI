@@ -258,7 +258,7 @@ describe('Toast', () => {
     expect(root).toHaveTextContent('REC-EXAMPLE');
     await user.click(screen.getByRole('button', { name: '撤销' }));
     expect(undo).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole('button', { name: '关闭通知' })).toBeInTheDocument();
+    expect(root.querySelector('.rl-toast__close')).toHaveAttribute('aria-label', '关闭通知');
   });
 
   it('close button dismisses; update replaces content', async () => {
@@ -273,7 +273,13 @@ describe('Toast', () => {
     act(() => api!.update(id, { title: '同步完成', status: 'success' }));
     expect(await screen.findByText('同步完成')).toBeInTheDocument();
     expect(screen.getByText('同步完成').closest('.rl-toast')).toHaveAttribute('data-status', 'success');
-    await user.click(screen.getByRole('button', { name: '关闭通知' }));
+    // Base UI hides the close button from AT until the stack is expanded or focused; once focus
+    // enters the toast (F6 / Tab) it becomes a named button.
+    const close = document.querySelector<HTMLButtonElement>('.rl-toast__close')!;
+    expect(close).toHaveAttribute('aria-hidden', 'true');
+    act(() => close.focus());
+    await waitFor(() => expect(screen.getByRole('button', { name: '关闭通知' })).toBe(close));
+    await user.click(close);
     await waitFor(() => expect(screen.queryByText('同步完成')).toBeNull());
   });
 
