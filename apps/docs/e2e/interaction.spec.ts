@@ -20,7 +20,9 @@ test.describe('keyboard', () => {
     await link.focus();
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(/#\/foundations$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'Design Tokens' })).toBeFocused();
+    const heading = page.getByRole('heading', { level: 1, name: 'Design Tokens' });
+    await expect(heading).toBeFocused();
+    expect(await heading.evaluate((el) => getComputedStyle(el).outlineStyle)).toBe('none');
     await expect(page.getByRole('link', { name: /^Foundations/ }).first()).toHaveAttribute('aria-current', 'page');
   });
 

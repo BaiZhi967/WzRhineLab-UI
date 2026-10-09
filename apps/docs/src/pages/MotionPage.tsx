@@ -168,7 +168,25 @@ export function MotionPage() {
                 </div>
               </li>
             ))}
+            <li>
+              <CurvePreview points={[0, 0, 1, 1]} label="linear" />
+              <div>
+                <code className="sc-mono-sm">--rl-ease-linear</code>
+                <p className="sc-small">仅用于真实进度与不确定加载循环</p>
+                <code className="sc-mono-sm sc-muted">linear</code>
+              </div>
+            </li>
           </ul>
+          <dl className="sc-easing-rules">
+            <div>
+              <dt>Spring</dt>
+              <dd>暂不提供默认预设；仅可拖拽 / 可打断目标使用，禁止无语义弹跳。</dd>
+            </div>
+            <div>
+              <dt>Reduce</dt>
+              <dd>所有曲线退化为 duration 0，仅保留颜色、透明度的即时变化。</dd>
+            </div>
+          </dl>
         </Specimen>
         <Specimen id="feedback" index="03" title="Button feedback" span="half" note="press 80ms · scale 0.985；不改变布局或命中区域。加载时宽度保持不变。">
           <FeedbackDemo />

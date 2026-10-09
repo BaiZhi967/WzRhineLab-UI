@@ -5,12 +5,15 @@
   "type": "module",
   "packageManager": "pnpm@10.17.1",
   "engines": {
-    "node": ">=20"
+    "node": ">=20.19"
   },
   "scripts": {
     "dev": "pnpm --filter @wzrhine/showcase dev",
     "build": "pnpm --filter @wzrhine/showcase build",
+    "preview": "pnpm --filter @wzrhine/showcase preview",
     "typecheck": "pnpm -r typecheck",
-    "preview": "pnpm --filter @wzrhine/showcase preview"
+    "test": "pnpm -r --filter ./packages/* test",
+    "test:e2e": "pnpm --filter @wzrhine/showcase test:e2e",
+    "check": "pnpm typecheck && pnpm test && pnpm build"
   }
 }

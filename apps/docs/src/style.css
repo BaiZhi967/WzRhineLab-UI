@@ -53,13 +53,9 @@ body,
   outline-offset: var(--rl-focus-offset);
 }
 
-:where(.sc-app) :where(h1[tabindex='-1']):focus {
+/* Page headings receive programmatic focus on route change only; they are not operable, so no ring. */
+.sc-app h1[tabindex='-1']:focus {
   outline: none;
-}
-
-:where(.sc-app) :where(h1[tabindex='-1']):focus-visible {
-  outline: var(--rl-focus-ring);
-  outline-offset: var(--rl-space-1);
 }
 
 .sc-visually-hidden {
@@ -1120,6 +1116,35 @@ body,
   align-items: center;
 }
 
+.sc-easing-rules {
+  display: grid;
+  padding-top: var(--rl-space-3);
+  border-top: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.sc-easing-rules > div {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: var(--rl-space-3);
+  padding: var(--rl-space-2) 0;
+}
+
+.sc-easing-rules dt {
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-mono);
+  color: var(--rl-fg-subtle);
+}
+
+.sc-easing-rules dd {
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+}
+
+.sc-control-note {
+  padding-top: var(--rl-space-3);
+  border-top: var(--rl-border-width) dashed var(--rl-border-subtle);
+}
+
 .sc-curve {
   width: 72px;
   height: 72px;
@@ -1231,6 +1256,7 @@ body,
   .sc-app {
     --sc-sidebar-width: 264px;
     --sc-gutter: var(--rl-space-16);
+    --sc-content-max: 1600px;
   }
 }
 

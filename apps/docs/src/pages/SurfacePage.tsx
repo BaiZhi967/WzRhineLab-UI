@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StatusBadge, Surface } from '@wzrhine/react';
-import type { SurfacePadding, SurfaceTone } from '@wzrhine/react';
+import type { SurfaceElement, SurfacePadding, SurfaceTone } from '@wzrhine/react';
 import { Playground } from '../ui/Playground';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
 import { Segmented, Toggle } from '../ui/controls';
@@ -11,6 +11,7 @@ const tones: Array<{ value: SurfaceTone; label: string }> = [
   { value: 'raised', label: 'raised' },
 ];
 const paddings: SurfacePadding[] = ['none', 'sm', 'md', 'lg'];
+const elements: SurfaceElement[] = ['section', 'div', 'article', 'aside'];
 
 function SampleRecord({ titleId }: { titleId?: string }) {
   return (
@@ -42,16 +43,26 @@ function SurfacePlayground() {
   const [tone, setTone] = React.useState<SurfaceTone>('default');
   const [padding, setPadding] = React.useState<SurfacePadding>('md');
   const [bordered, setBordered] = React.useState(true);
+  const [element, setElement] = React.useState<SurfaceElement>('section');
   const props = [
+    element !== 'section' && `as="${element}"`,
     tone !== 'default' && `tone="${tone}"`,
     padding !== 'md' && `padding="${padding}"`,
     !bordered && 'bordered={false}',
+    element === 'section' && 'aria-labelledby="record-title"',
   ].filter(Boolean);
+  const code = [
+    `<Surface${props.length ? ` ${props.join(' ')}` : ''}>`,
+    '  <p className="record-id">REC-EXAMPLE</p>',
+    '  <h3 id="record-title">示例档案记录</h3>',
+    '  <StatusBadge status="info" size="sm">审核中</StatusBadge>',
+    '</Surface>',
+  ].join('\n');
   return (
     <Playground
       id="surface-playground"
       title="Surface"
-      code={`<Surface${props.length ? ` ${props.join(' ')}` : ''} aria-labelledby="record-title">\n  …\n</Surface>`}
+      code={code}
       controls={
         <>
           <Segmented legend="tone" name="pg-tone" value={tone} onChange={setTone} options={tones} />
@@ -62,11 +73,32 @@ function SurfacePlayground() {
             onChange={setPadding}
             options={paddings.map((p) => ({ value: p, label: p }))}
           />
-          <Toggle label="bordered" checked={bordered} onChange={setBordered} />
+          <Segmented
+            legend="as"
+            name="pg-as"
+            value={element}
+            onChange={setElement}
+            options={elements.map((e) => ({ value: e, label: e }))}
+          />
+          <Toggle label="bordered" checked={bordered} onChange={setBordered} description="仅装饰分隔，不作为交互边界" />
+          <p className="sc-small sc-control-note">
+            {element === 'section'
+              ? 'section + aria-labelledby 会暴露为 region 地标。'
+              : element === 'div'
+                ? 'div 为纯视觉分组，不产生地标。'
+                : `${element} 保留其原生语义。`}
+          </p>
         </>
       }
     >
-      <Surface tone={tone} padding={padding} bordered={bordered} aria-labelledby="pg-record-title" className="sc-fill">
+      <Surface
+        as={element}
+        tone={tone}
+        padding={padding}
+        bordered={bordered}
+        aria-labelledby={element === 'section' ? 'pg-record-title' : undefined}
+        className="sc-fill"
+      >
         <SampleRecord titleId="pg-record-title" />
       </Surface>
     </Playground>
