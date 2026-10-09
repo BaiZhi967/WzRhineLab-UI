@@ -22,7 +22,8 @@ export default defineConfig({
   webServer: {
     command: `pnpm build && pnpm preview`,
     url: `http://127.0.0.1:${port}`,
-    reuseExistingServer: true,
+    // Reusing a leftover server once ran the suite against a stale build; opt in explicitly.
+    reuseExistingServer: process.env.PW_REUSE_SERVER === '1',
     timeout: 120_000,
   },
 });
