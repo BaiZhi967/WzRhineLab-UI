@@ -7,6 +7,7 @@ export const routes = [
   { name: 'surface', hash: '/#/components/surface' },
   { name: 'status-badge', hash: '/#/components/status-badge' },
   { name: 'motion', hash: '/#/motion' },
+  { name: 'lab-overlays', hash: '/#/lab/overlays' },
 ] as const;
 
 export const widths = [320, 390, 768, 1280, 1920] as const;

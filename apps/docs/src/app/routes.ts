@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export type RouteGroup = 'start' | 'foundations' | 'components' | 'motion';
+export type RouteGroup = 'start' | 'foundations' | 'components' | 'motion' | 'lab';
 
 export interface RouteDef {
   id: string;
@@ -17,6 +17,7 @@ export const routes = [
   { id: 'surface', path: '/components/surface', label: 'Surface', group: 'components', index: '03' },
   { id: 'status-badge', path: '/components/status-badge', label: 'StatusBadge', group: 'components', index: '04' },
   { id: 'motion', path: '/motion', label: 'Motion', group: 'motion', index: '05' },
+  { id: 'lab-overlays', path: '/lab/overlays', label: 'Overlays (ADR)', group: 'lab', index: 'L1' },
 ] as const satisfies readonly RouteDef[];
 
 export type RouteId = (typeof routes)[number]['id'];
@@ -26,6 +27,7 @@ export const groupLabels: Record<RouteGroup, string> = {
   foundations: 'Foundations',
   components: 'Components',
   motion: 'Motion',
+  lab: 'Lab',
 };
 
 export function hrefFor(id: RouteId): string {

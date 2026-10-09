@@ -12,8 +12,10 @@ import { MotionPage } from './pages/MotionPage';
 import { OverviewPage } from './pages/Overview';
 import { StatusBadgePage } from './pages/StatusBadgePage';
 import { SurfacePage } from './pages/SurfacePage';
+import { OverlaysLab } from './pages/lab/OverlaysLab';
+import { PortalContainerContext } from './app/portal';
 
-const groups: RouteGroup[] = ['start', 'foundations', 'components', 'motion'];
+const groups: RouteGroup[] = ['start', 'foundations', 'components', 'motion', 'lab'];
 
 function Navigation({ current, onNavigate }: { current: RouteId; onNavigate?: () => void }) {
   return (
@@ -73,6 +75,7 @@ export default function App() {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const mainRef = React.useRef<HTMLElement>(null);
+  const portalRef = React.useRef<HTMLDivElement>(null);
   const appRef = React.useRef<HTMLDivElement>(null);
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const firstRender = React.useRef(true);
@@ -135,6 +138,8 @@ export default function App() {
         return <StatusBadgePage />;
       case 'motion':
         return <MotionPage />;
+      case 'lab-overlays':
+        return <OverlaysLab />;
       default:
         return <OverviewPage />;
     }
@@ -252,7 +257,7 @@ export default function App() {
           </header>
 
           <main id="main" ref={mainRef} className="sc-main">
-            {page}
+            <PortalContainerContext.Provider value={portalRef}>{page}</PortalContainerContext.Provider>
           </main>
 
           <footer className="sc-footer">
@@ -260,6 +265,8 @@ export default function App() {
             <span>Not affiliated with any game franchise</span>
           </footer>
         </div>
+        {/* Popups portal here: outside the inert frame, inside the themed root. */}
+        <div ref={portalRef} className="sc-portal" />
       </ThemeScope>
     </MotionConfig>
   );
