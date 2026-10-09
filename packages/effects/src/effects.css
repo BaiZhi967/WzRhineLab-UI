@@ -1,0 +1,323 @@
+/*
+ * WzRhineLab UI · optional showcase effects (M4). Tokens only; requires a `.rl-theme` ancestor.
+ * Every animation here has a reduced-motion equivalent (asserted by tests).
+ */
+
+.rl-effect-sr {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--rl-border-width);
+  height: var(--rl-border-width);
+  margin: calc(var(--rl-border-width) * -1);
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- ArchiveReveal ---------- */
+.rl-reveal {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  font-family: var(--rl-font-mono);
+  letter-spacing: var(--rl-tracking-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.rl-reveal__glyphs {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.rl-reveal__cell {
+  color: var(--rl-fg-subtle);
+  transition: color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-reveal__cell[data-resolved] {
+  color: inherit;
+}
+
+.rl-reveal[data-state='concealed'] .rl-reveal__cell {
+  color: var(--rl-fg-subtle);
+}
+
+/* ---------- ScanSurface ---------- */
+.rl-scan {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.rl-scan__line {
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 1;
+  width: var(--rl-space-16);
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in srgb, var(--rl-accent) 14%, transparent) 70%,
+    var(--rl-accent) calc(100% - var(--rl-border-width)),
+    transparent 100%
+  );
+  translate: -100% 0;
+  animation: rl-scan-sweep var(--rl-scan-duration) var(--rl-ease-in-out) 1 forwards;
+}
+
+@keyframes rl-scan-sweep {
+  to {
+    translate: calc(100cqw + 100%) 0;
+  }
+}
+
+.rl-scan {
+  container-type: inline-size;
+}
+
+/* Reduced motion: no travelling line; a brief static outline marks the scan instead. */
+.rl-scan[data-reduced] .rl-scan__line,
+.rl-theme[data-rl-motion='reduce'] .rl-scan__line {
+  inset: 0;
+  width: auto;
+  background: none;
+  box-shadow: inset 0 0 0 var(--rl-border-width-strong) var(--rl-accent);
+  translate: none;
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rl-scan__line {
+    inset: 0;
+    width: auto;
+    background: none;
+    box-shadow: inset 0 0 0 var(--rl-border-width-strong) var(--rl-accent);
+    translate: none;
+    animation: none;
+  }
+}
+
+/* ---------- OrbitalDiagram ---------- */
+.rl-orbit {
+  display: grid;
+  grid-template-columns: minmax(0, var(--rl-orbit-size)) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--rl-space-6);
+  min-width: 0;
+}
+
+.rl-orbit__svg {
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.rl-orbit__center {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: center;
+  align-self: center;
+  translate: 0 calc(var(--rl-space-8) + var(--rl-space-2));
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-caps);
+  color: var(--rl-fg-muted);
+}
+
+.rl-orbit__ticks line {
+  stroke: var(--rl-border-default);
+  stroke-width: var(--rl-border-width);
+}
+
+.rl-orbit__ring {
+  fill: none;
+  stroke: var(--rl-border-default);
+  stroke-width: var(--rl-border-width);
+}
+
+.rl-orbit__ring[data-ring='0'] {
+  stroke-dasharray: 2 4;
+}
+
+.rl-orbit__node {
+  fill: var(--rl-bg-surface);
+  stroke: var(--rl-fg-muted);
+  stroke-width: var(--rl-border-width-strong);
+}
+
+.rl-orbit__node[data-active] {
+  fill: var(--rl-accent);
+  stroke: var(--rl-accent);
+}
+
+.rl-orbit__core {
+  fill: var(--rl-bg-subtle);
+  stroke: var(--rl-fg-primary);
+  stroke-width: var(--rl-border-width);
+}
+
+.rl-orbit__crosshair {
+  stroke: var(--rl-fg-primary);
+  stroke-width: var(--rl-border-width);
+}
+
+.rl-orbit__legend {
+  display: grid;
+  gap: var(--rl-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--rl-type-body-sm);
+}
+
+.rl-orbit__legend li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--rl-space-3);
+  padding-bottom: var(--rl-space-2);
+  border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.rl-orbit__legend li[data-active] {
+  font-weight: 600;
+}
+
+.rl-orbit__ring-index {
+  font: var(--rl-type-mono);
+  color: var(--rl-fg-subtle);
+}
+
+.rl-orbit__legend li[data-active] .rl-orbit__ring-index {
+  color: var(--rl-accent-text);
+}
+
+/* ---------- MotionPlayer ---------- */
+.rl-player {
+  display: grid;
+  gap: var(--rl-space-4);
+  min-width: 0;
+}
+
+.rl-player__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--rl-space-3) var(--rl-space-6);
+}
+
+.rl-player__titles {
+  display: grid;
+  gap: var(--rl-space-1);
+}
+
+.rl-player__title {
+  margin: 0;
+  font: var(--rl-type-label);
+}
+
+.rl-player__spec {
+  margin: 0;
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-mono);
+  color: var(--rl-fg-muted);
+}
+
+.rl-player__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rl-space-2);
+}
+
+.rl-player__button {
+  min-height: var(--rl-control-height-sm);
+  padding: 0 var(--rl-control-padding-x-sm);
+  appearance: none;
+  border: var(--rl-border-width) solid var(--rl-border-strong);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-surface);
+  color: var(--rl-fg-primary);
+  font: var(--rl-type-label-sm);
+  cursor: pointer;
+}
+
+.rl-player__button[data-primary] {
+  border-color: var(--rl-bg-inverse);
+  background: var(--rl-bg-inverse);
+  color: var(--rl-fg-inverse);
+}
+
+.rl-player__button:disabled {
+  border-color: var(--rl-border-default);
+  background: var(--rl-bg-disabled);
+  color: var(--rl-fg-disabled);
+  cursor: not-allowed;
+}
+
+.rl-player__button:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.rl-player__state {
+  font: var(--rl-type-mono);
+  color: var(--rl-fg-subtle);
+}
+
+/* Lanes: as many equal columns as fit at a readable minimum width; no breakpoint. */
+.rl-player__lanes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(var(--rl-field-label-width) * 1.5)), 1fr));
+  gap: var(--rl-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rl-player__lane {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--rl-space-2);
+  min-width: 0;
+  padding: var(--rl-space-3);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-bg-canvas);
+}
+
+.rl-player__lane-label {
+  display: grid;
+  gap: var(--rl-space-1);
+  margin: 0;
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-caps);
+  text-transform: uppercase;
+  color: var(--rl-accent-text);
+}
+
+.rl-player__lane-hint {
+  font: var(--rl-type-meta);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--rl-fg-muted);
+}
+
+.rl-player__stage {
+  display: grid;
+  align-content: center;
+  min-height: var(--rl-space-16);
+  min-width: 0;
+}
+
+@media (forced-colors: active) {
+  .rl-scan__line { background: none; box-shadow: inset 0 0 0 var(--rl-border-width-strong) Highlight; }
+  .rl-orbit__ring, .rl-orbit__ticks line, .rl-orbit__crosshair { stroke: CanvasText; }
+  .rl-orbit__node[data-active] { fill: Highlight; stroke: Highlight; }
+  .rl-player__lane { border-color: CanvasText; }
+}
