@@ -44,6 +44,18 @@ export type {
 } from './components/Menu';
 export { ToastProvider, ToastViewport, useToast } from './components/Toast';
 export type { ToastApi, ToastOptions, ToastStatus } from './components/Toast';
+export { MetadataList } from './components/MetadataList';
+export type { MetadataEmpty, MetadataItem, MetadataListLayout, MetadataListProps, MetadataValue } from './components/MetadataList';
+export { DataTable } from './components/DataTable';
+export type { DataTableColumn, DataTableProps, SortDirection, SortState } from './components/DataTable';
+export { ArchiveCard } from './components/ArchiveCard';
+export type { ArchiveCardProps, ArchiveCardStatus } from './components/ArchiveCard';
+export { StatusIndicator } from './components/StatusIndicator';
+export type { StatusIndicatorProps } from './components/StatusIndicator';
+export { Timeline } from './components/Timeline';
+export type { TimelineEvent, TimelineProps } from './components/Timeline';
+export { RecordHeader } from './components/RecordHeader';
+export type { RecordHeaderProps, RecordStatus, RecordTrailItem } from './components/RecordHeader';
 export { RhineProvider, usePortalContainer } from './provider/RhineProvider';
 export type { RhineDensity, RhineMotionPreference, RhineProviderProps, RhineTheme } from './provider/RhineProvider';
 export { duration, ease, fadePresence, pressScale, transition } from './motion/presets';

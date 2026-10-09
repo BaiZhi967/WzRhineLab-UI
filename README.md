@@ -31,10 +31,11 @@ corepack enable
 pnpm install
 pnpm dev            # Showcase：http://127.0.0.1:5173
 pnpm check          # typecheck + 单元测试 + 构建
-pnpm test:e2e       # Playwright：响应式截图、键盘、axe、减动（需本地 Chromium）
+pnpm test:e2e       # Playwright（Chromium）：响应式截图、键盘、axe、减动
+pnpm test:e2e:all   # 同一套件依次在 Chromium、Firefox、WebKit 上运行
 ```
 
-首次运行 E2E 前如未安装浏览器：`pnpm --filter @wzrhine/showcase exec playwright install chromium`。
+首次运行 E2E 前如未安装浏览器：`pnpm --filter @wzrhine/showcase exec playwright install chromium firefox webkit`。
 
 在应用中使用组件时需显式导入样式（入口无 CSS 副作用，见 [ADR-0002](docs/development/adr/0002-source-exports-and-style-entry.md)）：
 
@@ -50,7 +51,7 @@ import { Button, RhineProvider } from '@wzrhine/react';
 
 `RhineProvider` 提供 `.rl-theme` 作用域、弹层挂载点、减动策略和通知队列（`useToast()`）；所有弹层组件都必须放在它内部才能拿到主题。
 
-当前内置 Button、IconButton、Surface、StatusBadge、Text、Field、Input、Tabs、Tooltip、Dialog、Select、Popover、Menu、Toast 十四个组件和 `RhineProvider`（交互底座为 Base UI，见 ADR-0001）。包为 `private` 源码直出，不应当作稳定版组件库发布。
+当前内置 Button、IconButton、Surface、StatusBadge、Text、Field、Input、Tabs、Tooltip、Dialog、Select、Popover、Menu、Toast，以及档案组件 RecordHeader、MetadataList、ArchiveCard、StatusIndicator、Timeline、DataTable，共二十个组件和 `RhineProvider`（交互底座为 Base UI，见 ADR-0001）。包为 `private` 源码直出，不应当作稳定版组件库发布。
 
 ## 视觉原件与参考资料
 - [高保真 PNG 概念图索引](docs/concepts/README.md)：八张 PNG 已入库，为唯一视觉参考；不再使用简化 SVG 草图。
@@ -58,4 +59,4 @@ import { Button, RhineProvider } from '@wzrhine/react';
 - [研究摘要](docs/research/RESEARCH-SUMMARY.md) 与 [参考链接](docs/research/REFERENCES.md)。
 
 ## 设计与工程状态
-Sprint 01 已完成 M0 本地验收（install / typecheck / test / build / Playwright 均真实通过，记录见 [验收记录](docs/development/acceptance/2026-10-09-sprint-01.md)），并开始 M1-A。根目录尚未选择源代码许可证；未配置自动 GitHub Actions（避免配额消耗）。Firefox/WebKit、屏幕阅读器与 200% 缩放仍需人工验收。
+Sprint 01 已完成 M0 本地验收（install / typecheck / test / build / Playwright 均真实通过，记录见 [验收记录](docs/development/acceptance/2026-10-09-sprint-01.md)），并开始 M1-A。根目录尚未选择源代码许可证；未配置自动 GitHub Actions（避免配额消耗）。Chromium、Firefox、WebKit 的自动化验收已通过；屏幕阅读器、200% 缩放与真机仍需人工验收。

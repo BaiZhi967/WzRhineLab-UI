@@ -6,12 +6,14 @@ import { motionDurations } from '@wzrhine/tokens';
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 
-const cssFiles = ['../src/components.css', '../src/overlays.css', '../src/feedback.css'];
+const cssFiles = ['../src/components.css', '../src/overlays.css', '../src/feedback.css', '../src/archive.css'];
 const stripped = (path: string) =>
   read(path)
     .replace(/\/\*[\s\S]*?\*\//g, '')
     .replace(/@import\s+['"][^'"]+['"];/g, '');
 const allCss = () => cssFiles.map(stripped).join('\n');
+/** CSS without @keyframes bodies, whose from / to / % steps are not element selectors. */
+const selectorCss = () => allCss().replace(/@keyframes[^{]+\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g, '');
 
 const componentFiles = [
   'Button',
@@ -28,6 +30,12 @@ const componentFiles = [
   'Popover',
   'Menu',
   'Toast',
+  'RecordHeader',
+  'MetadataList',
+  'ArchiveCard',
+  'StatusIndicator',
+  'Timeline',
+  'DataTable',
 ];
 
 function splitTopLevel(selector: string): string[] {
@@ -55,6 +63,7 @@ describe('package boundary', () => {
     const entry = read('../src/components.css');
     expect(entry).toMatch(/@import '\.\/overlays\.css';/);
     expect(entry).toMatch(/@import '\.\/feedback\.css';/);
+    expect(entry).toMatch(/@import '\.\/archive\.css';/);
   });
 
   it('Base UI is only imported through subpaths', () => {
@@ -77,10 +86,27 @@ describe('package boundary', () => {
   });
 
   it('component CSS never targets :root, html, body or bare elements', () => {
-    const selectors = [...allCss().matchAll(/(^|})\s*([^{}@]+)\{/g)].map((m) => m[2]!.trim());
+    const selectors = [...selectorCss().matchAll(/(^|})\s*([^{}@]+)\{/g)].map((m) => m[2]!.trim());
     for (const selector of selectors) {
       for (const part of splitTopLevel(selector)) {
         expect(part.trim(), part).toMatch(/^(:where\(|:is\()?\.rl-/);
+      }
+    }
+  });
+
+  it('every @keyframes animation is switched off under reduced motion', () => {
+    const css = allCss();
+    const names = [...css.matchAll(/@keyframes\s+([\w-]+)/g)].map((m) => m[1]!);
+    expect(names.length).toBeGreaterThan(0);
+    const reduceBlocks = [...css.matchAll(/@media \(prefers-reduced-motion: reduce\)\s*\{([\s\S]*?)\n\}/g)].map((m) => m[1]!);
+    for (const name of names) {
+      const selectorsUsing = [...css.matchAll(new RegExp(`([^{}]+)\\{[^{}]*animation:[^;]*\\b${name}\\b`, 'g'))].map((m) =>
+        m[1]!.trim(),
+      );
+      expect(selectorsUsing.length, name).toBeGreaterThan(0);
+      for (const selector of selectorsUsing) {
+        const disabled = reduceBlocks.some((block) => block.includes(selector) && /animation:\s*none/.test(block));
+        expect(disabled, `${name} via ${selector}`).toBe(true);
       }
     }
   });

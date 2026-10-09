@@ -29,7 +29,8 @@
 - [M1-B 验收记录](development/acceptance/2026-10-09-m1b.md)
 - [M2-A 验收记录](development/acceptance/2026-10-09-m2a.md)
 - [M2-B 验收记录](development/acceptance/2026-10-09-m2b.md)
-- 组件文档：[Field & Input](components/field.md) · [IconButton · Text](components/icon-button-text.md) · [Provider · Tabs · Tooltip · Dialog · Select](components/overlays.md) · [Popover · Menu · Toast](components/popover-menu-toast.md)
+- [M3 验收记录](development/acceptance/2026-10-09-m3.md)
+- 组件文档：[Field & Input](components/field.md) · [IconButton · Text](components/icon-button-text.md) · [Provider · Tabs · Tooltip · Dialog · Select](components/overlays.md) · [Popover · Menu · Toast](components/popover-menu-toast.md) · [Archive patterns](components/archive.md)
 - [Windows 资源导入脚本](../scripts/import-visual-assets.ps1)
 - [Showcase 源码](../apps/docs/src/App.tsx)
 

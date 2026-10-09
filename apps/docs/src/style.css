@@ -364,6 +364,7 @@ body,
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
+  align-self: start;
   column-gap: var(--rl-space-2);
 }
 
@@ -388,9 +389,13 @@ body,
 .sc-field {
   display: grid;
   gap: var(--rl-space-2);
+  min-width: 0;
 }
 
+/* Firefox gives <input> a ~20ch intrinsic width; let it shrink to the column. */
 .sc-input {
+  width: 100%;
+  min-width: 0;
   min-height: var(--rl-control-height-md);
   padding: 0 var(--rl-space-3);
   border: var(--rl-border-width) solid var(--rl-border-strong);
@@ -971,8 +976,14 @@ body,
   display: grid;
   align-content: start;
   gap: var(--rl-space-4);
-  padding-right: var(--rl-space-6);
-  border-right: var(--rl-border-width) solid var(--rl-border-subtle);
+  padding: var(--rl-space-4);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-bg-canvas);
+  /* Controls stay in view while the preview and code scroll past (no dead quadrant). */
+  position: sticky;
+  top: calc(var(--sc-topbar-height) + var(--rl-space-4));
+  align-self: start;
 }
 
 .sc-playground__stage {
@@ -1293,6 +1304,161 @@ body,
   overflow-wrap: anywhere;
 }
 
+/* ---------- Archive & scenarios ---------- */
+.sc-meta-frame {
+  width: 100%;
+  max-width: 720px;
+  min-width: 0;
+}
+
+.sc-card-list {
+  display: grid;
+  gap: var(--rl-space-2);
+}
+
+.sc-status-list {
+  display: grid;
+  gap: var(--rl-space-3);
+}
+
+.sc-scenario {
+  display: grid;
+  gap: var(--rl-space-6);
+  min-width: 0;
+  padding-top: var(--rl-space-6);
+}
+
+.sc-scenario--search {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: start;
+}
+
+.sc-scenario__pane {
+  display: grid;
+  gap: var(--rl-space-4);
+  min-width: 0;
+  padding: var(--rl-surface-padding);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-surface);
+}
+
+.sc-scenario__detail {
+  position: sticky;
+  top: calc(var(--sc-topbar-height) + var(--rl-space-4));
+}
+
+.sc-scenario__pane-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--rl-space-3);
+}
+
+.sc-search-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--rl-space-3);
+}
+
+.sc-search-filters > :first-child {
+  grid-column: 1 / -1;
+}
+
+.sc-scenario__toolbar {
+  display: grid;
+  gap: var(--rl-space-3);
+  min-width: 0;
+}
+
+.sc-scenario__results {
+  min-width: 0;
+}
+
+.sc-settings__panel {
+  display: grid;
+  gap: var(--rl-space-6);
+  max-width: 520px;
+  padding-top: var(--rl-space-2);
+}
+
+.sc-scenario--settings {
+  max-width: 720px;
+  padding: var(--rl-space-6) var(--rl-surface-padding) var(--rl-surface-padding);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-surface);
+  margin-top: var(--rl-space-6);
+}
+
+.sc-monitor {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: start;
+  gap: var(--sc-grid-gap);
+}
+
+.sc-monitor__steps,
+.sc-monitor__log {
+  display: grid;
+  gap: var(--rl-space-4);
+}
+
+.sc-monitor__form {
+  display: grid;
+  gap: var(--rl-space-3);
+  padding-top: var(--rl-space-4);
+  border-top: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.sc-steps {
+  display: grid;
+}
+
+.sc-steps__item {
+  display: grid;
+  grid-template-columns: var(--rl-space-8) minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--rl-space-3);
+  padding: var(--rl-space-3) 0;
+  border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.sc-steps__index {
+  font: var(--rl-type-mono);
+  color: var(--rl-fg-subtle);
+}
+
+.sc-steps__text {
+  display: grid;
+  gap: var(--rl-space-1);
+}
+
+.sc-steps__title {
+  font: var(--rl-type-body-sm);
+  font-weight: 600;
+}
+
+.sc-steps__state {
+  font: var(--rl-type-mono);
+  color: var(--rl-fg-subtle);
+}
+
+.sc-steps__item[data-status='done'] .sc-steps__index,
+.sc-steps__item[data-status='done'] .sc-steps__state {
+  color: var(--rl-success);
+}
+
+.sc-steps__item[data-status='current'] {
+  box-shadow: inset var(--rl-border-width-strong) 0 0 var(--rl-accent);
+  padding-left: var(--rl-space-3);
+}
+
+.sc-steps__item[data-status='current'] .sc-steps__state {
+  color: var(--rl-accent-text);
+}
+
 /* ---------- Motion ---------- */
 .sc-easing {
   display: grid;
@@ -1476,6 +1642,15 @@ body,
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .sc-scenario--search,
+  .sc-monitor {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sc-scenario__detail {
+    position: static;
+  }
+
   .sc-sidebar {
     position: fixed;
     inset: 0 auto 0 0;
@@ -1510,11 +1685,9 @@ body,
   }
 
   .sc-playground__controls {
+    position: static;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
     align-items: start;
-    padding: 0 0 var(--rl-space-6);
-    border-right: 0;
-    border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
   }
 
   .sc-entries {
@@ -1560,7 +1733,8 @@ body,
   .sc-compare,
   .sc-density-compare,
   .sc-form,
-  .sc-filter {
+  .sc-filter,
+  .sc-search-filters {
     grid-template-columns: minmax(0, 1fr);
   }
 

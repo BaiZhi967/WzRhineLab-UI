@@ -4,10 +4,16 @@ import { setSettings } from './helpers';
 test.describe('keyboard', () => {
   test.use({ viewport: { width: 1280, height: 900 } });
 
-  test('skip link is the first tab stop and moves focus to the page heading', async ({ page }) => {
+  test('skip link is the first tab stop and moves focus to the page heading', async ({ page, browserName }) => {
     await page.goto('/#/components/button');
-    await page.keyboard.press('Tab');
     const skip = page.getByRole('link', { name: '跳到主要内容' });
+    if (browserName === 'webkit') {
+      // WebKit's default Tab skips links and buttons (Safari's "Press Tab to highlight each item"
+      // is off and Playwright cannot enable it), so Tab order is asserted in Chromium and Firefox.
+      await skip.focus();
+    } else {
+      await page.keyboard.press('Tab');
+    }
     await expect(skip).toBeFocused();
     await expect(skip).toBeInViewport();
     await page.keyboard.press('Enter');

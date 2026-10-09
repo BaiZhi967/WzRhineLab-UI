@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export type RouteGroup = 'start' | 'foundations' | 'components' | 'navigation' | 'motion';
+export type RouteGroup = 'start' | 'foundations' | 'components' | 'navigation' | 'archive' | 'motion';
 
 export interface RouteDef {
   id: string;
@@ -26,7 +26,9 @@ export const routes = [
   { id: 'popover', path: '/components/popover', label: 'Popover', group: 'navigation', index: '12' },
   { id: 'menu', path: '/components/menu', label: 'Menu', group: 'navigation', index: '13' },
   { id: 'toast', path: '/components/toast', label: 'Toast', group: 'navigation', index: '14' },
-  { id: 'motion', path: '/motion', label: 'Motion', group: 'motion', index: '15' },
+  { id: 'archive', path: '/archive', label: 'Archive patterns', group: 'archive', index: '16' },
+  { id: 'scenarios', path: '/archive/scenarios', label: 'Acceptance scenarios', group: 'archive', index: '17' },
+  { id: 'motion', path: '/motion', label: 'Motion', group: 'motion', index: '18' },
 ] as const satisfies readonly RouteDef[];
 
 export type RouteId = (typeof routes)[number]['id'];
@@ -36,6 +38,7 @@ export const groupLabels: Record<RouteGroup, string> = {
   foundations: 'Foundations',
   components: 'Components',
   navigation: 'Navigation & Overlay',
+  archive: 'Data & Archive',
   motion: 'Motion',
 };
 
