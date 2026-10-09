@@ -86,6 +86,10 @@ for (const [name, tgz] of Object.entries(tarballs)) {
   if (JSON.stringify(manifest).includes('workspace:')) fail(`${name}: workspace: protocol leaked into the published manifest`);
   if (!manifest.types || !manifest.exports?.['.']?.types) fail(`${name}: missing type declarations in exports`);
   if (!Array.isArray(manifest.sideEffects) || !manifest.sideEffects.includes('**/*.css')) fail(`${name}: sideEffects must list CSS only`);
+  for (const doc of ['package/README.md', 'package/CHANGELOG.md']) {
+    if (!list.includes(doc)) fail(`${name}: ${doc.replace('package/', '')} missing from tarball`);
+  }
+  if (!manifest.repository?.url) fail(`${name}: repository field missing`);
   for (const target of Object.values(manifest.exports).flatMap((v) => (typeof v === 'string' ? [v] : Object.values(v)))) {
     const path = `package/${target.replace(/^\.\//, '')}`;
     if (!list.includes(path)) fail(`${name}: export target ${target} missing from tarball`);
