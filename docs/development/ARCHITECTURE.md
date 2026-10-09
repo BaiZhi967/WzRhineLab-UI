@@ -12,7 +12,8 @@ WzRhineLab-UI/
 │  └─ ROADMAP.md
 ├─ packages/
 │  ├─ tokens/          # CSS 变量、主题值、语义层
-│  └─ react/           # React + TS 组件，无业务代码
+│  ├─ react/           # React + TS 组件，无业务代码
+│  └─ effects/         # 可选展示动效与动效播放器（ADR-0004），react 包不依赖它
 └─ apps/
    └─ docs/            # Vite 文档 / Showcase 的最小可运行原型
 ```
