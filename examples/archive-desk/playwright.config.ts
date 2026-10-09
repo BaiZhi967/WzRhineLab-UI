@@ -1,0 +1,25 @@
+import { defineConfig, devices } from '@playwright/test';
+
+const port = 4174;
+
+/** Local-only acceptance for the archive desk example, against the production build. */
+export default defineConfig({
+  testDir: './e2e',
+  outputDir: './test-results',
+  fullyParallel: true,
+  forbidOnly: true,
+  retries: 0,
+  reporter: [['list']],
+  use: {
+    baseURL: `http://127.0.0.1:${port}`,
+    trace: 'retain-on-failure',
+    locale: 'zh-CN',
+  },
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  webServer: {
+    command: 'pnpm build && pnpm preview',
+    url: `http://127.0.0.1:${port}`,
+    reuseExistingServer: process.env.PW_REUSE_SERVER === '1',
+    timeout: 120_000,
+  },
+});
