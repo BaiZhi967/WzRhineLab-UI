@@ -76,5 +76,10 @@ describe('stable theme contract', () => {
   it('tokenVar builds typed var() references', () => {
     expect(tokenVar('--rl-accent')).toBe('var(--rl-accent)');
     expect(tokenVar('--rl-space-4', '16px')).toBe('var(--rl-space-4, 16px)');
+    // Checked by `pnpm typecheck`: an unused directive fails if the parameter type is loosened to string.
+    // @ts-expect-error not a contract token
+    tokenVar('--rl-accent-primary');
+    // @ts-expect-error component-internal variables are not part of the contract
+    tokenVar('--rl-button-bg');
   });
 });

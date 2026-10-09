@@ -1,6 +1,6 @@
 # @wzrhine/tokens · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 26 个导出（3 functions & hooks，15 constants，4 interfaces，4 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 34 个导出（4 functions & hooks，19 constants，4 interfaces，7 types）。
 
 ## Functions & hooks
 
@@ -28,7 +28,23 @@ function parseColor: (input: string) => Rgb | null
 function relativeLuminance: ({ r, g, b }: Rgb) => number
 ```
 
+### `tokenVar`
+
+*function* — `var(--rl-…)` for a contract token. Typed, so a renamed or misspelled token fails to compile in CSS-in-JS or inline styles instead of silently resolving to nothing.
+
+```ts
+function tokenVar: (name: PublicToken, fallback?: string) => string
+```
+
 ## Constants
+
+### `allPublicTokens`
+
+*const* — Every public token, in contract order.
+
+```ts
+const allPublicTokens: readonly ("--rl-bg-canvas" | "--rl-bg-surface" | "--rl-bg-subtle" | "--rl-bg-raised" | "--rl-bg-hover" | "--rl-bg-pressed" | "--rl-bg-inverse" | "--rl-bg-disabled" | "--rl-bg-readonly" | "--rl-fg-primary" | "--rl-fg-muted" | "--rl-fg-subtle" | "--rl-fg-inverse" | "--rl-fg-on-accent" | "--rl-fg-on-danger" | "--rl-fg-disabled" | "--rl-border-subtle" | "--rl-border-default" | "--rl-border-strong" | "--rl-accent" | "--rl-accent-hover" | "--rl-accent-subtle" | "--rl-accent-text" | "--rl-accent-amber" | "--rl-info" | "--rl-info-subtle" | "--rl-success" | "--rl-success-subtle" | "--rl-warning" | "--rl-warning-subtle" | "--rl-danger" | "--rl-danger-subtle" | "--rl-focus" | "--rl-inverse-hover" | "--rl-shadow-raised" | "--rl-shadow-floating" | "--rl-font-body" | "--rl-font-mono" | "--rl-type-display" | "--rl-type-heading-1" | "--rl-type-heading-2" | "--rl-type-heading-3" | "--rl-type-body" | "--rl-type-body-sm" | "--rl-type-label" | "--rl-type-label-sm" | "--rl-type-meta" | "--rl-type-mono" | "--rl-tracking-display" | "--rl-tracking-caps" | "--rl-tracking-mono" | "--rl-space-0" | "--rl-space-1" | "--rl-space-2" | "--rl-space-3" | "--rl-space-4" | "--rl-space-6" | "--rl-space-8" | "--rl-space-12" | "--rl-space-16" | "--rl-radius-none" | "--rl-radius-xs" | "--rl-radius-sm" | "--rl-radius-md" | "--rl-radius-lg" | "--rl-radius-round" | "--rl-border-width" | "--rl-border-width-strong" | "--rl-focus-width" | "--rl-focus-offset" | "--rl-focus-ring" | "--rl-control-height-sm" | "--rl-control-height-md" | "--rl-control-height-lg" | "--rl-control-padding-x-sm" | "--rl-control-padding-x-md" | "--rl-control-padding-x-lg" | "--rl-control-gap" | "--rl-surface-padding" | "--rl-icon-size-sm" | "--rl-icon-size-md" | "--rl-icon-size-lg" | "--rl-badge-height-sm" | "--rl-badge-height-md" | "--rl-indicator-size" | "--rl-field-label-width" | "--rl-dialog-width-sm" | "--rl-dialog-width-md" | "--rl-dialog-width-lg" | "--rl-tooltip-max-width" | "--rl-popup-max-height" | "--rl-popup-offset" | "--rl-popover-width-sm" | "--rl-popover-width-md" | "--rl-popover-width-lg" | "--rl-menu-min-width" | "--rl-toast-width" | "--rl-orbit-size" | "--rl-z-overlay" | "--rl-z-dialog" | "--rl-z-popover" | "--rl-z-tooltip" | "--rl-z-toast" | "--rl-motion-instant" | "--rl-motion-press" | "--rl-motion-fast" | "--rl-motion-base" | "--rl-motion-panel" | "--rl-motion-scene" | "--rl-motion-showcase" | "--rl-motion-loop" | "--rl-ease-out" | "--rl-ease-in-out" | "--rl-ease-linear")[]
+```
 
 ### `borderWidths`
 
@@ -118,6 +134,14 @@ const motionTokens: { token: "--rl-motion-instant" | "--rl-motion-press" | "--rl
 const motionUsage: Record<"instant" | "press" | "fast" | "base" | "panel" | "scene" | "showcase", string>
 ```
 
+### `publicTokens`
+
+*const*
+
+```ts
+const publicTokens: { readonly color: readonly ["--rl-bg-canvas", "--rl-bg-surface", "--rl-bg-subtle", "--rl-bg-raised", "--rl-bg-hover", "--rl-bg-pressed", "--rl-bg-inverse", "--rl-bg-disabled", "--rl-bg-readonly", "--rl-fg-primary", "--rl-fg-muted", "--rl-fg-subtle", "--rl-fg-inverse", "--rl-fg-on-accent", "--rl-fg-on-danger", "--rl-fg-disabled", "--rl-border-subtle", "--rl-border-default", "--rl-border-strong", "--rl-accent", "--rl-accent-hover", "--rl-accent-subtle", "--rl-accent-text", "--rl-accent-amber", "--rl-info", "--rl-info-subtle", "--rl-success", "--rl-success-subtle", "--rl-warning", "--rl-warning-subtle", "--rl-danger", "--rl-danger-subtle", "--rl-focus", "--rl-inverse-hover"]; readonly elevation: readonly ["--rl-shadow-raised", "--rl-shadow-floating"]; readonly typography: readonly ["--rl-font-body", "--rl-font-mono", "--rl-type-display", "--rl-type-heading-1", "--rl-type-heading-2", "--rl-type-heading-3", "--rl-type-body", "--rl-type-body-sm", "--rl-type-label", "--rl-type-label-sm", "--rl-type-meta", "--rl-type-mono", "--rl-tracking-display", "--rl-tracking-caps", "--rl-tracking-mono"]; readonly space: readonly ["--rl-space-0", "--rl-space-1", "--rl-space-2", "--rl-space-3", "--rl-space-4", "--rl-space-6", "--rl-space-8", "--rl-space-12", "--rl-space-16"]; readonly shape: readonly ["--rl-radius-none", "--rl-radius-xs", "--rl-radius-sm", "--rl-radius-md", "--rl-radius-lg", "--rl-radius-round", "--rl-border-width", "--rl-border-width-strong"]; readonly focus: readonly ["--rl-focus-width", "--rl-focus-offset", "--rl-focus-ring"]; readonly size: readonly ["--rl-control-height-sm", "--rl-control-height-md", "--rl-control-height-lg", "--rl-control-padding-x-sm", "--rl-control-padding-x-md", "--rl-control-padding-x-lg", "--rl-control-gap", "--rl-surface-padding", "--rl-icon-size-sm", "--rl-icon-size-md", "--rl-icon-size-lg", "--rl-badge-height-sm", "--rl-badge-height-md", "--rl-indicator-size", "--rl-field-label-width", "--rl-dialog-width-sm", "--rl-dialog-width-md", "--rl-dialog-width-lg", "--rl-tooltip-max-width", "--rl-popup-max-height", "--rl-popup-offset", "--rl-popover-width-sm", "--rl-popover-width-md", "--rl-popover-width-lg", "--rl-menu-min-width", "--rl-toast-width", "--rl-orbit-size"]; readonly layer: readonly ["--rl-z-overlay", "--rl-z-dialog", "--rl-z-popover", "--rl-z-tooltip", "--rl-z-toast"]; readonly motion: readonly ["--rl-motion-instant", "--rl-motion-press", "--rl-motion-fast", "--rl-motion-base", "--rl-motion-panel", "--rl-motion-scene", "--rl-motion-showcase", "--rl-motion-loop", "--rl-ease-out", "--rl-ease-in-out", "--rl-ease-linear"]; }
+```
+
 ### `radiusScale`
 
 *const*
@@ -132,6 +156,22 @@ const radiusScale: readonly [{ readonly token: "--rl-radius-none"; readonly usag
 
 ```ts
 const spaceScale: readonly [{ readonly token: "--rl-space-0"; readonly px: 0; }, { readonly token: "--rl-space-1"; readonly px: 4; }, { readonly token: "--rl-space-2"; readonly px: 8; }, { readonly token: "--rl-space-3"; readonly px: 12; }, { readonly token: "--rl-space-4"; readonly px: 16; }, { readonly token: "--rl-space-6"; readonly px: 24; }, { readonly token: "--rl-space-8"; readonly px: 32; }, { readonly token: "--rl-space-12"; readonly px: 48; }, { readonly token: "--rl-space-16"; readonly px: 64; }]
+```
+
+### `themeAttributes`
+
+*const* — Stable theme contract (M6).
+
+```ts
+const themeAttributes: { readonly theme: { readonly attribute: "data-rl-theme"; readonly values: readonly ["light", "dark", "system"]; }; readonly density: { readonly attribute: "data-rl-density"; readonly values: readonly ["comfortable", "compact"]; }; readonly motion: { readonly attribute: "data-rl-motion"; readonly values: readonly ["reduce"]; }; }
+```
+
+### `themedPublicTokens`
+
+*const* — Tokens each theme block (`dark`, `system`) must redefine.
+
+```ts
+const themedPublicTokens: readonly ("--rl-bg-canvas" | "--rl-bg-surface" | "--rl-bg-subtle" | "--rl-bg-raised" | "--rl-bg-hover" | "--rl-bg-pressed" | "--rl-bg-inverse" | "--rl-bg-disabled" | "--rl-bg-readonly" | "--rl-fg-primary" | "--rl-fg-muted" | "--rl-fg-subtle" | "--rl-fg-inverse" | "--rl-fg-on-accent" | "--rl-fg-on-danger" | "--rl-fg-disabled" | "--rl-border-subtle" | "--rl-border-default" | "--rl-border-strong" | "--rl-accent" | "--rl-accent-hover" | "--rl-accent-subtle" | "--rl-accent-text" | "--rl-accent-amber" | "--rl-info" | "--rl-info-subtle" | "--rl-success" | "--rl-success-subtle" | "--rl-warning" | "--rl-warning-subtle" | "--rl-danger" | "--rl-danger-subtle" | "--rl-focus" | "--rl-inverse-hover" | "--rl-shadow-raised" | "--rl-shadow-floating")[]
 ```
 
 ### `themedTokens`
@@ -219,11 +259,35 @@ type DensityName = 'comfortable' | 'compact'
 type MotionDurationName = keyof typeof motionDurations
 ```
 
+### `PublicToken`
+
+*type*
+
+```ts
+type PublicToken = (typeof publicTokens)[TokenCategory][number]
+```
+
+### `ThemedToken`
+
+*type*
+
+```ts
+type ThemedToken = (typeof publicTokens)['color' | 'elevation'][number]
+```
+
 ### `ThemeName`
 
 *type* — Machine-readable index of the CSS custom properties defined in `tokens.css`. Tests assert that every token listed here exists in each theme, and the showcase renders foundations from this list instead of copying values.
 
 ```ts
 type ThemeName = 'light' | 'dark'
+```
+
+### `TokenCategory`
+
+*type*
+
+```ts
+type TokenCategory = keyof typeof publicTokens
 ```
 

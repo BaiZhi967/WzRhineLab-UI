@@ -151,8 +151,10 @@ export type PublicToken = (typeof publicTokens)[TokenCategory][number];
 /** Every public token, in contract order. */
 export const allPublicTokens: readonly PublicToken[] = Object.values(publicTokens).flat();
 
+export type ThemedToken = (typeof publicTokens)['color' | 'elevation'][number];
+
 /** Tokens each theme block (`dark`, `system`) must redefine. */
-export const themedPublicTokens: readonly PublicToken[] = [...publicTokens.color, ...publicTokens.elevation];
+export const themedPublicTokens: readonly ThemedToken[] = [...publicTokens.color, ...publicTokens.elevation];
 
 /**
  * `var(--rl-…)` for a contract token. Typed, so a renamed or misspelled token fails to compile
