@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
-import { usePortalContainer } from '../provider/RhineProvider';
+import { usePortalContainer } from '../provider/portal';
 import { cx } from '../utils/cx';
 import type { InputSize } from './Input';
 

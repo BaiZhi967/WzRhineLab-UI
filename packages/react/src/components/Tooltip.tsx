@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
-import { usePortalContainer } from '../provider/RhineProvider';
+import { usePortalContainer } from '../provider/portal';
 import { cx } from '../utils/cx';
 
 export type TooltipSide = 'top' | 'bottom' | 'left' | 'right';

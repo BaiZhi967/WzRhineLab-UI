@@ -21,6 +21,29 @@ export { Dialog, DialogClose } from './components/Dialog';
 export type { DialogCloseProps, DialogProps, DialogSize } from './components/Dialog';
 export { Select } from './components/Select';
 export type { SelectGroup, SelectOption, SelectProps } from './components/Select';
+export { Popover, PopoverClose } from './components/Popover';
+export type { PopoverAlign, PopoverCloseProps, PopoverProps, PopoverSide, PopoverSize } from './components/Popover';
+export {
+  Menu,
+  MenuCheckboxItem,
+  MenuGroup,
+  MenuItem,
+  MenuRadioGroup,
+  MenuRadioItem,
+  MenuSeparator,
+} from './components/Menu';
+export type {
+  MenuAlign,
+  MenuCheckboxItemProps,
+  MenuGroupProps,
+  MenuItemProps,
+  MenuProps,
+  MenuRadioGroupProps,
+  MenuRadioItemProps,
+  MenuSide,
+} from './components/Menu';
+export { ToastProvider, ToastViewport, useToast } from './components/Toast';
+export type { ToastApi, ToastOptions, ToastStatus } from './components/Toast';
 export { RhineProvider, usePortalContainer } from './provider/RhineProvider';
 export type { RhineDensity, RhineMotionPreference, RhineProviderProps, RhineTheme } from './provider/RhineProvider';
 export { duration, ease, fadePresence, pressScale, transition } from './motion/presets';
