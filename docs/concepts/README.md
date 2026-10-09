@@ -26,3 +26,18 @@
 - [ ] 研究 PDF 原件在仓库 `docs/research/` 可下载
 - [ ] 图像来源/使用目的/文件大小/许可说明记录
 - [ ] 压缩预览图没有替换原件、无外部商标素材
+
+## 仓库内可直接预览的 SVG 结构图
+
+本仓库额外提供八张原创、可版本化的 SVG 结构示意图（对应八种研究主题，**不是先前 PNG 原件的复刻或替代**）：
+
+1. [01-overview-schematic.svg](./diagrams/01-overview-schematic.svg)
+2. [02-components-schematic.svg](./diagrams/02-components-schematic.svg)
+3. [03-archive-schematic.svg](./diagrams/03-archive-schematic.svg)
+4. [04-responsive-schematic.svg](./diagrams/04-responsive-schematic.svg)
+5. [05-tokens-schematic.svg](./diagrams/05-tokens-schematic.svg)
+6. [06-workbench-schematic.svg](./diagrams/06-workbench-schematic.svg)
+7. [07-motion-schematic.svg](./diagrams/07-motion-schematic.svg)
+8. [08-ecosystem-schematic.svg](./diagrams/08-ecosystem-schematic.svg)
+
+SVG 表达层级、网格和组件组合，适合代码评审与后续迭代；视觉质感仍以原有 PNG 画板为参考。
