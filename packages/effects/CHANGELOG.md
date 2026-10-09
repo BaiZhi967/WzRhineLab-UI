@@ -13,3 +13,5 @@
 
 ### Requirements
 - peer：`@wzrhine/react`（同版本线）、`react` / `react-dom` ^18.2 || ^19、`motion` ^12。
+
+M6 未改动本包。升级步骤见 [UPGRADING.md](https://github.com/BaiZhi967/WzRhineLab-UI/blob/main/docs/development/UPGRADING.md)。
