@@ -10,15 +10,33 @@
 #>
 param(
   [Parameter(Mandatory=$true)][string]$AssetZip,
-  [string]$RepoRoot = (Split-Path $PSScriptRoot -Parent),
+  [string]$RepoRoot,
   [switch]$Commit,
   [switch]$Push
 )
 $ErrorActionPreference = 'Stop'
 if ($Push -and -not $Commit) { throw '-Push requires -Commit' }
-$zip = (Resolve-Path $AssetZip).Path
-$repo = (Resolve-Path $RepoRoot).Path
-if (-not (Test-Path (Join-Path $repo '.git'))) { throw "Not a Git checkout: $repo" }
+
+# Script-scoped paths are not reliably available while PowerShell 5.1
+# evaluates parameter defaults. Resolve the repository after binding.
+if ([string]::IsNullOrWhiteSpace($RepoRoot)) {
+  $scriptFile = $MyInvocation.MyCommand.Path
+  if ([string]::IsNullOrWhiteSpace($scriptFile)) {
+    throw 'Cannot determine script location. Provide -RepoRoot explicitly.'
+  }
+  $RepoRoot = Join-Path -Path (Split-Path -Path $scriptFile -Parent) -ChildPath '..'
+}
+if (-not (Test-Path -LiteralPath $AssetZip -PathType Leaf)) {
+  throw "Asset ZIP not found: $AssetZip"
+}
+$zip = (Resolve-Path -LiteralPath $AssetZip).Path
+if (-not (Test-Path -LiteralPath $RepoRoot -PathType Container)) {
+  throw "Repository folder not found: $RepoRoot"
+}
+$repo = (Resolve-Path -LiteralPath $RepoRoot).Path
+if (-not (Test-Path -LiteralPath (Join-Path $repo '.git'))) {
+  throw "Not a Git checkout: $repo"
+}
 $tmp = Join-Path ([IO.Path]::GetTempPath()) ('wzrhine-assets-' + [guid]::NewGuid().ToString('N'))
 New-Item -Path $tmp -ItemType Directory -Force | Out-Null
 try {
