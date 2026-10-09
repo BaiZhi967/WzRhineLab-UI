@@ -16,6 +16,7 @@
     "test": "pnpm -r --filter ./packages/* test",
     "test:e2e": "pnpm --filter @wzrhine/showcase test:e2e",
     "test:examples": "pnpm --filter ./examples/* --workspace-concurrency=1 test:e2e",
+    "test:examples:all": "pnpm --filter ./examples/* --workspace-concurrency=1 test:e2e:all",
     "test:visual": "pnpm --filter @wzrhine/showcase test:visual",
     "test:visual:update": "pnpm --filter @wzrhine/showcase test:visual:update",
     "check": "pnpm typecheck && pnpm test && pnpm build && pnpm build:examples",

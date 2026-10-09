@@ -8,7 +8,8 @@
     "build": "tsc --noEmit -p tsconfig.json && vite build --outDir dist/client && vite build --ssr src/entry-server.tsx --outDir dist/server",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "preview": "node server.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test --project=chromium",
+    "test:e2e:all": "playwright test"
   },
   "dependencies": {
     "@wzrhine/react": "workspace:*",
