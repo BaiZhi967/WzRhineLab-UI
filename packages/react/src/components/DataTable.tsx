@@ -207,16 +207,17 @@ export function DataTable<Row>({
                   {columns.map((column) => {
                     const content = column.cell ? column.cell(row) : defaultCell(row, column.key);
                     const props = {
-                      key: column.key,
                       'data-align': column.align ?? 'start',
                       'data-mono': column.mono || undefined,
                     };
                     return column.rowHeader ? (
-                      <th {...props} scope="row">
+                      <th key={column.key} {...props} scope="row">
                         {content}
                       </th>
                     ) : (
-                      <td {...props}>{content}</td>
+                      <td key={column.key} {...props}>
+                        {content}
+                      </td>
                     );
                   })}
                 </tr>

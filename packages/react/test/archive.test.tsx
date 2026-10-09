@@ -317,6 +317,12 @@ describe('DataTable', () => {
     expect(screen.getByRole('columnheader', { name: '操作' })).toBeInTheDocument();
   });
 
+  it('renders without React warnings (keys are not spread into JSX)', () => {
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    render(<Harness />);
+    expect(errors.mock.calls.map((c) => String(c[0]))).toEqual([]);
+  });
+
   it('sortable headers are buttons and report aria-sort; caller-sorted rows render in order', async () => {
     const user = userEvent.setup();
     render(<Harness />);
