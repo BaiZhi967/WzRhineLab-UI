@@ -68,6 +68,18 @@
   --rl-badge-height-md: 24px;
   --rl-indicator-size: 6px;
   --rl-field-label-width: 160px;
+  --rl-dialog-width-sm: 400px;
+  --rl-dialog-width-md: 520px;
+  --rl-dialog-width-lg: 720px;
+  --rl-tooltip-max-width: 280px;
+  --rl-popup-max-height: 320px;
+  --rl-popup-offset: 6px;
+
+  /* Stacking: popups live in the provider's portal node */
+  --rl-z-overlay: 1000;
+  --rl-z-dialog: 1010;
+  --rl-z-popover: 1020;
+  --rl-z-tooltip: 1030;
 
   /* Motion · mirrored by packages/react/src/motion/presets.ts */
   --rl-motion-instant: 0ms;

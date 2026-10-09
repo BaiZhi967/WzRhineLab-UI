@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { MotionConfig } from 'motion/react';
 import { IconButton } from '@wzrhine/react';
 import { groupLabels, hrefFor, routes, useHashRoute } from './app/routes';
 import type { RouteGroup, RouteId } from './app/routes';
@@ -13,13 +12,15 @@ import { MotionPage } from './pages/MotionPage';
 import { OverviewPage } from './pages/Overview';
 import { StatusBadgePage } from './pages/StatusBadgePage';
 import { SurfacePage } from './pages/SurfacePage';
-import { OverlaysLab } from './pages/lab/OverlaysLab';
 import { IconButtonPage } from './pages/IconButtonPage';
 import { TextPage } from './pages/TextPage';
 import { FieldPage } from './pages/FieldPage';
-import { PortalContainerContext } from './app/portal';
+import { TabsPage } from './pages/TabsPage';
+import { TooltipPage } from './pages/TooltipPage';
+import { DialogPage } from './pages/DialogPage';
+import { SelectPage } from './pages/SelectPage';
 
-const groups: RouteGroup[] = ['start', 'foundations', 'components', 'motion', 'lab'];
+const groups: RouteGroup[] = ['start', 'foundations', 'components', 'navigation', 'motion'];
 
 function Navigation({ current, onNavigate }: { current: RouteId; onNavigate?: () => void }) {
   return (
@@ -79,7 +80,6 @@ export default function App() {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const mainRef = React.useRef<HTMLElement>(null);
-  const portalRef = React.useRef<HTMLDivElement>(null);
   const appRef = React.useRef<HTMLDivElement>(null);
   const menuButtonRef = React.useRef<HTMLButtonElement>(null);
   const firstRender = React.useRef(true);
@@ -148,8 +148,14 @@ export default function App() {
         return <TextPage />;
       case 'field':
         return <FieldPage />;
-      case 'lab-overlays':
-        return <OverlaysLab />;
+      case 'tabs':
+        return <TabsPage />;
+      case 'tooltip':
+        return <TooltipPage />;
+      case 'dialog':
+        return <DialogPage />;
+      case 'select':
+        return <SelectPage />;
       default:
         return <OverviewPage />;
     }
@@ -158,7 +164,6 @@ export default function App() {
   const sidebarHidden = !isDesktop && !drawerOpen;
 
   return (
-    <MotionConfig reducedMotion={settings.motion === 'reduce' ? 'always' : 'user'}>
       <ThemeScope
         ref={appRef}
         className="sc-app"
@@ -217,7 +222,7 @@ export default function App() {
               <span className="sc-topbar__index">{route.index}</span>
               <span aria-hidden="true">/</span>
               <span>{groupLabels[route.group]}</span>
-              {route.group === 'components' && (
+              {(route.group === 'components' || route.group === 'navigation') && (
                 <>
                   <span aria-hidden="true">/</span>
                   <span>{route.label}</span>
@@ -263,7 +268,7 @@ export default function App() {
           </header>
 
           <main id="main" ref={mainRef} className="sc-main">
-            <PortalContainerContext.Provider value={portalRef}>{page}</PortalContainerContext.Provider>
+            {page}
           </main>
 
           <footer className="sc-footer">
@@ -271,9 +276,6 @@ export default function App() {
             <span>Not affiliated with any game franchise</span>
           </footer>
         </div>
-        {/* Popups portal here: outside the inert frame, inside the themed root. */}
-        <div ref={portalRef} className="sc-portal" />
       </ThemeScope>
-    </MotionConfig>
   );
 }

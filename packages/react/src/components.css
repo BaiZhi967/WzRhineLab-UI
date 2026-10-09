@@ -5,7 +5,9 @@
  * No literal colours, spacing or radii here: everything resolves to --rl-* tokens.
  */
 
-:where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-text, .rl-field, .rl-input),
+@import './overlays.css';
+
+:where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-text, .rl-field, .rl-input, .rl-tabs, .rl-tooltip, .rl-dialog, .rl-select, .rl-select__popup),
 :where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-field, .rl-input) *,
 :where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-field, .rl-input) *::before,
 :where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-field, .rl-input) *::after {
@@ -121,10 +123,12 @@
   justify-content: center;
   gap: var(--rl-control-gap);
   min-width: 0;
+  max-width: 100%;
 }
 
 .rl-button__label {
   min-width: 0;
+  max-width: 100%;
   overflow-wrap: anywhere;
 }
 
@@ -318,6 +322,8 @@
 .rl-text[data-tone='info'] { --rl-text-tone: var(--rl-info); }
 
 .rl-text[data-truncate] {
+  display: block;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

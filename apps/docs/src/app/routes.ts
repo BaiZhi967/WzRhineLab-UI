@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export type RouteGroup = 'start' | 'foundations' | 'components' | 'motion' | 'lab';
+export type RouteGroup = 'start' | 'foundations' | 'components' | 'navigation' | 'motion';
 
 export interface RouteDef {
   id: string;
@@ -19,8 +19,11 @@ export const routes = [
   { id: 'status-badge', path: '/components/status-badge', label: 'StatusBadge', group: 'components', index: '05' },
   { id: 'text', path: '/components/text', label: 'Text', group: 'components', index: '06' },
   { id: 'field', path: '/components/field', label: 'Field & Input', group: 'components', index: '07' },
-  { id: 'motion', path: '/motion', label: 'Motion', group: 'motion', index: '08' },
-  { id: 'lab-overlays', path: '/lab/overlays', label: 'Overlays (ADR)', group: 'lab', index: 'L1' },
+  { id: 'tabs', path: '/components/tabs', label: 'Tabs', group: 'navigation', index: '08' },
+  { id: 'tooltip', path: '/components/tooltip', label: 'Tooltip', group: 'navigation', index: '09' },
+  { id: 'dialog', path: '/components/dialog', label: 'Dialog', group: 'navigation', index: '10' },
+  { id: 'select', path: '/components/select', label: 'Select', group: 'navigation', index: '11' },
+  { id: 'motion', path: '/motion', label: 'Motion', group: 'motion', index: '12' },
 ] as const satisfies readonly RouteDef[];
 
 export type RouteId = (typeof routes)[number]['id'];
@@ -29,8 +32,8 @@ export const groupLabels: Record<RouteGroup, string> = {
   start: 'Start',
   foundations: 'Foundations',
   components: 'Components',
+  navigation: 'Navigation & Overlay',
   motion: 'Motion',
-  lab: 'Lab',
 };
 
 export function hrefFor(id: RouteId): string {
