@@ -9,7 +9,9 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort",
     "test:e2e": "playwright test --project=chromium",
-    "test:e2e:all": "playwright test --project=chromium && playwright test --project=firefox --workers=4 && playwright test --project=webkit --workers=4"
+    "test:e2e:all": "playwright test --project=chromium && playwright test --project=firefox --workers=4 && playwright test --project=webkit --workers=4",
+    "test:visual": "playwright test --project=visual",
+    "test:visual:update": "playwright test --project=visual --update-snapshots"
   },
   "dependencies": {
     "@base-ui/react": "1.8.0",

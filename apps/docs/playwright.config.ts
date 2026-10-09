@@ -8,7 +8,21 @@ const port = 4173;
  */
 export default defineConfig({
   testDir: './e2e',
+  testIgnore: ['visual/**'],
   outputDir: './test-results',
+  // Visual baselines are committed per platform: Chromium renders text differently across OSes.
+  snapshotPathTemplate: '{testDir}/__screenshots__/{platform}/{arg}{ext}',
+  expect: {
+    toHaveScreenshot: {
+      // Measured: run-to-run noise is at most 1 anti-aliased pixel; the smallest real token change
+      // (border-strong darkened by 16/255, radius 4→3px) moved 17+ pixels. Keep the budget between.
+      maxDiffPixels: 10,
+      threshold: 0.05,
+      animations: 'disabled',
+      caret: 'hide',
+      scale: 'css',
+    },
+  },
   fullyParallel: true,
   forbidOnly: true,
   retries: 0,
@@ -23,6 +37,13 @@ export default defineConfig({
     // `pnpm test:e2e` runs Chromium only; `pnpm test:e2e:all` adds Firefox and WebKit.
     { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    // `pnpm test:visual` compares against committed baselines; `test:visual:update` rewrites them.
+    {
+      name: 'visual',
+      testDir: './e2e/visual',
+      testIgnore: [],
+      use: { ...devices['Desktop Chrome'], deviceScaleFactor: 1, colorScheme: 'light', reducedMotion: 'reduce' },
+    },
   ],
   webServer: {
     command: `pnpm build && pnpm preview`,
