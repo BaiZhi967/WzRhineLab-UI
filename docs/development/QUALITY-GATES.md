@@ -21,8 +21,10 @@
 - [ ] 有自动化测试证明回归范围；未运行不得填「通过」
 
 ## G3 — Release
-- [ ] 公开许可证确认，第三方字体/图片/图标权利核对
-- [ ] npm exports/CSS sideEffects/ESM 类型声明测试
-- [ ] 示例与包版本匹配、changelog 更新
-- [ ] 手动 CI（如获授权）与本地验收记录
-- [ ] semver 破坏性变更和迁移说明
+- [ ] 公开许可证确认（**待维护者选定**），第三方字体/图片/图标权利核对（✅ `pnpm license:audit` → THIRD-PARTY-LICENSES.md）
+- [x] npm exports/CSS sideEffects/ESM 类型声明测试（`pnpm verify:packages`，M5）
+- [x] 示例与包版本匹配、changelog 更新（三个包同一版本线，各自 CHANGELOG）
+- [x] 手动 CI（如获授权）与本地验收记录（未启用 CI；本地 `pnpm release:check` 与验收记录）
+- [x] semver 破坏性变更和迁移说明（CHANGELOG「破坏性」条目附迁移步骤；`pnpm api:check` 暴露 API 变化）
+
+详细流程见 [RELEASING.md](RELEASING.md)。
