@@ -1,0 +1,197 @@
+import * as React from 'react';
+import { MotionConfig, motion } from 'motion/react';
+import { easingTokens, motionTokens, motionUsage } from '@wzrhine/tokens';
+import { Button, transition, useRhineMotion } from '@wzrhine/react';
+import type { RhineTransitionName } from '@wzrhine/react';
+import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
+import { Segmented } from '../ui/controls';
+
+type Speed = '1' | '0.25';
+type Mode = 'default' | 'reduce';
+
+/** Mirrors the token curve as an SVG path so the preview cannot drift from the value. */
+function CurvePreview({ points, label }: { points: readonly number[]; label: string }) {
+  const [x1, y1, x2, y2] = points as [number, number, number, number];
+  const s = 64;
+  const path = `M0 ${s} C ${x1 * s} ${s - y1 * s}, ${x2 * s} ${s - y2 * s}, ${s} 0`;
+  return (
+    <svg className="sc-curve" viewBox={`-4 -4 ${s + 8} ${s + 8}`} role="img" aria-label={`${label} 曲线`}>
+      <rect x="0" y="0" width={s} height={s} className="sc-curve__frame" />
+      <path d={path} className="sc-curve__path" />
+    </svg>
+  );
+}
+
+function scaled(name: RhineTransitionName, speed: Speed) {
+  const t = transition[name] as { duration: number };
+  return { ...transition[name], duration: t.duration / Number(speed) };
+}
+
+/** A track whose indicator slides between stops; clicking mid-flight retargets from the current position. */
+function InterruptDemo({ speed }: { speed: Speed }) {
+  const prefs = useRhineMotion();
+  const stops = ['Overview', 'Records', 'Imagery', 'Notes'] as const;
+  const [active, setActive] = React.useState(0);
+  return (
+    <div className="sc-interrupt">
+      <div className="sc-interrupt__track" role="group" aria-label="指示器目标">
+        {stops.map((stop, i) => (
+          <button
+            key={stop}
+            type="button"
+            className="sc-interrupt__stop"
+            aria-pressed={active === i}
+            onClick={() => setActive(i)}
+          >
+            {stop}
+          </button>
+        ))}
+        <motion.span
+          className="sc-interrupt__indicator"
+          aria-hidden="true"
+          initial={false}
+          animate={{ x: `${active * 100}%` }}
+          transition={prefs.reduced ? transition.instant : scaled('base', speed)}
+        />
+      </div>
+      <p className="sc-small">快速连续点击：指示器从当前视觉位置改道，不排队播放过时动画。</p>
+    </div>
+  );
+}
+
+function FeedbackDemo() {
+  const [busy, setBusy] = React.useState(false);
+  React.useEffect(() => {
+    if (!busy) return;
+    const t = window.setTimeout(() => setBusy(false), 1800);
+    return () => window.clearTimeout(t);
+  }, [busy]);
+  return (
+    <div className="sc-row">
+      <Button variant="secondary">按住观察按压</Button>
+      <Button loading={busy} onClick={() => setBusy(true)}>
+        触发加载
+      </Button>
+    </div>
+  );
+}
+
+function PresenceDemo({ speed }: { speed: Speed }) {
+  const prefs = useRhineMotion();
+  const [open, setOpen] = React.useState(true);
+  return (
+    <div className="sc-presence">
+      <Button variant="secondary" size="sm" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-controls="presence-panel">
+        {open ? '收起面板' : '展开面板'}
+      </Button>
+      <div id="presence-panel" className="sc-presence__slot">
+        <motion.div
+          className="sc-presence__panel"
+          initial={false}
+          animate={open ? { opacity: 1, y: 0 } : { opacity: 0, y: prefs.reduced ? 0 : 8 }}
+          transition={prefs.reduced ? transition.instant : scaled('panel', speed)}
+          style={{ pointerEvents: open ? 'auto' : 'none' }}
+          aria-hidden={!open}
+        >
+          <p className="sc-subhead">详情层</p>
+          <p className="sc-small">panel 280ms · ease-out · 8px 位移；减动时只显隐。</p>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+function ComparePane({ mode, speed }: { mode: Mode; speed: Speed }) {
+  return (
+    <MotionConfig reducedMotion={mode === 'reduce' ? 'always' : 'user'}>
+      <div className="sc-compare__pane" data-rl-motion={mode === 'reduce' ? 'reduce' : undefined}>
+        <p className="sc-compare__label">{mode === 'reduce' ? 'Reduced motion' : 'Default'}</p>
+        <InterruptDemo speed={speed} />
+        <PresenceDemo speed={speed} />
+      </div>
+    </MotionConfig>
+  );
+}
+
+export function MotionPage() {
+  const [speed, setSpeed] = React.useState<Speed>('1');
+  return (
+    <div className="sc-page">
+      <PageHeader index="05" section="Motion" title="Motion Foundations">
+        <p>
+          可解释、精确、克制、可中断。组件通过 <code>useRhineMotion()</code> 取用统一预设，系统「减少动态效果」或
+          <code>&lt;MotionConfig reducedMotion&gt;</code> 生效时全部降级为即时变化。
+        </p>
+      </PageHeader>
+      <SpecimenGrid>
+        <Specimen id="durations" index="01" title="Duration tokens" span="two-thirds" note="CSS 变量与 motion/react 预设由同一份 manifest 生成，并由测试保持一致。">
+          <div className="sc-table-wrap" tabIndex={0} role="region" aria-label="时长 tokens（可横向滚动）">
+            <table className="sc-table">
+              <thead>
+                <tr>
+                  <th scope="col">名称</th>
+                  <th scope="col" className="sc-num">
+                    时长
+                  </th>
+                  <th scope="col">用途</th>
+                  <th scope="col">CSS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {motionTokens.map((t) => (
+                  <tr key={t.name}>
+                    <td>
+                      <code className="sc-mono-sm">{t.name}</code>
+                    </td>
+                    <td className="sc-num">
+                      <code className="sc-mono-sm">{t.ms}ms</code>
+                    </td>
+                    <td>{motionUsage[t.name]}</td>
+                    <td>
+                      <code className="sc-mono-sm">{t.token}</code>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Specimen>
+        <Specimen id="easing" index="02" title="Easing" span="third" note="linear 仅用于真实进度；Spring 仅用于可拖拽目标。">
+          <ul className="sc-easing">
+            {easingTokens.map((e) => (
+              <li key={e.name}>
+                <CurvePreview points={e.points} label={e.name} />
+                <div>
+                  <code className="sc-mono-sm">{e.token}</code>
+                  <p className="sc-small">{e.usage}</p>
+                  <code className="sc-mono-sm sc-muted">[{e.points.join(', ')}]</code>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Specimen>
+        <Specimen id="feedback" index="03" title="Button feedback" span="half" note="press 80ms · scale 0.985；不改变布局或命中区域。加载时宽度保持不变。">
+          <FeedbackDemo />
+        </Specimen>
+        <Specimen id="compare" index="04" title="Default vs reduced · interrupt" note="左右两侧使用同一组件；右侧强制 reducedMotion=always。Slow ×0.25 只影响本演示。">
+          <div className="sc-compare__toolbar">
+            <Segmented
+              legend="播放速度"
+              name="motion-speed"
+              value={speed}
+              onChange={setSpeed}
+              options={[
+                { value: '1', label: '×1' },
+                { value: '0.25', label: 'Slow ×0.25' },
+              ]}
+            />
+          </div>
+          <div className="sc-compare">
+            <ComparePane mode="default" speed={speed} />
+            <ComparePane mode="reduce" speed={speed} />
+          </div>
+        </Specimen>
+      </SpecimenGrid>
+    </div>
+  );
+}

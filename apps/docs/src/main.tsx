@@ -1,8 +1,15 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
-import { MotionConfig } from 'motion/react';
-import App from './App';
+import '@wzrhine/tokens/styles.css';
+import '@wzrhine/react/styles.css';
 import './style.css';
+import App from './App';
+
 const root = document.getElementById('root');
 if (!root) throw new Error('Root element missing');
-createRoot(root).render(<React.StrictMode><MotionConfig reducedMotion="user"><App /></MotionConfig></React.StrictMode>);
+
+createRoot(root).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);

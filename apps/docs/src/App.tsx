@@ -1,36 +1,266 @@
-import { useState } from 'react';
-import { Button, StatusBadge, Surface } from '@wzrhine/react';
+import * as React from 'react';
+import { MotionConfig } from 'motion/react';
+import { groupLabels, hrefFor, routes, useHashRoute } from './app/routes';
+import type { RouteGroup, RouteId } from './app/routes';
+import { ThemeScope } from './app/ThemeScope';
+import { useMediaQuery, useResolvedTheme, useSettings } from './app/settings';
+import { BrandMark, Close, Menu } from './icons';
+import { Segmented } from './ui/controls';
+import { ButtonPage } from './pages/ButtonPage';
+import { FoundationsPage } from './pages/Foundations';
+import { MotionPage } from './pages/MotionPage';
+import { OverviewPage } from './pages/Overview';
+import { StatusBadgePage } from './pages/StatusBadgePage';
+import { SurfacePage } from './pages/SurfacePage';
 
-const menu = ['Overview', 'Components', 'Motion', 'Tokens', 'Guides'];
-const swatches = [
-  ['Canvas', '#F3F2ED'], ['Surface', '#FCFBF7'], ['Ink', '#20251F'],
-  ['Research', '#E56A32'], ['Data', '#226A84'], ['Success', '#23734A'],
-] as const;
-export default function App() {
-  const [section, setSection] = useState('Overview');
-  const [dark, setDark] = useState(false);
-  const [busy, setBusy] = useState(false);
+const groups: RouteGroup[] = ['start', 'foundations', 'components', 'motion'];
+
+function Navigation({ current, onNavigate }: { current: RouteId; onNavigate?: () => void }) {
   return (
-    <div className="rl-theme showcase" data-rl-theme={dark ? 'dark' : 'light'}>
-      <aside className="sidebar">
-        <a href="/" className="brand"><span className="brand-mark" aria-hidden="true">◩</span><span>WZRHINE <b>LAB</b><small>RESEARCH INTERFACE SYSTEM</small></span></a>
-        <p className="sidebar-caption">RESEARCH BUILDS<br />BETTER INTERFACES.</p>
-        <nav aria-label="主导航">{menu.map((item, i) => <button key={item} className={section === item ? 'nav-item active' : 'nav-item'} type="button" aria-current={section === item ? 'page' : undefined} onClick={() => setSection(item)}><span>{item}</span><span className="mono">0{i + 1}</span></button>)}</nav>
-        <div className="sidebar-bottom mono">DESIGN SYSTEM / 0.1<br />INTERNAL RESEARCH BUILD</div>
-      </aside>
-      <main className="content">
-        <header className="topbar"><div className="mono">CATALOG / v0.1.0 <span className="dim"> // CLASS A / DRAFT</span></div><Button variant="ghost" size="sm" onClick={() => setDark(v => !v)} aria-label={dark ? '切换到浅色' : '切换到深色'}>{dark ? 'Light theme' : 'Dark theme'}</Button></header>
-        <div className="body">
-          <div className="eyebrow mono">01 / DESIGN SYSTEM / {section.toUpperCase()}</div>
-          <div className="hero-grid"><div><h1>RESEARCH<br/>UI SYSTEM<span className="period">.</span></h1><p className="tagline">A component library for ideas in motion.</p><p className="lede">温暖而理性的科研档案界面语言。语义化设计 Tokens、可组合的 React 组件，以及克制、清晰、可中断的 Motion 反馈。</p><div className="actions"><Button onClick={() => setSection('Components')}>Browse components →</Button><Button variant="secondary" onClick={() => setSection('Tokens')}>Explore tokens</Button></div></div><div className="orbital" aria-hidden="true"><div className="orbital-ring one"/><div className="orbital-ring two"/><div className="orbital-core"/><div className="orbital-label mono">ARCHIVE / 001<br/>STATUS: READY<br/>RESEARCH: ACTIVE</div></div></div>
-          <div className="divider mono">02 / FOUNDATION MODULES <span>INTERFACE SPECIMENS</span></div>
-          <div className="cards">
-            <Surface><p className="module-index mono">01 / ACTIONS</p><h2>Component States</h2><p>Primary · Secondary · Ghost · Loading</p><div className="button-stack"><Button onClick={() => setBusy(true)} loading={busy}>{busy ? 'Processing…' : 'Start processing'}</Button>{busy && <Button variant="ghost" size="sm" onClick={() => setBusy(false)}>Reset loading demo</Button>}<Button variant="secondary">Secondary action</Button><Button variant="ghost">Ghost action →</Button></div></Surface>
-            <Surface><p className="module-index mono">02 / STATUS</p><h2>Information State</h2><p>永远将状态文本与颜色关联。</p><div className="badge-list"><StatusBadge status="success">Completed</StatusBadge><StatusBadge status="info">Processing</StatusBadge><StatusBadge status="warning">Review required</StatusBadge><StatusBadge status="danger">Failed</StatusBadge></div></Surface>
-            <Surface><p className="module-index mono">03 / TOKENS</p><h2>Color Grammar</h2><p>科研机构的暖纸色和少量信号强调。</p><div className="swatches">{swatches.map(([name, color]) => <div key={name}><span style={{ background: color }}/><small>{name}<br/>{color}</small></div>)}</div></Surface>
-          </div><footer className="footer mono">WZRHINE LAB // ORIGINAL DESIGN EXPLORATION <span>REACT + MOTION // 2026</span></footer>
+    <nav className="sc-nav" aria-label="主导航">
+      {groups.map((group) => (
+        <div key={group} className="sc-nav__group">
+          <p className="sc-nav__heading" id={`nav-${group}`}>
+            {groupLabels[group]}
+          </p>
+          <ul aria-labelledby={`nav-${group}`}>
+            {routes
+              .filter((r) => r.group === group)
+              .map((r) => (
+                <li key={r.id}>
+                  <a
+                    className="sc-nav__link"
+                    href={hrefFor(r.id)}
+                    aria-current={current === r.id ? 'page' : undefined}
+                    onClick={onNavigate}
+                  >
+                    <span>{r.label}</span>
+                    <span className="sc-nav__index" aria-hidden="true">
+                      {r.index}
+                    </span>
+                  </a>
+                </li>
+              ))}
+          </ul>
         </div>
-      </main>
-    </div>
+      ))}
+    </nav>
+  );
+}
+
+function Brand() {
+  return (
+    <a className="sc-brand" href={hrefFor('overview')}>
+      <BrandMark className="sc-brand__mark" />
+      <span className="sc-brand__text">
+        <span className="sc-brand__name">
+          WZRHINE <span className="sc-brand__light">LAB</span>
+        </span>
+        <span className="sc-brand__tag">Research Interface System</span>
+      </span>
+    </a>
+  );
+}
+
+function focusPageHeading(main: HTMLElement | null) {
+  main?.querySelector<HTMLElement>('h1')?.focus();
+}
+
+export default function App() {
+  const route = useHashRoute();
+  const [settings, update] = useSettings();
+  const resolvedTheme = useResolvedTheme(settings.theme);
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const mainRef = React.useRef<HTMLElement>(null);
+  const appRef = React.useRef<HTMLDivElement>(null);
+  const menuButtonRef = React.useRef<HTMLButtonElement>(null);
+  const firstRender = React.useRef(true);
+
+  React.useEffect(() => {
+    document.title = `${route.label} · WzRhineLab UI`;
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    // Land keyboard and screen reader users on the new page's heading.
+    focusPageHeading(mainRef.current);
+    window.scrollTo({ top: 0 });
+  }, [route.id, route.label]);
+
+  React.useEffect(() => {
+    if (isDesktop) setDrawerOpen(false);
+  }, [isDesktop]);
+
+  const restoreFocusRef = React.useRef(false);
+
+  const closeDrawer = React.useCallback(() => {
+    // The menu button sits inside the inert frame until React commits; focus it after the re-render.
+    restoreFocusRef.current = true;
+    setDrawerOpen(false);
+  }, []);
+
+  React.useEffect(() => {
+    if (drawerOpen || !restoreFocusRef.current) return;
+    restoreFocusRef.current = false;
+    menuButtonRef.current?.focus();
+  }, [drawerOpen]);
+
+  React.useEffect(() => {
+    if (!drawerOpen) return;
+    document.querySelector<HTMLElement>('#sidebar a, #sidebar button')?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeDrawer();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [drawerOpen, closeDrawer]);
+
+  React.useEffect(() => {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    const el = appRef.current;
+    if (!meta || !el) return;
+    meta.setAttribute('content', getComputedStyle(el).getPropertyValue('--rl-bg-canvas').trim());
+  }, [resolvedTheme]);
+
+  const page = (() => {
+    switch (route.id) {
+      case 'foundations':
+        return <FoundationsPage themeKey={`${resolvedTheme}-${settings.density}`} />;
+      case 'button':
+        return <ButtonPage />;
+      case 'surface':
+        return <SurfacePage />;
+      case 'status-badge':
+        return <StatusBadgePage />;
+      case 'motion':
+        return <MotionPage />;
+      default:
+        return <OverviewPage />;
+    }
+  })();
+
+  const sidebarHidden = !isDesktop && !drawerOpen;
+
+  return (
+    <MotionConfig reducedMotion={settings.motion === 'reduce' ? 'always' : 'user'}>
+      <ThemeScope
+        ref={appRef}
+        className="sc-app"
+        theme={settings.theme}
+        density={settings.density}
+        motion={settings.motion}
+      >
+        <a
+          className="sc-skip"
+          href="#main"
+          onClick={(e) => {
+            e.preventDefault();
+            focusPageHeading(mainRef.current);
+          }}
+        >
+          跳到主要内容
+        </a>
+
+        <aside
+          id="sidebar"
+          className="sc-sidebar"
+          aria-label="侧栏"
+          inert={sidebarHidden || undefined}
+          data-hidden={sidebarHidden || undefined}
+          data-open={drawerOpen || undefined}
+        >
+          <div className="sc-sidebar__top">
+            <Brand />
+            {!isDesktop && (
+              <button type="button" className="sc-icon-button" aria-label="关闭导航" onClick={closeDrawer}>
+                <Close />
+              </button>
+            )}
+          </div>
+          <Navigation current={route.id} onNavigate={() => setDrawerOpen(false)} />
+          <p className="sc-sidebar__foot">
+            Design system 0.0.0
+            <br />
+            Internal preview · not published
+          </p>
+        </aside>
+        {drawerOpen && <div className="sc-scrim" aria-hidden="true" onClick={closeDrawer} />}
+
+        <div className="sc-frame" inert={drawerOpen || undefined}>
+          <header className="sc-topbar">
+            {!isDesktop && (
+              <button
+                ref={menuButtonRef}
+                type="button"
+                className="sc-icon-button"
+                aria-label="打开导航"
+                aria-expanded={drawerOpen}
+                aria-controls="sidebar"
+                onClick={() => setDrawerOpen(true)}
+              >
+                <Menu />
+              </button>
+            )}
+            <p className="sc-topbar__crumb">
+              <span className="sc-topbar__index">{route.index}</span>
+              <span aria-hidden="true">/</span>
+              <span>{groupLabels[route.group]}</span>
+              {route.group === 'components' && (
+                <>
+                  <span aria-hidden="true">/</span>
+                  <span>{route.label}</span>
+                </>
+              )}
+            </p>
+            <div className="sc-topbar__settings" role="group" aria-label="显示设置">
+              <Segmented
+                legend="主题"
+                name="theme"
+                hideLegend
+                value={settings.theme}
+                onChange={(v) => update('theme', v)}
+                options={[
+                  { value: 'light', label: 'Light' },
+                  { value: 'dark', label: 'Dark' },
+                  { value: 'system', label: 'System' },
+                ]}
+              />
+              <Segmented
+                legend="密度"
+                name="density"
+                hideLegend
+                value={settings.density}
+                onChange={(v) => update('density', v)}
+                options={[
+                  { value: 'comfortable', label: '舒适' },
+                  { value: 'compact', label: '紧凑' },
+                ]}
+              />
+              <Segmented
+                legend="动效"
+                name="motion"
+                hideLegend
+                value={settings.motion}
+                onChange={(v) => update('motion', v)}
+                options={[
+                  { value: 'user', label: '跟随系统' },
+                  { value: 'reduce', label: '减少' },
+                ]}
+              />
+            </div>
+          </header>
+
+          <main id="main" ref={mainRef} className="sc-main">
+            {page}
+          </main>
+
+          <footer className="sc-footer">
+            <span>WzRhineLab UI · original design exploration</span>
+            <span>Not affiliated with any game franchise</span>
+          </footer>
+        </div>
+      </ThemeScope>
+    </MotionConfig>
   );
 }
