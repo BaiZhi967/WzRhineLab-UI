@@ -133,6 +133,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(function 
           sideOffset={4}
           collisionPadding={8}
           alignItemWithTrigger={false}
+          positionMethod="fixed"
         >
           <BaseSelect.Popup className="rl-select__popup">
             <BaseSelect.List className="rl-select__list">

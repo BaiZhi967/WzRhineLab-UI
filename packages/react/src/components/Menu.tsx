@@ -53,7 +53,7 @@ export function Menu({ trigger, children, side = 'bottom', align = 'start', open
     >
       <BaseMenu.Trigger render={trigger} />
       <BaseMenu.Portal container={container}>
-        <BaseMenu.Positioner className="rl-menu__positioner" side={side} align={align} sideOffset={4} collisionPadding={8}>
+        <BaseMenu.Positioner className="rl-menu__positioner" side={side} align={align} sideOffset={4} collisionPadding={8} positionMethod="fixed">
           <BaseMenu.Popup className={cx('rl-menu', className)} data-slot="menu">
             {children}
           </BaseMenu.Popup>

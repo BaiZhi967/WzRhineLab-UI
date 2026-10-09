@@ -810,6 +810,12 @@ body,
   max-width: 100%;
   overflow-x: auto;
   border-radius: var(--rl-radius-xs);
+  /* Scroll-driven edge shadows: visible only while more columns are hidden on that side. */
+  background:
+    linear-gradient(to right, var(--rl-bg-surface) 30%, transparent) left / var(--rl-space-6) 100% no-repeat local,
+    linear-gradient(to left, var(--rl-bg-surface) 30%, transparent) right / var(--rl-space-6) 100% no-repeat local,
+    linear-gradient(to right, var(--rl-border-default), transparent) left / var(--rl-space-3) 100% no-repeat scroll,
+    linear-gradient(to left, var(--rl-border-default), transparent) right / var(--rl-space-3) 100% no-repeat scroll;
 }
 
 .sc-table,

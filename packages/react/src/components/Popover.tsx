@@ -74,6 +74,7 @@ export function Popover({
           align={align}
           sideOffset={8}
           collisionPadding={8}
+          positionMethod="fixed"
         >
           <BasePopover.Popup
             className={cx('rl-popover', className)}

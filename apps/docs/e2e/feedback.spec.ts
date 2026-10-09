@@ -27,6 +27,26 @@ test.describe('Popover', () => {
     await expect(trigger).toBeFocused();
   });
 
+  test('opening does not scroll the page; the panel opens next to its trigger', async ({ page }) => {
+    await page.goto('/#/components/popover');
+    for (const trigger of [
+      page.getByRole('region', { name: 'Popover' }).first().getByRole('button', { name: '筛选…' }),
+      page.getByRole('button', { name: '修改' }),
+    ]) {
+      await trigger.scrollIntoViewIfNeeded();
+      const before = await page.evaluate(() => window.scrollY);
+      await trigger.click();
+      const popup = page.locator('.rl-popover');
+      await expect(popup).toBeVisible();
+      await expect(popup).toBeInViewport();
+      expect(await page.evaluate(() => window.scrollY)).toBe(before);
+      const [pb, tb] = [await popup.boundingBox(), await trigger.boundingBox()];
+      expect(Math.abs(pb!.y - (tb!.y + tb!.height))).toBeLessThan(24);
+      await page.keyboard.press('Escape');
+      await expect(popup).toBeHidden();
+    }
+  });
+
   test('non-modal: page stays scrollable and the nav stays in the accessibility tree', async ({ page }) => {
     await page.goto('/#/components/popover');
     await page.getByRole('region', { name: 'Popover' }).first().getByRole('button', { name: '筛选…' }).click();
@@ -73,7 +93,10 @@ test.describe('Popover', () => {
       await page.setViewportSize({ width: theme === 'light' ? 390 : 1280, height: 844 });
       await setSettings(page, { theme });
       await page.goto('/#/components/popover');
-      await page.getByRole('region', { name: 'Popover' }).first().getByRole('button', { name: '筛选…' }).click();
+      const trigger = page.getByRole('region', { name: 'Popover' }).first().getByRole('button', { name: '筛选…' });
+      await trigger.scrollIntoViewIfNeeded();
+      await trigger.click();
+      await expect(page.locator('.rl-popover')).toBeInViewport();
       const box = await page.locator('.rl-popover').boundingBox();
       expect(box!.x).toBeGreaterThanOrEqual(0);
       expect(box!.x + box!.width).toBeLessThanOrEqual(theme === 'light' ? 390 : 1280);
@@ -141,6 +164,16 @@ test.describe('Menu', () => {
     await expect(dialog).toBeHidden();
     await expect(page.locator('.rl-toast').filter({ hasText: 'REC-0102 已归档' })).toBeVisible();
     await expect(page.getByRole('row', { name: /REC-0102/ })).toContainText('已归档');
+  });
+
+  test('opening a menu low on the page does not scroll it', async ({ page }) => {
+    await page.goto('/#/components/menu');
+    const trigger = page.getByRole('button', { name: 'REC-0103 的操作' });
+    await trigger.scrollIntoViewIfNeeded();
+    const before = await page.evaluate(() => window.scrollY);
+    await trigger.click();
+    await expect(page.getByRole('menu')).toBeInViewport();
+    expect(await page.evaluate(() => window.scrollY)).toBe(before);
   });
 
   test('menu stays inside the viewport at 390px and axe is clean while open', async ({ page }) => {
