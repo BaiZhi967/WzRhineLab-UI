@@ -6,7 +6,7 @@ import { motionDurations } from '@wzrhine/tokens';
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 
-const cssFiles = ['../src/components.css', '../src/overlays.css'];
+const cssFiles = ['../src/components.css', '../src/overlays.css', '../src/feedback.css'];
 const stripped = (path: string) =>
   read(path)
     .replace(/\/\*[\s\S]*?\*\//g, '')
@@ -25,6 +25,9 @@ const componentFiles = [
   'Tooltip',
   'Dialog',
   'Select',
+  'Popover',
+  'Menu',
+  'Toast',
 ];
 
 function splitTopLevel(selector: string): string[] {
@@ -48,8 +51,10 @@ describe('package boundary', () => {
     expect(entry).not.toMatch(/^\s*import\s+['"][^'"]+\.css['"]/m);
   });
 
-  it('the single style entry imports the overlay styles', () => {
-    expect(read('../src/components.css')).toMatch(/@import '\.\/overlays\.css';/);
+  it('the single style entry imports every partial stylesheet', () => {
+    const entry = read('../src/components.css');
+    expect(entry).toMatch(/@import '\.\/overlays\.css';/);
+    expect(entry).toMatch(/@import '\.\/feedback\.css';/);
   });
 
   it('Base UI is only imported through subpaths', () => {

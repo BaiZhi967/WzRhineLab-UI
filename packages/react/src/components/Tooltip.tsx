@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
-import { usePortalContainer } from '../provider/RhineProvider';
+import { usePortalContainer } from '../provider/portal';
 import { cx } from '../utils/cx';
 
 export type TooltipSide = 'top' | 'bottom' | 'left' | 'right';
@@ -49,7 +49,7 @@ export function Tooltip({
     >
       <BaseTooltip.Trigger render={children} delay={delay} />
       <BaseTooltip.Portal container={container}>
-        <BaseTooltip.Positioner side={side} sideOffset={6} collisionPadding={8} className="rl-tooltip__positioner">
+        <BaseTooltip.Positioner side={side} sideOffset={6} collisionPadding={8} positionMethod="fixed" className="rl-tooltip__positioner">
           <BaseTooltip.Popup className={cx('rl-tooltip', className)} data-slot="tooltip">
             {content}
           </BaseTooltip.Popup>

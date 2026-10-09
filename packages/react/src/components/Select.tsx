@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
-import { usePortalContainer } from '../provider/RhineProvider';
+import { usePortalContainer } from '../provider/portal';
 import { cx } from '../utils/cx';
 import type { InputSize } from './Input';
 
@@ -133,6 +133,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(function 
           sideOffset={4}
           collisionPadding={8}
           alignItemWithTrigger={false}
+          positionMethod="fixed"
         >
           <BaseSelect.Popup className="rl-select__popup">
             <BaseSelect.List className="rl-select__list">

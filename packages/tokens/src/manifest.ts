@@ -47,6 +47,7 @@ export const colorGroups = [
       { name: '--rl-fg-subtle', role: '元信息 / 编号' },
       { name: '--rl-fg-inverse', role: '深墨填充上的文本' },
       { name: '--rl-fg-on-accent', role: '信号橙填充上的文本' },
+      { name: '--rl-fg-on-danger', role: '危险色填充上的文本' },
       { name: '--rl-fg-disabled', role: '禁用文本' },
     ],
   },
@@ -153,6 +154,11 @@ export const densityTokens = [
   { token: '--rl-tooltip-max-width', usage: '提示最大宽度' },
   { token: '--rl-popup-max-height', usage: '下拉列表最大高度' },
   { token: '--rl-popup-offset', usage: '浮层与触发器间距' },
+  { token: '--rl-popover-width-sm', usage: '小号弹出面板宽度' },
+  { token: '--rl-popover-width-md', usage: '默认弹出面板宽度' },
+  { token: '--rl-popover-width-lg', usage: '大号弹出面板宽度' },
+  { token: '--rl-menu-min-width', usage: '菜单最小宽度' },
+  { token: '--rl-toast-width', usage: '通知宽度' },
 ] as const;
 
 /** Duration tokens in milliseconds. Source of truth for CSS (`--rl-motion-*`) and motion/react presets. */
@@ -256,4 +262,9 @@ export const contrastPairs: readonly ContrastPair[] = [
   { fg: '--rl-danger', bg: '--rl-bg-surface', level: 'text', usage: '字段错误文本 / 表面' },
   { fg: '--rl-danger', bg: '--rl-bg-canvas', level: 'text', usage: '字段错误文本 / 画布' },
   { fg: '--rl-danger', bg: '--rl-bg-surface', level: 'non-text', usage: '无效字段边界' },
+  { fg: '--rl-fg-on-danger', bg: '--rl-danger', level: 'text', usage: '危险菜单项高亮' },
+  { fg: '--rl-info', bg: '--rl-bg-raised', level: 'non-text', usage: '通知状态条 / 图标' },
+  { fg: '--rl-success', bg: '--rl-bg-raised', level: 'non-text', usage: '通知状态条 / 图标' },
+  { fg: '--rl-warning', bg: '--rl-bg-raised', level: 'non-text', usage: '通知状态条 / 图标' },
+  { fg: '--rl-danger', bg: '--rl-bg-raised', level: 'text', usage: '危险菜单项 / 通知' },
 ];

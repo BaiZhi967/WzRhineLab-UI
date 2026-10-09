@@ -14,6 +14,9 @@ export const routes = [
   { name: 'tooltip', hash: '/#/components/tooltip' },
   { name: 'dialog', hash: '/#/components/dialog' },
   { name: 'select', hash: '/#/components/select' },
+  { name: 'popover', hash: '/#/components/popover' },
+  { name: 'menu', hash: '/#/components/menu' },
+  { name: 'toast', hash: '/#/components/toast' },
 ] as const;
 
 export const widths = [320, 390, 768, 1280, 1920] as const;

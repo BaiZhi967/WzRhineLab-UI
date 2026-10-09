@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { AnimatePresence, motion } from 'motion/react';
-import { usePortalContainer } from '../provider/RhineProvider';
+import { usePortalContainer } from '../provider/portal';
 import { useRhineMotion } from '../motion/useRhineMotion';
 import { cx } from '../utils/cx';
 

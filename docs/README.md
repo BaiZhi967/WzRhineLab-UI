@@ -28,7 +28,8 @@
 - [Sprint 01 验收记录](development/acceptance/2026-10-09-sprint-01.md)
 - [M1-B 验收记录](development/acceptance/2026-10-09-m1b.md)
 - [M2-A 验收记录](development/acceptance/2026-10-09-m2a.md)
-- 组件文档：[Field & Input](components/field.md) · [IconButton · Text](components/icon-button-text.md) · [Provider · Tabs · Tooltip · Dialog · Select](components/overlays.md)
+- [M2-B 验收记录](development/acceptance/2026-10-09-m2b.md)
+- 组件文档：[Field & Input](components/field.md) · [IconButton · Text](components/icon-button-text.md) · [Provider · Tabs · Tooltip · Dialog · Select](components/overlays.md) · [Popover · Menu · Toast](components/popover-menu-toast.md)
 - [Windows 资源导入脚本](../scripts/import-visual-assets.ps1)
 - [Showcase 源码](../apps/docs/src/App.tsx)
 
