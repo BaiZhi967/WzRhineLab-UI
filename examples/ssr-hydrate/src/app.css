@@ -1,0 +1,33 @@
+/* SSR example page layout; values are tokens. */
+body {
+  margin: 0;
+}
+
+.ssr-root {
+  min-height: 100vh;
+}
+
+.ssr-page {
+  display: grid;
+  gap: var(--rl-space-6);
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--rl-space-6);
+  box-sizing: border-box;
+}
+
+.ssr-form {
+  display: grid;
+  gap: var(--rl-space-4);
+}
+
+.ssr-footnote {
+  margin: 0;
+}
+
+@media (max-width: 520px) {
+  .ssr-page {
+    padding: var(--rl-space-4);
+  }
+}
