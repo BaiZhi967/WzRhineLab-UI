@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { MotionConfig } from 'motion/react';
+import { IconButton } from '@wzrhine/react';
 import { groupLabels, hrefFor, routes, useHashRoute } from './app/routes';
 import type { RouteGroup, RouteId } from './app/routes';
 import { ThemeScope } from './app/ThemeScope';
@@ -13,6 +14,9 @@ import { OverviewPage } from './pages/Overview';
 import { StatusBadgePage } from './pages/StatusBadgePage';
 import { SurfacePage } from './pages/SurfacePage';
 import { OverlaysLab } from './pages/lab/OverlaysLab';
+import { IconButtonPage } from './pages/IconButtonPage';
+import { TextPage } from './pages/TextPage';
+import { FieldPage } from './pages/FieldPage';
 import { PortalContainerContext } from './app/portal';
 
 const groups: RouteGroup[] = ['start', 'foundations', 'components', 'motion', 'lab'];
@@ -138,6 +142,12 @@ export default function App() {
         return <StatusBadgePage />;
       case 'motion':
         return <MotionPage />;
+      case 'icon-button':
+        return <IconButtonPage />;
+      case 'text':
+        return <TextPage />;
+      case 'field':
+        return <FieldPage />;
       case 'lab-overlays':
         return <OverlaysLab />;
       default:
@@ -178,9 +188,7 @@ export default function App() {
           <div className="sc-sidebar__top">
             <Brand />
             {!isDesktop && (
-              <button type="button" className="sc-icon-button" aria-label="关闭导航" onClick={closeDrawer}>
-                <Close />
-              </button>
+              <IconButton icon={<Close />} label="关闭导航" variant="secondary" onClick={closeDrawer} />
             )}
           </div>
           <Navigation current={route.id} onNavigate={() => setDrawerOpen(false)} />
@@ -195,17 +203,15 @@ export default function App() {
         <div className="sc-frame" inert={drawerOpen || undefined}>
           <header className="sc-topbar">
             {!isDesktop && (
-              <button
+              <IconButton
                 ref={menuButtonRef}
-                type="button"
-                className="sc-icon-button"
-                aria-label="打开导航"
+                icon={<Menu />}
+                label="打开导航"
+                variant="secondary"
                 aria-expanded={drawerOpen}
                 aria-controls="sidebar"
                 onClick={() => setDrawerOpen(true)}
-              >
-                <Menu />
-              </button>
+              />
             )}
             <p className="sc-topbar__crumb">
               <span className="sc-topbar__index">{route.index}</span>

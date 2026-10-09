@@ -219,20 +219,6 @@ body,
   color: var(--rl-fg-subtle);
 }
 
-.sc-icon-button {
-  display: inline-grid;
-  place-items: center;
-  flex: none;
-  width: var(--rl-control-height-md);
-  height: var(--rl-control-height-md);
-  padding: 0;
-  border: var(--rl-border-width) solid var(--rl-border-default);
-  border-radius: var(--rl-radius-sm);
-  background: var(--rl-bg-surface);
-  color: var(--rl-fg-primary);
-  font-size: var(--rl-icon-size-lg);
-  cursor: pointer;
-}
 
 .sc-scrim {
   display: none;
@@ -1101,6 +1087,82 @@ body,
 .sc-record__meta dd {
   margin-top: var(--rl-space-1);
   font: var(--rl-type-body-sm);
+}
+
+/* ---------- Text / IconButton / Field pages ---------- */
+.sc-text-frame {
+  width: 100%;
+  max-width: 560px;
+  min-width: 0;
+}
+
+.sc-tone-list {
+  display: grid;
+}
+
+.sc-tone-list li {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: var(--rl-space-3);
+  align-items: baseline;
+  padding: var(--rl-space-2) 0;
+  border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.sc-toolbar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rl-space-1);
+  padding: var(--rl-space-1);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-surface);
+}
+
+.sc-toolbar__sep {
+  width: var(--rl-border-width);
+  align-self: stretch;
+  margin: var(--rl-space-1);
+  background: var(--rl-border-default);
+}
+
+.sc-dismiss {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rl-space-3);
+  padding: var(--rl-space-2) var(--rl-space-2) var(--rl-space-2) var(--rl-space-4);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-left: var(--rl-border-width-strong) solid var(--rl-success);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-surface);
+}
+
+.sc-field-frame {
+  width: 100%;
+  max-width: 420px;
+  min-width: 0;
+}
+
+.sc-form {
+  display: grid;
+  gap: var(--rl-space-6);
+  max-width: 440px;
+}
+
+.sc-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--rl-space-2);
+  padding-top: var(--rl-space-4);
+  border-top: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.sc-stack {
+  display: grid;
+  gap: var(--rl-space-6);
+  max-width: 440px;
 }
 
 /* ---------- Motion ---------- */

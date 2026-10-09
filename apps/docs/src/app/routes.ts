@@ -14,9 +14,12 @@ export const routes = [
   { id: 'overview', path: '/', label: 'Overview', group: 'start', index: '00' },
   { id: 'foundations', path: '/foundations', label: 'Foundations', group: 'foundations', index: '01' },
   { id: 'button', path: '/components/button', label: 'Button', group: 'components', index: '02' },
-  { id: 'surface', path: '/components/surface', label: 'Surface', group: 'components', index: '03' },
-  { id: 'status-badge', path: '/components/status-badge', label: 'StatusBadge', group: 'components', index: '04' },
-  { id: 'motion', path: '/motion', label: 'Motion', group: 'motion', index: '05' },
+  { id: 'icon-button', path: '/components/icon-button', label: 'IconButton', group: 'components', index: '03' },
+  { id: 'surface', path: '/components/surface', label: 'Surface', group: 'components', index: '04' },
+  { id: 'status-badge', path: '/components/status-badge', label: 'StatusBadge', group: 'components', index: '05' },
+  { id: 'text', path: '/components/text', label: 'Text', group: 'components', index: '06' },
+  { id: 'field', path: '/components/field', label: 'Field & Input', group: 'components', index: '07' },
+  { id: 'motion', path: '/motion', label: 'Motion', group: 'motion', index: '08' },
   { id: 'lab-overlays', path: '/lab/overlays', label: 'Overlays (ADR)', group: 'lab', index: 'L1' },
 ] as const satisfies readonly RouteDef[];
 
