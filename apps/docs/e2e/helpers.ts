@@ -42,7 +42,7 @@ export async function findHorizontalOverflow(page: Page) {
     const offenders: string[] = [];
     for (const el of Array.from(document.querySelectorAll<HTMLElement>('body *'))) {
       // Intentional inner scrollers: tables, code, overflowing tab lists, and the closed drawer.
-      if (el.closest('.sc-table-wrap, .sc-code pre, .rl-tabs__list, .sc-sidebar[data-hidden]')) continue;
+      if (el.closest('.sc-table-wrap, .rl-table-scroll, .sc-code pre, .rl-tabs__list, .sc-sidebar[data-hidden]')) continue;
       const rect = el.getBoundingClientRect();
       if (rect.width === 0 || rect.height === 0) continue;
       if (rect.right > vw + 1 || rect.left < -1) {

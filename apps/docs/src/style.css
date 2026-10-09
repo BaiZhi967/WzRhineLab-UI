@@ -364,6 +364,7 @@ body,
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
+  align-self: start;
   column-gap: var(--rl-space-2);
 }
 
@@ -971,8 +972,14 @@ body,
   display: grid;
   align-content: start;
   gap: var(--rl-space-4);
-  padding-right: var(--rl-space-6);
-  border-right: var(--rl-border-width) solid var(--rl-border-subtle);
+  padding: var(--rl-space-4);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-bg-canvas);
+  /* Controls stay in view while the preview and code scroll past (no dead quadrant). */
+  position: sticky;
+  top: calc(var(--sc-topbar-height) + var(--rl-space-4));
+  align-self: start;
 }
 
 .sc-playground__stage {
@@ -1674,11 +1681,9 @@ body,
   }
 
   .sc-playground__controls {
+    position: static;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
     align-items: start;
-    padding: 0 0 var(--rl-space-6);
-    border-right: 0;
-    border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
   }
 
   .sc-entries {

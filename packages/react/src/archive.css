@@ -597,6 +597,15 @@
   border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
   text-align: left;
   vertical-align: middle;
+  /* Columns keep their natural width; a narrow container scrolls rather than stacking CJK text
+     one character per line. Long free-text cells may still wrap once they exceed the max width. */
+  white-space: nowrap;
+}
+
+.rl-table td:not([data-mono]) {
+  white-space: normal;
+  min-width: calc(var(--rl-field-label-width) * 0.6);
+  max-width: calc(var(--rl-field-label-width) * 2.5);
 }
 
 .rl-table thead th {
