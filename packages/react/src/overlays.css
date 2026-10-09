@@ -36,6 +36,15 @@
   box-shadow: inset 0 calc(var(--rl-border-width) * -1) 0 var(--rl-border-default);
 }
 
+/* Scroll affordance: fade the trailing edge so a clipped tab reads as "more to scroll". */
+.rl-tabs__list[data-overflowing] {
+  mask-image: linear-gradient(to right, black calc(100% - var(--rl-space-12)), transparent);
+}
+
+.rl-tabs__list[data-overflowing][data-scrolled-end] {
+  mask-image: none;
+}
+
 .rl-tabs[data-variant='segmented'] .rl-tabs__list {
   display: inline-flex;
   justify-self: start;

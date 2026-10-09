@@ -151,7 +151,7 @@ export function SelectPage() {
       </PageHeader>
       <SpecimenGrid>
         <SelectPlayground />
-        <Specimen id="select-form" index="01" title="Groups in a form" span="half" note="分组标签为 mono 元信息；值随表单 FormData 提交。">
+        <Specimen id="select-form" align="start" index="01" title="Groups in a form" span="half" note="分组标签为 mono 元信息；值随表单 FormData 提交。">
           <FilterForm />
         </Specimen>
         <Specimen id="select-states" index="02" title="States" span="half" align="start" note="disabled 选项可被浏览但不可选择。">

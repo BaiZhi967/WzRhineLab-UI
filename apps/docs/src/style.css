@@ -1017,6 +1017,8 @@ body,
 }
 
 .sc-playground__demo {
+  width: 100%;
+  max-width: 720px;
   display: grid;
   justify-items: center;
   gap: var(--rl-space-3);
@@ -1046,6 +1048,9 @@ body,
   font: var(--rl-type-mono);
   font-size: 13px;
   line-height: 20px;
+  /* Wrap long JSX lines on narrow screens; continuation lines indent past the tag. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .sc-code code {

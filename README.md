@@ -41,14 +41,16 @@ pnpm test:e2e       # Playwright：响应式截图、键盘、axe、减动（需
 ```tsx
 import '@wzrhine/tokens/styles.css';
 import '@wzrhine/react/styles.css';
-import { Button } from '@wzrhine/react';
+import { Button, RhineProvider } from '@wzrhine/react';
 
-<div className="rl-theme" data-rl-theme="light">
+<RhineProvider theme="light">
   <Button variant="primary">保存记录</Button>
-</div>
+</RhineProvider>
 ```
 
-当前内置 Button、IconButton、Surface、StatusBadge、Text、Field、Input 七个组件（交互底座为 Base UI，见 ADR-0001），包为 `private` 源码直出，不应当作稳定版组件库发布。
+`RhineProvider` 提供 `.rl-theme` 作用域、弹层挂载点和减动策略；Dialog、Select、Tooltip 必须放在它内部才能拿到主题。
+
+当前内置 Button、IconButton、Surface、StatusBadge、Text、Field、Input、Tabs、Tooltip、Dialog、Select 十一个组件和 `RhineProvider`（交互底座为 Base UI，见 ADR-0001）。包为 `private` 源码直出，不应当作稳定版组件库发布。
 
 ## 视觉原件与参考资料
 - [高保真 PNG 概念图索引](docs/concepts/README.md)：八张 PNG 已入库，为唯一视觉参考；不再使用简化 SVG 草图。

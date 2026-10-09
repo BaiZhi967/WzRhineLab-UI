@@ -228,8 +228,11 @@ test.describe('Tabs', () => {
     const list = page.getByRole('tablist', { name: '实验阶段' });
     const { scrollWidth, clientWidth } = await list.evaluate((el) => ({ scrollWidth: el.scrollWidth, clientWidth: el.clientWidth }));
     expect(scrollWidth).toBeGreaterThan(clientWidth);
+    await expect(list).toHaveAttribute('data-overflowing', 'true');
+    await expect(list).not.toHaveAttribute('data-scrolled-end');
     await list.getByRole('tab').last().focus();
     await expect(list.getByRole('tab').last()).toBeInViewport();
+    await expect(list).toHaveAttribute('data-scrolled-end', 'true');
   });
 });
 

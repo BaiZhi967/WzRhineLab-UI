@@ -111,10 +111,10 @@ export function TabsPage() {
       </PageHeader>
       <SpecimenGrid>
         <TabsPlayground />
-        <Specimen id="tabs-line" index="01" title="Line" span="half" note="默认：页面级视图切换。研究橙指示线是本页唯一的信号色。">
+        <Specimen id="tabs-line" align="start" index="01" title="Line" span="half" note="默认：页面级视图切换。研究橙指示线是本页唯一的信号色。">
           <RecordTabs variant="line" size="md" />
         </Specimen>
-        <Specimen id="tabs-segmented" index="02" title="Segmented" span="half" note="面板内的紧凑切换，例如图表时间范围。">
+        <Specimen id="tabs-segmented" align="start" index="02" title="Segmented" span="half" note="面板内的紧凑切换，例如图表时间范围。">
           <Tabs defaultValue="30d" variant="segmented" size="sm">
             <TabList aria-label="时间范围">
               <Tab value="7d">7 天</Tab>

@@ -50,12 +50,51 @@ export type TabListProps = Omit<React.ComponentProps<typeof BaseTabs.List>, 'cla
   style?: React.CSSProperties;
 };
 
+/** Flags horizontal overflow so CSS can fade the trailing edge as a scroll affordance. */
+function useOverflowState(node: HTMLElement | null) {
+  const [state, setState] = React.useState({ overflowing: false, atEnd: false });
+  React.useEffect(() => {
+    if (!node) return;
+    const update = () => {
+      const overflowing = node.scrollWidth > node.clientWidth + 1;
+      const atEnd = node.scrollLeft + node.clientWidth >= node.scrollWidth - 1;
+      setState((prev) => (prev.overflowing === overflowing && prev.atEnd === atEnd ? prev : { overflowing, atEnd }));
+    };
+    update();
+    node.addEventListener('scroll', update, { passive: true });
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update);
+    observer?.observe(node);
+    return () => {
+      node.removeEventListener('scroll', update);
+      observer?.disconnect();
+    };
+  }, [node]);
+  return state;
+}
+
 export const TabList = React.forwardRef<HTMLDivElement, TabListProps>(function TabList(
   { className, style, children, ...rest },
   ref,
 ) {
+  const [node, setNode] = React.useState<HTMLDivElement | null>(null);
+  const { overflowing, atEnd } = useOverflowState(node);
+  const setRefs = React.useCallback(
+    (el: HTMLDivElement | null) => {
+      setNode(el);
+      if (typeof ref === 'function') ref(el);
+      else if (ref) ref.current = el;
+    },
+    [ref],
+  );
   return (
-    <BaseTabs.List {...rest} ref={ref} className={cx('rl-tabs__list', className)} style={style}>
+    <BaseTabs.List
+      {...rest}
+      ref={setRefs}
+      className={cx('rl-tabs__list', className)}
+      style={style}
+      data-overflowing={overflowing || undefined}
+      data-scrolled-end={(overflowing && atEnd) || undefined}
+    >
       {children}
       <BaseTabs.Indicator className="rl-tabs__indicator" />
     </BaseTabs.List>
