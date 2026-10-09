@@ -1,6 +1,6 @@
 # Visual Asset Manifest · 原件归档表
 
-截至 2026-10-09，以下资源已在本次交付 ZIP `WzRhineLab-UI_concepts_and_research_2026-10-09.zip` 中打包，并保留源文件无损 PNG。**GitHub 中的八张 SVG 是另外的结构草图，不能替代此清单中的原件。**
+截至 2026-10-09，以下资源已在本次交付 ZIP `WzRhineLab-UI_concepts_and_research_2026-10-09.zip` 中打包，并保留源文件无损 PNG。先前不符合视觉规范的八张简化 SVG 已删除；本清单中的 PNG 原件才是视觉基准。
 
 | Source PNG | 目标仓库路径 | 大小 |
 | --- | --- | --- |

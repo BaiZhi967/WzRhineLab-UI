@@ -27,17 +27,10 @@
 - [ ] 图像来源/使用目的/文件大小/许可说明记录
 - [ ] 压缩预览图没有替换原件、无外部商标素材
 
-## 仓库内可直接预览的 SVG 结构图
+## 视觉基准与导入
 
-本仓库额外提供八张原创、可版本化的 SVG 结构示意图（对应八种研究主题，**不是先前 PNG 原件的复刻或替代**）：
+此前新增的八张简化 SVG 结构草图因与既定风格不符，已从仓库删除，不再作为设计参考。请以本页列出的八张高分辨率 PNG 原图为视觉基准（WebP 仅用于展示加速）。
 
-1. [01-overview-schematic.svg](./diagrams/01-overview-schematic.svg)
-2. [02-components-schematic.svg](./diagrams/02-components-schematic.svg)
-3. [03-archive-schematic.svg](./diagrams/03-archive-schematic.svg)
-4. [04-responsive-schematic.svg](./diagrams/04-responsive-schematic.svg)
-5. [05-tokens-schematic.svg](./diagrams/05-tokens-schematic.svg)
-6. [06-workbench-schematic.svg](./diagrams/06-workbench-schematic.svg)
-7. [07-motion-schematic.svg](./diagrams/07-motion-schematic.svg)
-8. [08-ecosystem-schematic.svg](./diagrams/08-ecosystem-schematic.svg)
+上传说明：先下载并保存 `WzRhineLab-UI_concepts_and_research_2026-10-09.zip`，在 Windows 本地克隆仓库后运行 `scripts/import-visual-assets.ps1 -AssetZip <ZIP完整路径> -Commit -Push`。脚本会验 SHA-256，复制 8 PNG + 8 WebP + 1 PDF 到相应路径，并产生一次中文提交。**不要直接把 ZIP 上传到 GitHub 网页：GitHub 不会自动解压。**
 
-SVG 表达层级、网格和组件组合，适合代码评审与后续迭代；视觉质感仍以原有 PNG 画板为参考。
+参考 [ASSET-MANIFEST](../research/ASSET-MANIFEST.md) 及仓库根 README。

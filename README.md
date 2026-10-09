@@ -38,7 +38,7 @@ pnpm build
 Showcase 默认由 Vite 启动，本地浏览器访问终端输出的地址。本仓库当前只内置 Button、Surface、StatusBadge 三个原型组件，不应当作稳定版组件库发布。**上述命令尚未在有依赖环境下完成验收**，请按 [质量门禁](docs/development/QUALITY-GATES.md) 执行。
 
 ## 视觉原件与参考资料
-- [8 张原创 SVG 布局概念图](docs/concepts/README.md) 可以直接在 GitHub 查看。
+- [原始高保真 PNG 概念图索引](docs/concepts/README.md)：以此前生成的视觉概念图为唯一视觉参考，不再使用简化 SVG 草图。
 - [原始图片和研究 PDF 的完整清单](docs/research/ASSET-MANIFEST.md) 记录了应归档的 8 PNG / 8 WebP / 22 页 PDF。
 - 原件 ZIP 当前在本次 ChatGPT 对话作为可下载文件提供；由于 GitHub 二进制写入路径限制，**原始 PNG/PDF 尚未进入 GitHub**。Windows 用户可使用 [导入脚本](scripts/import-visual-assets.ps1) 校验 SHA-256 并向仓库提交。
 - [研究摘要](docs/research/RESEARCH-SUMMARY.md) 与 [参考链接](docs/research/REFERENCES.md) 已经入库。

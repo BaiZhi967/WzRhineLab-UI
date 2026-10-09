@@ -26,4 +26,4 @@
 - [Windows 资源导入脚本](../scripts/import-visual-assets.ps1)
 - [原型源码](../apps/docs/src/App.tsx)
 
-**注意**：SVG 结构图已上传，八张 PNG 和 PDF 原件尚在独立 ZIP 中等待二进制导入。验收 GitHub 二进制文件时，以实际 Git tree 为准。
+**注意**：先前不符合视觉规范的 SVG 草图已删除。八张高保真 PNG、八张 WebP 预览图及 PDF 原件需通过资源导入脚本上传，验收以 GitHub 实际文件为准。
