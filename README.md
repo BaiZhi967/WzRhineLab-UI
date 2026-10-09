@@ -48,9 +48,9 @@ import { Button, RhineProvider } from '@wzrhine/react';
 </RhineProvider>
 ```
 
-`RhineProvider` 提供 `.rl-theme` 作用域、弹层挂载点和减动策略；Dialog、Select、Tooltip 必须放在它内部才能拿到主题。
+`RhineProvider` 提供 `.rl-theme` 作用域、弹层挂载点、减动策略和通知队列（`useToast()`）；所有弹层组件都必须放在它内部才能拿到主题。
 
-当前内置 Button、IconButton、Surface、StatusBadge、Text、Field、Input、Tabs、Tooltip、Dialog、Select 十一个组件和 `RhineProvider`（交互底座为 Base UI，见 ADR-0001）。包为 `private` 源码直出，不应当作稳定版组件库发布。
+当前内置 Button、IconButton、Surface、StatusBadge、Text、Field、Input、Tabs、Tooltip、Dialog、Select、Popover、Menu、Toast 十四个组件和 `RhineProvider`（交互底座为 Base UI，见 ADR-0001）。包为 `private` 源码直出，不应当作稳定版组件库发布。
 
 ## 视觉原件与参考资料
 - [高保真 PNG 概念图索引](docs/concepts/README.md)：八张 PNG 已入库，为唯一视觉参考；不再使用简化 SVG 草图。
