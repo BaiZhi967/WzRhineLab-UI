@@ -1,0 +1,242 @@
+/*
+ * WzRhineLab UI · archive patterns (M3): RecordHeader, MetadataList.
+ * Imported by components.css; tokens only.
+ */
+
+.rl-visually-hidden {
+  position: absolute;
+  width: var(--rl-border-width);
+  height: var(--rl-border-width);
+  margin: calc(var(--rl-border-width) * -1);
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- MetadataList ---------- */
+.rl-meta {
+  --rl-meta-label-width: var(--rl-field-label-width);
+  --rl-meta-row-gap: var(--rl-space-2);
+  --rl-meta-columns: 1;
+  --rl-meta-gap: var(--rl-space-8);
+  /* A column never gets narrower than label + value; below that the list reflows to fewer columns. */
+  --rl-meta-min-column: calc(var(--rl-field-label-width) * 2);
+
+  display: grid;
+  /* At most N columns, each at least --rl-meta-min-column wide: no breakpoint needed. */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(
+      max(min(100%, var(--rl-meta-min-column)), calc((100% - (var(--rl-meta-columns) - 1) * var(--rl-meta-gap)) / var(--rl-meta-columns))),
+      1fr
+    )
+  );
+  column-gap: var(--rl-meta-gap);
+  margin: 0;
+  min-width: 0;
+}
+
+.rl-meta[data-columns='2'] { --rl-meta-columns: 2; }
+.rl-meta[data-columns='3'] { --rl-meta-columns: 3; }
+
+.rl-meta__item {
+  display: grid;
+  gap: var(--rl-space-1);
+  padding: var(--rl-meta-row-gap) 0;
+  border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
+  min-width: 0;
+}
+
+.rl-meta[data-layout='inline'] .rl-meta__item {
+  grid-template-columns: minmax(0, var(--rl-meta-label-width)) minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: var(--rl-space-4);
+}
+
+.rl-meta__item[data-wide] {
+  grid-column: 1 / -1;
+}
+
+.rl-meta__label {
+  margin: 0;
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-mono);
+  color: var(--rl-fg-subtle);
+  overflow-wrap: anywhere;
+}
+
+.rl-meta__value {
+  display: grid;
+  gap: var(--rl-space-1);
+  margin: 0;
+  min-width: 0;
+  font: var(--rl-type-body-sm);
+  color: var(--rl-fg-primary);
+  overflow-wrap: anywhere;
+}
+
+.rl-meta__value[data-mono] {
+  font-family: var(--rl-font-mono);
+  letter-spacing: var(--rl-tracking-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.rl-meta__value[data-empty] {
+  color: var(--rl-fg-subtle);
+}
+
+.rl-meta__hint {
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+}
+
+.rl-meta[data-size='sm'] {
+  --rl-meta-row-gap: var(--rl-space-1);
+  --rl-meta-label-width: calc(var(--rl-field-label-width) * 0.75);
+}
+
+.rl-meta[data-size='sm'] .rl-meta__value {
+  font: var(--rl-type-meta);
+}
+
+.rl-meta[data-size='sm'] .rl-meta__value[data-mono] {
+  font: var(--rl-type-mono);
+}
+
+/* ---------- RecordHeader ---------- */
+.rl-record {
+  display: grid;
+  gap: var(--rl-space-4);
+  min-width: 0;
+  padding-bottom: var(--rl-space-6);
+  border-bottom: var(--rl-border-width) solid var(--rl-border-strong);
+}
+
+.rl-record__trail ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rl-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-caps);
+  text-transform: uppercase;
+  color: var(--rl-fg-subtle);
+}
+
+.rl-record__trail li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rl-space-2);
+}
+
+.rl-record__trail li + li::before {
+  content: '//';
+  color: var(--rl-border-strong);
+}
+
+.rl-record__trail a {
+  color: var(--rl-fg-muted);
+  text-decoration: none;
+  border-radius: var(--rl-radius-xs);
+}
+
+@media (hover: hover) {
+  .rl-record__trail a:hover {
+    color: var(--rl-fg-primary);
+    text-decoration: underline;
+    text-underline-offset: var(--rl-space-1);
+  }
+}
+
+.rl-record__trail a:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.rl-record__trail [aria-current='page'] {
+  color: var(--rl-fg-primary);
+}
+
+/* Meta sits beside the title when both fit, and wraps below it otherwise (flex-wrap, no breakpoint). */
+.rl-record__main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--rl-space-4) var(--rl-space-8);
+}
+
+.rl-record__identity {
+  flex: 999 1 calc(var(--rl-field-label-width) * 2.5);
+  display: grid;
+  gap: var(--rl-space-2);
+  min-width: 0;
+  /* Accent rule marks the record as the page subject; one per view. */
+  padding-left: var(--rl-space-4);
+  border-left: var(--rl-border-width-strong) solid var(--rl-accent);
+}
+
+.rl-record__id-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rl-space-3);
+  margin: 0;
+}
+
+.rl-record__id {
+  font: var(--rl-type-heading-1);
+  font-family: var(--rl-font-mono);
+  letter-spacing: var(--rl-tracking-mono);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.rl-record__title {
+  margin: 0;
+  font: var(--rl-type-heading-3);
+  overflow-wrap: anywhere;
+}
+
+.rl-record__classification {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rl-space-2);
+  margin: 0;
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-caps);
+  text-transform: uppercase;
+  color: var(--rl-fg-muted);
+}
+
+.rl-record__term + .rl-record__term::before {
+  content: '//';
+  margin-right: var(--rl-space-2);
+  color: var(--rl-border-strong);
+}
+
+.rl-record__summary {
+  max-width: 64ch;
+  margin: 0;
+  font: var(--rl-type-body-sm);
+  color: var(--rl-fg-muted);
+}
+
+.rl-record__meta {
+  flex: 1 1 calc(var(--rl-field-label-width) * 2);
+  max-width: 100%;
+}
+
+.rl-record__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rl-space-2);
+}
+
+@media (forced-colors: active) {
+  .rl-record__identity { border-left-color: CanvasText; }
+  .rl-meta__item { border-bottom-color: CanvasText; }
+}

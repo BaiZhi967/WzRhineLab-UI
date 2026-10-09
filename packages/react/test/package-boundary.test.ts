@@ -6,7 +6,7 @@ import { motionDurations } from '@wzrhine/tokens';
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 
-const cssFiles = ['../src/components.css', '../src/overlays.css', '../src/feedback.css'];
+const cssFiles = ['../src/components.css', '../src/overlays.css', '../src/feedback.css', '../src/archive.css'];
 const stripped = (path: string) =>
   read(path)
     .replace(/\/\*[\s\S]*?\*\//g, '')
@@ -28,6 +28,8 @@ const componentFiles = [
   'Popover',
   'Menu',
   'Toast',
+  'RecordHeader',
+  'MetadataList',
 ];
 
 function splitTopLevel(selector: string): string[] {
@@ -55,6 +57,7 @@ describe('package boundary', () => {
     const entry = read('../src/components.css');
     expect(entry).toMatch(/@import '\.\/overlays\.css';/);
     expect(entry).toMatch(/@import '\.\/feedback\.css';/);
+    expect(entry).toMatch(/@import '\.\/archive\.css';/);
   });
 
   it('Base UI is only imported through subpaths', () => {
