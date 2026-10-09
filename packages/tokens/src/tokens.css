@@ -108,6 +108,7 @@
   --rl-bg-pressed: #e2e1d9;
   --rl-bg-inverse: #20251f;
   --rl-bg-disabled: #e6e5df;
+  --rl-bg-readonly: #efeee8;
 
   --rl-fg-primary: #20251f;
   --rl-fg-muted: #505850;
@@ -154,6 +155,7 @@
   --rl-bg-pressed: #334146;
   --rl-bg-inverse: #e6e9e2;
   --rl-bg-disabled: #253034;
+  --rl-bg-readonly: #182125;
 
   --rl-fg-primary: #e6e9e2;
   --rl-fg-muted: #aeb8b6;
@@ -201,6 +203,8 @@
     --rl-bg-pressed: #334146;
     --rl-bg-inverse: #e6e9e2;
     --rl-bg-disabled: #253034;
+    --rl-bg-readonly: #182125;
+  --rl-bg-readonly: #182125;
 
     --rl-fg-primary: #e6e9e2;
     --rl-fg-muted: #aeb8b6;
