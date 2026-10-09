@@ -1,0 +1,45 @@
+/*
+ * WzRhineLab UI · host isolation
+ * Host pages often style bare elements (button, table, th, td, h1–h3, input). Wherever a component
+ * does not set a property itself, such rules would leak in. This file resets those properties on
+ * library classes only — never on bare elements — so the host keeps its own styling.
+ * Class selectors outrank element selectors; this file is imported first, so component rules that
+ * follow still win ties. Verified against a hostile host stylesheet in examples/host-embed.
+ */
+
+:is(.rl-button, .rl-icon-button, .rl-select, .rl-tabs__tab, .rl-toast__action, .rl-toast__close, .rl-table__sort, .rl-archive-card, .rl-input__control, .rl-text) {
+  text-transform: none;
+  letter-spacing: normal;
+  text-shadow: none;
+}
+
+:is(.rl-record__title, .rl-dialog__title, .rl-popover__title, .rl-toast__title) {
+  margin: 0;
+  color: inherit;
+  font-family: var(--rl-font-body);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+:is(.rl-dialog__description, .rl-popover__description, .rl-toast__description, .rl-dialog__eyebrow) {
+  margin: 0;
+}
+
+.rl-table {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* :where keeps this at class specificity so .rl-table__caption / .rl-table th still win. */
+.rl-table :where(caption, th, td) {
+  box-sizing: border-box;
+  padding: 0;
+  border: 0;
+}
+
+.rl-table__checkbox {
+  padding: 0;
+  font-size: inherit;
+}

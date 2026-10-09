@@ -243,6 +243,7 @@ const js = assets.filter((f) => f.endsWith('.js')).map((f) => readFileSync(join(
 const cssChecks = {
   'tokens.css': '--rl-bg-canvas',
   'components.css': '.rl-button__spinner',
+  'reset.css': '.rl-table__checkbox{padding:0',
   'overlays.css': '.rl-dialog__backdrop',
   'feedback.css': '.rl-toast-viewport',
   'archive.css': '.rl-table__sort',
