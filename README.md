@@ -21,3 +21,27 @@ React 19 · TypeScript · Motion (`motion/react`) · CSS Variables / Semantic To
 ## 授权与素材
 
 源代码许可证尚待维护者决定；**未附许可证不表示获得复用授权**。设计概念图属于原创探索，AI 生成的文字、数值和排版不是经过校验的产品规范。第三方品牌及参考素材保持各自权利归属。
+
+
+## 本地运行
+需要 Node.js 20+，并启用 Corepack / pnpm 10：
+
+```sh
+corepack enable
+pnpm install
+pnpm dev
+# 新终端里执行
+pnpm typecheck
+pnpm build
+```
+
+Showcase 默认由 Vite 启动，本地浏览器访问终端输出的地址。本仓库当前只内置 Button、Surface、StatusBadge 三个原型组件，不应当作稳定版组件库发布。**上述命令尚未在有依赖环境下完成验收**，请按 [质量门禁](docs/development/QUALITY-GATES.md) 执行。
+
+## 视觉原件与参考资料
+- [8 张原创 SVG 布局概念图](docs/concepts/README.md) 可以直接在 GitHub 查看。
+- [原始图片和研究 PDF 的完整清单](docs/research/ASSET-MANIFEST.md) 记录了应归档的 8 PNG / 8 WebP / 22 页 PDF。
+- 原件 ZIP 当前在本次 ChatGPT 对话作为可下载文件提供；由于 GitHub 二进制写入路径限制，**原始 PNG/PDF 尚未进入 GitHub**。Windows 用户可使用 [导入脚本](scripts/import-visual-assets.ps1) 校验 SHA-256 并向仓库提交。
+- [研究摘要](docs/research/RESEARCH-SUMMARY.md) 与 [参考链接](docs/research/REFERENCES.md) 已经入库。
+
+## 设计与工程状态
+M0 基础设施是起始骨架，并非完成验收。根目录尚未选择源代码许可证，未配置自动 GitHub Actions（避免配额消耗），首次 npm 依赖与浏览器验收仍待执行。
