@@ -1,0 +1,25 @@
+/* Widget layout. Scoped to rl-embed classes; values are tokens. */
+.rl-embed-root {
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-sm);
+}
+
+.rl-embed {
+  display: grid;
+  gap: var(--rl-space-3);
+  padding: var(--rl-surface-padding);
+}
+
+.rl-embed__title {
+  margin: 0;
+  font: var(--rl-type-heading-3);
+  color: var(--rl-fg-primary);
+  text-transform: none;
+}
+
+.rl-embed__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--rl-space-2);
+}
