@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { cx } from '../utils/cx';
-import { StatusBadge } from './StatusBadge';
-import type { StatusKind } from './StatusBadge';
+import { cx } from '../utils/cx.js';
+import { StatusBadge } from './StatusBadge.js';
+import type { StatusKind } from './StatusBadge.js';
 
 /**
  * Compact archive record for lists and grids (COMPONENTS.md "标准档案卡").

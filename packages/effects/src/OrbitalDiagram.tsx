@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { motion } from 'motion/react';
-import { useEffectTiming } from './clock';
-import { useInViewport, usePageVisible } from './usePageVisible';
+import { useEffectTiming } from './clock.js';
+import { useInViewport, usePageVisible } from './usePageVisible.js';
 
 /**
  * Instrument-style orbital diagram (DESIGN.md "Instrument Accent"): concentric rings with labelled

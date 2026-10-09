@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useEffectTiming } from './clock';
-import { scrambleCells, stepToward } from './scramble';
-import { usePageVisible } from './usePageVisible';
+import { useEffectTiming } from './clock.js';
+import { scrambleCells, stepToward } from './scramble.js';
+import { usePageVisible } from './usePageVisible.js';
 
 /**
  * Decrypt-style reveal for short labels (IDs, titles). Showcase effect only (MOTION.md):

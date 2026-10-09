@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MotionConfig } from 'motion/react';
-import { EffectClock } from './clock';
+import { EffectClock } from './clock.js';
 
 /**
  * Side-by-side motion comparison (MOTION.md "Showcase 每类动画提供 Default / Slow x0.25 /

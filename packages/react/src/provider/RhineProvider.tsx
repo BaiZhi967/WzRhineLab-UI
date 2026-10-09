@@ -2,11 +2,11 @@ import * as React from 'react';
 import { MotionConfig } from 'motion/react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
-import { ToastViewport } from '../components/Toast';
-import { cx } from '../utils/cx';
-import { PortalContext } from './portal';
+import { ToastViewport } from '../components/Toast.js';
+import { cx } from '../utils/cx.js';
+import { PortalContext } from './portal.js';
 
-export { usePortalContainer } from './portal';
+export { usePortalContainer } from './portal.js';
 
 export type RhineTheme = 'light' | 'dark' | 'system';
 export type RhineDensity = 'comfortable' | 'compact';

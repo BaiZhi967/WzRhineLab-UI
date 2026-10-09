@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cx } from '../utils/cx';
+import { cx } from '../utils/cx.js';
 
 export type SurfaceTone = 'default' | 'subtle' | 'raised';
 export type SurfacePadding = 'none' | 'sm' | 'md' | 'lg';

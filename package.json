@@ -15,6 +15,13 @@
     "test": "pnpm -r --filter ./packages/* test",
     "test:e2e": "pnpm --filter @wzrhine/showcase test:e2e",
     "check": "pnpm typecheck && pnpm test && pnpm build",
-    "test:e2e:all": "pnpm --filter @wzrhine/showcase test:e2e:all"
+    "test:e2e:all": "pnpm --filter @wzrhine/showcase test:e2e:all",
+    "build:packages": "pnpm --filter ./packages/* build",
+    "verify:packages": "node scripts/verify-packages.mjs",
+    "api:report": "pnpm build:packages && node scripts/api-report.mjs",
+    "api:check": "pnpm build:packages && node scripts/api-report.mjs --check",
+    "release:check": "pnpm check && pnpm api:check && pnpm license:audit && pnpm verify:packages",
+    "release:dry": "node scripts/release.mjs 0.1.0",
+    "license:audit": "node scripts/license-audit.mjs"
   }
 }

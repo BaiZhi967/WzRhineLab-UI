@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { cx } from '../utils/cx';
-import type { StatusKind } from './StatusBadge';
+import { cx } from '../utils/cx.js';
+import type { StatusKind } from './StatusBadge.js';
 
 /**
  * Inline live/system status: a shaped marker plus visible text, e.g. "同步中 · 2 分钟前".

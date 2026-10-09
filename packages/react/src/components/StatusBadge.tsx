@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cx } from '../utils/cx';
+import { cx } from '../utils/cx.js';
 
 export type StatusKind = 'neutral' | 'info' | 'success' | 'warning' | 'danger';
 export type StatusBadgeSize = 'sm' | 'md';

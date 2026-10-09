@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { AnimatePresence, motion } from 'motion/react';
-import { usePortalContainer } from '../provider/portal';
-import { useRhineMotion } from '../motion/useRhineMotion';
-import { cx } from '../utils/cx';
+import { usePortalContainer } from '../provider/portal.js';
+import { useRhineMotion } from '../motion/useRhineMotion.js';
+import { cx } from '../utils/cx.js';
 
 /**
  * Modal dialog on Base UI Dialog (ADR-0001): focus trap, Escape, scroll lock, inert background

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input as BaseInput } from '@base-ui/react/input';
-import { cx } from '../utils/cx';
+import { cx } from '../utils/cx.js';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 

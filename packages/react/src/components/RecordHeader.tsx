@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { cx } from '../utils/cx';
-import { MetadataList, isEmptyValue } from './MetadataList';
-import type { MetadataItem } from './MetadataList';
-import { StatusBadge } from './StatusBadge';
-import type { StatusKind } from './StatusBadge';
+import { cx } from '../utils/cx.js';
+import { MetadataList, isEmptyValue } from './MetadataList.js';
+import type { MetadataItem } from './MetadataList.js';
+import { StatusBadge } from './StatusBadge.js';
+import type { StatusKind } from './StatusBadge.js';
 
 /**
  * Archive record header: location trail, record ID, status, title, classification,

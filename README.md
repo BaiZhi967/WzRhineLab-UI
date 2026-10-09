@@ -33,6 +33,7 @@ pnpm dev            # Showcase：http://127.0.0.1:5173
 pnpm check          # typecheck + 单元测试 + 构建
 pnpm test:e2e       # Playwright（Chromium）：响应式截图、键盘、axe、减动
 pnpm test:e2e:all   # 同一套件依次在 Chromium、Firefox、WebKit 上运行
+pnpm release:check  # 发布门禁：check + API 漂移 + 许可证审计 + 临时项目安装验证
 ```
 
 首次运行 E2E 前如未安装浏览器：`pnpm --filter @wzrhine/showcase exec playwright install chromium firefox webkit`。
