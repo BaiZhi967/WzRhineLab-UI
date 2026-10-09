@@ -5,7 +5,9 @@
  * No literal colours, spacing or radii here: everything resolves to --rl-* tokens.
  */
 
-:where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-text, .rl-field, .rl-input),
+@import './overlays.css';
+
+:where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-text, .rl-field, .rl-input, .rl-tabs, .rl-tooltip, .rl-dialog, .rl-select, .rl-select__popup),
 :where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-field, .rl-input) *,
 :where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-field, .rl-input) *::before,
 :where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-field, .rl-input) *::after {
