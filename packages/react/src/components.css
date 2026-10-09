@@ -9,7 +9,7 @@
 @import './feedback.css';
 @import './archive.css';
 
-:where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-text, .rl-field, .rl-input, .rl-tabs, .rl-tooltip, .rl-dialog, .rl-select, .rl-select__popup, .rl-popover, .rl-menu, .rl-toast, .rl-record, .rl-meta),
+:where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-text, .rl-field, .rl-input, .rl-tabs, .rl-tooltip, .rl-dialog, .rl-select, .rl-select__popup, .rl-popover, .rl-menu, .rl-toast, .rl-record, .rl-meta, .rl-status, .rl-archive-card, .rl-timeline),
 :where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-field, .rl-input) *,
 :where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-field, .rl-input) *::before,
 :where(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-field, .rl-input) *::after {

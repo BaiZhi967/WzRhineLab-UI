@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { Button, MetadataList, RecordHeader } from '../src';
+import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
+import { ArchiveCard, Button, MetadataList, RecordHeader, StatusIndicator, Timeline } from '../src';
 import type { MetadataItem } from '../src';
 
 const items: MetadataItem[] = [
@@ -134,5 +136,127 @@ describe('RecordHeader', () => {
     expect(ref.current?.tagName).toBe('HEADER');
     expect(ref.current).toHaveAttribute('aria-describedby', 'x');
     expect(screen.getByRole('button', { name: '编辑' })).toBeInTheDocument();
+  });
+});
+
+describe('ArchiveCard', () => {
+  const base = { id: 'ARC-1024', title: '分子结构观测' } as const;
+
+  it('static card is an article named by its title with only the given fields', () => {
+    const { container } = render(<ArchiveCard {...base} />);
+    const card = screen.getByRole('article', { name: '分子结构观测' });
+    expect(card).toHaveTextContent('ARC-1024');
+    expect(container.querySelector('time')).toBeNull();
+    expect(container.querySelector('.rl-badge')).toBeNull();
+    expect(container.querySelector('.rl-archive-card__class')).toBeNull();
+    expect(container.querySelector('img')).toBeNull();
+  });
+
+  it('href renders one link named by the title, described by date and status', () => {
+    render(
+      <ArchiveCard
+        {...base}
+        category="实验记录"
+        subcategory="材料学"
+        status={{ tone: 'warning', label: '需复核' }}
+        updatedAt="2026-10-09"
+        href="#/archive/ARC-1024"
+      />,
+    );
+    const link = screen.getByRole('link', { name: '分子结构观测' });
+    expect(link).toHaveAttribute('href', '#/archive/ARC-1024');
+    expect(link).toHaveAccessibleDescription(/2026-10-09/);
+    expect(link).toHaveAccessibleDescription(/需复核/);
+    expect(screen.getByText('2026-10-09')).toHaveAttribute('datetime', '2026-10-09');
+    expect(screen.getAllByRole('link')).toHaveLength(1);
+  });
+
+  it('onOpen renders a button; selected exposes aria-pressed', async () => {
+    const user = userEvent.setup();
+    const onOpen = vi.fn();
+    render(<ArchiveCard {...base} onOpen={onOpen} selected />);
+    const button = screen.getByRole('button', { name: '分子结构观测' });
+    expect(button).toHaveAttribute('aria-pressed', 'true');
+    expect(button).toHaveAttribute('data-selected', 'true');
+    await user.click(button);
+    button.focus();
+    await user.keyboard('{Enter}');
+    expect(onOpen).toHaveBeenCalledTimes(2);
+  });
+
+  it('a selected link uses aria-current instead', () => {
+    render(<ArchiveCard {...base} href="#x" selected />);
+    expect(screen.getByRole('link')).toHaveAttribute('aria-current', 'true');
+  });
+
+  it('media requires explicit alt text and lazy-loads', () => {
+    render(<ArchiveCard {...base} media={{ src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=', alt: '样本显微照片' }} layout="tile" />);
+    const img = screen.getByRole('img', { name: '样本显微照片' });
+    expect(img).toHaveAttribute('loading', 'lazy');
+    expect(img.closest('.rl-archive-card')).toHaveAttribute('data-layout', 'tile');
+  });
+});
+
+describe('StatusIndicator', () => {
+  it('shows a decorative marker plus visible text and detail', () => {
+    const { container } = render(<StatusIndicator tone="success" label="已同步" detail="2 分钟前" />);
+    expect(screen.getByText('已同步')).toBeVisible();
+    expect(screen.getByText('2 分钟前')).toBeVisible();
+    expect(container.querySelector('.rl-status__marker')).toHaveAttribute('aria-hidden', 'true');
+    expect(container.querySelector('.rl-status')).toHaveAttribute('data-tone', 'success');
+  });
+
+  it('live mode is a polite status region; default is not', () => {
+    const { rerender } = render(<StatusIndicator label="离线" />);
+    expect(screen.queryByRole('status')).toBeNull();
+    rerender(<StatusIndicator label="同步中" live tone="info" />);
+    expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite');
+    expect(screen.getByRole('status')).toHaveTextContent('同步中');
+  });
+
+  it('pulse is opt-in', () => {
+    const { container, rerender } = render(<StatusIndicator label="在线" />);
+    expect(container.querySelector('.rl-status')).not.toHaveAttribute('data-pulse');
+    rerender(<StatusIndicator label="在线" pulse />);
+    expect(container.querySelector('.rl-status')).toHaveAttribute('data-pulse', 'true');
+  });
+});
+
+describe('Timeline', () => {
+  const events = [
+    { id: 'e1', title: '样本入库', dateTime: '2026-10-01T09:00', time: '10-01 09:00', actor: '示例研究员', tone: 'success' as const },
+    { id: 'e2', title: '结构观测', dateTime: '2026-10-05T14:30', description: '完成第一轮观测。' },
+    { id: 'e3', title: '复核请求', dateTime: '2026-10-09', tone: 'warning' as const },
+  ];
+
+  it('is an ordered list in the given order with machine-readable times', () => {
+    render(<Timeline events={events} aria-label="实验时间线" />);
+    const list = screen.getByRole('list', { name: '实验时间线' });
+    expect(list.tagName).toBe('OL');
+    const items = within(list).getAllByRole('listitem');
+    expect(items.map((i) => i.querySelector('.rl-timeline__title')!.textContent)).toEqual(['样本入库', '结构观测', '复核请求']);
+    expect(within(items[0]!).getByText('10-01 09:00')).toHaveAttribute('datetime', '2026-10-01T09:00');
+    expect(within(items[2]!).getByText('2026-10-09').tagName).toBe('TIME');
+  });
+
+  it('renders optional description, actor and tone only when given', () => {
+    render(<Timeline events={events} />);
+    expect(screen.getByText('完成第一轮观测。')).toBeInTheDocument();
+    expect(screen.getByText('示例研究员')).toBeInTheDocument();
+    const items = screen.getAllByRole('listitem');
+    expect(items[1]).toHaveAttribute('data-tone', 'neutral');
+    expect(items[2]).toHaveAttribute('data-tone', 'warning');
+    expect(items[1]!.querySelector('.rl-timeline__actor')).toBeNull();
+  });
+
+  it('shows an explicit empty state instead of invented events', () => {
+    render(<Timeline events={[]} emptyText="尚无实验记录" />);
+    expect(screen.queryByRole('list')).toBeNull();
+    expect(screen.getByText('尚无实验记录')).toBeInTheDocument();
+  });
+
+  it('passes reversed to the ordered list for newest-first logs', () => {
+    render(<Timeline events={events} reversed />);
+    expect(screen.getByRole('list')).toHaveAttribute('reversed');
   });
 });

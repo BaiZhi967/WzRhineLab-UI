@@ -1,5 +1,5 @@
 /*
- * WzRhineLab UI · archive patterns (M3): RecordHeader, MetadataList.
+ * WzRhineLab UI · archive patterns (M3): RecordHeader, MetadataList, StatusIndicator, ArchiveCard, Timeline.
  * Imported by components.css; tokens only.
  */
 
@@ -236,7 +236,310 @@
   gap: var(--rl-space-2);
 }
 
+/* ---------- StatusIndicator ---------- */
+.rl-status {
+  --rl-status-color: var(--rl-fg-muted);
+
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--rl-space-2);
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-primary);
+}
+
+.rl-status[data-tone='info'] { --rl-status-color: var(--rl-info); }
+.rl-status[data-tone='success'] { --rl-status-color: var(--rl-success); }
+.rl-status[data-tone='warning'] { --rl-status-color: var(--rl-warning); }
+.rl-status[data-tone='danger'] { --rl-status-color: var(--rl-danger); }
+
+/* Marker shape varies by tone (same grammar as StatusBadge), so colour is not the only cue. */
+.rl-status__marker {
+  position: relative;
+  flex: none;
+  align-self: center;
+  width: var(--rl-indicator-size);
+  height: var(--rl-indicator-size);
+  border-radius: var(--rl-radius-round);
+  background: var(--rl-status-color);
+}
+
+.rl-status[data-tone='neutral'] .rl-status__marker {
+  background: transparent;
+  box-shadow: inset 0 0 0 var(--rl-border-width-strong) var(--rl-status-color);
+}
+
+.rl-status[data-tone='warning'] .rl-status__marker {
+  border-radius: 0;
+  transform: rotate(45deg) scale(0.85);
+}
+
+.rl-status[data-tone='danger'] .rl-status__marker {
+  border-radius: 0;
+}
+
+.rl-status[data-pulse] .rl-status__marker::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--rl-status-color);
+  animation: rl-status-pulse calc(var(--rl-motion-loop) * 2) var(--rl-ease-out) infinite;
+}
+
+@keyframes rl-status-pulse {
+  from { opacity: 0.6; scale: 1; }
+  to { opacity: 0; scale: 2.6; }
+}
+
+.rl-theme[data-rl-motion='reduce'] .rl-status[data-pulse] .rl-status__marker::after {
+  animation: none;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rl-status[data-pulse] .rl-status__marker::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+.rl-status__label {
+  font-weight: 600;
+}
+
+.rl-status__detail {
+  font: var(--rl-type-mono);
+  color: var(--rl-fg-muted);
+}
+
+/* ---------- ArchiveCard ---------- */
+.rl-archive-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--rl-space-3) var(--rl-space-4);
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: var(--rl-space-3) var(--rl-space-4);
+  appearance: none;
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-surface);
+  color: var(--rl-fg-primary);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  transition:
+    border-color var(--rl-motion-fast) var(--rl-ease-out),
+    background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-archive-card:has(.rl-archive-card__media) {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.rl-archive-card[data-interactive] {
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .rl-archive-card[data-interactive]:hover {
+    border-color: var(--rl-border-strong);
+  }
+}
+
+.rl-archive-card[data-interactive]:active {
+  background: var(--rl-bg-hover);
+}
+
+.rl-archive-card:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+/* Selected: inset accent rule on the leading edge plus raised fill — distinct from hover and focus. */
+.rl-archive-card[data-selected] {
+  border-color: var(--rl-border-strong);
+  background: var(--rl-bg-raised);
+  box-shadow: inset var(--rl-border-width-strong) 0 0 var(--rl-accent);
+}
+
+.rl-archive-card__media {
+  display: block;
+  width: var(--rl-space-16);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-bg-subtle);
+}
+
+.rl-archive-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rl-archive-card__body {
+  display: grid;
+  gap: var(--rl-space-1);
+  min-width: 0;
+}
+
+.rl-archive-card__id {
+  font: var(--rl-type-mono);
+  font-weight: 600;
+  letter-spacing: var(--rl-tracking-mono);
+}
+
+.rl-archive-card__title {
+  font: var(--rl-type-body-sm);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.rl-archive-card__class {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rl-space-2);
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+}
+
+.rl-archive-card__class > * + *::before {
+  content: '//';
+  margin-right: var(--rl-space-2);
+  color: var(--rl-border-strong);
+}
+
+.rl-archive-card__aside {
+  display: grid;
+  justify-items: end;
+  gap: var(--rl-space-2);
+}
+
+.rl-archive-card__date {
+  font: var(--rl-type-mono);
+  color: var(--rl-fg-subtle);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.rl-archive-card[data-layout='tile'],
+.rl-archive-card[data-layout='tile']:has(.rl-archive-card__media) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.rl-archive-card[data-layout='tile'] .rl-archive-card__media {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+}
+
+.rl-archive-card[data-layout='tile'] .rl-archive-card__aside {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ---------- Timeline ---------- */
+.rl-timeline {
+  --rl-timeline-time-width: calc(var(--rl-field-label-width) * 0.75);
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rl-timeline__event {
+  --rl-timeline-color: var(--rl-fg-muted);
+
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, var(--rl-timeline-time-width)) var(--rl-space-4) minmax(0, 1fr);
+  column-gap: var(--rl-space-3);
+  padding-bottom: var(--rl-space-4);
+}
+
+.rl-timeline__event[data-tone='info'] { --rl-timeline-color: var(--rl-info); }
+.rl-timeline__event[data-tone='success'] { --rl-timeline-color: var(--rl-success); }
+.rl-timeline__event[data-tone='warning'] { --rl-timeline-color: var(--rl-warning); }
+.rl-timeline__event[data-tone='danger'] { --rl-timeline-color: var(--rl-danger); }
+
+/* Hairline spine connecting markers, centred in the marker column. */
+.rl-timeline__event:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--rl-space-1) + var(--rl-space-3));
+  bottom: 0;
+  left: calc(var(--rl-timeline-time-width) + var(--rl-space-3) + var(--rl-space-2) - var(--rl-border-width) / 2);
+  width: var(--rl-border-width);
+  background: var(--rl-border-default);
+}
+
+.rl-timeline__time {
+  font: var(--rl-type-mono);
+  color: var(--rl-fg-subtle);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.rl-timeline__marker {
+  justify-self: center;
+  width: var(--rl-space-3);
+  height: var(--rl-space-3);
+  margin-top: var(--rl-space-1);
+  border: var(--rl-border-width-strong) solid var(--rl-timeline-color);
+  border-radius: var(--rl-radius-round);
+  background: var(--rl-bg-surface);
+}
+
+.rl-timeline__event[data-tone='warning'] .rl-timeline__marker,
+.rl-timeline__event[data-tone='danger'] .rl-timeline__marker {
+  border-radius: 0;
+}
+
+.rl-timeline__event[data-tone='warning'] .rl-timeline__marker {
+  transform: rotate(45deg) scale(0.85);
+}
+
+.rl-timeline__body {
+  display: grid;
+  gap: var(--rl-space-1);
+  min-width: 0;
+}
+
+.rl-timeline__title {
+  margin: 0;
+  font: var(--rl-type-body-sm);
+  font-weight: 600;
+}
+
+.rl-timeline__description {
+  margin: 0;
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+}
+
+.rl-timeline__actor {
+  margin: 0;
+  font: var(--rl-type-mono);
+  color: var(--rl-fg-subtle);
+}
+
+.rl-timeline__empty {
+  margin: 0;
+  font: var(--rl-type-body-sm);
+  color: var(--rl-fg-muted);
+}
+
 @media (forced-colors: active) {
   .rl-record__identity { border-left-color: CanvasText; }
   .rl-meta__item { border-bottom-color: CanvasText; }
+  .rl-archive-card { border-color: CanvasText; }
+  .rl-archive-card[data-selected] { border-color: Highlight; box-shadow: none; }
+  .rl-status__marker,
+  .rl-timeline__marker { background: CanvasText; border-color: CanvasText; }
 }
