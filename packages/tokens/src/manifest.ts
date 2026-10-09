@@ -146,6 +146,7 @@ export const densityTokens = [
   { token: '--rl-badge-height-sm', usage: '小号徽标高度（非点击目标）' },
   { token: '--rl-badge-height-md', usage: '默认徽标高度（非点击目标）' },
   { token: '--rl-indicator-size', usage: '状态圆点' },
+  { token: '--rl-field-label-width', usage: '行内字段标签列宽' },
 ] as const;
 
 /** Duration tokens in milliseconds. Source of truth for CSS (`--rl-motion-*`) and motion/react presets. */

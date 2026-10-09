@@ -67,6 +67,7 @@
   --rl-badge-height-sm: 20px;
   --rl-badge-height-md: 24px;
   --rl-indicator-size: 6px;
+  --rl-field-label-width: 160px;
 
   /* Motion · mirrored by packages/react/src/motion/presets.ts */
   --rl-motion-instant: 0ms;
