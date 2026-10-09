@@ -35,6 +35,7 @@ const componentFiles = [
   'ArchiveCard',
   'StatusIndicator',
   'Timeline',
+  'DataTable',
 ];
 
 function splitTopLevel(selector: string): string[] {

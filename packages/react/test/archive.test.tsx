@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import { ArchiveCard, Button, MetadataList, RecordHeader, StatusIndicator, Timeline } from '../src';
+import { ArchiveCard, Button, DataTable, MetadataList, RecordHeader, StatusIndicator, Timeline } from '../src';
 import type { MetadataItem } from '../src';
 
 const items: MetadataItem[] = [
@@ -258,5 +258,106 @@ describe('Timeline', () => {
   it('passes reversed to the ordered list for newest-first logs', () => {
     render(<Timeline events={events} reversed />);
     expect(screen.getByRole('list')).toHaveAttribute('reversed');
+  });
+});
+
+describe('DataTable', () => {
+  interface Rec {
+    id: string;
+    title: string;
+    updated: string;
+    status: string;
+  }
+  const recs: Rec[] = [
+    { id: 'ARC-0101', title: '样本入库记录', updated: '2026-10-01', status: '已归档' },
+    { id: 'ARC-0102', title: '结构观测', updated: '2026-10-05', status: '审核中' },
+    { id: 'ARC-0103', title: '外勤报告', updated: '2026-10-09', status: '草稿' },
+  ];
+  const columns = [
+    { key: 'id', header: '编号', sortable: true, mono: true, rowHeader: true },
+    { key: 'title', header: '标题' },
+    { key: 'updated', header: '更新', sortable: true, mono: true, align: 'end' as const },
+    { key: 'actions', header: '操作', hideHeader: true, cell: (r: Rec) => <button type="button">打开 {r.id}</button> },
+  ];
+
+  function Harness({ initial = new Set<string>() }: { initial?: Set<string> }) {
+    const [sort, setSort] = React.useState<{ column: string; direction: 'ascending' | 'descending' } | null>(null);
+    const [selected, setSelected] = React.useState(initial);
+    const rows = React.useMemo(() => {
+      if (!sort) return recs;
+      const sorted = [...recs].sort((a, b) => String(a[sort.column as keyof Rec]).localeCompare(String(b[sort.column as keyof Rec])));
+      return sort.direction === 'descending' ? sorted.reverse() : sorted;
+    }, [sort]);
+    return (
+      <>
+        <DataTable
+          caption="档案记录"
+          columns={columns}
+          rows={rows}
+          getRowId={(r) => r.id}
+          getRowLabel={(r) => r.title}
+          sort={sort}
+          onSortChange={setSort}
+          selectedIds={selected}
+          onSelectionChange={setSelected}
+        />
+        <output>{[...selected].sort().join(',')}</output>
+      </>
+    );
+  }
+
+  it('is a captioned native table in a focusable, labelled scroll region', () => {
+    render(<Harness />);
+    const table = screen.getByRole('table', { name: '档案记录' });
+    expect(table.tagName).toBe('TABLE');
+    const region = screen.getByRole('region', { name: '档案记录' });
+    expect(region).toHaveAttribute('tabindex', '0');
+    expect(screen.getAllByRole('columnheader')).toHaveLength(5);
+    expect(screen.getByRole('rowheader', { name: 'ARC-0101' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: '操作' })).toBeInTheDocument();
+  });
+
+  it('sortable headers are buttons and report aria-sort; caller-sorted rows render in order', async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+    const idHeader = screen.getByRole('columnheader', { name: '编号' });
+    expect(idHeader).toHaveAttribute('aria-sort', 'none');
+    expect(screen.getByRole('columnheader', { name: '标题' })).not.toHaveAttribute('aria-sort');
+    await user.click(within(idHeader).getByRole('button', { name: '编号' }));
+    expect(idHeader).toHaveAttribute('aria-sort', 'ascending');
+    await user.click(within(idHeader).getByRole('button', { name: '编号' }));
+    expect(idHeader).toHaveAttribute('aria-sort', 'descending');
+    const firstRow = screen.getAllByRole('row')[1]!;
+    expect(within(firstRow).getByRole('rowheader')).toHaveTextContent('ARC-0103');
+  });
+
+  it('row checkboxes are named by the row; header checkbox selects all and goes indeterminate', async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+    await user.click(screen.getByRole('checkbox', { name: '选择 结构观测' }));
+    expect(screen.getByRole('status')).toHaveTextContent('ARC-0102');
+    const all = screen.getByRole('checkbox', { name: '全选' }) as HTMLInputElement;
+    expect(all.indeterminate).toBe(true);
+    await user.click(all);
+    expect(screen.getByRole('status')).toHaveTextContent('ARC-0101,ARC-0102,ARC-0103');
+    await user.click(screen.getByRole('checkbox', { name: '取消全选' }));
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+  });
+
+  it('selected rows are marked for styling', () => {
+    render(<Harness initial={new Set(['ARC-0101'])} />);
+    expect(screen.getByRole('rowheader', { name: 'ARC-0101' }).closest('tr')).toHaveAttribute('data-selected', 'true');
+  });
+
+  it('renders an empty state spanning all columns', () => {
+    render(<DataTable caption="空" columns={columns} rows={[]} getRowId={(r: Rec) => r.id} emptyText="没有匹配的记录" />);
+    const cell = screen.getByText('没有匹配的记录');
+    expect(cell).toHaveAttribute('colspan', '4');
+  });
+
+  it('without selection props there is no checkbox column; hideCaption keeps the name', () => {
+    render(<DataTable caption="只读表" hideCaption columns={columns} rows={recs} getRowId={(r) => r.id} />);
+    expect(screen.queryByRole('checkbox')).toBeNull();
+    expect(screen.getByRole('table', { name: '只读表' })).toBeInTheDocument();
   });
 });

@@ -46,6 +46,8 @@ export { ToastProvider, ToastViewport, useToast } from './components/Toast';
 export type { ToastApi, ToastOptions, ToastStatus } from './components/Toast';
 export { MetadataList } from './components/MetadataList';
 export type { MetadataEmpty, MetadataItem, MetadataListLayout, MetadataListProps, MetadataValue } from './components/MetadataList';
+export { DataTable } from './components/DataTable';
+export type { DataTableColumn, DataTableProps, SortDirection, SortState } from './components/DataTable';
 export { ArchiveCard } from './components/ArchiveCard';
 export type { ArchiveCardProps, ArchiveCardStatus } from './components/ArchiveCard';
 export { StatusIndicator } from './components/StatusIndicator';
