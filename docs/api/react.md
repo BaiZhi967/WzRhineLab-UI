@@ -1,6 +1,6 @@
 # @wzrhine/react · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 209 个导出（59 components，12 functions & hooks，6 constants，20 interfaces，112 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 219 个导出（61 components，12 functions & hooks，5 constants，22 interfaces，119 types）。
 
 ## Components
 
@@ -10,8 +10,12 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
+| `action` | `React.ReactNode` | Follow-up control(s), e.g. a small Button 「查看」. |
 | `children` | `React.ReactNode` |  |
+| `dismissLabel` | `string` | Accessible name of the close button. |
+| `icon` | `React.ReactNode` | Replace the tone icon; `null` removes it. |
 | `live` | `AlertLive` |  |
+| `onDismiss` | `(() => void)` | Shows a close button. The caller removes the Alert and places focus. |
 | `title` | `React.ReactNode` |  |
 | `tone` | `AlertTone` |  |
 
@@ -23,11 +27,23 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `confirmLabel` * | `React.ReactNode` |  |
-| `description` * | `React.ReactNode` |  |
-| `onConfirm` * | `() => void \| Promise<unknown>` |  |
+| `aria-label` | `undefined` | The accessible name and description always come from `title` / `description`. |
+| `aria-labelledby` | `undefined` |  |
+| `cancelLabel` | `React.ReactNode` |  |
+| `children` | `React.ReactNode` | Extra detail about the consequences, e.g. the affected records. |
+| `className` | `string` |  |
+| `confirmLabel` * | `React.ReactNode` | Label of the confirming action; name it after the action ("删除记录"), not "确定". |
+| `defaultOpen` | `boolean` |  |
+| `description` * | `React.ReactNode` | Required: a confirmation must say what will happen. |
+| `errorText` | `React.ReactNode` | Shown in a role="alert" message when the Promise from `onConfirm` rejects. |
+| `eyebrow` | `React.ReactNode` | Small archive-style label above the title, e.g. "ARCHIVE / DELETE". |
+| `onClosed` | `(() => void)` | Fires after the exit animation, when focus has returned. |
+| `onConfirm` * | `() => void \| Promise<unknown>` | Runs on confirm. Return a Promise to keep the dialog open until it settles. |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `open` | `boolean` |  |
 | `title` * | `React.ReactNode` |  |
-| `tone` | `AlertDialogTone` |  |
+| `tone` | `AlertDialogTone` | `danger` (default) fills the confirm button with the danger colour. |
+| `trigger` | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>>` | Element that opens the dialog (usually a Button). Omit when opening programmatically. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -102,6 +118,7 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `children` | `React.ReactNode` |  |
+| `icon` | `React.ReactNode` | Replace the tone icon; `null` removes it. |
 | `title` | `React.ReactNode` |  |
 | `tone` | `AlertTone` |  |
 
@@ -162,7 +179,8 @@
 | `columns` * | `readonly DataTableColumn<Row>[]` |  |
 | `density` | `"comfortable" \| "compact"` |  |
 | `emptyAction` | `React.ReactNode` | Optional action under the empty text, e.g. a "clear filters" button. |
-| `emptyText` | `React.ReactNode` |  |
+| `emptyDescription` | `React.ReactNode` | Secondary line under the empty text, e.g. how to get results. |
+| `emptyText` | `React.ReactNode` | Empty-state title (rendered by EmptyState size="sm", as a paragraph). |
 | `errorText` | `React.ReactNode` |  |
 | `getRowId` * | `(row: Row) => string` |  |
 | `getRowLabel` | `((row: Row) => string)` | Accessible name for a row's checkbox; defaults to the row id. |
@@ -196,6 +214,7 @@
 | `dismissOnOutsideClick` | `boolean` | `false` keeps outside clicks from dismissing (use for destructive confirmations). |
 | `eyebrow` | `React.ReactNode` | Small archive-style label above the title, e.g. "ARCHIVE / CONFIRM". |
 | `initialFocus` | `React.RefObject<HTMLElement \| null>` | Element to focus on open; defaults to the first tabbable element. |
+| `onCloseRequest` | `((reason: DialogCloseReason) => boolean \| void)` | Called before a user-initiated close. Return `false` to keep the dialog open (focus stays put), e.g. to ask "放弃未保存的更改？" in a nested AlertDialog. Programmatic `open={false}` skips it. |
 | `onClosed` | `(() => void)` | Fires after the exit animation, when focus has returned. |
 | `onOpenChange` | `((open: boolean) => void)` |  |
 | `open` | `boolean` |  |
@@ -221,10 +240,33 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
+| `actions` | `React.ReactNode` | Footer action bar. Use `<DrawerClose>` for buttons that only dismiss. |
 | `children` | `React.ReactNode` |  |
-| `side` | `DrawerSide` |  |
-| `size` | `DrawerSize` |  |
+| `className` | `string` |  |
+| `closeLabel` | `string` | Accessible name of the header close button. |
+| `defaultOpen` | `boolean` |  |
+| `description` | `React.ReactNode` |  |
+| `eyebrow` | `React.ReactNode` | Small archive-style label above the title, e.g. "ARCHIVE / DETAIL". |
+| `finalFocus` | `React.RefObject<HTMLElement \| null>` | Element to focus after closing; defaults to the trigger or the previously focused element. |
+| `initialFocus` | `React.RefObject<HTMLElement \| null>` | Element to focus on open; defaults to the panel itself so its title is announced first. |
+| `onCloseRequest` | `((reason: DrawerCloseReason) => boolean \| void)` | Called before a user-initiated close. Return `false` to keep the drawer open (focus stays put), e.g. while a save is in flight. Programmatic `open={false}` skips it. |
+| `onClosed` | `(() => void)` | Fires after the exit transition, when focus has returned. |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `open` | `boolean` |  |
+| `side` | `DrawerSide` | Logical edge the panel attaches to on wide viewports; follows the writing direction. |
+| `size` | `DrawerSize` | Panel width on wide viewports (the bottom sheet is always full width). |
 | `title` * | `React.ReactNode` |  |
+| `trigger` | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>>` | Element that opens the drawer (usually a Button). Omit when opening programmatically. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `DrawerClose`
+
+*component* — Wraps a button so activating it closes the nearest Drawer (reason `close-button`).
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>>` | The element that closes the drawer, typically `<Button variant="ghost">取消</Button>`. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -234,7 +276,12 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
+| `action` | `React.ReactNode` | Next step, e.g. 「清除筛选」 or 「新建记录」. |
+| `description` | `React.ReactNode` |  |
+| `headingLevel` | `EmptyStateHeadingLevel` | Render the title as `<h2>`–`<h6>`; omitted = `<p>`. |
+| `icon` | `React.ReactNode` | Replace the kind's icon; `null` removes it. Always decorative. |
 | `kind` | `EmptyStateKind` |  |
+| `size` | `EmptyStateSize` | `sm` inside tables and cards; `md` for a whole region. |
 | `title` * | `React.ReactNode` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
@@ -688,7 +735,10 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
+| `height` | `string` | CSS length. Text defaults to one line height; block and circle to `--rl-space-16`. |
+| `lines` | `number` | Text only: number of lines; the last one is 60% wide. |
 | `shape` | `SkeletonShape` |  |
+| `width` | `string` | CSS length, e.g. `'12rem'`, `'60%'` or `'var(--rl-space-16)'`. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -698,8 +748,8 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `label` | `string` |  |
-| `size` | `SpinnerSize` |  |
+| `label` | `string` | Spoken status text, e.g. 「正在加载」. Omit for a decorative spinner. |
+| `size` | `SpinnerSize` | Maps to the icon-size tokens. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -880,6 +930,10 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `ToastProvider`
+
+*component* — Toast queue. Mounted by RhineProvider; render it yourself only without one.
+
 ### `ToastViewport`
 
 *component* — Viewport that renders queued toasts. Mounted by RhineProvider; render it yourself only without one.
@@ -1043,14 +1097,6 @@ const fadePresence: { readonly initial: { readonly opacity: 0; }; readonly anima
 
 ```ts
 const pressScale: 0.985
-```
-
-### `ToastProvider`
-
-*const*
-
-```ts
-const ToastProvider: React.FC<ToastProviderProps>
 ```
 
 ### `transition`
@@ -1264,6 +1310,16 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | `title` * | `React.ReactNode` |  |
 | `tone` | `StatusKind` | Optional status marker; the title must still say what happened. |
 
+### `ToastAction`
+
+*interface* — A single follow-up action, e.g. 撤销 / 查看 / 重试.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `keepOpen` | `boolean` | Keep the toast open after the action runs. By default it closes. |
+| `label` * | `string` |  |
+| `onClick` * | `() => void` |  |
+
 ### `ToastApi`
 
 *interface*
@@ -1271,7 +1327,8 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | Member | Type | Description |
 | --- | --- | --- |
 | `dismiss` * | `(id?: string) => void` |  |
-| `show` * | `(options: ToastOptions) => string` | Show a toast; returns its id. |
+| `promise` * | `<Value>(promise: Promise<Value>, options: ToastPromiseOptions<Value>) => Promise<Value>` | One toast follows the promise: `loading` until it settles, then `success` or `error` in place. Returns a promise with the same outcome (it rejects when the input rejects). |
+| `show` * | `(options: ToastOptions) => string` | Show a toast; returns its id. With an existing `id`, updates that toast instead. |
 | `update` * | `(id: string, options: Partial<ToastOptions>) => void` | Replace the content of an existing toast (e.g. 处理中 → 已完成). |
 
 ### `ToastOptions`
@@ -1280,13 +1337,24 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 
 | Member | Type | Description |
 | --- | --- | --- |
-| `action` | `{ label: string; onClick: () => void; }` | A single follow-up action, e.g. 撤销 / 查看. |
+| `action` | `ToastAction` | The page must still offer the same result or an equivalent control; the toast is a shortcut. |
 | `description` | `React.ReactNode` |  |
+| `id` | `string` | Showing a toast with the id of one still on screen updates it in place (no stacking). |
 | `onClose` | `(() => void)` |  |
 | `priority` | `"low" \| "high"` | `high` interrupts screen readers (role=alert). Reserve for failures and time-critical notices. |
 | `status` | `ToastStatus` |  |
-| `timeout` | `number` | Auto-dismiss delay in ms. `0` keeps it until dismissed; use for errors that need action. |
+| `timeout` | `number` | Auto-dismiss delay in ms. `0` keeps it until dismissed; use for errors that need action. Defaults to the provider's `toastTimeout`; with an `action`, to at least 10 s. |
 | `title` * | `React.ReactNode` |  |
+
+### `ToastPromiseOptions`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `error` * | `ToastPromiseStage<unknown>` | Status defaults to `danger`, priority to `high` and timeout to `0` (stays until dismissed). |
+| `loading` * | `string \| ToastOptions` | Shown until the promise settles; never auto-dismisses. Status defaults to `info`. |
+| `success` * | `ToastPromiseStage<Value>` | Status defaults to `success`. |
 
 ## Types
 
@@ -1294,13 +1362,9 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 
 *type*
 
-```ts
-type AlertDialogProps = { title: React.ReactNode; description: React.ReactNode; confirmLabel: React.ReactNode; onConfirm: () => void | Promise<unknown>; tone?: AlertDialogTone; }
-```
-
 ### `AlertDialogTone`
 
-*type*
+*type* — Confirmation for destructive or irreversible actions (ADR-0006 §2) on Base UI AlertDialog: role="alertdialog", always modal, outside clicks never dismiss, Escape = cancel. Initial focus lands on the cancel button. `onConfirm` may return a Promise: while it is pending the confirm button shows `loading` (and keeps focus) and every way of cancelling is ignored; on resolve the dialog closes, on reject it stays open with `errorText` in a role="alert" message. Motion matches Dialog (backdrop fast, panel + 8px rise; opacity only when reduced).
 
 ```ts
 type AlertDialogTone = 'danger' | 'default'
@@ -1318,13 +1382,9 @@ type AlertLive = 'off' | 'polite' | 'assertive'
 
 *type*
 
-```ts
-type AlertProps = { tone?: AlertTone; title?: React.ReactNode; children?: React.ReactNode; live?: AlertLive; }
-```
-
 ### `AlertTone`
 
-*type*
+*type* — In-page status message and explanatory note (ADR-0006 §5). Tone is always carried by an icon and text as well as colour.
 
 ```ts
 type AlertTone = 'neutral' | 'info' | 'success' | 'warning' | 'danger'
@@ -1371,7 +1431,7 @@ type ButtonVariant = 'primary' | 'accent' | 'secondary' | 'ghost'
 *type*
 
 ```ts
-type CalloutProps = { tone?: AlertTone; title?: React.ReactNode; children?: React.ReactNode; }
+type CalloutProps = BaseProps
 ```
 
 ### `CheckboxGroupProps`
@@ -1410,6 +1470,14 @@ type DataTableStatus = 'ready' | 'loading' | 'error'
 type DialogCloseProps = { /** The element that closes the dialog, typically `<Button variant="ghost">取消</Button>`. */ children: React.ReactElement<Record<string, unknown>>; }
 ```
 
+### `DialogCloseReason`
+
+*type* — Why the user is trying to close the dialog (ADR-0006 §3).
+
+```ts
+type DialogCloseReason = 'escape' | 'outside' | 'close-button' | 'trigger'
+```
+
 ### `DialogProps`
 
 *type*
@@ -1422,17 +1490,29 @@ type DialogCloseProps = { /** The element that closes the dialog, typically `<Bu
 type DialogSize = 'sm' | 'md' | 'lg'
 ```
 
-### `DrawerProps`
+### `DrawerCloseProps`
 
 *type*
 
 ```ts
-type DrawerProps = { title: React.ReactNode; children?: React.ReactNode; side?: DrawerSide; size?: DrawerSize; }
+type DrawerCloseProps = { /** The element that closes the drawer, typically `<Button variant="ghost">取消</Button>`. */ children: React.ReactElement<Record<string, unknown>>; }
 ```
+
+### `DrawerCloseReason`
+
+*type* — Why the user is trying to close the drawer: the `DialogCloseReason` values (ADR-0006 §3) plus `swipe` for the dismiss gesture.
+
+```ts
+type DrawerCloseReason = 'escape' | 'outside' | 'close-button' | 'trigger' | 'swipe'
+```
+
+### `DrawerProps`
+
+*type*
 
 ### `DrawerSide`
 
-*type*
+*type* — Edge panel on Base UI Drawer (ADR-0006 §4): focus enters, Tab loops, Escape and backdrop clicks close, page scroll is locked, the background is inert and focus returns to the trigger — all from Base UI. Below 40rem the panel becomes a bottom sheet (swipe down to dismiss); wider it slides from the inline `side` (swipe toward that edge). CSS owns `transform` (Base UI writes the swipe offset into the same property), so enter / exit are CSS transitions on data-starting-style / data-ending-style: interruptible, and Base UI unmounts after they end.
 
 ```ts
 type DrawerSide = 'start' | 'end'
@@ -1446,9 +1526,17 @@ type DrawerSide = 'start' | 'end'
 type DrawerSize = 'sm' | 'md' | 'lg'
 ```
 
-### `EmptyStateKind`
+### `EmptyStateHeadingLevel`
 
 *type*
+
+```ts
+type EmptyStateHeadingLevel = 2 | 3 | 4 | 5 | 6
+```
+
+### `EmptyStateKind`
+
+*type* — Placeholder for a region with nothing to show (ADR-0006 §6). `kind` only picks the default decorative icon. The title is a heading when `headingLevel` is given, otherwise a paragraph (e.g. inside a table cell). No live role: the filter result count announces empty results.
 
 ```ts
 type EmptyStateKind = 'empty' | 'no-results' | 'no-permission' | 'first-use'
@@ -1458,8 +1546,12 @@ type EmptyStateKind = 'empty' | 'no-results' | 'no-permission' | 'first-use'
 
 *type*
 
+### `EmptyStateSize`
+
+*type*
+
 ```ts
-type EmptyStateProps = { title: React.ReactNode; kind?: EmptyStateKind; }
+type EmptyStateSize = 'sm' | 'md'
 ```
 
 ### `FieldProps`
@@ -1806,13 +1898,9 @@ type SeparatorTone = 'subtle' | 'default' | 'strong'
 
 *type*
 
-```ts
-type SkeletonProps = { shape?: SkeletonShape; }
-```
-
 ### `SkeletonShape`
 
-*type*
+*type* — Placeholder block for content that is still loading (ADR-0006 §7). Always `aria-hidden`: the container owns `aria-busy` and a visible or visually hidden 「正在加载」 text. Pulses on `--rl-motion-loop`; static under reduced motion.
 
 ```ts
 type SkeletonShape = 'text' | 'block' | 'circle'
@@ -1831,12 +1919,12 @@ type SortDirection = 'ascending' | 'descending'
 *type*
 
 ```ts
-type SpinnerProps = { size?: SpinnerSize; label?: string; }
+type SpinnerProps = Omit<React.HTMLAttributes<HTMLSpanElement>, 'children' | 'role'> & { /** Maps to the icon-size tokens. */ size?: SpinnerSize; /** Spoken status text, e.g. 「正在加载」. Omit for a decorative spinner. */ label?: string; }
 ```
 
 ### `SpinnerSize`
 
-*type*
+*type* — Indeterminate activity indicator (ADR-0006 §7). With `label` it is a polite status (`role="status"` + visually hidden text); without, it is decorative and the surrounding control carries the busy state (e.g. Button `aria-busy`). Rotation runs on motion/react and stops under reduced motion (OS or RhineProvider), leaving a longer static arc.
 
 ```ts
 type SpinnerSize = 'sm' | 'md' | 'lg'
@@ -1997,6 +2085,22 @@ type TextVariant = 'display' | 'heading-1' | 'heading-2' | 'heading-3' | 'body' 
 ### `TimelineProps`
 
 *type*
+
+### `ToastPromiseStage`
+
+*type* — A promise stage: a title, full options, or (for success / error) a function of the outcome.
+
+```ts
+type ToastPromiseStage = string | ToastOptions | ((value: Arg) => string | ToastOptions)
+```
+
+### `ToastProviderProps`
+
+*type*
+
+```ts
+type ToastProviderProps = React.ComponentProps<typeof BaseToast.Provider>
+```
 
 ### `ToastStatus`
 
