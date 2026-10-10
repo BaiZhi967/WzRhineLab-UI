@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { fadePresence, pressScale, transition } from '../motion/presets.js';
+import { fadePresence, pressScale } from '../motion/presets.js';
 import { useRhineMotion } from '../motion/useRhineMotion.js';
 import { cx } from '../utils/cx.js';
+import { Spinner } from './Spinner.js';
 
 // motion.button redefines these handlers with gesture/animation signatures.
 type MotionConflictingProps =
@@ -102,25 +103,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
             {...fadePresence}
             transition={motionPrefs.get('fast')}
           >
-            <Spinner reduced={motionPrefs.reduced} />
+            <Spinner />
           </motion.span>
         )}
       </AnimatePresence>
     </motion.button>
   );
 });
-
-function Spinner({ reduced }: { reduced: boolean }) {
-  return (
-    <motion.svg
-      className="rl-spinner"
-      viewBox="0 0 16 16"
-      data-reduced={reduced || undefined}
-      animate={reduced ? { rotate: 0 } : { rotate: 360 }}
-      transition={reduced ? transition.instant : transition.loop}
-    >
-      <circle className="rl-spinner__track" cx="8" cy="8" r="6" />
-      <circle className="rl-spinner__arc" cx="8" cy="8" r="6" pathLength="100" />
-    </motion.svg>
-  );
-}

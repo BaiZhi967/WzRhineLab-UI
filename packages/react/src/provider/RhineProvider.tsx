@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { MotionConfig } from 'motion/react';
-import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
-import { ToastViewport } from '../components/Toast.js';
+import { ToastProvider, ToastViewport } from '../components/Toast.js';
 import { cx } from '../utils/cx.js';
 import { PortalContext } from './portal.js';
 
@@ -79,9 +78,9 @@ export const RhineProvider = React.forwardRef<HTMLDivElement, RhineProviderProps
         <BaseTooltip.Provider delay={tooltipDelay}>
           <PortalContext.Provider value={value}>
             {withToasts ? (
-              <BaseToast.Provider timeout={toastTimeout} limit={toastLimit}>
+              <ToastProvider timeout={toastTimeout} limit={toastLimit}>
                 {scope}
-              </BaseToast.Provider>
+              </ToastProvider>
             ) : (
               scope
             )}

@@ -36,14 +36,16 @@ M8 的 DataTable 已经有加载、空、错误三种状态，但骨架、空结
 - `role="alertdialog"`，标题与描述分别经 `aria-labelledby` / `aria-describedby` 关联。
 - **初始焦点落在取消按钮上**，不落在破坏性按钮上（退出门禁）。按钮顺序：取消在前，确认在后；确认按钮 `tone="danger"` 时用危险色填充。
 - 外部点击**不**关闭（Base UI 强制）；Esc 等同于取消。
-- `onConfirm` 可以返回 Promise：等待期间确认按钮为 `loading`（保持焦点），取消按钮与 Esc 失效（防止「看似取消、实际已提交」）；成功后关闭；失败（reject）时保持打开，在对话框内用 `role="alert"` 显示 `errorText`（默认「操作未完成，请重试。」），焦点回到确认按钮。
+- `onConfirm` 可以返回 Promise：等待期间确认按钮为 `loading`（保持焦点），取消按钮与 Esc 失效（防止「看似取消、实际已提交」）；成功后关闭；失败（reject 或同步抛错）时保持打开，在对话框正文末尾（`children` 之后）用 `role="alert"` 显示 `errorText`（默认「操作未完成，请重试。」），焦点回到确认按钮。每次失败重新挂载错误节点，重复失败也会再次宣告；重新打开时清除上一次错误。
+- 过期结果保护：对话框关闭、重新打开或卸载之后才完成的 Promise 被忽略，不会关闭新的一次打开，也不会在卸载后更新状态。
 - 关闭后焦点归还触发器；受控用法（例如从菜单打开）由 Base UI 归还到打开前的焦点元素。
 - 动效与 Dialog 相同：backdrop `fast` 淡入；面板 `panel` 280ms + 8px 上移；减动时只淡入淡出，无位移。
 
 ### 3. Dialog 关闭保护
 - 新增 `onCloseRequest?: (reason: DialogCloseReason) => boolean | void`。`reason` 为 `escape` / `outside` / `close-button`（`DialogClose`）/ `trigger`。返回 `false` 时取消本次关闭（Base UI `eventDetails.cancel()`），对话框保持打开、焦点不动。
 - 典型用法：表单有未保存修改时返回 `false` 并打开一个嵌套的 AlertDialog「放弃未保存的更改？」；提交进行中时直接返回 `false`。
-- 程序化关闭（受控 `open={false}`）不经过 `onCloseRequest`。
+- 程序化关闭（受控 `open={false}`）不经过 `onCloseRequest`；Base UI 的 `focus-out`、`imperative-action` 原因也不映射（模态对话框不会出现）。
+- 嵌套确认：AlertDialog 要放在 Dialog 内部渲染，Esc 只交给最上层。嵌套打开时 Base UI 把父 Dialog 移出可访问树（DOM 仍可见），关闭子层后恢复。
 
 ### 4. Drawer
 ```tsx
@@ -51,12 +53,14 @@ M8 的 DataTable 已经有加载、空、错误三种状态，但骨架、空结
   …
 </Drawer>
 ```
-- 属性：`title`（必填）、`description`、`eyebrow`、`children`、`actions`（底部操作栏）、`trigger`、`open` / `defaultOpen` / `onOpenChange`、`onClosed`、`side`（`end` / `start`，默认 `end`，跟随书写方向）、`size`（`sm` / `md` / `lg`，复用 `--rl-dialog-width-*`）、`closeLabel`（默认「关闭」）、`onCloseRequest`（同 §3）。
+- 属性：`title`（必填）、`description`、`eyebrow`、`children`、`actions`（底部操作栏）、`trigger`、`open` / `defaultOpen` / `onOpenChange`、`onClosed`、`side`（`end` / `start`，默认 `end`，跟随书写方向：每次打开时读取容器的 `direction`，RTL 下 `end` 贴左）、`size`（`sm` / `md` / `lg`，复用 `--rl-dialog-width-*`）、`closeLabel`（默认「关闭」）、`onCloseRequest`（同 §3，原因多一个 `swipe`；Android 返回手势 `close-watcher` 归为 `escape`）、`initialFocus` / `finalFocus`（默认初始焦点在面板本身，读屏先读标题与描述；列表 → 详情这类场景用 `finalFocus` 把焦点还给打开它的条目）。另导出 `DrawerClose`，与 `DialogClose` 对应。
+- 正文溢出时成为可聚焦的 `region`（名称取标题），键盘可以滚动。
 - 模态：焦点进入、Tab 循环、Esc 关闭、滚动锁定、背景 inert、关闭后焦点归还，与 Dialog 一致。外部点击（backdrop）关闭。
 - 头部固定一个关闭按钮（`IconButton`，名称取 `closeLabel`），内容区单独滚动。
 - **窄屏**：视口宽度小于 `40rem` 时改为底部弹出（bottom sheet），高度上限为视口的 85%，`swipeDirection="down"`；宽屏为侧边面板，`swipeDirection` 与 `side` 一致。断点由组件内的 `matchMedia` 决定，SSR 首帧按宽屏渲染（面板只在打开后出现，不影响水合）。
 - 动效：**由 CSS 负责 transform**（Base UI 滑动通过 `--drawer-swipe-movement-*` 写同一属性，不能再让 motion/react 写 transform，见 M10 属性所有权）。进出场 `--rl-motion-panel` + `--rl-ease-out`，从当前位置接续（CSS transition 天然可中断）；拖动时过渡时长为 0。减动：不位移，只淡入淡出。
-- 不提供 snap points、嵌套缩进效果（M12 视需求再定）。
+- 不提供 snap points、嵌套缩进效果（M12 视需求再定）；不接入 `Drawer.VirtualKeyboardProvider`，底部弹出内含输入框时软键盘依赖浏览器默认行为（已知限制）。
+- 组件断点（40rem）只决定「侧边 / 底部」。何时用 Drawer 代替常驻面板由页面决定：档案检索在页面单列（< 1024px）时就改用 Drawer，因此 768 宽度下是侧边面板。
 
 ### 5. Alert 与 Callout
 ```tsx

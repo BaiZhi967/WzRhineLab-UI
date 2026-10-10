@@ -236,6 +236,8 @@ test.describe('Toast', () => {
 
   test('auto-dismisses after the default timeout', async ({ page }) => {
     await page.goto('/#/components/toast');
+    // Toasts with an action stay at least 10 s (ADR-0006 §8); measure the plain default.
+    await page.getByRole('checkbox', { name: 'action（撤销）' }).uncheck();
     await page.getByRole('button', { name: '显示通知' }).click();
     const toast = page.locator('.rl-toast').filter({ hasText: '记录已归档' });
     await expect(toast).toBeVisible();

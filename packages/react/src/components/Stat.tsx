@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { cx } from '../utils/cx.js';
+import { Skeleton } from './Skeleton.js';
 
 /**
  * Labelled figure with an optional change (ADR-0005 §5). A rise is not assumed to be good:
@@ -88,7 +89,7 @@ export const Stat = React.forwardRef<HTMLElement, StatProps>(function Stat(
       <dt className="rl-stat__label">{label}</dt>
       <dd className="rl-stat__value" data-empty={(!loading && empty) || undefined}>
         {loading ? (
-          <span className="rl-stat__skeleton" aria-hidden="true" />
+          <Skeleton className="rl-stat__skeleton" width="calc(var(--rl-space-16) * 1.25)" />
         ) : empty ? (
           <>
             <span aria-hidden="true">—</span>

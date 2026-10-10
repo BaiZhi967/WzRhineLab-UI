@@ -34,7 +34,7 @@ export type { TabListProps, TabPanelProps, TabProps, TabsProps, TabsSize, TabsVa
 export { Tooltip } from './components/Tooltip.js';
 export type { TooltipProps, TooltipSide } from './components/Tooltip.js';
 export { Dialog, DialogClose } from './components/Dialog.js';
-export type { DialogCloseProps, DialogProps, DialogSize } from './components/Dialog.js';
+export type { DialogCloseProps, DialogCloseReason, DialogProps, DialogSize } from './components/Dialog.js';
 export { Select } from './components/Select.js';
 export type { SelectGroup, SelectOption, SelectProps } from './components/Select.js';
 export { Popover, PopoverClose } from './components/Popover.js';
@@ -59,7 +59,7 @@ export type {
   MenuSide,
 } from './components/Menu.js';
 export { ToastProvider, ToastViewport, useToast } from './components/Toast.js';
-export type { ToastApi, ToastOptions, ToastStatus } from './components/Toast.js';
+export type { ToastAction, ToastApi, ToastOptions, ToastPromiseOptions, ToastPromiseStage, ToastProviderProps, ToastStatus } from './components/Toast.js';
 export { MetadataList } from './components/MetadataList.js';
 export type { MetadataEmpty, MetadataItem, MetadataListLayout, MetadataListProps, MetadataValue } from './components/MetadataList.js';
 export { Pagination, getPaginationItems, paginate } from './components/Pagination.js';
@@ -72,12 +72,12 @@ export { Stat } from './components/Stat.js';
 export type { StatDelta, StatProps, StatTone } from './components/Stat.js';
 export { AlertDialog } from './components/AlertDialog.js';
 export type { AlertDialogProps, AlertDialogTone } from './components/AlertDialog.js';
-export { Drawer } from './components/Drawer.js';
-export type { DrawerProps, DrawerSide, DrawerSize } from './components/Drawer.js';
+export { Drawer, DrawerClose } from './components/Drawer.js';
+export type { DrawerCloseProps, DrawerCloseReason, DrawerProps, DrawerSide, DrawerSize } from './components/Drawer.js';
 export { Alert, Callout } from './components/Alert.js';
 export type { AlertLive, AlertProps, AlertTone, CalloutProps } from './components/Alert.js';
 export { EmptyState } from './components/EmptyState.js';
-export type { EmptyStateKind, EmptyStateProps } from './components/EmptyState.js';
+export type { EmptyStateHeadingLevel, EmptyStateKind, EmptyStateProps, EmptyStateSize } from './components/EmptyState.js';
 export { Skeleton } from './components/Skeleton.js';
 export type { SkeletonProps, SkeletonShape } from './components/Skeleton.js';
 export { Spinner } from './components/Spinner.js';
