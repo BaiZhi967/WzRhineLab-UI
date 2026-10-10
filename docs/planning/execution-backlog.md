@@ -198,6 +198,88 @@
 
 每个领域模式必须经过至少一个真实页面验证，并确保不绑定后端模型。
 
+## Agent UI 平台：拟议 @wzrhine/agent
+
+### 设计与契约
+
+- [ ] 确认 @wzrhine/agent 的 package 边界和依赖方向。
+- [ ] 定义 Conversation、Message、MessagePart、Run、Tool、Approval、Questionnaire、Artifact 和 Sync view-model。
+- [ ] 定义 runStatus、syncStatus、actionStatus 三个状态轴。
+- [ ] 定义 actionId、targetId、baseRevision 和 unknown 回执。
+- [ ] 定义 capability、禁用原因和 action callback。
+- [ ] 定义 renderer、slots、children 和 render props 的使用边界。
+- [ ] 定义 Markdown、Code、Diff、Artifact 和 Terminal renderer 接口。
+- [ ] 定义多实例、portal、DOM id、draft 和 scroll 隔离。
+- [ ] 建立静态 Agent fixture，不依赖 Wpi DTO。
+- [ ] 为公开类型建立 API report 和变更规则。
+
+### 第一组：Shell、Conversation、Message
+
+- [ ] 建立 packages/agent workspace 包骨架。
+- [ ] 实现 AgentShell、AgentHeader、AgentSidebar、AgentWorkspace。
+- [ ] 实现 ConversationList、ConversationItem、ConversationSearch。
+- [ ] 实现 MessageList、Message、MessagePart、MessageActions。
+- [ ] 实现 default、loading、empty、error、unknown 状态。
+- [ ] 验证稳定 ID、revision、sequence、去重和未知 part fallback。
+- [ ] 验证键盘、focus、live-region 和 reduced-motion。
+
+### 第二组：Composer 和消息流
+
+- [ ] 实现 Composer、ComposerInput、ComposerToolbar。
+- [ ] 保留中文 IME、selection、Token Mirror 和光标恢复。
+- [ ] 实现 MentionPicker、CommandPicker、AttachmentList、FileReferenceList。
+- [ ] 实现 SendStopButton 和 actionStatus。
+- [ ] 实现流式内容、JumpToLatest、阅读锚点和历史加载。
+- [ ] 验证重复事件、旧 revision、断线重放和快速切换会话。
+- [ ] 验证 compositionstart、compositionend、Enter、Backspace、Delete、粘贴和撤销。
+
+### 第三组：工具和运行过程
+
+- [ ] 实现 RunStatus、RunPhase、ToolActivity、ToolGroup、ToolCall。
+- [ ] 实现 ToolInput、ToolOutput、ProcessOutput、ActivityFeed。
+- [ ] 实现 RunSummary、ContextUsage、截断和权限不足状态。
+- [ ] 支持摘要、惰性展开、分页或外部 renderer。
+- [ ] 验证大输出、错误输出、未知工具和输出中断。
+- [ ] 验证工具详情展开时的焦点和屏幕阅读器语义。
+
+### 第四组：审批和问卷
+
+- [ ] 实现 ApprovalPanel、ApprovalCard、PermissionSummary。
+- [ ] 实现 ApprovalEvidence 和 approvalAvailability。
+- [ ] 表现 pending、submitting、unknown、approved、rejected、expired。
+- [ ] 保留缺少材料时禁用批准但允许拒绝。
+- [ ] 实现 Questionnaire、QuestionCard、QuestionnaireProgress。
+- [ ] 实现草稿串行保存、关闭前 flush、revision 防回退和 unknown 重试。
+- [ ] 验证 actionId、operationId、canonical record 和材料 revision。
+
+### 第五组：Artifact、文件和代码
+
+- [ ] 实现 ArtifactList、ArtifactCard、ArtifactPreview。
+- [ ] 实现 Citation、SourceList、FileReference。
+- [ ] 实现 FilePreview、CodePreview、DiffPreview、TerminalOutput。
+- [ ] 支持 renderer 替换、未知类型 fallback、加载、缺失、禁止和过期状态。
+- [ ] 不把文件读取、下载、Tauri open 或终端连接放入公共包。
+- [ ] 验证大文件和高密度输出的懒加载或摘要策略。
+
+### 第六组：Wpi-Agent 接入
+
+- [ ] 建立 Wpi view-model adapter，不直接传入 agent-client DTO。
+- [ ] 接入 Agent Header、Conversation、Message、Composer 和 RunStatus。
+- [ ] 接入 Tool、Approval、Questionnaire、Artifact 和 File renderer。
+- [ ] 保留 Wpi Query、持久化、权限真实性、文件系统和 Tauri。
+- [ ] 完成真实流式、断线、审批未知回执和问卷恢复验证。
+- [ ] 删除已经被 @wzrhine/agent 替代的 Wpi 视觉重复实现。
+
+### 动效和质量
+
+- [ ] 使用 motion/react 和 Rhine tokens 建立 Agent motion patterns。
+- [ ] 验证消息进入、工具展开、审批出现、Send/Stop、AgentSpark 和侧栏切换。
+- [ ] 验证中断、快速反向、卸载、隐藏页和 reduced-motion。
+- [ ] 验证 320 / 390 / 768 / 1280 / 1920 布局。
+- [ ] 验证 Chromium / Firefox / WebKit、axe、键盘和静态 fixture。
+- [ ] 完成 Wpi-Agent 消费项目验收。
+- [ ] 更新 Agent UI acceptance 记录和路线回填。
+
 ## M14：人工无障碍和国际化
 
 - [ ] NVDA 或等价读屏。
