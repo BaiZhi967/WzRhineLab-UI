@@ -145,7 +145,7 @@ function useInViewport: <T extends Element>(ref: React.RefObject<T | null>) => b
 
 ### `usePageVisible`
 
-*function* — Tracks document visibility so loops stop on hidden tabs (MOTION.md lifecycle rule 4).
+*function* — True while the document is visible. Loops must pause when it turns false (MOTION.md lifecycle rule 4).
 
 ```ts
 function usePageVisible: () => boolean
@@ -185,7 +185,7 @@ function usePageVisible: () => boolean
 
 ### `OrbitNode`
 
-*interface* — Instrument-style orbital diagram (DESIGN.md "Instrument Accent"): concentric rings with labelled nodes. Decorative structure around real labels, not a data visualisation: - Labels are real text in an accessible list; the SVG is aria-hidden. - Rotation is opt-in (`animate`), stops when off-screen, on hidden tabs and under reduced motion. - Positions are fixed by `angle` props; nothing is random.
+*interface* — Instrument-style orbital diagram (DESIGN.md "Instrument Accent"): concentric rings with labelled nodes. Decorative structure around real labels, not a data visualisation: - Labels are real text in an accessible list; the SVG is aria-hidden. - Rotation is opt-in (`animate`), stops when off-screen, on hidden tabs and under reduced motion (shared lifecycle, ADR-0007); `data-lifecycle` / `data-paused` expose the current state. - Positions are fixed by `angle` props; nothing is random.
 
 | Member | Type | Description |
 | --- | --- | --- |
@@ -208,11 +208,11 @@ function usePageVisible: () => boolean
 
 ### `ArchiveRevealProps`
 
-*type* — Decrypt-style reveal for short labels (IDs, titles). Showcase effect only (MOTION.md): - The real text is always in the accessibility tree; the scramble is aria-hidden decoration. - Toggling `revealed` mid-flight reverses from the current progress, never restarting. - Reduced motion (OS, provider, or EffectClock) swaps instantly with no glyph cycling. - The loop pauses while the page is hidden and stops once settled. Never use it to delay business data: pass content that is already loaded.
+*type* — Decrypt-style reveal for short labels (IDs, titles). Showcase effect only (MOTION.md): - The real text is always in the accessibility tree; the scramble is aria-hidden decoration. - Toggling `revealed` mid-flight reverses from the current progress, never restarting. - Reduced motion (OS, provider, or EffectClock) swaps instantly with no glyph cycling. - The loop pauses while the page is hidden (shared `usePageVisible`, ADR-0007), resumes from the current progress, and stops once settled or unmounted. It is short and one-shot, so it does not track the viewport. Never use it to delay business data: pass content that is already loaded.
 
 ### `MotionLane`
 
-*type* — Side-by-side motion comparison (MOTION.md "Showcase 每类动画提供 Default / Slow x0.25 / Reduced / Interrupt 四组状态"). Renders the same demo in four lanes: - Default: speed 1, user motion preference. - Slow ×0.25: four times slower, for reviewing easing and choreography. - Reduced: forced reduced motion (MotionConfig "always" + data-rl-motion), the equivalent fallback. - Interrupt: speed 1; the player re-triggers the demo while it is still running, proving the effect retargets from its current state instead of queueing or restarting. One shared play control drives every lane, so the lanes stay in step.
+*type* — Side-by-side motion comparison (MOTION.md "Showcase 每类动画提供 Default / Slow x0.25 / Reduced / Interrupt 四组状态"). Renders the same demo in four lanes: - Default: speed 1, inherits the surrounding motion preference (never re-enables motion). - Slow ×0.25: four times slower, for reviewing easing and choreography. - Reduced: forced reduced motion (MotionConfig "always" + data-rl-motion), the equivalent fallback. - Interrupt: speed 1; the player re-triggers the demo while it is still running, proving the effect retargets from its current state instead of queueing or restarting. One shared play control drives every lane, so the lanes stay in step. Lanes also set `MotionSpeed`, so
 
 ```ts
 type MotionLane = 'default' | 'slow' | 'reduced' | 'interrupt'
@@ -228,7 +228,7 @@ type MotionLane = 'default' | 'slow' | 'reduced' | 'interrupt'
 
 ### `ScanSurfaceProps`
 
-*type* — Single-pass scan line over a surface, triggered by the user (e.g. "re-scan"). Showcase effect: - One sweep per `scanKey` change, never an idle infinite loop (STYLE.md forbids default infinite scans). - Children render immediately and stay interactive; the sweep is a pointer-events:none overlay. - Reduced motion: no moving line; a brief static outline marks the "scanned" moment instead. - Skipped while the page is hidden.
+*type* — Single-pass scan line over a surface, triggered by the user (e.g. "re-scan"). Showcase effect: - One sweep per `scanKey` change, never an idle infinite loop (STYLE.md forbids default infinite scans). - Children render immediately and stay interactive; the sweep is a pointer-events:none overlay. - Reduced motion: no moving line; a brief static outline marks the "scanned" moment instead. - Stop conditions (ADR-0007): skipped while the page is hidden, cut short if the page hides mid-sweep, cleared on unmount. One-shot, so it does not track the viewport.
 
 ```ts
 type ScanSurfaceProps = { children: React.ReactNode; /** Change this value to run one sweep (a counter or timestamp). */ scanKey?: number | string; /** Sweep duration at speed 1 (ms). */ duration?: number; onScanEnd?: () => void; className?: string; }

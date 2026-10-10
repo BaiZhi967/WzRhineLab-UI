@@ -1,8 +1,35 @@
 # @wzrhine/react · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 164 个导出（47 components，6 functions & hooks，6 constants，16 interfaces，89 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 209 个导出（59 components，12 functions & hooks，6 constants，20 interfaces，112 types）。
 
 ## Components
+
+### `Alert`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` |  |
+| `live` | `AlertLive` |  |
+| `title` | `React.ReactNode` |  |
+| `tone` | `AlertTone` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `AlertDialog`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `confirmLabel` * | `React.ReactNode` |  |
+| `description` * | `React.ReactNode` |  |
+| `onConfirm` * | `() => void \| Promise<unknown>` |  |
+| `title` * | `React.ReactNode` |  |
+| `tone` | `AlertDialogTone` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
 ### `ArchiveCard`
 
@@ -16,6 +43,7 @@
 | `id` * | `string` |  |
 | `layout` | `"row" \| "tile"` | `row` for lists, `tile` for grids. |
 | `media` | `{ src: string; alt: string; }` | Optional thumbnail. Provide `alt` that describes it, or `alt=""` when purely decorative. |
+| `motion` | `"none" \| "identity"` | `identity`: the record ID continues into a matching `ArchiveIdentity` (list → detail). Default `none`. |
 | `onOpen` | `(() => void)` | Open the record in place (renders <button>). Ignored when `href` is set. |
 | `selected` | `boolean` | Selected in a list/detail layout. |
 | `status` | `ArchiveCardStatus` |  |
@@ -23,6 +51,18 @@
 | `title` * | `React.ReactNode` |  |
 | `updatedAt` | `string` | ISO date for <time dateTime>; `updatedLabel` is the visible text (defaults to the ISO string). |
 | `updatedLabel` | `React.ReactNode` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `ArchiveIdentity`
+
+*component* — Target end of an ArchiveCard shared identity, e.g. the ID line of a detail pane.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` | Visible text; defaults to the ID. |
+| `className` | `string` |  |
+| `id` * | `string` | Record ID; must match the `ArchiveCard` it continues from. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -52,6 +92,18 @@
 | `loading` | `boolean` | Blocks activation and announces busy state while keeping focus and the accessible name. |
 | `size` | `ButtonSize` |  |
 | `variant` | `ButtonVariant` | Visual weight. `primary` = ink fill; `accent` = research-orange signal, use once per view. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Callout`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` |  |
+| `title` | `React.ReactNode` |  |
+| `tone` | `AlertTone` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -160,6 +212,30 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `children` * | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>>` | The element that closes the dialog, typically `<Button variant="ghost">取消</Button>`. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Drawer`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` |  |
+| `side` | `DrawerSide` |  |
+| `size` | `DrawerSize` |  |
+| `title` * | `React.ReactNode` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `EmptyState`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `kind` | `EmptyStateKind` |  |
+| `title` * | `React.ReactNode` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -366,6 +442,32 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `MotionPresence`
+
+*component* — Enter / exit wrapper over `AnimatePresence`. Toggling `show` mid-flight reverses from the current visual state (no queued animations). Hidden content is unmounted, so it never lingers in the accessibility tree.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `as` | `"span" \| "div" \| "li" \| "ol" \| "section" \| "ul"` | Element rendered for the animated wrapper. |
+| `children` | `React.ReactNode` |  |
+| `initial` | `boolean` | Animate on first render too. Off by default: content present at load just appears. |
+| `onExitComplete` | `(() => void)` | Fires after the exit animation, once the content has unmounted. |
+| `preset` | `MotionPresencePreset` |  |
+| `show` * | `boolean` | Mount (true) or animate out and unmount (false). |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `MotionSpeed`
+
+*component* — Slows every `useRhineMotion()` transition in this subtree. Review and showcase only (e.g. the motion player's Slow ×0.25 lane); never ship it in a product view.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `speed` * | `number` | 0.25 = four times slower. Values ≤ 0 are ignored. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `Pagination`
 
 *component*
@@ -499,6 +601,32 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `RhineMotionGroup`
+
+*component* — Staggered entrance for a short group (≤ ~8 items). Item n waits n × 24ms, capped at the `fast` token (120ms) so long lists never trickle in; reduced motion removes the stagger and the offset. Exit is one group fade, never a reverse cascade.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `as` | `"div" \| "ol" \| "section" \| "ul"` |  |
+| `children` | `React.ReactNode` | `RhineMotionItem` children; their order sets the stagger. |
+| `initial` | `boolean` | Animate on first render too. Off by default. |
+| `onExitComplete` | `(() => void)` |  |
+| `preset` | `"fade" \| "rise"` | Item preset. |
+| `show` | `boolean` | Mount (true) with staggered items, or fade the whole group out and unmount (false). |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `RhineMotionItem`
+
+*component* — One staggered item; must be a direct child of `RhineMotionGroup`.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `as` | `"span" \| "div" \| "li"` |  |
+| `children` | `React.ReactNode` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `RhineProvider`
 
 *component* — Root of a WzRhineLab UI subtree: renders the `.rl-theme` scope, a portal target inside it, the motion/react reduced-motion policy, shared tooltip timing and the toast queue. Nestable — an inner provider can switch theme or density for a region.
@@ -551,6 +679,27 @@
 | `decorative` | `boolean` | Purely visual rule: removed from the accessibility tree. Use for decoration inside a group whose structure is already conveyed by headings or lists. |
 | `orientation` | `SeparatorOrientation` |  |
 | `tone` | `SeparatorTone` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Skeleton`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `shape` | `SkeletonShape` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Spinner`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `label` | `string` |  |
+| `size` | `SpinnerSize` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -790,6 +939,54 @@ function getPaginationItems: (page: number, pageCount: number, siblingCount?: nu
 function paginate: <Row>(rows: readonly Row[], page: number, pageSize: number) => Row[]
 ```
 
+### `resolveMotion`
+
+*function* — Resolve a named preset for one kind of property. Pure: pass `reduced` from `useRhineMotion()` (or use its `resolve`, which does this for you). `speed` < 1 slows the result down (showcase review only); it never lengthens the reduced fallback, which stays within the `fast` token.
+
+```ts
+function resolveMotion: (kind: MotionPropertyKind, name: RhineTransitionName, reduced: boolean, speed?: number) => Transition
+```
+
+### `useInViewport`
+
+*function* — True while the element intersects the viewport. Treated as visible where IntersectionObserver is unavailable.
+
+```ts
+function useInViewport: <T extends Element>(ref: React.RefObject<T | null>) => boolean
+```
+
+### `useLatestGuard`
+
+*function* — Stale async result guard (MOTION.md lifecycle rule 2): a late response must not reopen a dialog or overwrite newer state.
+
+```ts
+function useLatestGuard: () => LatestGuard
+```
+
+### `useMotionLifecycle`
+
+*function*
+
+```ts
+function useMotionLifecycle: ({ active, autoStart, viewportRef, reduced: forceReduced }?: MotionLifecycleOptions) => MotionLifecycle
+```
+
+### `useMotionSpeed`
+
+*function* — Current review speed (1 outside a `MotionSpeed`).
+
+```ts
+function useMotionSpeed: () => number
+```
+
+### `usePageVisible`
+
+*function* — True while the document is visible. Loops must pause when it turns false (MOTION.md lifecycle rule 4).
+
+```ts
+function usePageVisible: () => boolean
+```
+
 ### `usePortalContainer`
 
 *function* — Portal target for popups (Dialog, Select, Tooltip, Popover, Menu, Toast). Inside a RhineProvider it is a node within the themed root, so popups inherit --rl-* tokens, theme, density and reduced motion. The value is the element itself (not a ref) so portals re-render once it exists; a null container would otherwise make Base UI fall back to <body> and lose the theme. Returns `undefined` outside a provider.
@@ -861,7 +1058,7 @@ const ToastProvider: React.FC<ToastProviderProps>
 *const* — Named transitions. Components import these instead of writing their own numbers.
 
 ```ts
-const transition: { readonly press: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly release: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly fast: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly base: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly panel: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly scene: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly loop: { readonly duration: number; readonly ease: "linear"; readonly repeat: number; }; readonly instant: { readonly duration: 0; }; }
+const transition: { readonly press: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly release: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly fast: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly base: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly panel: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly scene: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly showcase: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly loop: { readonly duration: number; readonly ease: "linear"; readonly repeat: number; }; readonly instant: { readonly duration: 0; }; }
 ```
 
 ## Interfaces
@@ -924,6 +1121,15 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | `siblingCount` | `number` |  |
 | `totalItems` * | `number` | Total rows across all pages; drives the page count and the range summary. |
 
+### `LatestGuard`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `begin` * | `() => () => boolean` | Begin a new async run; the returned check is true until a newer run begins, `cancel()` or unmount. |
+| `cancel` * | `() => void` | Invalidate every pending run (e.g. when the dialog that started it closes). |
+
 ### `MetadataItem`
 
 *interface*
@@ -937,6 +1143,40 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | `mono` | `boolean` | Monospace value for IDs, codes, measurements and timestamps. |
 | `value` * | `React.ReactNode` |  |
 | `wide` | `boolean` | Let a long value span the full row in multi-column layouts. |
+
+### `MotionLifecycle`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `pauseReason` * | `MotionPauseReason \| null` | Why a requested loop is not running; `null` when running, idle or stopped. |
+| `pause` * | `() => void` |  |
+| `resume` * | `() => void` |  |
+| `running` * | `boolean` | True only in `running`; drive the loop from this. |
+| `start` * | `() => void` |  |
+| `state` * | `MotionLifecycleState` |  |
+| `stop` * | `() => void` |  |
+
+### `MotionLifecycleOptions`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` | Controlled request. When set, it overrides `start()` / `stop()`. |
+| `autoStart` | `boolean` | Start on mount (uncontrolled only). |
+| `reduced` | `boolean` | Extra reduced-motion signal (e.g. an effect clock forcing reduce). OS / provider preference always applies. |
+| `viewportRef` | `React.RefObject<Element \| null>` | Pause while this element is outside the viewport. |
+
+### `MotionSpeedProps`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `speed` * | `number` | 0.25 = four times slower. Values ≤ 0 are ignored. |
 
 ### `PaginationLabels`
 
@@ -968,6 +1208,8 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | --- | --- | --- |
 | `get` * | `(name: RhineTransitionName) => Transition` | Returns the named preset, or an instant transition when motion is reduced. |
 | `reduced` * | `boolean` | True when the OS preference or the nearest `<MotionConfig reducedMotion>` asks for reduced motion. |
+| `resolve` * | `(kind: MotionPropertyKind, name: RhineTransitionName) => Transition` | Returns the named preset degraded for one property kind (ADR-0007): colour / opacity keep a short fade. |
+| `speed` * | `number` | Review speed from the nearest `MotionSpeed` (1 by default). |
 
 ### `SelectGroup`
 
@@ -1048,9 +1290,57 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 
 ## Types
 
+### `AlertDialogProps`
+
+*type*
+
+```ts
+type AlertDialogProps = { title: React.ReactNode; description: React.ReactNode; confirmLabel: React.ReactNode; onConfirm: () => void | Promise<unknown>; tone?: AlertDialogTone; }
+```
+
+### `AlertDialogTone`
+
+*type*
+
+```ts
+type AlertDialogTone = 'danger' | 'default'
+```
+
+### `AlertLive`
+
+*type*
+
+```ts
+type AlertLive = 'off' | 'polite' | 'assertive'
+```
+
+### `AlertProps`
+
+*type*
+
+```ts
+type AlertProps = { tone?: AlertTone; title?: React.ReactNode; children?: React.ReactNode; live?: AlertLive; }
+```
+
+### `AlertTone`
+
+*type*
+
+```ts
+type AlertTone = 'neutral' | 'info' | 'success' | 'warning' | 'danger'
+```
+
 ### `ArchiveCardProps`
 
 *type*
+
+### `ArchiveIdentityProps`
+
+*type*
+
+```ts
+type ArchiveIdentityProps = { /** Record ID; must match the `ArchiveCard` it continues from. */ id: string; /** Visible text; defaults to the ID. */ children?: React.ReactNode; className?: string; }
+```
 
 ### `BreadcrumbProps`
 
@@ -1074,6 +1364,14 @@ type ButtonSize = 'sm' | 'md' | 'lg'
 
 ```ts
 type ButtonVariant = 'primary' | 'accent' | 'secondary' | 'ghost'
+```
+
+### `CalloutProps`
+
+*type*
+
+```ts
+type CalloutProps = { tone?: AlertTone; title?: React.ReactNode; children?: React.ReactNode; }
 ```
 
 ### `CheckboxGroupProps`
@@ -1122,6 +1420,46 @@ type DialogCloseProps = { /** The element that closes the dialog, typically `<Bu
 
 ```ts
 type DialogSize = 'sm' | 'md' | 'lg'
+```
+
+### `DrawerProps`
+
+*type*
+
+```ts
+type DrawerProps = { title: React.ReactNode; children?: React.ReactNode; side?: DrawerSide; size?: DrawerSize; }
+```
+
+### `DrawerSide`
+
+*type*
+
+```ts
+type DrawerSide = 'start' | 'end'
+```
+
+### `DrawerSize`
+
+*type*
+
+```ts
+type DrawerSize = 'sm' | 'md' | 'lg'
+```
+
+### `EmptyStateKind`
+
+*type*
+
+```ts
+type EmptyStateKind = 'empty' | 'no-results' | 'no-permission' | 'first-use'
+```
+
+### `EmptyStateProps`
+
+*type*
+
+```ts
+type EmptyStateProps = { title: React.ReactNode; kind?: EmptyStateKind; }
 ```
 
 ### `FieldProps`
@@ -1268,6 +1606,42 @@ type MetadataValue = React.ReactNode
 type MeterState = 'optimum' | 'suboptimum' | 'critical'
 ```
 
+### `MotionLifecycleState`
+
+*type*
+
+```ts
+type MotionLifecycleState = 'idle' | 'running' | 'paused' | 'stopped'
+```
+
+### `MotionPauseReason`
+
+*type*
+
+```ts
+type MotionPauseReason = 'manual' | 'hidden' | 'offscreen' | 'reduced'
+```
+
+### `MotionPresencePreset`
+
+*type* — - `fade`: opacity only, `fast` — tooltips, inline status swaps. - `panel`: opacity + 8px rise, `panel` — detail layers, dialogs, sheets. - `rise`: opacity + 4px rise, `base` — list items, inline feedback.
+
+```ts
+type MotionPresencePreset = 'fade' | 'panel' | 'rise'
+```
+
+### `MotionPresenceProps`
+
+*type*
+
+### `MotionPropertyKind`
+
+*type* — What a transition animates. Reduced motion degrades by kind (ADR-0007): - `color` / `opacity`: keep a short fade, never longer than `fast`; - `transform` / `layout`: jump straight to the target; - `loop`: stop (instant, no repeat).
+
+```ts
+type MotionPropertyKind = 'color' | 'opacity' | 'transform' | 'layout' | 'loop'
+```
+
 ### `PaginationItem`
 
 *type* — Page navigation (ADR-0005 §3): a `<nav>` of plain buttons in normal Tab order. The current page keeps `aria-current="page"` and stays focusable so it can be announced. Narrow containers switch to "上一页 · 第 n / m 页 · 下一页" through a container query.
@@ -1364,6 +1738,18 @@ type RecordTrailItem = BreadcrumbItem
 type RhineDensity = 'comfortable' | 'compact'
 ```
 
+### `RhineMotionGroupProps`
+
+*type*
+
+### `RhineMotionItemProps`
+
+*type*
+
+```ts
+type RhineMotionItemProps = ElementProps & { as?: 'div' | 'li' | 'span'; children?: React.ReactNode; }
+```
+
 ### `RhineMotionPreference`
 
 *type* — `user` follows the OS setting; `reduce` forces reduced motion for this subtree.
@@ -1386,7 +1772,7 @@ type RhineTheme = 'light' | 'dark' | 'system'
 
 ### `RhineTransitionName`
 
-*type*
+*type* — Named preset keys (`instant` … `showcase`, plus `press`/`release`/`loop`).
 
 ```ts
 type RhineTransitionName = keyof typeof transition
@@ -1416,12 +1802,44 @@ type SeparatorOrientation = 'horizontal' | 'vertical'
 type SeparatorTone = 'subtle' | 'default' | 'strong'
 ```
 
+### `SkeletonProps`
+
+*type*
+
+```ts
+type SkeletonProps = { shape?: SkeletonShape; }
+```
+
+### `SkeletonShape`
+
+*type*
+
+```ts
+type SkeletonShape = 'text' | 'block' | 'circle'
+```
+
 ### `SortDirection`
 
 *type*
 
 ```ts
 type SortDirection = 'ascending' | 'descending'
+```
+
+### `SpinnerProps`
+
+*type*
+
+```ts
+type SpinnerProps = { size?: SpinnerSize; label?: string; }
+```
+
+### `SpinnerSize`
+
+*type*
+
+```ts
+type SpinnerSize = 'sm' | 'md' | 'lg'
 ```
 
 ### `StatProps`
