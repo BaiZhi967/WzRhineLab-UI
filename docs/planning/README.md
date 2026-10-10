@@ -1,7 +1,7 @@
 # WzRhineLab-UI 长期规划中心
 
 > 状态：Working plan  
-> 基线：main @ bd220bf（2026-10-10，Base UI 1.9.0 与 M7 Forms 已合入）  
+> 基线：Base UI 1.9.0 与 M7 Forms 已合入 main  
 > 维护方式：规划文档描述目标和门禁，验收记录描述已经真实执行的结果。
 
 本目录是 WzRhineLab-UI 后续规划的统一入口。现有的 design、development 和 acceptance 文档继续作为规范、实现约束和事实记录；本目录负责回答三个问题：
@@ -42,7 +42,7 @@
 
 | 文件 | 内容 |
 | --- | --- |
-| [2026-2030-roadmap.md](2026-2030-roadmap.md) | 从 M8 到公共生态的阶段路线和依赖关系 |
+| [roadmap.md](roadmap.md) | 从 M8 到公共生态的阶段路线和依赖关系 |
 | [component-platform-plan.md](component-platform-plan.md) | 组件分层、优先级、API、验收矩阵和领域模式 |
 | [motion-and-rendering-plan.md](motion-and-rendering-plan.md) | CSS、Motion、SVG、Canvas、WebGL 和第三方适配器的长期边界 |
 | [quality-release-and-ecosystem-plan.md](quality-release-and-ecosystem-plan.md) | 质量门禁、兼容性、许可、发布、文档与生态计划 |
