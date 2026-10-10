@@ -150,7 +150,7 @@ test.describe('Drawer', () => {
     await dialog.getByRole('button', { name: '关闭' }).click();
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText(/已拒绝 3 次关闭请求/)).toBeVisible();
-    await expect(dialog).toBeHidden({ timeout: 4000 });
+    await expect(dialog).toBeHidden({ timeout: 8000 });
     await expect(page.getByRole('status').filter({ hasText: '复核完成' })).toBeVisible();
   });
 
@@ -168,9 +168,23 @@ test.describe('Drawer', () => {
     const popup = page.locator('.rl-drawer');
     await expect(popup).toHaveCount(1);
     await settled(popup);
+    // Measured in-page so a fast engine finishing the exit between Playwright polls cannot hide
+    // it: the panel must stay mounted for most of the panel transition (280ms) after Escape.
+    const exitMs = popup.evaluate(
+      (el) =>
+        new Promise<number>((resolve) => {
+          const start = performance.now();
+          const observer = new MutationObserver(() => {
+            if (!el.isConnected) {
+              observer.disconnect();
+              resolve(performance.now() - start);
+            }
+          });
+          observer.observe(document.body, { childList: true, subtree: true });
+        }),
+    );
     await page.keyboard.press('Escape');
-    // The exit transition is visible: the panel is still mounted, sliding, right after Escape.
-    await expect(popup).toHaveAttribute('data-ending-style', '');
+    expect(await exitMs).toBeGreaterThan(150);
     await expect(popup).toHaveCount(0);
     await expect(trigger).toBeFocused();
   });

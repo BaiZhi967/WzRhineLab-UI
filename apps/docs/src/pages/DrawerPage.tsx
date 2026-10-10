@@ -198,7 +198,7 @@ function GuardedDrawer() {
       setSaving(false);
       setSaved(noteRef.current?.value || '（无备注）');
       setOpen(false);
-    }, 1500);
+    }, 3000);
     return () => window.clearTimeout(t);
   }, [saving]);
 
