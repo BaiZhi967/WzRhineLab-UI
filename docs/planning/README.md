@@ -20,6 +20,7 @@
 - @wzrhine/tokens、@wzrhine/react、@wzrhine/effects 三个包；
 - Base UI 1.9.0 作为唯一 headless 交互底座；
 - 基础原语、Fields、Navigation / Overlay、Data、Rhine archive patterns；
+- Agent UI 公共包尚未实现；其目标边界和契约见 Agent UI 平台规划；
 - M7 表单层：Textarea、Checkbox、CheckboxGroup、RadioGroup、Radio、Switch、Fieldset、Form、Separator、VisuallyHidden；
 - 3 个示例应用：archive-desk、host-embed、ssr-hydrate；
 - 三内核自动化验收、axe 检查、视觉回归基线、package verification；
@@ -46,7 +47,10 @@
 | [component-platform-plan.md](component-platform-plan.md) | 组件分层、优先级、API、验收矩阵和领域模式 |
 | [motion-and-rendering-plan.md](motion-and-rendering-plan.md) | CSS、Motion、SVG、Canvas、WebGL 和第三方适配器的长期边界 |
 | [quality-release-and-ecosystem-plan.md](quality-release-and-ecosystem-plan.md) | 质量门禁、兼容性、许可、发布、文档与生态计划 |
-| [execution-backlog.md](execution-backlog.md) | 当前 90 天和后续阶段的可执行任务清单 |
+| [execution-backlog.md](execution-backlog.md) | 当前及后续阶段的可执行任务清单 |
+| [agent-ui-platform-plan.md](agent-ui-platform-plan.md) | @wzrhine/agent 的组件分层、迁移顺序和质量门禁 |
+| [agent-ui-contracts.md](agent-ui-contracts.md) | Agent view-model、actions、状态、流式恢复和异步交互契约 |
+| [agent-ui-adoption.md](agent-ui-adoption.md) | Wpi-Agent 与其他 Agent 应用的接入方式和双层验收 |
 
 ## 计划使用规则
 
@@ -81,6 +85,8 @@ DOM/SVG 展示效果可以留在 @wzrhine/effects。Canvas、WebGL、Rive、Lott
 
 只有展示概念而没有使用场景的效果，放入 showcase backlog，不进入核心组件排期。
 
+Agent UI 采用独立的 @wzrhine/agent 包。一个真实的 Agent 消费项目就可以提出组件插入需求；第二个消费者用于验证公共契约，不是进入规划的前置条件。Agent UI 的运行时、传输、权限事实和宿主 API 必须留在消费项目。
+
 ## 阶段状态约定
 
 - Proposed：已提出，尚未完成需求和风险评估；
@@ -111,4 +117,7 @@ DOM/SVG 展示效果可以留在 @wzrhine/effects。Canvas、WebGL、Rive、Lott
 5. Stat；
 6. 三浏览器、键盘、axe、视觉和真实数据密度验收；
 7. 再进入 M9 Ecosystem，而不是立即引入 3D 或第二套组件底座。
+
+Agent UI 的实现应按 [Agent UI 平台规划](agent-ui-platform-plan.md) 的依赖顺序推进；遇到 WzRhine 尚未支持的 Combobox、Drawer、Slider 或 Accordion 时，按照 [需求插入流程（PR #11）](https://github.com/BaiZhi967/WzRhineLab-UI/pull/11) 提交最小支持闭环。
+
 

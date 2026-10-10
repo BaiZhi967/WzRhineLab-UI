@@ -2,7 +2,7 @@
 
 ## 1. 组件分层
 
-WzRhineLab-UI 使用六层结构：
+WzRhineLab-UI 使用七层结构：
 
 | 层级 | 责任 | 当前状态 |
 | --- | --- | --- |
@@ -11,6 +11,7 @@ WzRhineLab-UI 使用六层结构：
 | Navigation / Overlay | Tabs、Menu、Popover、Dialog、Toast、路径 | 基础已完成，Breadcrumb 待做 |
 | Data | Table、Pagination、Progress、Meter、Stat | DataTable 已有，M8 补齐 |
 | Rhine Patterns | 归档、实验、Agent、证据和指标场景 | 首批已完成，M13 扩展 |
+| Agent UI | Agent Shell、消息、Composer、工具、审批、问卷、Artifact 和多 Agent 组合 | 拟议 @wzrhine/agent，M13 分阶段建设 |
 | Effects | 展示型视觉效果和渲染适配器 | DOM/SVG 已有，Canvas/WebGL 后置 |
 
 ### 分层规则
@@ -20,6 +21,8 @@ WzRhineLab-UI 使用六层结构：
 - Navigation / Overlay 不拥有业务状态；
 - Data 提供展示和交互契约，不绑定请求库；
 - Rhine Patterns 通过 slots、children 和 render props 注入业务内容；
+- Agent UI 依赖 Primitives、Fields、Navigation / Overlay、Data 和 Motion contract，但不依赖消费项目 DTO、请求库、Tauri 或 Agent SDK；
+- Agent UI 通过 view-model、actions、capabilities 和 renderer 接入不同运行时；
 - Effects 不阻塞业务结果、不替代语义 DOM；
 - WebGL 不得进入 @wzrhine/react 依赖链。
 
@@ -100,6 +103,32 @@ README 当前将这些列为三十个组件和 RhineProvider。后续统计以�
 - RecordDetail；
 - RunComparison；
 - TraceSummary。
+
+### Agent UI 候选
+
+Agent UI 不再只以 AgentRunCard 的形式列在 Rhine Patterns 中，而是规划为独立包：
+
+- AgentShell、AgentHeader、AgentSidebar、AgentWorkspace；
+- ConversationList、ConversationItem、ConversationSearch；
+- MessageList、Message、MessagePart、StreamingText、JumpToLatest；
+- Composer、MentionPicker、CommandPicker、AttachmentList、SendStopButton；
+- RunStatus、ToolActivity、ToolCall、ToolOutput、ProcessOutput、RunSummary；
+- ApprovalPanel、ApprovalEvidence、PermissionSummary；
+- Questionnaire、QuestionCard、QuestionnaireRecovery；
+- ArtifactCard、ArtifactPreview、Citation、SourceList、FileReference；
+- FilePreview、CodePreview、DiffPreview、TerminalOutput；
+- TaskList、SubagentActivity、TraceSummary、RunComparison。
+
+这些组件的公共接口只能接受应用无关的 view-model 和 actions。Wpi-Agent 的 agent-client、TanStack Query、MCP 事实校验、Tauri 和文件系统逻辑留在 adapter。
+
+### Agent UI 的晋升标准
+
+- 当前页面存在真实 Agent 操作场景；
+- 组件行为可以用静态 fixture 复现；
+- 没有依赖 Wpi DTO 或某个 Agent SDK；
+- 组件的异步状态、unknown 回执、焦点和减动行为可以测试；
+- 至少完成组件库验收和一个真实消费项目验收；
+- 已知限制、本次延后能力和路线回填位置已记录。
 
 领域模式的验收页面：
 
@@ -246,4 +275,5 @@ Stack、Cluster、Container、Grid 等布局组件只有在真实项目中出现
 | 测试可行性 | 难以稳定验证 | 可做视觉验证 | 可做行为和语义验证 |
 
 总分 9 分以上进入近期排期；6–8 分进入候选；5 分以下保留在概念或领域层。
+
 
