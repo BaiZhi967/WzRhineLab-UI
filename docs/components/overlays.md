@@ -1,6 +1,6 @@
 # RhineProvider · Tabs · Tooltip · Dialog · Select
 
-- 状态：**Beta（M2-A）** · 底座：Base UI 1.8.0（ADR-0001）
+- 状态：**Beta（M2-A）** · 底座：Base UI 1.9.0（ADR-0001，2026-10-10 升级）
 - 源码：`packages/react/src/provider/RhineProvider.tsx`、`components/{Tabs,Tooltip,Dialog,Select}.tsx`、`overlays.css`
 - Showcase：`#/components/tabs`、`/tooltip`、`/dialog`、`/select`
 

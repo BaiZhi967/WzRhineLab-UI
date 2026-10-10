@@ -45,3 +45,9 @@
 ## 后果
 - `@wzrhine/react` 增加 1 个运行时依赖（Base UI 及 floating-ui）；只用 Button/Surface 的宿主因子路径导入与 tree-shake 不受影响（M5 发布前以 bundle 分析复核）。
 - M1-B 的 Input / Field 直接基于 Base UI Field 实现；M2 的 Dialog / Select 从 `apps/docs/src/pages/lab` 原型升级为正式组件。
+
+## 修订 · 2026-10-10：升级 1.9.0
+- `@base-ui/react` 1.8.0 → **1.9.0**（2026-10-09 发布的 minor 版本，changelog 无破坏性变更）；传递依赖 `@base-ui/utils` 0.4.0 → 0.5.0，floating-ui 系列版本不变。
+- 动机：上游修复与本项目全部九个包裹模块相交——Menu 的 focus guard 循环与 hover-out 动画、Popover/Tooltip 的 remount 过渡、Select 大列表挂载性能、Tabs 函数值选择、Toast 交互期间计时器暂停、Field 的 `defaultValue` 告警；并为 M7 表单组件带来 Checkbox/Radio/Switch 的 `aria-label` 优先级与 RadioGroup 方向键、inputRef 修复。
+- 重验（分支 `chore/base-ui-1.9.0`，真实运行，证据见 [验收记录](../acceptance/2026-10-10-base-ui-1.9.0.md)）：jsdom 131 项（含本 ADR 要求的 spike 三组：Dialog+motion / Field / Select）、Showcase 三内核 E2E 238 项、视觉基线 31/31 零 diff、示例逐内核 archive-desk 13×3 / host-embed 27 / ssr-hydrate 18、`api:check` 无公开 API 漂移、`license:audit` 与 `verify:packages` 通过。
+- 使用约束 1–6 维持不变；继续以 `dependency` 精确锁定版本。

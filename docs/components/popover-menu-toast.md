@@ -1,6 +1,6 @@
 # Popover · Menu · Toast
 
-- 状态：**Beta（M2-B）** · 底座：Base UI 1.8.0（ADR-0001）
+- 状态：**Beta（M2-B）** · 底座：Base UI 1.9.0（ADR-0001，2026-10-10 升级）
 - 源码：`packages/react/src/components/{Popover,Menu,Toast}.tsx`、`feedback.css`
 - Showcase：`#/components/popover`、`/menu`、`/toast`
 

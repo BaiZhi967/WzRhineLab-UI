@@ -7,8 +7,8 @@
 | 包 | 版本 | 许可证 | 引入方 |
 | --- | --- | --- | --- |
 | `@babel/runtime` | 7.29.10 | MIT | @wzrhine/react |
-| `@base-ui/react` | 1.8.0 | MIT | @wzrhine/react |
-| `@base-ui/utils` | 0.4.0 | MIT | @wzrhine/react |
+| `@base-ui/react` | 1.9.0 | MIT | @wzrhine/react |
+| `@base-ui/utils` | 0.5.0 | MIT | @wzrhine/react |
 | `@floating-ui/core` | 1.8.0 | MIT | @wzrhine/react |
 | `@floating-ui/dom` | 1.8.0 | MIT | @wzrhine/react |
 | `@floating-ui/react-dom` | 2.1.9 | MIT | @wzrhine/react |
