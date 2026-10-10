@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 import { setSettings } from './helpers';
@@ -480,4 +481,19 @@ test.describe('effects stop while the page is hidden', () => {
     await expect(lane.locator('.rl-scan__line')).toHaveCount(0, { timeout: 300 });
     await expect(lane.locator('.rl-scan')).not.toHaveAttribute('data-scanning');
   });
+});
+
+test.describe('Motion page accessibility', () => {
+  for (const theme of ['light', 'dark'] as const) {
+    test(`axe clean with the lab loaded and every comparison played · ${theme}`, async ({ page }) => {
+      await setSettings(page, { theme });
+      await page.goto('/#/motion');
+      const play = page.locator('.rl-player button[data-primary]');
+      await expect(play).toHaveCount(3);
+      for (let i = 0; i < 3; i += 1) await play.nth(i).click();
+      await page.waitForTimeout(1200);
+      const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+      expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
+    });
+  }
 });
