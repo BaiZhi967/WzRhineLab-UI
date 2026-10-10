@@ -11,7 +11,7 @@
 | [development/ARCHITECTURE.md](development/ARCHITECTURE.md) | workspace、包结构、依赖边界与发布约束 |
 | [development/CONTRIBUTING.md](development/CONTRIBUTING.md) | 开发约束、commit、分支、评审与测试 |
 | [development/QUALITY-GATES.md](development/QUALITY-GATES.md) | 可执行质量门槛 |
-| [ROADMAP.md](ROADMAP.md) | M0–M6 里程碑、验收与依赖 |
+| [ROADMAP.md](ROADMAP.md) | M0–M9 里程碑、验收与依赖 |
 | [concepts/README.md](concepts/README.md) | 概念图索引、用途与局限 |
 | [research/REFERENCES.md](research/REFERENCES.md) | 官方 / 社区 / 技术参考资料及授权提醒 |
 

@@ -58,3 +58,40 @@ describe('M1-B prop types', () => {
     void (<Field label="x"><Input size="sm" mono /></Field>);
   });
 });
+
+describe('M7 form prop types', () => {
+  it('choice controls require a visible or hidden label', async () => {
+    const { Checkbox, CheckboxGroup, Radio, RadioGroup, Switch, Fieldset } = await import('../src');
+    void (<Checkbox label="确认" />);
+    // @ts-expect-error label is required
+    void (<Checkbox />);
+    // @ts-expect-error naming goes through label, not aria-label
+    void (<Checkbox label="x" aria-label="y" />);
+    // @ts-expect-error label is required
+    void (<Switch />);
+    // @ts-expect-error Switch is not a required-style control; use Checkbox
+    void (<Switch label="x" required />);
+    // @ts-expect-error group needs a legend
+    void (<CheckboxGroup><Checkbox label="a" /></CheckboxGroup>);
+    // @ts-expect-error Radio needs a value
+    void (<RadioGroup label="g"><Radio label="a" /></RadioGroup>);
+    // @ts-expect-error Fieldset needs a legend
+    void (<Fieldset>x</Fieldset>);
+    void (
+      <CheckboxGroup label="g" onValueChange={(value) => expectTypeOf(value).toEqualTypeOf<string[]>()}>
+        <Checkbox value="a" label="a" />
+      </CheckboxGroup>
+    );
+  });
+
+  it('Textarea is a textarea, not an input', async () => {
+    const { Textarea } = await import('../src');
+    const ref = React.createRef<HTMLTextAreaElement>();
+    void (<Textarea ref={ref} rows={4} maxLength={10} showCount onValueChange={(v) => expectTypeOf(v).toEqualTypeOf<string>()} />);
+    const inputRef = React.createRef<HTMLInputElement>();
+    // @ts-expect-error wrong element type
+    void (<Textarea ref={inputRef} />);
+    // @ts-expect-error unknown resize mode
+    void (<Textarea resize="both" />);
+  });
+});
