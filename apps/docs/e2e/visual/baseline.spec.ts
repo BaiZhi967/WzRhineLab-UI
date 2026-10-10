@@ -19,6 +19,7 @@ const pages = [
   { name: 'choice', hash: '/#/components/choice' },
   { name: 'archive', hash: '/#/archive' },
   { name: 'data', hash: '/#/archive/data' },
+  { name: 'feedback', hash: '/#/components/feedback' },
   { name: 'scenarios', hash: '/#/archive/scenarios' },
 ] as const;
 
@@ -48,6 +49,22 @@ for (const theme of ['light', 'dark'] as const) {
         await page.getByRole('button', { name: '归档记录…' }).click();
         await expect(page.getByRole('dialog')).toBeVisible();
         await expect(page).toHaveScreenshot(`dialog-open-${theme}-${width}.png`);
+      });
+
+      test('alert dialog open', async ({ page }) => {
+        await setSettings(page, { theme, motion: 'reduce' });
+        await open(page, '/#/components/alert-dialog');
+        await page.getByRole('button', { name: '删除记录…' }).first().click();
+        await expect(page.getByRole('alertdialog')).toBeVisible();
+        await expect(page).toHaveScreenshot(`alert-dialog-open-${theme}-${width}.png`);
+      });
+
+      test('drawer open', async ({ page }) => {
+        await setSettings(page, { theme, motion: 'reduce' });
+        await open(page, '/#/components/drawer');
+        await page.getByRole('button', { name: '查看详情' }).first().click();
+        await expect(page.getByRole('dialog')).toBeVisible();
+        await expect(page).toHaveScreenshot(`drawer-open-${theme}-${width}.png`);
       });
 
       test('select open', async ({ page }) => {
@@ -107,6 +124,27 @@ test.describe('component close-ups', () => {
       }
     });
   }
+
+  for (const theme of ['light', 'dark'] as const) {
+    test(`feedback specimens · ${theme}`, async ({ page }) => {
+      await setSettings(page, { theme, motion: 'reduce' });
+      await open(page, '/#/components/feedback');
+      for (const name of ['Alert tones', 'Callout', 'EmptyState', 'Skeleton', 'Spinner'] as const) {
+        const region = page.getByRole('region', { name, exact: true });
+        await region.scrollIntoViewIfNeeded();
+        await expect(region).toHaveScreenshot(`feedback-${name.replace(/[^a-z]+/gi, '-').toLowerCase()}-${theme}.png`);
+      }
+    });
+  }
+
+  test('forced colors · feedback', async ({ page }) => {
+    await page.emulateMedia({ forcedColors: 'active' });
+    await setSettings(page, { motion: 'reduce' });
+    await open(page, '/#/components/feedback');
+    const region = page.getByRole('region', { name: 'Alert tones', exact: true });
+    await region.scrollIntoViewIfNeeded();
+    await expect(region).toHaveScreenshot('feedback-alert-tones-forced-colors.png');
+  });
 
   test('forced colors · data navigation', async ({ page }) => {
     await page.emulateMedia({ forcedColors: 'active' });

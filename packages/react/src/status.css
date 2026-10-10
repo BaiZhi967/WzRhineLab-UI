@@ -219,6 +219,7 @@
   text-transform: none;
   letter-spacing: normal;
   overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .rl-empty[data-size='sm'] .rl-empty__title {
@@ -231,6 +232,8 @@
   font: var(--rl-type-body-sm);
   color: var(--rl-fg-muted);
   overflow-wrap: anywhere;
+  /* Centred CJK text: avoid a lone glyph on the last line. */
+  text-wrap: pretty;
 }
 
 .rl-empty[data-size='sm'] .rl-empty__description {
