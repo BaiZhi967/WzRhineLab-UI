@@ -139,6 +139,10 @@ describe('package boundary', () => {
     for (const [name, ms] of Object.entries(motionDurations)) {
       expect(duration[name as keyof typeof duration]).toBeCloseTo(ms / 1000, 6);
     }
+    // Every duration token has a same-named preset (M10 exit gate: Motion API ↔ tokens mapping).
+    for (const [name, ms] of Object.entries(motionDurations)) {
+      expect((transition as Record<string, { duration: number }>)[name]?.duration, name).toBeCloseTo(ms / 1000, 6);
+    }
     expect(transition.press.duration).toBe(motionDurations.press / 1000);
     expect(transition.instant.duration).toBe(0);
   });

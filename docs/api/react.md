@@ -1,6 +1,6 @@
 # @wzrhine/react · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 196 个导出（56 components，6 functions & hooks，5 constants，18 interfaces，111 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 209 个导出（59 components，12 functions & hooks，6 constants，20 interfaces，112 types）。
 
 ## Components
 
@@ -10,12 +10,8 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `action` | `React.ReactNode` | Follow-up control(s), e.g. a small Button 「查看」. |
 | `children` | `React.ReactNode` |  |
-| `dismissLabel` | `string` | Accessible name of the close button. |
-| `icon` | `React.ReactNode` | Replace the tone icon; `null` removes it. |
 | `live` | `AlertLive` |  |
-| `onDismiss` | `(() => void)` | Shows a close button. The caller removes the Alert and places focus. |
 | `title` | `React.ReactNode` |  |
 | `tone` | `AlertTone` |  |
 
@@ -27,23 +23,11 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `aria-label` | `undefined` | The accessible name and description always come from `title` / `description`. |
-| `aria-labelledby` | `undefined` |  |
-| `cancelLabel` | `React.ReactNode` |  |
-| `children` | `React.ReactNode` | Extra detail about the consequences, e.g. the affected records. |
-| `className` | `string` |  |
-| `confirmLabel` * | `React.ReactNode` | Label of the confirming action; name it after the action ("删除记录"), not "确定". |
-| `defaultOpen` | `boolean` |  |
-| `description` * | `React.ReactNode` | Required: a confirmation must say what will happen. |
-| `errorText` | `React.ReactNode` | Shown in a role="alert" message when the Promise from `onConfirm` rejects. |
-| `eyebrow` | `React.ReactNode` | Small archive-style label above the title, e.g. "ARCHIVE / DELETE". |
-| `onClosed` | `(() => void)` | Fires after the exit animation, when focus has returned. |
-| `onConfirm` * | `() => void \| Promise<unknown>` | Runs on confirm. Return a Promise to keep the dialog open until it settles. |
-| `onOpenChange` | `((open: boolean) => void)` |  |
-| `open` | `boolean` |  |
+| `confirmLabel` * | `React.ReactNode` |  |
+| `description` * | `React.ReactNode` |  |
+| `onConfirm` * | `() => void \| Promise<unknown>` |  |
 | `title` * | `React.ReactNode` |  |
-| `tone` | `AlertDialogTone` | `danger` (default) fills the confirm button with the danger colour. |
-| `trigger` | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>>` | Element that opens the dialog (usually a Button). Omit when opening programmatically. |
+| `tone` | `AlertDialogTone` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -59,6 +43,7 @@
 | `id` * | `string` |  |
 | `layout` | `"row" \| "tile"` | `row` for lists, `tile` for grids. |
 | `media` | `{ src: string; alt: string; }` | Optional thumbnail. Provide `alt` that describes it, or `alt=""` when purely decorative. |
+| `motion` | `"none" \| "identity"` | `identity`: the record ID continues into a matching `ArchiveIdentity` (list → detail). Default `none`. |
 | `onOpen` | `(() => void)` | Open the record in place (renders <button>). Ignored when `href` is set. |
 | `selected` | `boolean` | Selected in a list/detail layout. |
 | `status` | `ArchiveCardStatus` |  |
@@ -66,6 +51,18 @@
 | `title` * | `React.ReactNode` |  |
 | `updatedAt` | `string` | ISO date for <time dateTime>; `updatedLabel` is the visible text (defaults to the ISO string). |
 | `updatedLabel` | `React.ReactNode` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `ArchiveIdentity`
+
+*component* — Target end of an ArchiveCard shared identity, e.g. the ID line of a detail pane.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` | Visible text; defaults to the ID. |
+| `className` | `string` |  |
+| `id` * | `string` | Record ID; must match the `ArchiveCard` it continues from. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -105,7 +102,6 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `children` | `React.ReactNode` |  |
-| `icon` | `React.ReactNode` | Replace the tone icon; `null` removes it. |
 | `title` | `React.ReactNode` |  |
 | `tone` | `AlertTone` |  |
 
@@ -166,8 +162,7 @@
 | `columns` * | `readonly DataTableColumn<Row>[]` |  |
 | `density` | `"comfortable" \| "compact"` |  |
 | `emptyAction` | `React.ReactNode` | Optional action under the empty text, e.g. a "clear filters" button. |
-| `emptyDescription` | `React.ReactNode` | Secondary line under the empty text, e.g. how to get results. |
-| `emptyText` | `React.ReactNode` | Empty-state title (rendered by EmptyState size="sm", as a paragraph). |
+| `emptyText` | `React.ReactNode` |  |
 | `errorText` | `React.ReactNode` |  |
 | `getRowId` * | `(row: Row) => string` |  |
 | `getRowLabel` | `((row: Row) => string)` | Accessible name for a row's checkbox; defaults to the row id. |
@@ -201,7 +196,6 @@
 | `dismissOnOutsideClick` | `boolean` | `false` keeps outside clicks from dismissing (use for destructive confirmations). |
 | `eyebrow` | `React.ReactNode` | Small archive-style label above the title, e.g. "ARCHIVE / CONFIRM". |
 | `initialFocus` | `React.RefObject<HTMLElement \| null>` | Element to focus on open; defaults to the first tabbable element. |
-| `onCloseRequest` | `((reason: DialogCloseReason) => boolean \| void)` | Called before a user-initiated close. Return `false` to keep the dialog open (focus stays put), e.g. to ask "放弃未保存的更改？" in a nested AlertDialog. Programmatic `open={false}` skips it. |
 | `onClosed` | `(() => void)` | Fires after the exit animation, when focus has returned. |
 | `onOpenChange` | `((open: boolean) => void)` |  |
 | `open` | `boolean` |  |
@@ -227,33 +221,10 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `actions` | `React.ReactNode` | Footer action bar. Use `<DrawerClose>` for buttons that only dismiss. |
 | `children` | `React.ReactNode` |  |
-| `className` | `string` |  |
-| `closeLabel` | `string` | Accessible name of the header close button. |
-| `defaultOpen` | `boolean` |  |
-| `description` | `React.ReactNode` |  |
-| `eyebrow` | `React.ReactNode` | Small archive-style label above the title, e.g. "ARCHIVE / DETAIL". |
-| `finalFocus` | `React.RefObject<HTMLElement \| null>` | Element to focus after closing; defaults to the trigger or the previously focused element. |
-| `initialFocus` | `React.RefObject<HTMLElement \| null>` | Element to focus on open; defaults to the panel itself so its title is announced first. |
-| `onCloseRequest` | `((reason: DrawerCloseReason) => boolean \| void)` | Called before a user-initiated close. Return `false` to keep the drawer open (focus stays put), e.g. while a save is in flight. Programmatic `open={false}` skips it. |
-| `onClosed` | `(() => void)` | Fires after the exit transition, when focus has returned. |
-| `onOpenChange` | `((open: boolean) => void)` |  |
-| `open` | `boolean` |  |
-| `side` | `DrawerSide` | Logical edge the panel attaches to on wide viewports; follows the writing direction. |
-| `size` | `DrawerSize` | Panel width on wide viewports (the bottom sheet is always full width). |
+| `side` | `DrawerSide` |  |
+| `size` | `DrawerSize` |  |
 | `title` * | `React.ReactNode` |  |
-| `trigger` | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>>` | Element that opens the drawer (usually a Button). Omit when opening programmatically. |
-
-`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
-
-### `DrawerClose`
-
-*component* — Wraps a button so activating it closes the nearest Drawer (reason `close-button`).
-
-| Prop | Type | Description |
-| --- | --- | --- |
-| `children` * | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>>` | The element that closes the drawer, typically `<Button variant="ghost">取消</Button>`. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -263,12 +234,7 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `action` | `React.ReactNode` | Next step, e.g. 「清除筛选」 or 「新建记录」. |
-| `description` | `React.ReactNode` |  |
-| `headingLevel` | `EmptyStateHeadingLevel` | Render the title as `<h2>`–`<h6>`; omitted = `<p>`. |
-| `icon` | `React.ReactNode` | Replace the kind's icon; `null` removes it. Always decorative. |
 | `kind` | `EmptyStateKind` |  |
-| `size` | `EmptyStateSize` | `sm` inside tables and cards; `md` for a whole region. |
 | `title` * | `React.ReactNode` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
@@ -476,6 +442,32 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `MotionPresence`
+
+*component* — Enter / exit wrapper over `AnimatePresence`. Toggling `show` mid-flight reverses from the current visual state (no queued animations). Hidden content is unmounted, so it never lingers in the accessibility tree.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `as` | `"span" \| "div" \| "li" \| "ol" \| "section" \| "ul"` | Element rendered for the animated wrapper. |
+| `children` | `React.ReactNode` |  |
+| `initial` | `boolean` | Animate on first render too. Off by default: content present at load just appears. |
+| `onExitComplete` | `(() => void)` | Fires after the exit animation, once the content has unmounted. |
+| `preset` | `MotionPresencePreset` |  |
+| `show` * | `boolean` | Mount (true) or animate out and unmount (false). |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `MotionSpeed`
+
+*component* — Slows every `useRhineMotion()` transition in this subtree. Review and showcase only (e.g. the motion player's Slow ×0.25 lane); never ship it in a product view.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `speed` * | `number` | 0.25 = four times slower. Values ≤ 0 are ignored. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `Pagination`
 
 *component*
@@ -609,6 +601,32 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `RhineMotionGroup`
+
+*component* — Staggered entrance for a short group (≤ ~8 items). Item n waits n × 24ms, capped at the `fast` token (120ms) so long lists never trickle in; reduced motion removes the stagger and the offset. Exit is one group fade, never a reverse cascade.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `as` | `"div" \| "ol" \| "section" \| "ul"` |  |
+| `children` | `React.ReactNode` | `RhineMotionItem` children; their order sets the stagger. |
+| `initial` | `boolean` | Animate on first render too. Off by default. |
+| `onExitComplete` | `(() => void)` |  |
+| `preset` | `"fade" \| "rise"` | Item preset. |
+| `show` | `boolean` | Mount (true) with staggered items, or fade the whole group out and unmount (false). |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `RhineMotionItem`
+
+*component* — One staggered item; must be a direct child of `RhineMotionGroup`.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `as` | `"span" \| "div" \| "li"` |  |
+| `children` | `React.ReactNode` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `RhineProvider`
 
 *component* — Root of a WzRhineLab UI subtree: renders the `.rl-theme` scope, a portal target inside it, the motion/react reduced-motion policy, shared tooltip timing and the toast queue. Nestable — an inner provider can switch theme or density for a region.
@@ -670,10 +688,7 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `height` | `string` | CSS length. Text defaults to one line height; block and circle to `--rl-space-16`. |
-| `lines` | `number` | Text only: number of lines; the last one is 60% wide. |
 | `shape` | `SkeletonShape` |  |
-| `width` | `string` | CSS length, e.g. `'12rem'`, `'60%'` or `'var(--rl-space-16)'`. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -683,8 +698,8 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `label` | `string` | Spoken status text, e.g. 「正在加载」. Omit for a decorative spinner. |
-| `size` | `SpinnerSize` | Maps to the icon-size tokens. |
+| `label` | `string` |  |
+| `size` | `SpinnerSize` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -865,10 +880,6 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
-### `ToastProvider`
-
-*component* — Toast queue. Mounted by RhineProvider; render it yourself only without one.
-
 ### `ToastViewport`
 
 *component* — Viewport that renders queued toasts. Mounted by RhineProvider; render it yourself only without one.
@@ -926,6 +937,54 @@ function getPaginationItems: (page: number, pageCount: number, siblingCount?: nu
 
 ```ts
 function paginate: <Row>(rows: readonly Row[], page: number, pageSize: number) => Row[]
+```
+
+### `resolveMotion`
+
+*function* — Resolve a named preset for one kind of property. Pure: pass `reduced` from `useRhineMotion()` (or use its `resolve`, which does this for you). `speed` < 1 slows the result down (showcase review only); it never lengthens the reduced fallback, which stays within the `fast` token.
+
+```ts
+function resolveMotion: (kind: MotionPropertyKind, name: RhineTransitionName, reduced: boolean, speed?: number) => Transition
+```
+
+### `useInViewport`
+
+*function* — True while the element intersects the viewport. Treated as visible where IntersectionObserver is unavailable.
+
+```ts
+function useInViewport: <T extends Element>(ref: React.RefObject<T | null>) => boolean
+```
+
+### `useLatestGuard`
+
+*function* — Stale async result guard (MOTION.md lifecycle rule 2): a late response must not reopen a dialog or overwrite newer state.
+
+```ts
+function useLatestGuard: () => LatestGuard
+```
+
+### `useMotionLifecycle`
+
+*function*
+
+```ts
+function useMotionLifecycle: ({ active, autoStart, viewportRef, reduced: forceReduced }?: MotionLifecycleOptions) => MotionLifecycle
+```
+
+### `useMotionSpeed`
+
+*function* — Current review speed (1 outside a `MotionSpeed`).
+
+```ts
+function useMotionSpeed: () => number
+```
+
+### `usePageVisible`
+
+*function* — True while the document is visible. Loops must pause when it turns false (MOTION.md lifecycle rule 4).
+
+```ts
+function usePageVisible: () => boolean
 ```
 
 ### `usePortalContainer`
@@ -986,12 +1045,20 @@ const fadePresence: { readonly initial: { readonly opacity: 0; }; readonly anima
 const pressScale: 0.985
 ```
 
+### `ToastProvider`
+
+*const*
+
+```ts
+const ToastProvider: React.FC<ToastProviderProps>
+```
+
 ### `transition`
 
 *const* — Named transitions. Components import these instead of writing their own numbers.
 
 ```ts
-const transition: { readonly press: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly release: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly fast: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly base: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly panel: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly scene: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly loop: { readonly duration: number; readonly ease: "linear"; readonly repeat: number; }; readonly instant: { readonly duration: 0; }; }
+const transition: { readonly press: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly release: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly fast: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly base: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly panel: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly scene: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly showcase: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly loop: { readonly duration: number; readonly ease: "linear"; readonly repeat: number; }; readonly instant: { readonly duration: 0; }; }
 ```
 
 ## Interfaces
@@ -1054,6 +1121,15 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | `siblingCount` | `number` |  |
 | `totalItems` * | `number` | Total rows across all pages; drives the page count and the range summary. |
 
+### `LatestGuard`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `begin` * | `() => () => boolean` | Begin a new async run; the returned check is true until a newer run begins, `cancel()` or unmount. |
+| `cancel` * | `() => void` | Invalidate every pending run (e.g. when the dialog that started it closes). |
+
 ### `MetadataItem`
 
 *interface*
@@ -1067,6 +1143,40 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | `mono` | `boolean` | Monospace value for IDs, codes, measurements and timestamps. |
 | `value` * | `React.ReactNode` |  |
 | `wide` | `boolean` | Let a long value span the full row in multi-column layouts. |
+
+### `MotionLifecycle`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `pauseReason` * | `MotionPauseReason \| null` | Why a requested loop is not running; `null` when running, idle or stopped. |
+| `pause` * | `() => void` |  |
+| `resume` * | `() => void` |  |
+| `running` * | `boolean` | True only in `running`; drive the loop from this. |
+| `start` * | `() => void` |  |
+| `state` * | `MotionLifecycleState` |  |
+| `stop` * | `() => void` |  |
+
+### `MotionLifecycleOptions`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` | Controlled request. When set, it overrides `start()` / `stop()`. |
+| `autoStart` | `boolean` | Start on mount (uncontrolled only). |
+| `reduced` | `boolean` | Extra reduced-motion signal (e.g. an effect clock forcing reduce). OS / provider preference always applies. |
+| `viewportRef` | `React.RefObject<Element \| null>` | Pause while this element is outside the viewport. |
+
+### `MotionSpeedProps`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `speed` * | `number` | 0.25 = four times slower. Values ≤ 0 are ignored. |
 
 ### `PaginationLabels`
 
@@ -1098,6 +1208,8 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | --- | --- | --- |
 | `get` * | `(name: RhineTransitionName) => Transition` | Returns the named preset, or an instant transition when motion is reduced. |
 | `reduced` * | `boolean` | True when the OS preference or the nearest `<MotionConfig reducedMotion>` asks for reduced motion. |
+| `resolve` * | `(kind: MotionPropertyKind, name: RhineTransitionName) => Transition` | Returns the named preset degraded for one property kind (ADR-0007): colour / opacity keep a short fade. |
+| `speed` * | `number` | Review speed from the nearest `MotionSpeed` (1 by default). |
 
 ### `SelectGroup`
 
@@ -1152,16 +1264,6 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | `title` * | `React.ReactNode` |  |
 | `tone` | `StatusKind` | Optional status marker; the title must still say what happened. |
 
-### `ToastAction`
-
-*interface* — A single follow-up action, e.g. 撤销 / 查看 / 重试.
-
-| Member | Type | Description |
-| --- | --- | --- |
-| `keepOpen` | `boolean` | Keep the toast open after the action runs. By default it closes. |
-| `label` * | `string` |  |
-| `onClick` * | `() => void` |  |
-
 ### `ToastApi`
 
 *interface*
@@ -1169,8 +1271,7 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | Member | Type | Description |
 | --- | --- | --- |
 | `dismiss` * | `(id?: string) => void` |  |
-| `promise` * | `<Value>(promise: Promise<Value>, options: ToastPromiseOptions<Value>) => Promise<Value>` | One toast follows the promise: `loading` until it settles, then `success` or `error` in place. Returns a promise with the same outcome (it rejects when the input rejects). |
-| `show` * | `(options: ToastOptions) => string` | Show a toast; returns its id. With an existing `id`, updates that toast instead. |
+| `show` * | `(options: ToastOptions) => string` | Show a toast; returns its id. |
 | `update` * | `(id: string, options: Partial<ToastOptions>) => void` | Replace the content of an existing toast (e.g. 处理中 → 已完成). |
 
 ### `ToastOptions`
@@ -1179,24 +1280,13 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 
 | Member | Type | Description |
 | --- | --- | --- |
-| `action` | `ToastAction` | The page must still offer the same result or an equivalent control; the toast is a shortcut. |
+| `action` | `{ label: string; onClick: () => void; }` | A single follow-up action, e.g. 撤销 / 查看. |
 | `description` | `React.ReactNode` |  |
-| `id` | `string` | Showing a toast with the id of one still on screen updates it in place (no stacking). |
 | `onClose` | `(() => void)` |  |
 | `priority` | `"low" \| "high"` | `high` interrupts screen readers (role=alert). Reserve for failures and time-critical notices. |
 | `status` | `ToastStatus` |  |
-| `timeout` | `number` | Auto-dismiss delay in ms. `0` keeps it until dismissed; use for errors that need action. Defaults to the provider's `toastTimeout`; with an `action`, to at least 10 s. |
+| `timeout` | `number` | Auto-dismiss delay in ms. `0` keeps it until dismissed; use for errors that need action. |
 | `title` * | `React.ReactNode` |  |
-
-### `ToastPromiseOptions`
-
-*interface*
-
-| Member | Type | Description |
-| --- | --- | --- |
-| `error` * | `ToastPromiseStage<unknown>` | Status defaults to `danger`, priority to `high` and timeout to `0` (stays until dismissed). |
-| `loading` * | `string \| ToastOptions` | Shown until the promise settles; never auto-dismisses. Status defaults to `info`. |
-| `success` * | `ToastPromiseStage<Value>` | Status defaults to `success`. |
 
 ## Types
 
@@ -1204,9 +1294,13 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 
 *type*
 
+```ts
+type AlertDialogProps = { title: React.ReactNode; description: React.ReactNode; confirmLabel: React.ReactNode; onConfirm: () => void | Promise<unknown>; tone?: AlertDialogTone; }
+```
+
 ### `AlertDialogTone`
 
-*type* — Confirmation for destructive or irreversible actions (ADR-0006 §2) on Base UI AlertDialog: role="alertdialog", always modal, outside clicks never dismiss, Escape = cancel. Initial focus lands on the cancel button. `onConfirm` may return a Promise: while it is pending the confirm button shows `loading` (and keeps focus) and every way of cancelling is ignored; on resolve the dialog closes, on reject it stays open with `errorText` in a role="alert" message. Motion matches Dialog (backdrop fast, panel + 8px rise; opacity only when reduced).
+*type*
 
 ```ts
 type AlertDialogTone = 'danger' | 'default'
@@ -1224,9 +1318,13 @@ type AlertLive = 'off' | 'polite' | 'assertive'
 
 *type*
 
+```ts
+type AlertProps = { tone?: AlertTone; title?: React.ReactNode; children?: React.ReactNode; live?: AlertLive; }
+```
+
 ### `AlertTone`
 
-*type* — In-page status message and explanatory note (ADR-0006 §5). Tone is always carried by an icon and text as well as colour.
+*type*
 
 ```ts
 type AlertTone = 'neutral' | 'info' | 'success' | 'warning' | 'danger'
@@ -1235,6 +1333,14 @@ type AlertTone = 'neutral' | 'info' | 'success' | 'warning' | 'danger'
 ### `ArchiveCardProps`
 
 *type*
+
+### `ArchiveIdentityProps`
+
+*type*
+
+```ts
+type ArchiveIdentityProps = { /** Record ID; must match the `ArchiveCard` it continues from. */ id: string; /** Visible text; defaults to the ID. */ children?: React.ReactNode; className?: string; }
+```
 
 ### `BreadcrumbProps`
 
@@ -1265,7 +1371,7 @@ type ButtonVariant = 'primary' | 'accent' | 'secondary' | 'ghost'
 *type*
 
 ```ts
-type CalloutProps = BaseProps
+type CalloutProps = { tone?: AlertTone; title?: React.ReactNode; children?: React.ReactNode; }
 ```
 
 ### `CheckboxGroupProps`
@@ -1304,14 +1410,6 @@ type DataTableStatus = 'ready' | 'loading' | 'error'
 type DialogCloseProps = { /** The element that closes the dialog, typically `<Button variant="ghost">取消</Button>`. */ children: React.ReactElement<Record<string, unknown>>; }
 ```
 
-### `DialogCloseReason`
-
-*type* — Why the user is trying to close the dialog (ADR-0006 §3).
-
-```ts
-type DialogCloseReason = 'escape' | 'outside' | 'close-button' | 'trigger'
-```
-
 ### `DialogProps`
 
 *type*
@@ -1324,29 +1422,17 @@ type DialogCloseReason = 'escape' | 'outside' | 'close-button' | 'trigger'
 type DialogSize = 'sm' | 'md' | 'lg'
 ```
 
-### `DrawerCloseProps`
-
-*type*
-
-```ts
-type DrawerCloseProps = { /** The element that closes the drawer, typically `<Button variant="ghost">取消</Button>`. */ children: React.ReactElement<Record<string, unknown>>; }
-```
-
-### `DrawerCloseReason`
-
-*type* — Why the user is trying to close the drawer: the `DialogCloseReason` values (ADR-0006 §3) plus `swipe` for the dismiss gesture.
-
-```ts
-type DrawerCloseReason = 'escape' | 'outside' | 'close-button' | 'trigger' | 'swipe'
-```
-
 ### `DrawerProps`
 
 *type*
 
+```ts
+type DrawerProps = { title: React.ReactNode; children?: React.ReactNode; side?: DrawerSide; size?: DrawerSize; }
+```
+
 ### `DrawerSide`
 
-*type* — Edge panel on Base UI Drawer (ADR-0006 §4): focus enters, Tab loops, Escape and backdrop clicks close, page scroll is locked, the background is inert and focus returns to the trigger — all from Base UI. Below 40rem the panel becomes a bottom sheet (swipe down to dismiss); wider it slides from the inline `side` (swipe toward that edge). CSS owns `transform` (Base UI writes the swipe offset into the same property), so enter / exit are CSS transitions on data-starting-style / data-ending-style: interruptible, and Base UI unmounts after they end.
+*type*
 
 ```ts
 type DrawerSide = 'start' | 'end'
@@ -1360,17 +1446,9 @@ type DrawerSide = 'start' | 'end'
 type DrawerSize = 'sm' | 'md' | 'lg'
 ```
 
-### `EmptyStateHeadingLevel`
-
-*type*
-
-```ts
-type EmptyStateHeadingLevel = 2 | 3 | 4 | 5 | 6
-```
-
 ### `EmptyStateKind`
 
-*type* — Placeholder for a region with nothing to show (ADR-0006 §6). `kind` only picks the default decorative icon. The title is a heading when `headingLevel` is given, otherwise a paragraph (e.g. inside a table cell). No live role: the filter result count announces empty results.
+*type*
 
 ```ts
 type EmptyStateKind = 'empty' | 'no-results' | 'no-permission' | 'first-use'
@@ -1380,12 +1458,8 @@ type EmptyStateKind = 'empty' | 'no-results' | 'no-permission' | 'first-use'
 
 *type*
 
-### `EmptyStateSize`
-
-*type*
-
 ```ts
-type EmptyStateSize = 'sm' | 'md'
+type EmptyStateProps = { title: React.ReactNode; kind?: EmptyStateKind; }
 ```
 
 ### `FieldProps`
@@ -1532,6 +1606,42 @@ type MetadataValue = React.ReactNode
 type MeterState = 'optimum' | 'suboptimum' | 'critical'
 ```
 
+### `MotionLifecycleState`
+
+*type*
+
+```ts
+type MotionLifecycleState = 'idle' | 'running' | 'paused' | 'stopped'
+```
+
+### `MotionPauseReason`
+
+*type*
+
+```ts
+type MotionPauseReason = 'manual' | 'hidden' | 'offscreen' | 'reduced'
+```
+
+### `MotionPresencePreset`
+
+*type* — - `fade`: opacity only, `fast` — tooltips, inline status swaps. - `panel`: opacity + 8px rise, `panel` — detail layers, dialogs, sheets. - `rise`: opacity + 4px rise, `base` — list items, inline feedback.
+
+```ts
+type MotionPresencePreset = 'fade' | 'panel' | 'rise'
+```
+
+### `MotionPresenceProps`
+
+*type*
+
+### `MotionPropertyKind`
+
+*type* — What a transition animates. Reduced motion degrades by kind (ADR-0007): - `color` / `opacity`: keep a short fade, never longer than `fast`; - `transform` / `layout`: jump straight to the target; - `loop`: stop (instant, no repeat).
+
+```ts
+type MotionPropertyKind = 'color' | 'opacity' | 'transform' | 'layout' | 'loop'
+```
+
 ### `PaginationItem`
 
 *type* — Page navigation (ADR-0005 §3): a `<nav>` of plain buttons in normal Tab order. The current page keeps `aria-current="page"` and stays focusable so it can be announced. Narrow containers switch to "上一页 · 第 n / m 页 · 下一页" through a container query.
@@ -1628,6 +1738,18 @@ type RecordTrailItem = BreadcrumbItem
 type RhineDensity = 'comfortable' | 'compact'
 ```
 
+### `RhineMotionGroupProps`
+
+*type*
+
+### `RhineMotionItemProps`
+
+*type*
+
+```ts
+type RhineMotionItemProps = ElementProps & { as?: 'div' | 'li' | 'span'; children?: React.ReactNode; }
+```
+
 ### `RhineMotionPreference`
 
 *type* — `user` follows the OS setting; `reduce` forces reduced motion for this subtree.
@@ -1650,7 +1772,7 @@ type RhineTheme = 'light' | 'dark' | 'system'
 
 ### `RhineTransitionName`
 
-*type*
+*type* — Named preset keys (`instant` … `showcase`, plus `press`/`release`/`loop`).
 
 ```ts
 type RhineTransitionName = keyof typeof transition
@@ -1684,9 +1806,13 @@ type SeparatorTone = 'subtle' | 'default' | 'strong'
 
 *type*
 
+```ts
+type SkeletonProps = { shape?: SkeletonShape; }
+```
+
 ### `SkeletonShape`
 
-*type* — Placeholder block for content that is still loading (ADR-0006 §7). Always `aria-hidden`: the container owns `aria-busy` and a visible or visually hidden 「正在加载」 text. Pulses on `--rl-motion-loop`; static under reduced motion.
+*type*
 
 ```ts
 type SkeletonShape = 'text' | 'block' | 'circle'
@@ -1705,12 +1831,12 @@ type SortDirection = 'ascending' | 'descending'
 *type*
 
 ```ts
-type SpinnerProps = Omit<React.HTMLAttributes<HTMLSpanElement>, 'children' | 'role'> & { /** Maps to the icon-size tokens. */ size?: SpinnerSize; /** Spoken status text, e.g. 「正在加载」. Omit for a decorative spinner. */ label?: string; }
+type SpinnerProps = { size?: SpinnerSize; label?: string; }
 ```
 
 ### `SpinnerSize`
 
-*type* — Indeterminate activity indicator (ADR-0006 §7). With `label` it is a polite status (`role="status"` + visually hidden text); without, it is decorative and the surrounding control carries the busy state (e.g. Button `aria-busy`). Rotation runs on motion/react and stops under reduced motion (OS or RhineProvider), leaving a longer static arc.
+*type*
 
 ```ts
 type SpinnerSize = 'sm' | 'md' | 'lg'
@@ -1871,22 +1997,6 @@ type TextVariant = 'display' | 'heading-1' | 'heading-2' | 'heading-3' | 'body' 
 ### `TimelineProps`
 
 *type*
-
-### `ToastPromiseStage`
-
-*type* — A promise stage: a title, full options, or (for success / error) a function of the outcome.
-
-```ts
-type ToastPromiseStage = string | ToastOptions | ((value: Arg) => string | ToastOptions)
-```
-
-### `ToastProviderProps`
-
-*type*
-
-```ts
-type ToastProviderProps = React.ComponentProps<typeof BaseToast.Provider>
-```
 
 ### `ToastStatus`
 

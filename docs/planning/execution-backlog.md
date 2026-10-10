@@ -145,20 +145,20 @@
 
 ## M10：Motion Core 2.0
 
-- [ ] 建立 motion pattern 目录。
-- [ ] 写 motion ownership ADR。
-- [ ] 统一 CSS / Motion / SVG 的属性边界。
-- [ ] 提炼 RhineMotionGroup。
-- [ ] 提炼 MotionPresence。
-- [ ] 统一 page visibility pause。
-- [ ] 增加 start / pause / resume / stop 生命周期。
-- [ ] 为 Dialog、Popover、Toast、Tabs 增加 interrupt 测试。
-- [ ] 为 ArchiveCard 增加 shared identity 验证。
-- [ ] 为 text reveal 提供语义 fallback。
-- [ ] 为 effects 循环动画提供停止条件。
-- [ ] 增加 Default / Slow / Reduced / Interrupt showcase。
-- [ ] 重新验证 reduced motion。
-- [ ] 完成 M10 acceptance。
+- [x] 建立 motion pattern 目录。
+- [x] 写 motion ownership ADR。
+- [x] 统一 CSS / Motion / SVG 的属性边界。
+- [x] 提炼 RhineMotionGroup。
+- [x] 提炼 MotionPresence。
+- [x] 统一 page visibility pause。
+- [x] 增加 start / pause / resume / stop 生命周期。
+- [x] 为 Dialog、Popover、Toast、Tabs 增加 interrupt 测试。
+- [x] 为 ArchiveCard 增加 shared identity 验证。
+- [x] 为 text reveal 提供语义 fallback。
+- [x] 为 effects 循环动画提供停止条件。
+- [x] 增加 Default / Slow / Reduced / Interrupt showcase。
+- [x] 重新验证 reduced motion。
+- [x] 完成 M10 acceptance（[验收记录](../development/acceptance/2026-10-10-m10.md)；人工读屏 / 真机 / 低帧率设备未验收）。
 
 ## M11：Rendering Lab
 

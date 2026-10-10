@@ -104,3 +104,12 @@ export type { RhineDensity, RhineMotionPreference, RhineProviderProps, RhineThem
 export { duration, ease, fadePresence, pressScale, transition } from './motion/presets.js';
 export { useRhineMotion } from './motion/useRhineMotion.js';
 export type { RhineMotion, RhineTransitionName } from './motion/useRhineMotion.js';
+export { MotionSpeed, resolveMotion, useMotionSpeed } from './motion/resolve.js';
+export type { MotionPropertyKind, MotionSpeedProps } from './motion/resolve.js';
+export { MotionPresence, RhineMotionGroup, RhineMotionItem } from './motion/presence.js';
+export type { MotionPresencePreset, MotionPresenceProps, RhineMotionGroupProps, RhineMotionItemProps } from './motion/presence.js';
+export { useInViewport, usePageVisible } from './motion/visibility.js';
+export { useLatestGuard, useMotionLifecycle } from './motion/lifecycle.js';
+export type { LatestGuard, MotionLifecycle, MotionLifecycleOptions, MotionLifecycleState, MotionPauseReason } from './motion/lifecycle.js';
+export { ArchiveIdentity } from './components/ArchiveCard.js';
+export type { ArchiveIdentityProps } from './components/ArchiveCard.js';
