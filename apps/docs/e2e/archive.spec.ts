@@ -141,6 +141,44 @@ test.describe('Scenario · 档案检索', () => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
     await page.screenshot({ path: 'test-results/screens/390-scenario-search-table.png', fullPage: true });
   });
+
+  test('narrow layout: a card opens the detail in a Drawer; closing returns focus to the card', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/#/archive/scenarios');
+    // No stacked detail pane under the list in the one-column layout.
+    await expect(page.getByRole('region', { name: '记录详情' })).toHaveCount(0);
+    const card = page.getByRole('list', { name: '检索结果' }).getByRole('button', { name: '沉积岩样本 #7' });
+    await card.click();
+    const drawer = page.getByRole('dialog', { name: '沉积岩样本 #7' });
+    await expect(drawer).toBeVisible();
+    await expect(drawer.getByRole('navigation', { name: '档案位置' })).toContainText('ARC-1031');
+    await expect(drawer.locator('dl')).toContainText('样本库 · B 区');
+    await expect(drawer.getByRole('button', { name: '更多操作' })).toBeVisible();
+    // Bottom sheet below 40rem.
+    await expect(drawer).toHaveAttribute('data-swipe-direction', 'down');
+    await expect.poll(() => drawer.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+    await page.screenshot({ path: 'test-results/screens/390-scenario-search-drawer.png' });
+    await drawer.getByRole('button', { name: '关闭' }).click();
+    await expect(drawer).toBeHidden();
+    await expect(card).toBeFocused();
+    await expect(card).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('narrow table view: 查看 opens the drawer; Escape returns focus to that button', async ({ page }) => {
+    await page.setViewportSize({ width: 768, height: 900 });
+    await page.goto('/#/archive/scenarios');
+    await page.getByRole('region', { name: '档案检索' }).getByRole('tab', { name: /表格/ }).click();
+    const row = page.getByRole('table', { name: '检索结果' }).getByRole('row').filter({ hasText: '低温保存操作规程' });
+    const view = row.getByRole('button', { name: '查看' });
+    await view.click();
+    const drawer = page.getByRole('dialog', { name: '低温保存操作规程' });
+    await expect(drawer).toBeVisible();
+    // 768 is above 40rem: a side panel on the right edge.
+    await expect(drawer).toHaveAttribute('data-swipe-direction', 'right');
+    await page.keyboard.press('Escape');
+    await expect(drawer).toBeHidden();
+    await expect(view).toBeFocused();
+  });
 });
 
 test.describe('Scenario · 实验监测', () => {
@@ -174,7 +212,10 @@ test.describe('Scenario · 实验监测', () => {
     await expect(steps.getByRole('button', { name: '流程已完成' })).toBeDisabled();
     await expect(page.locator('.rl-toast').filter({ hasText: '流程已完成' })).toBeVisible();
     await steps.getByRole('button', { name: '重置' }).click();
-    const dialog = page.getByRole('dialog', { name: '重置演示流程？' });
+    const dialog = page.getByRole('alertdialog', { name: '重置演示流程？' });
+    await expect(dialog).toHaveAccessibleDescription('将清空已完成的步骤与时间线。');
+    // Destructive confirmation: focus starts on the safe choice.
+    await expect.poll(() => dialog.getByRole('button', { name: '取消' }).evaluate((el) => el === document.activeElement)).toBe(true);
     await dialog.getByRole('button', { name: '重置' }).click();
     await expect(steps.getByRole('status')).toContainText('未开始');
     await expect(page.getByText('尚未完成任何步骤。')).toBeVisible();
@@ -259,11 +300,12 @@ test.describe('Scenario · 设置表单', () => {
     const name = form.getByRole('textbox', { name: /实验室名称/ });
     await name.fill('临时名称');
     await form.getByRole('button', { name: '放弃更改' }).click();
-    const dialog = page.getByRole('dialog', { name: '放弃未保存的更改？' });
+    const dialog = page.getByRole('alertdialog', { name: '放弃未保存的更改？' });
+    await expect.poll(() => dialog.getByRole('button', { name: '继续编辑' }).evaluate((el) => el === document.activeElement)).toBe(true);
     await dialog.getByRole('button', { name: '继续编辑' }).click();
     await expect(name).toHaveValue('临时名称');
     await form.getByRole('button', { name: '放弃更改' }).click();
-    await page.getByRole('dialog').getByRole('button', { name: '放弃更改' }).click();
+    await page.getByRole('alertdialog').getByRole('button', { name: '放弃更改' }).click();
     await expect(name).toHaveValue('示例实验室');
   });
 });

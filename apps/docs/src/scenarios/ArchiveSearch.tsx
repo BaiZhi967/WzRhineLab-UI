@@ -3,6 +3,7 @@ import {
   ArchiveCard,
   Button,
   DataTable,
+  Drawer,
   Field,
   IconButton,
   Input,
@@ -20,13 +21,16 @@ import {
   useToast,
 } from '@wzrhine/react';
 import type { DataTableColumn, SortState } from '@wzrhine/react';
+import { useMediaQuery } from '../app/settings';
 import { Download, Grid, Search } from '../icons';
 import { categoryLabel, records, statusLabel, statusTone } from './data';
 import type { ArchiveRecord, RecordCategory, RecordStatus } from './data';
 
 /**
  * Scenario 1 · 档案检索. A searchable, filterable archive list with list/table views and a
- * detail pane. Every count and label is derived from the fixture records.
+ * detail pane. Every count and label is derived from the fixture records. Where the layout
+ * collapses to one column (< 1024px, matching style.css) the detail opens in a Drawer instead of
+ * being stacked under the list (ADR-0006 consequences); closing it returns focus to the card.
  */
 
 type View = 'list' | 'table';
@@ -61,6 +65,25 @@ export function ArchiveSearch() {
   const [sort, setSort] = React.useState<SortState | null>({ column: 'updated', direction: 'descending' });
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
   const [activeId, setActiveId] = React.useState<string>(records[0]!.id);
+  // One-column layout (same breakpoint as style.css): the detail opens in a Drawer.
+  const narrow = useMediaQuery('(max-width: 1023px)');
+  const [detailOpen, setDetailOpen] = React.useState(false);
+  // Openers by view + id, so focus returns to the card / 查看 button that opened the drawer.
+  const openers = React.useRef(new Map<string, HTMLElement>());
+  const returnFocus = React.useRef<HTMLElement | null>(null);
+  const opener = (key: string) => (el: HTMLElement | null) => {
+    if (el) openers.current.set(key, el);
+    else openers.current.delete(key);
+  };
+  const openRecord = (id: string, key: string) => {
+    setActiveId(id);
+    if (!narrow) return;
+    returnFocus.current = openers.current.get(key) ?? null;
+    setDetailOpen(true);
+  };
+  React.useEffect(() => {
+    if (!narrow) setDetailOpen(false);
+  }, [narrow]);
 
   const filtered = React.useMemo(
     () =>
@@ -74,6 +97,55 @@ export function ArchiveSearch() {
   );
   const active = records.find((r) => r.id === activeId);
 
+  const detail = active && (
+    <>
+      <RecordHeader
+        headingLevel={2}
+        trail={[{ label: '档案' }, { label: categoryLabel[active.category] }, { label: active.id }]}
+        recordId={active.id}
+        status={{ tone: statusTone[active.status], label: statusLabel[active.status] }}
+        title={active.title}
+        classification={[categoryLabel[active.category], active.discipline]}
+        summary={active.summary}
+        actions={
+          <>
+            <Tooltip content="导出该记录">
+              <IconButton
+                icon={<Download />}
+                label="导出该记录"
+                variant="secondary"
+                onClick={() => toast.show({ title: `已导出 ${active.id}`, status: 'success' })}
+              />
+            </Tooltip>
+            <Menu trigger={<Button variant="secondary">更多操作</Button>} align="end">
+              <MenuItem onSelect={() => navigator.clipboard?.writeText(active.id).catch(() => undefined)}>复制编号</MenuItem>
+              <MenuItem
+                tone="danger"
+                disabled={active.status === 'archived'}
+                onSelect={() => toast.show({ title: `已提交 ${active.id} 的归档申请`, description: '演示：状态未真正改变。', status: 'info' })}
+              >
+                申请归档
+              </MenuItem>
+            </Menu>
+          </>
+        }
+      />
+      <MetadataList
+        aria-label="记录元数据"
+        columns={2}
+        items={[
+          { label: '编号', value: active.id, mono: true },
+          { label: '负责人', value: active.owner },
+          { label: '创建', value: active.created, dateTime: active.created, mono: true },
+          { label: '更新', value: active.updated, dateTime: active.updated, mono: true },
+          { label: '存放位置', value: active.location },
+          { label: '标签', value: active.tags.join('、'), wide: true },
+        ]}
+      />
+      <p className="sc-small">样例档案记录，用于组件验收，不代表真实数据。</p>
+    </>
+  );
+
   const columns: DataTableColumn<ArchiveRecord>[] = [
     { key: 'id', header: '编号', sortable: true, mono: true, rowHeader: true },
     { key: 'title', header: '标题', sortable: true },
@@ -86,7 +158,7 @@ export function ArchiveSearch() {
       hideHeader: true,
       align: 'end',
       cell: (r) => (
-        <Button size="sm" variant="ghost" onClick={() => setActiveId(r.id)}>
+        <Button ref={opener(`table:${r.id}`)} size="sm" variant="ghost" onClick={() => openRecord(r.id, `table:${r.id}`)}>
           查看
         </Button>
       ),
@@ -149,6 +221,7 @@ export function ArchiveSearch() {
                   {filtered.map((r) => (
                     <li key={r.id}>
                       <ArchiveCard
+                        ref={opener(`list:${r.id}`)}
                         id={r.id}
                         title={r.title}
                         category={categoryLabel[r.category]}
@@ -156,7 +229,7 @@ export function ArchiveSearch() {
                         status={{ tone: statusTone[r.status], label: statusLabel[r.status] }}
                         updatedAt={r.updated}
                         selected={r.id === activeId}
-                        onOpen={() => setActiveId(r.id)}
+                        onOpen={() => openRecord(r.id, `list:${r.id}`)}
                       />
                     </li>
                   ))}
@@ -193,58 +266,22 @@ export function ArchiveSearch() {
         </div>
       </section>
 
-      <section className="sc-scenario__pane sc-scenario__detail" aria-label="记录详情">
-        {active ? (
-          <>
-            <RecordHeader
-              headingLevel={2}
-              trail={[{ label: '档案' }, { label: categoryLabel[active.category] }, { label: active.id }]}
-              recordId={active.id}
-              status={{ tone: statusTone[active.status], label: statusLabel[active.status] }}
-              title={active.title}
-              classification={[categoryLabel[active.category], active.discipline]}
-              summary={active.summary}
-              actions={
-                <>
-                  <Tooltip content="导出该记录">
-                    <IconButton
-                      icon={<Download />}
-                      label="导出该记录"
-                      variant="secondary"
-                      onClick={() => toast.show({ title: `已导出 ${active.id}`, status: 'success' })}
-                    />
-                  </Tooltip>
-                  <Menu trigger={<Button variant="secondary">更多操作</Button>} align="end">
-                    <MenuItem onSelect={() => navigator.clipboard?.writeText(active.id).catch(() => undefined)}>复制编号</MenuItem>
-                    <MenuItem
-                      tone="danger"
-                      disabled={active.status === 'archived'}
-                      onSelect={() => toast.show({ title: `已提交 ${active.id} 的归档申请`, description: '演示：状态未真正改变。', status: 'info' })}
-                    >
-                      申请归档
-                    </MenuItem>
-                  </Menu>
-                </>
-              }
-            />
-            <MetadataList
-              aria-label="记录元数据"
-              columns={2}
-              items={[
-                { label: '编号', value: active.id, mono: true },
-                { label: '负责人', value: active.owner },
-                { label: '创建', value: active.created, dateTime: active.created, mono: true },
-                { label: '更新', value: active.updated, dateTime: active.updated, mono: true },
-                { label: '存放位置', value: active.location },
-                { label: '标签', value: active.tags.join('、'), wide: true },
-              ]}
-            />
-            <p className="sc-small">样例档案记录，用于组件验收，不代表真实数据。</p>
-          </>
-        ) : (
-          <p className="sc-small">请选择一条记录。</p>
-        )}
-      </section>
+      {narrow ? (
+        <Drawer
+          open={detailOpen && active != null}
+          onOpenChange={setDetailOpen}
+          title={active?.title ?? ''}
+          description="记录详情（样例数据）"
+          className="sc-detail-drawer"
+          finalFocus={returnFocus}
+        >
+          {detail}
+        </Drawer>
+      ) : (
+        <section className="sc-scenario__pane sc-scenario__detail" aria-label="记录详情">
+          {detail || <p className="sc-small">请选择一条记录。</p>}
+        </section>
+      )}
     </div>
   );
 }

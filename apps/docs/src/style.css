@@ -1378,6 +1378,20 @@ body,
   top: calc(var(--sc-topbar-height) + var(--rl-space-4));
 }
 
+/* Narrow layout: the detail opens in a Drawer whose title already names the record. */
+.sc-detail-drawer .rl-record__title {
+  display: none;
+}
+
+.sc-drawer-log {
+  display: grid;
+  gap: var(--rl-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--rl-type-body-sm);
+}
+
 .sc-scenario__pane-head {
   display: flex;
   flex-wrap: wrap;
@@ -1695,10 +1709,6 @@ body,
   .sc-scenario--search,
   .sc-monitor {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .sc-scenario__detail {
-    position: static;
   }
 
   .sc-sidebar {
