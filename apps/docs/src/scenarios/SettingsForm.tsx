@@ -1,10 +1,9 @@
 import * as React from 'react';
 import {
+  AlertDialog,
   Button,
   Checkbox,
   CheckboxGroup,
-  Dialog,
-  DialogClose,
   Field,
   Input,
   MetadataList,
@@ -235,29 +234,17 @@ export function SettingsForm() {
         </Button>
       </div>
 
-      <Dialog
+      <AlertDialog
         open={confirmDiscard}
         onOpenChange={setConfirmDiscard}
         title="放弃未保存的更改？"
         description="表单将恢复为上次保存的内容。"
-        size="sm"
-        actions={
-          <>
-            <DialogClose>
-              <Button variant="ghost">继续编辑</Button>
-            </DialogClose>
-            <DialogClose>
-              <Button
-                onClick={() => {
-                  setDraft(saved);
-                  setSubmitted(false);
-                }}
-              >
-                放弃更改
-              </Button>
-            </DialogClose>
-          </>
-        }
+        cancelLabel="继续编辑"
+        confirmLabel="放弃更改"
+        onConfirm={() => {
+          setDraft(saved);
+          setSubmitted(false);
+        }}
       />
     </form>
   );

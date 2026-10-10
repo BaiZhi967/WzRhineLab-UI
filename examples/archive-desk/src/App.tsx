@@ -3,6 +3,7 @@ import {
   Button,
   DataTable,
   paginate,
+  AlertDialog,
   Dialog,
   DialogClose,
   Field,
@@ -299,34 +300,20 @@ function Desk({ theme, onThemeChange }: { theme: RhineTheme; onThemeChange: (t: 
         </section>
       </main>
 
-      <Dialog
+      <AlertDialog
         open={pendingDelete !== null}
         onOpenChange={(open) => {
           if (!open) setPendingDelete(null);
         }}
         title={`删除 ${pendingDelete?.id ?? ''}？`}
         description="删除后无法恢复。"
-        size="sm"
-        dismissOnOutsideClick={false}
-        actions={
-          <>
-            <DialogClose>
-              <Button variant="ghost">取消</Button>
-            </DialogClose>
-            <DialogClose>
-              <Button
-                onClick={() => {
-                  if (!pendingDelete) return;
-                  remove(pendingDelete.id);
-                  setActiveId(records.find((r) => r.id !== pendingDelete.id)?.id ?? null);
-                  toast.show({ title: `已删除 ${pendingDelete.id}`, status: 'warning' });
-                }}
-              >
-                删除
-              </Button>
-            </DialogClose>
-          </>
-        }
+        confirmLabel="删除"
+        onConfirm={() => {
+          if (!pendingDelete) return;
+          remove(pendingDelete.id);
+          setActiveId(records.find((r) => r.id !== pendingDelete.id)?.id ?? null);
+          toast.show({ title: `已删除 ${pendingDelete.id}`, status: 'warning' });
+        }}
       />
     </div>
   );

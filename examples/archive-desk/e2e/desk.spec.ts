@@ -78,14 +78,15 @@ test('delete goes through a confirmation, then restore brings samples back', asy
   const detail = page.getByLabel('记录详情');
   await detail.getByRole('button', { name: 'ARC-0001 的更多操作' }).click();
   await page.getByRole('menuitem', { name: '删除记录' }).click();
-  const confirm = page.getByRole('dialog', { name: '删除 ARC-0001？' });
+  const confirm = page.getByRole('alertdialog', { name: '删除 ARC-0001？' });
   await expect(confirm).toBeVisible();
+  await expect.poll(() => confirm.getByRole('button', { name: '取消' }).evaluate((el) => el === document.activeElement)).toBe(true);
   await confirm.getByRole('button', { name: '取消' }).click();
   await expect(page.getByRole('rowheader', { name: 'ARC-0001' })).toBeVisible();
 
   await detail.getByRole('button', { name: 'ARC-0001 的更多操作' }).click();
   await page.getByRole('menuitem', { name: '删除记录' }).click();
-  await page.getByRole('dialog', { name: '删除 ARC-0001？' }).getByRole('button', { name: '删除' }).click();
+  await page.getByRole('alertdialog', { name: '删除 ARC-0001？' }).getByRole('button', { name: '删除' }).click();
   await expect(page.getByRole('rowheader', { name: 'ARC-0001' })).toHaveCount(0);
   await expect(page.getByText('2 / 2 条')).toBeVisible();
 

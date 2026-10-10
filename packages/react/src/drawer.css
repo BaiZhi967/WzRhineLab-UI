@@ -1,1 +1,226 @@
 /* Drawer and AlertDialog styles (ADR-0006). */
+
+/* ---------- AlertDialog ---------- */
+/* Reuses the .rl-dialog panel (overlays.css); only the tone and the error message are added here. */
+.rl-alert-dialog[data-tone='danger'] {
+  border-top-color: var(--rl-danger);
+}
+
+/* .rl-button doubled: @import puts this file before the Button variant rules in components.css. */
+.rl-button.rl-alert-dialog__confirm[data-tone='danger'] {
+  --rl-button-bg: var(--rl-danger);
+  --rl-button-fg: var(--rl-fg-on-danger);
+  --rl-button-border: var(--rl-danger);
+  --rl-button-bg-hover: color-mix(in srgb, var(--rl-danger) 86%, var(--rl-bg-inverse));
+  --rl-button-bg-pressed: color-mix(in srgb, var(--rl-danger) 78%, var(--rl-bg-inverse));
+  --rl-button-border-hover: color-mix(in srgb, var(--rl-danger) 86%, var(--rl-bg-inverse));
+}
+
+.rl-alert-dialog__error {
+  margin: 0;
+  padding: var(--rl-space-2) var(--rl-space-3);
+  border-left: var(--rl-border-width-strong) solid var(--rl-danger);
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-bg-surface);
+  color: var(--rl-danger);
+  font: var(--rl-type-body-sm);
+}
+
+@media (forced-colors: active) {
+  .rl-alert-dialog__confirm[data-tone='danger'] { border-color: ButtonText; }
+  .rl-alert-dialog__error { border-left-color: CanvasText; }
+}
+/* ---------- end AlertDialog ---------- */
+
+/* ---------- Drawer ---------- */
+/*
+ * Base UI writes the swipe offset into --drawer-swipe-movement-x / -y and, while dragging, an inline
+ * transform; CSS owns transform for enter / exit so a release or a re-open retargets from where the
+ * panel is. Exit waits for these transitions (Base UI unmounts after they finish).
+ */
+.rl-drawer__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--rl-z-dialog);
+  /* Same dim as .rl-dialog__backdrop; opacity follows the swipe so the page brightens as it closes. */
+  background: color-mix(in srgb, var(--rl-bg-inverse) 36%, transparent);
+  opacity: calc(1 - var(--drawer-swipe-progress, 0));
+  transition: opacity var(--rl-motion-panel) var(--rl-ease-out);
+}
+
+.rl-drawer__backdrop[data-starting-style],
+.rl-drawer__backdrop[data-ending-style] {
+  opacity: 0;
+}
+
+.rl-drawer__viewport {
+  position: fixed;
+  inset: 0;
+  z-index: var(--rl-z-dialog);
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+}
+
+.rl-drawer__viewport[data-placement='left'] {
+  justify-content: flex-start;
+}
+
+.rl-drawer__viewport[data-placement='bottom'] {
+  align-items: flex-end;
+  justify-content: stretch;
+}
+
+.rl-drawer {
+  --rl-drawer-width: var(--rl-dialog-width-md);
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: min(var(--rl-drawer-width), calc(100vw - var(--rl-space-12)));
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  border: 0 solid var(--rl-border-default);
+  background: var(--rl-bg-raised);
+  color: var(--rl-fg-primary);
+  box-shadow: var(--rl-shadow-floating);
+  outline: none;
+  transform: translate(var(--drawer-swipe-movement-x, var(--rl-space-0)), var(--drawer-swipe-movement-y, var(--rl-space-0)));
+  transition:
+    transform var(--rl-motion-panel) var(--rl-ease-out),
+    opacity var(--rl-motion-panel) var(--rl-ease-out);
+}
+
+.rl-drawer[data-size='sm'] { --rl-drawer-width: var(--rl-dialog-width-sm); }
+.rl-drawer[data-size='lg'] { --rl-drawer-width: var(--rl-dialog-width-lg); }
+
+.rl-drawer[data-placement='right'] { border-left-width: var(--rl-border-width); }
+.rl-drawer[data-placement='left'] { border-right-width: var(--rl-border-width); }
+
+.rl-drawer[data-placement='bottom'] {
+  width: 100%;
+  height: auto;
+  max-height: 85vh;
+  max-height: 85dvh;
+  padding-bottom: env(safe-area-inset-bottom, var(--rl-space-0));
+  border-top-width: var(--rl-border-width);
+  border-radius: var(--rl-radius-md) var(--rl-radius-md) 0 0;
+}
+
+.rl-drawer[data-placement='right'][data-starting-style],
+.rl-drawer[data-placement='right'][data-ending-style] { transform: translateX(100%); }
+.rl-drawer[data-placement='left'][data-starting-style],
+.rl-drawer[data-placement='left'][data-ending-style] { transform: translateX(-100%); }
+.rl-drawer[data-placement='bottom'][data-starting-style],
+.rl-drawer[data-placement='bottom'][data-ending-style] { transform: translateY(100%); }
+
+/* A fast swipe release shortens the exit (Base UI scales --drawer-swipe-strength to 0.1–1). */
+.rl-drawer[data-ending-style],
+.rl-drawer__backdrop[data-ending-style] {
+  transition-duration: calc(var(--rl-motion-panel) * var(--drawer-swipe-strength, 1));
+}
+
+/* Dragging follows the pointer 1:1. */
+.rl-drawer[data-swiping],
+.rl-drawer__backdrop[data-swiping] {
+  transition-duration: var(--rl-motion-instant);
+}
+
+.rl-drawer[data-swiping] {
+  user-select: none;
+}
+
+/* Reduced motion: no slide, opacity only (durations already collapse via the motion tokens). */
+@media (prefers-reduced-motion: reduce) {
+  .rl-drawer[data-starting-style],
+  .rl-drawer[data-ending-style] {
+    transform: none;
+    opacity: 0;
+  }
+}
+
+.rl-theme[data-rl-motion='reduce'] .rl-drawer[data-starting-style],
+.rl-theme[data-rl-motion='reduce'] .rl-drawer[data-ending-style] {
+  transform: none;
+  opacity: 0;
+}
+
+.rl-drawer__handle {
+  display: none;
+}
+
+.rl-drawer[data-placement='bottom'] .rl-drawer__handle {
+  display: block;
+  flex: none;
+  width: var(--rl-space-12);
+  height: var(--rl-space-1);
+  margin: var(--rl-space-3) auto 0;
+  border-radius: var(--rl-radius-round);
+  background: var(--rl-border-strong);
+}
+
+.rl-drawer__content {
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+}
+
+.rl-drawer__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--rl-space-4);
+  padding: var(--rl-space-6) var(--rl-space-6) var(--rl-space-4);
+  border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.rl-drawer[data-placement='bottom'] .rl-drawer__header {
+  padding-top: var(--rl-space-3);
+}
+
+.rl-drawer__heading {
+  display: grid;
+  gap: var(--rl-space-2);
+  min-width: 0;
+}
+
+.rl-drawer__title {
+  overflow-wrap: anywhere;
+}
+
+.rl-drawer__close {
+  margin-top: calc(var(--rl-space-2) * -1);
+  margin-inline-end: calc(var(--rl-space-2) * -1);
+}
+
+.rl-drawer__body {
+  display: grid;
+  align-content: start;
+  gap: var(--rl-space-4);
+  min-height: 0;
+  padding: var(--rl-space-6);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.rl-drawer__body:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: calc(var(--rl-focus-width) * -1);
+}
+
+.rl-drawer__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--rl-space-2);
+  padding: var(--rl-space-4) var(--rl-space-6);
+  border-top: var(--rl-border-width) solid var(--rl-border-subtle);
+  background: var(--rl-bg-surface);
+}
+
+@media (forced-colors: active) {
+  .rl-drawer { border-color: CanvasText; }
+}
+/* ---------- end Drawer ---------- */
