@@ -13,6 +13,8 @@ import { categoryLabel, records } from '../scenarios/data';
  */
 
 const sample = records.slice(0, 5);
+// Eight items: long enough that the 120ms stagger cap is reached (items 5–7 start together).
+const groupSample = records.slice(0, 8);
 
 function PresenceDemo({ active }: MotionDemoProps) {
   return (
@@ -30,7 +32,7 @@ function GroupDemo({ active }: MotionDemoProps) {
   return (
     <div className="sc-lab-slot">
       <RhineMotionGroup show={active} as="ul" className="sc-lab-list" aria-label="样例记录">
-        {sample.map((r) => (
+        {groupSample.map((r) => (
           <RhineMotionItem key={r.id} as="li">
             <span className="sc-mono-sm">{r.id}</span>
             <span className="sc-small">{categoryLabel[r.category]}</span>

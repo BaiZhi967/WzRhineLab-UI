@@ -6,7 +6,7 @@ import { EffectClock } from './clock.js';
 /**
  * Side-by-side motion comparison (MOTION.md "Showcase 每类动画提供 Default / Slow x0.25 /
  * Reduced / Interrupt 四组状态"). Renders the same demo in four lanes:
- * - Default:   speed 1, user motion preference.
+ * - Default:   speed 1, inherits the surrounding motion preference (never re-enables motion).
  * - Slow ×0.25: four times slower, for reviewing easing and choreography.
  * - Reduced:   forced reduced motion (MotionConfig "always" + data-rl-motion), the equivalent fallback.
  * - Interrupt: speed 1; the player re-triggers the demo while it is still running, proving the effect
@@ -49,6 +49,15 @@ const laneMeta: Record<MotionLane, { label: string; hint: string; speed: number;
 };
 
 const allLanes: readonly MotionLane[] = ['default', 'slow', 'reduced', 'interrupt'];
+
+/**
+ * The Reduced lane forces reduced motion. The other lanes inherit the surrounding preference
+ * (OS or RhineProvider) instead of resetting it to "user": a reader who asked for reduced motion
+ * must not get motion back inside a comparison.
+ */
+function LaneMotion({ reduced, children }: { reduced: boolean; children: React.ReactNode }) {
+  return reduced ? <MotionConfig reducedMotion="always">{children}</MotionConfig> : <>{children}</>;
+}
 
 export function MotionPlayer({
   title,
@@ -115,7 +124,7 @@ export function MotionPlayer({
                 <span>{meta.label}</span>
                 <span className="rl-player__lane-hint">{meta.hint}</span>
               </p>
-              <MotionConfig reducedMotion={meta.reduced ? 'always' : 'user'}>
+              <LaneMotion reduced={meta.reduced}>
                 <MotionSpeed speed={meta.speed}>
                   <EffectClock speed={meta.speed} reduced={meta.reduced}>
                     <div className="rl-player__stage" data-rl-motion={meta.reduced ? 'reduce' : undefined}>
@@ -123,7 +132,7 @@ export function MotionPlayer({
                     </div>
                   </EffectClock>
                 </MotionSpeed>
-              </MotionConfig>
+              </LaneMotion>
             </li>
           );
         })}

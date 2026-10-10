@@ -119,15 +119,15 @@ function PresenceDemo({ speed }: { speed: Speed }) {
 }
 
 function ComparePane({ mode, speed }: { mode: Mode; speed: Speed }) {
-  return (
-    <MotionConfig reducedMotion={mode === 'reduce' ? 'always' : 'user'}>
-      <div className="sc-compare__pane" data-rl-motion={mode === 'reduce' ? 'reduce' : undefined}>
-        <p className="sc-compare__label">{mode === 'reduce' ? 'Reduced motion' : 'Default'}</p>
-        <InterruptDemo speed={speed} />
-        <PresenceDemo speed={speed} />
-      </div>
-    </MotionConfig>
+  const pane = (
+    <div className="sc-compare__pane" data-rl-motion={mode === 'reduce' ? 'reduce' : undefined}>
+      <p className="sc-compare__label">{mode === 'reduce' ? 'Reduced motion' : 'Default'}</p>
+      <InterruptDemo speed={speed} />
+      <PresenceDemo speed={speed} />
+    </div>
   );
+  // The default pane inherits the showcase / OS preference: it must never re-enable motion.
+  return mode === 'reduce' ? <MotionConfig reducedMotion="always">{pane}</MotionConfig> : pane;
 }
 
 export function MotionPage() {
