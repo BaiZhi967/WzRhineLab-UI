@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { cx } from '../utils/cx.js';
+import { Breadcrumb } from './Breadcrumb.js';
+import type { BreadcrumbItem } from './Breadcrumb.js';
 import { MetadataList, isEmptyValue } from './MetadataList.js';
 import type { MetadataItem } from './MetadataList.js';
 import { StatusBadge } from './StatusBadge.js';
@@ -11,11 +13,8 @@ import type { StatusKind } from './StatusBadge.js';
  * omitted when absent — the header never fabricates IDs, dates or access levels.
  */
 
-export interface RecordTrailItem {
-  label: React.ReactNode;
-  /** Omit for the current record; links render as <a>. */
-  href?: string;
-}
+/** Same shape as a Breadcrumb item (ADR-0005 §4). */
+export type RecordTrailItem = BreadcrumbItem;
 
 export interface RecordStatus {
   tone: StatusKind;
@@ -66,22 +65,8 @@ export const RecordHeader = React.forwardRef<HTMLElement, RecordHeaderProps>(fun
   return (
     <header {...rest} ref={ref} className={cx('rl-record', className)} data-slot="record-header" data-has-meta={hasMeta || undefined}>
       {trail && trail.length > 0 && (
-        <nav className="rl-record__trail" aria-label={trailLabel}>
-          <ol>
-            {trail.map((item, index) => {
-              const current = index === trail.length - 1 && !item.href;
-              return (
-                <li key={index}>
-                  {item.href ? (
-                    <a href={item.href}>{item.label}</a>
-                  ) : (
-                    <span aria-current={current ? 'page' : undefined}>{item.label}</span>
-                  )}
-                </li>
-              );
-            })}
-          </ol>
-        </nav>
+        // maxItems={0}: record trails are short and always shown in full.
+        <Breadcrumb className="rl-record__trail" items={trail} label={trailLabel} maxItems={0} />
       )}
 
       <div className="rl-record__main">

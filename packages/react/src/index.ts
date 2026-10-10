@@ -62,8 +62,23 @@ export { ToastProvider, ToastViewport, useToast } from './components/Toast.js';
 export type { ToastApi, ToastOptions, ToastStatus } from './components/Toast.js';
 export { MetadataList } from './components/MetadataList.js';
 export type { MetadataEmpty, MetadataItem, MetadataListLayout, MetadataListProps, MetadataValue } from './components/MetadataList.js';
+export { Pagination, getPaginationItems, paginate } from './components/Pagination.js';
+export type { PaginationItem, PaginationLabels, PaginationProps } from './components/Pagination.js';
+export { Breadcrumb } from './components/Breadcrumb.js';
+export type { BreadcrumbItem, BreadcrumbLinkProps, BreadcrumbProps } from './components/Breadcrumb.js';
+export { Progress, Meter, getMeterState } from './components/Progress.js';
+export type { MeterProps, MeterState, ProgressProps, ProgressSize, ProgressTone } from './components/Progress.js';
+export { Stat } from './components/Stat.js';
+export type { StatDelta, StatProps, StatTone } from './components/Stat.js';
 export { DataTable } from './components/DataTable.js';
-export type { DataTableColumn, DataTableProps, SortDirection, SortState } from './components/DataTable.js';
+export type {
+  DataTableColumn,
+  DataTablePagination,
+  DataTableProps,
+  DataTableStatus,
+  SortDirection,
+  SortState,
+} from './components/DataTable.js';
 export { ArchiveCard } from './components/ArchiveCard.js';
 export type { ArchiveCardProps, ArchiveCardStatus } from './components/ArchiveCard.js';
 export { StatusIndicator } from './components/StatusIndicator.js';
