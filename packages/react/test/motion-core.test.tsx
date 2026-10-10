@@ -61,6 +61,8 @@ describe('resolveMotion · reduced motion by property kind', () => {
   it('speed scales durations for review lanes only', () => {
     expect(resolveMotion('transform', 'panel', false, 0.25)).toMatchObject({ duration: duration.panel * 4 });
     expect(resolveMotion('transform', 'panel', true, 0.25)).toEqual(transition.instant);
+    // Reduce wins over review speed: the fade fallback is never stretched past the fast token.
+    expect(resolveMotion('opacity', 'panel', true, 0.25)).toEqual({ duration: duration.fast, ease: transition.fast.ease });
   });
 });
 

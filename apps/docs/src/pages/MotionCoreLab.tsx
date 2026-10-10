@@ -13,8 +13,8 @@ import { categoryLabel, records } from '../scenarios/data';
  */
 
 const sample = records.slice(0, 5);
-// Eight items: long enough that the 120ms stagger cap is reached (items 5–7 start together).
-const groupSample = records.slice(0, 8);
+// Every sample record (7): long enough that the 120ms stagger cap is reached (items 5 and 6 start together).
+const groupSample = records;
 
 function PresenceDemo({ active }: MotionDemoProps) {
   return (

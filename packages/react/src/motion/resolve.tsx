@@ -22,7 +22,8 @@ function scaleTransition(t: TimedTransition, speed: number): Transition {
 
 /**
  * Resolve a named preset for one kind of property. Pure: pass `reduced` from `useRhineMotion()`
- * (or use its `resolve`, which does this for you). `speed` < 1 slows the result down (showcase review only).
+ * (or use its `resolve`, which does this for you). `speed` < 1 slows the result down (showcase review only);
+ * it never lengthens the reduced fallback, which stays within the `fast` token.
  */
 export function resolveMotion(kind: MotionPropertyKind, name: RhineTransitionName, reduced: boolean, speed = 1): Transition {
   const preset: TimedTransition = transition[name];
@@ -30,7 +31,8 @@ export function resolveMotion(kind: MotionPropertyKind, name: RhineTransitionNam
   if (kind === 'color' || kind === 'opacity') {
     const ms = Math.min(preset.duration ?? 0, duration.fast);
     if (ms === 0 || 'repeat' in preset) return transition.instant;
-    return scaleTransition({ duration: ms, ease: ease.out }, speed);
+    // Review speed never stretches the reduced fallback: reduce wins over Slow ×0.25.
+    return { duration: ms, ease: ease.out };
   }
   return transition.instant;
 }
