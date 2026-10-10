@@ -48,6 +48,8 @@
 | [motion-and-rendering-plan.md](motion-and-rendering-plan.md) | CSS、Motion、SVG、Canvas、WebGL 和第三方适配器的长期边界 |
 | [quality-release-and-ecosystem-plan.md](quality-release-and-ecosystem-plan.md) | 质量门禁、兼容性、许可、发布、文档与生态计划 |
 | [execution-backlog.md](execution-backlog.md) | 当前及后续阶段的可执行任务清单 |
+| [demand-insertion-workflow.md](demand-insertion-workflow.md) | 真实需求插入、Agent 引导问询、消费项目验收和路线回填 |
+| [templates/component-demand.md](templates/component-demand.md) | 组件需求记录与范围确认模板 |
 | [agent-ui-platform-plan.md](agent-ui-platform-plan.md) | @wzrhine/agent 的组件分层、迁移顺序和质量门禁 |
 | [agent-ui-contracts.md](agent-ui-contracts.md) | Agent view-model、actions、状态、流式恢复和异步交互契约 |
 | [agent-ui-adoption.md](agent-ui-adoption.md) | Wpi-Agent 与其他 Agent 应用的接入方式和双层验收 |
@@ -87,6 +89,16 @@ DOM/SVG 展示效果可以留在 @wzrhine/effects。Canvas、WebGL、Rive、Lott
 
 Agent UI 采用独立的 @wzrhine/agent 包。一个真实的 Agent 消费项目就可以提出组件插入需求；第二个消费者用于验证公共契约，不是进入规划的前置条件。Agent UI 的运行时、传输、权限事实和宿主 API 必须留在消费项目。
 
+### 5. 真实需求可以插入，但必须可回填
+
+当其他项目的真实页面被缺少的组件阻塞时，可以提前实现目标里程碑中的一个最小支持子集。Agent 必须先按 [真实需求插入与 Agent 引导流程](demand-insertion-workflow.md) 逐步询问，一次只确认一个关键问题，不要求用户一次填写完整表单。
+
+插入前必须记录场景、归属、最小范围、必要依赖、组件库验收、消费项目验收、主线暂停点和恢复点。提前完成组件不等于完成整个目标里程碑；消费项目未真实接入时，不能写成已解决。
+
+### 6. 评分用于排序，不是阻塞门槛
+
+组件优先级评分用于比较候选项。真实项目的明确阻塞可以提前进入插入队列，即使当前只有一个消费项目或一个页面。涉及第二套 headless 底座、渲染内核、公共 package 边界或许可证变化时，必须先做 ADR 或架构评估。
+
 ## 阶段状态约定
 
 - Proposed：已提出，尚未完成需求和风险评估；
@@ -119,5 +131,3 @@ Agent UI 采用独立的 @wzrhine/agent 包。一个真实的 Agent 消费项目
 7. 再进入 M9 Ecosystem，而不是立即引入 3D 或第二套组件底座。
 
 Agent UI 的实现应按 [Agent UI 平台规划](agent-ui-platform-plan.md) 的依赖顺序推进；遇到 WzRhine 尚未支持的 Combobox、Drawer、Slider 或 Accordion 时，按照 [需求插入流程（PR #11）](https://github.com/BaiZhi967/WzRhineLab-UI/pull/11) 提交最小支持闭环。
-
-

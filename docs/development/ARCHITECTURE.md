@@ -39,4 +39,3 @@ WzRhineLab-UI/
 - M3 起先配置 workflow_dispatch 手动触发，再根据资源与权限决定是否开放 PR 自动检查。
 - 首次推送不包含私有凭证、官方游戏截图、字体安装包、未授权素材。
 - License 待确认；未确定之前不发布 public npm，也不声称项目 MIT。
-
