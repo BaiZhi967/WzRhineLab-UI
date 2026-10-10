@@ -135,6 +135,19 @@ test.describe('Drawer', () => {
   });
 
   test('close guard: refuses Escape, backdrop and close button while saving', async ({ page }) => {
+    // Hold the demo's simulated save (a 3000ms timer) until the test releases it, so a slow
+    // engine cannot finish saving before the three close attempts are made.
+    await page.addInitScript(() => {
+      const w = window as unknown as { __releaseSave?: () => void };
+      const original = window.setTimeout.bind(window);
+      window.setTimeout = ((handler: TimerHandler, ms?: number, ...args: unknown[]) => {
+        if (ms === 3000 && typeof handler === 'function') {
+          w.__releaseSave = () => (handler as (...a: unknown[]) => void)(...args);
+          return 0;
+        }
+        return original(handler, ms, ...args);
+      }) as typeof window.setTimeout;
+    });
     await page.goto('/#/components/drawer');
     await page.getByRole('button', { name: '编辑备注…' }).click();
     const dialog = page.getByRole('dialog', { name: '编辑记录备注' });
@@ -150,7 +163,8 @@ test.describe('Drawer', () => {
     await dialog.getByRole('button', { name: '关闭' }).click();
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText(/已拒绝 3 次关闭请求/)).toBeVisible();
-    await expect(dialog).toBeHidden({ timeout: 8000 });
+    await page.evaluate(() => (window as unknown as { __releaseSave: () => void }).__releaseSave());
+    await expect(dialog).toBeHidden();
     await expect(page.getByRole('status').filter({ hasText: '复核完成' })).toBeVisible();
   });
 
@@ -170,21 +184,23 @@ test.describe('Drawer', () => {
     await settled(popup);
     // Measured in-page so a fast engine finishing the exit between Playwright polls cannot hide
     // it: the panel must stay mounted for most of the panel transition (280ms) after Escape.
-    const exitMs = popup.evaluate(
-      (el) =>
-        new Promise<number>((resolve) => {
-          const start = performance.now();
-          const observer = new MutationObserver(() => {
-            if (!el.isConnected) {
-              observer.disconnect();
-              resolve(performance.now() - start);
-            }
-          });
-          observer.observe(document.body, { childList: true, subtree: true });
-        }),
-    );
+    // The clock starts at the in-page Escape keydown, not when Playwright sends it.
+    await popup.evaluate((el) => {
+      const w = window as unknown as { __exitMs: Promise<number> };
+      w.__exitMs = new Promise<number>((resolve) => {
+        let start = 0;
+        document.addEventListener('keydown', () => (start = performance.now()), { capture: true, once: true });
+        const observer = new MutationObserver(() => {
+          if (start && !el.isConnected) {
+            observer.disconnect();
+            resolve(performance.now() - start);
+          }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      });
+    });
     await page.keyboard.press('Escape');
-    expect(await exitMs).toBeGreaterThan(150);
+    expect(await page.evaluate(() => (window as unknown as { __exitMs: Promise<number> }).__exitMs)).toBeGreaterThan(150);
     await expect(popup).toHaveCount(0);
     await expect(trigger).toBeFocused();
   });
