@@ -6,8 +6,8 @@
 
 - 主分支：main；
 - Base UI：1.9.0；
-- 当前里程碑：M7 Forms 已完成；
-- 下一里程碑：M8 Data & Navigation；
+- 当前里程碑：M8 Data & Navigation 已完成；
+- 下一里程碑：M9 覆盖层与反馈；
 - 发布状态：暂不发布；
 - React 18：未正式验证；
 - 自动 CI：暂不创建；
@@ -15,54 +15,57 @@
 
 ## M8-1：设计和行为契约
 
-- [ ] 阅读并确认 DataTable 当前分页、排序、选择和 loading API。
-- [ ] 写 M8 Data & Navigation ADR 或补充现有组件规划。
-- [ ] 确认 Pagination 的受控 / 非受控 API。
-- [ ] 确认 Breadcrumb 是否复用 RecordHeader trail。
-- [ ] 确认 Progress 与 Meter 的语义边界。
-- [ ] 确认 Stat 是否属于基础 Data 组件还是 Rhine pattern。
-- [ ] 为每个 M8 组件写状态矩阵。
-- [ ] 为每个 M8 组件写键盘和读屏契约。
-- [ ] 为每个 M8 组件写 Motion / reduced-motion 方案。
-- [ ] 为 DataTable 千行场景准备确定性数据 fixture。
-- [ ] 写 M8 验收记录模板。
+- [x] 阅读并确认 DataTable 当前分页、排序、选择和 loading API。
+- [x] 写 M8 Data & Navigation ADR 或补充现有组件规划。
+- [x] 确认 Pagination 的受控 / 非受控 API。
+- [x] 确认 Breadcrumb 是否复用 RecordHeader trail。
+- [x] 确认 Progress 与 Meter 的语义边界。
+- [x] 确认 Stat 是否属于基础 Data 组件还是 Rhine pattern。
+- [x] 为每个 M8 组件写状态矩阵。
+- [x] 为每个 M8 组件写键盘和读屏契约。
+- [x] 为每个 M8 组件写 Motion / reduced-motion 方案。
+- [x] 为 DataTable 千行场景准备确定性数据 fixture。
+- [x] 写 M8 验收记录模板。
 
 ## M8-2：实现
 
-- [ ] 实现 Pagination。
-- [ ] 为 Pagination 增加单测和类型反向测试。
-- [ ] 实现 Breadcrumb。
-- [ ] 为 Breadcrumb 增加窄屏和长文本测试。
-- [ ] 实现 Progress。
-- [ ] 实现 Meter。
-- [ ] 实现 Stat。
-- [ ] 为 DataTable 增加 loading、empty、error 状态。
-- [ ] 为 DataTable 增加分页适配。
-- [ ] 将 pagination 接入 archive-desk。
-- [ ] 将 breadcrumb 接入 archive-desk。
-- [ ] 将 progress / stat 接入一个真实示例场景。
-- [ ] 更新组件文档和 docs 导航。
-- [ ] 更新 API report。
-- [ ] 运行单测、typecheck、build。
-- [ ] 运行 Chromium / Firefox / WebKit E2E。
-- [ ] 运行 axe。
-- [ ] 运行视觉回归。
-- [ ] 记录人工键盘验收。
+- [x] 实现 Pagination。
+- [x] 为 Pagination 增加单测和类型反向测试。
+- [x] 实现 Breadcrumb。
+- [x] 为 Breadcrumb 增加窄屏和长文本测试。
+- [x] 实现 Progress。
+- [x] 实现 Meter。
+- [x] 实现 Stat。
+- [x] 为 DataTable 增加 loading、empty、error 状态。
+- [x] 为 DataTable 增加分页适配。
+- [x] 将 pagination 接入 archive-desk。
+- [x] 将 breadcrumb 接入 archive-desk。
+- [x] 将 progress / stat 接入一个真实示例场景。
+- [x] 更新组件文档和 docs 导航。
+- [x] 更新 API report。
+- [x] 运行单测、typecheck、build。
+- [x] 运行 Chromium / Firefox / WebKit E2E。
+- [x] 运行 axe。
+- [x] 运行视觉回归。
+- [ ] 记录人工键盘验收（未做，见 M8 验收记录「未覆盖」）。
 
 ## M8-3：验收
 
-- [ ] 执行 pnpm check。
-- [ ] 执行 pnpm test:e2e:all。
-- [ ] 执行 pnpm test:examples:all。
-- [ ] 执行 pnpm test:visual。
-- [ ] 执行 pnpm api:check。
-- [ ] 记录 320 / 390 / 768 / 1280 / 1920 截图。
-- [ ] 记录长中文和英文长词结果。
-- [ ] 记录 1000 行表格性能观察。
-- [ ] 保留 Firefox 失败时的 trace 和 test-results。
-- [ ] 完成 M8 acceptance 文档。
-- [ ] 更新 docs/ROADMAP.md。
-- [ ] 创建 M8 合并 PR。
+- [x] 执行 pnpm check。
+- [x] 执行 pnpm test:e2e:all。
+- [x] 执行 pnpm test:examples:all。
+- [x] 执行 pnpm test:visual。
+- [x] 执行 pnpm api:check。
+- [x] 记录 320 / 390 / 768 / 1280 / 1920 截图。
+- [x] 记录长中文和英文长词结果。
+- [x] 记录 1000 行表格性能观察（分页条件下；未测不分页渲染）。
+- [x] 保留 Firefox 失败时的 trace 和 test-results。
+- [x] 完成 M8 acceptance 文档。
+- [x] 更新 docs/ROADMAP.md。
+- [x] 创建 M8 合并 PR。
+
+证据：[M8 验收记录](../development/acceptance/2026-10-10-m8.md)、[ADR-0005](../development/adr/0005-data-navigation-contracts.md)。
+
 
 ## M9：覆盖层与反馈
 

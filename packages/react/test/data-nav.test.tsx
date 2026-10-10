@@ -131,6 +131,18 @@ describe('Pagination', () => {
     expect(screen.getByRole('navigation')).toHaveAttribute('aria-disabled', 'true');
   });
 
+  it('busy keeps every control focusable but ignores presses', async () => {
+    const user = userEvent.setup();
+    const onPageChange = vi.fn();
+    render(<Pagination page={2} pageCount={5} onPageChange={onPageChange} busy />);
+    const next = screen.getByRole('button', { name: '下一页' });
+    next.focus();
+    await user.keyboard('{Enter}');
+    expect(onPageChange).not.toHaveBeenCalled();
+    expect(next).toHaveFocus();
+    expect(next).toHaveAttribute('aria-disabled', 'true');
+  });
+
   it('labels are overridable', () => {
     render(
       <Pagination
@@ -143,6 +155,11 @@ describe('Pagination', () => {
     expect(screen.getByRole('navigation', { name: 'Pages' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Page 2' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Next' })).toBeInTheDocument();
+  });
+
+  it('an explicit aria-label names the landmark (several pagers on one page)', () => {
+    render(<Pagination pageCount={2} aria-label="结果分页" />);
+    expect(screen.getByRole('navigation', { name: '结果分页' })).toBeInTheDocument();
   });
 });
 

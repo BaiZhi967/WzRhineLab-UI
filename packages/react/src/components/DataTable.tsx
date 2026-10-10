@@ -343,7 +343,7 @@ export function DataTable<Row>({
             totalItems={pagination.totalItems}
             siblingCount={pagination.siblingCount}
             labels={pagination.labels}
-            disabled={busy}
+            busy={busy}
           />
         )}
       </div>

@@ -14,13 +14,24 @@
 }
 
 /* ---------- Breadcrumb ---------- */
+/* One line. If even the minimum widths do not fit (a long uncollapsed path on a phone),
+   the trail scrolls inside its own box instead of widening the page. */
 .rl-breadcrumb {
+  --rl-breadcrumb-ring: calc(var(--rl-focus-offset) + var(--rl-focus-width));
+
   min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  /* Room for focus rings inside the scroll clip; the negative margin keeps the layout unchanged. */
+  margin: calc(var(--rl-breadcrumb-ring) * -1);
+  padding: var(--rl-breadcrumb-ring);
 }
 
 .rl-breadcrumb__list {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: var(--rl-space-2);
   margin: 0;
@@ -34,10 +45,22 @@
 
 .rl-breadcrumb__item {
   display: inline-flex;
+  flex: 0 1 auto;
   align-items: center;
   gap: var(--rl-space-2);
   min-width: 0;
-  max-width: 100%;
+}
+
+/* Ancestors give up width four times faster than the current item. No min-width: a minimum
+   larger than a short label ("档案") would widen that item and open a gap. */
+.rl-breadcrumb__item:not(:last-child) {
+  flex-shrink: 4;
+}
+
+/* The expand button never shrinks or truncates. */
+.rl-breadcrumb__item[data-collapsed] {
+  flex: none;
+  min-width: 0;
 }
 
 .rl-breadcrumb__item + .rl-breadcrumb__item::before {
@@ -49,7 +72,6 @@
 .rl-breadcrumb__link,
 .rl-breadcrumb__current {
   min-width: 0;
-  max-width: calc(var(--rl-field-label-width) * 1.5);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -76,7 +98,8 @@
   outline-offset: var(--rl-focus-offset);
 }
 
-.rl-breadcrumb__current {
+/* Only the current page is emphasised; other non-link items keep the list colour. */
+.rl-breadcrumb__current[aria-current='page'] {
   color: var(--rl-fg-primary);
 }
 
@@ -109,14 +132,19 @@
 }
 
 /* ---------- Pagination ---------- */
+/* The nav is the size container; a block-level box gets its width from the parent, not its content. */
 .rl-pagination {
   container-type: inline-size;
+  display: block;
+  min-width: 0;
+}
+
+.rl-pagination__row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--rl-space-2) var(--rl-space-4);
-  min-width: 0;
 }
 
 .rl-pagination__list {
@@ -155,11 +183,12 @@
 
 .rl-pagination__step {
   font: var(--rl-type-label-sm);
+  white-space: nowrap;
   border-color: var(--rl-border-default);
 }
 
 @media (hover: hover) {
-  :is(.rl-pagination__page, .rl-pagination__step):not(:disabled, [aria-current='page']):hover {
+  :is(.rl-pagination__page, .rl-pagination__step):not(:disabled, [aria-disabled='true'], [aria-current='page']):hover {
     background: var(--rl-bg-hover);
     border-color: var(--rl-border-strong);
   }
@@ -183,6 +212,11 @@
   color: var(--rl-fg-disabled);
   border-color: var(--rl-border-subtle);
   cursor: not-allowed;
+}
+
+.rl-pagination[data-busy] :is(.rl-pagination__page, .rl-pagination__step) {
+  cursor: progress;
+  opacity: 0.6;
 }
 
 .rl-pagination__page[aria-current='page']:disabled {
@@ -227,12 +261,12 @@
 }
 
 /* Narrow container: "‹ 上一页 · 第 n / m 页 · 下一页 ›". Container width, not viewport. */
-@container (max-width: 30rem) {
+@container (max-width: 26rem) {
   .rl-pagination__page-item { display: none; }
   .rl-pagination__compact { display: block; }
 }
 
-@container (max-width: 18rem) {
+@container (max-width: 14rem) {
   .rl-pagination__step-label {
     position: absolute;
     width: var(--rl-border-width);
@@ -453,6 +487,7 @@
 
 .rl-table__pagination {
   flex: 1 1 auto;
+  min-width: 0;
 }
 
 .rl-table__selection {
@@ -492,7 +527,7 @@
   color: var(--rl-fg-muted);
 }
 
-.rl-table__message {
+.rl-table td.rl-table__message {
   padding: var(--rl-space-8) var(--rl-table-cell-x);
   text-align: center;
 }

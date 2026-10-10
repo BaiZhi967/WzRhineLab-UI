@@ -21,6 +21,7 @@
 - Base UI 1.9.0 作为唯一 headless 交互底座；
 - 基础原语、Fields、Navigation / Overlay、Data、Rhine archive patterns；
 - M7 表单层：Textarea、Checkbox、CheckboxGroup、RadioGroup、Radio、Switch、Fieldset、Form、Separator、VisuallyHidden；
+- M8 数据与导航：Pagination、Breadcrumb、Progress、Meter、Stat，DataTable 加载 / 错误 / 空状态与分页（[验收记录](../development/acceptance/2026-10-10-m8.md)）；
 - 3 个示例应用：archive-desk、host-embed、ssr-hydrate；
 - 三内核自动化验收、axe 检查、视觉回归基线、package verification；
 - effects 包与 react 核心包之间的依赖边界；
@@ -34,7 +35,6 @@
 - React 18 的正式验证和支持承诺；
 - 根目录许可证、npm scope、公开版本号；
 - 公开发布前的变更日志和安装体验；
-- M8 Data & Navigation；
 - M9 覆盖层与反馈组件；
 - M9.5 Ecosystem 工程化；
 - 长期的动效模式目录与 Canvas/WebGL 可选渲染实验。

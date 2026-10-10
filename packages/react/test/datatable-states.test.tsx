@@ -99,11 +99,17 @@ describe('DataTable states', () => {
     expect(screen.queryByText('没有符合条件的记录')).toBeNull();
   });
 
-  it('reload keeps the old rows (stale) and disables paging and selection', () => {
+  it('reload keeps the old rows (stale); paging is inert but stays focusable; selection is disabled', async () => {
+    const user = userEvent.setup();
     render(<PagedTable status="loading" />);
     expect(screen.getAllByRole('rowheader')).toHaveLength(25);
     expect(screen.getByRole('table').querySelector('tbody')).toHaveAttribute('data-stale');
-    expect(screen.getByRole('button', { name: '第 2 页' })).toBeDisabled();
+    const page2 = screen.getByRole('button', { name: '第 2 页' });
+    expect(page2).toHaveAttribute('aria-disabled', 'true');
+    expect(page2).not.toBeDisabled();
+    await user.click(page2);
+    expect(screen.getByRole('button', { name: '第 1 页' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('navigation', { name: '分页' })).toHaveAttribute('aria-busy', 'true');
     expect(screen.getByRole('checkbox', { name: '选择 ARC-0001' })).toBeDisabled();
     expect(screen.getAllByRole('status').some((s) => s.textContent === '正在加载…')).toBe(true);
   });

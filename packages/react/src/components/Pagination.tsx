@@ -79,8 +79,13 @@ export type PaginationProps = Omit<React.HTMLAttributes<HTMLElement>, 'onChange'
     onPageChange?: (page: number) => void;
     /** Pages shown on each side of the current page. */
     siblingCount?: number;
-    /** Disable every control, e.g. while a page is loading. */
+    /** Disable every control. */
     disabled?: boolean;
+    /**
+     * A page request is in flight: controls ignore presses and announce `aria-disabled`, but stay
+     * focusable so keyboard focus is not dropped to <body> while the table reloads.
+     */
+    busy?: boolean;
     /** Show the "第 a–b 条，共 n 条" summary (needs `totalItems` and `pageSize`). */
     showStatus?: boolean;
     labels?: PaginationLabels;
@@ -104,6 +109,7 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
     pageSize,
     siblingCount = 1,
     disabled = false,
+    busy = false,
     showStatus = totalItems != null && pageSize != null,
     labels: labelsProp,
     className,
@@ -123,7 +129,7 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
 
   const go = (next: number, focusKey: string) => {
     const target = clamp(next, 1, pageCount);
-    if (target === page || disabled) return;
+    if (target === page || disabled || busy) return;
     pendingFocus.current = focusKey;
     if (pageProp === undefined) setUncontrolled(target);
     onPageChange?.(target);
@@ -150,11 +156,14 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
       {...rest}
       ref={ref}
       className={cx('rl-pagination', className)}
-      aria-label={labels.nav}
+      aria-label={rest['aria-label'] ?? labels.nav}
       aria-disabled={disabled || undefined}
+      aria-busy={busy || undefined}
       data-slot="pagination"
       data-disabled={disabled || undefined}
+      data-busy={busy || undefined}
     >
+      <div className="rl-pagination__row">
       <ul ref={listRef} className="rl-pagination__list">
         <li>
           <button
@@ -162,6 +171,7 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
             className="rl-pagination__step"
             data-key="previous"
             disabled={disabled || page <= 1}
+            aria-disabled={busy || undefined}
             onClick={() => go(page - 1, 'previous')}
           >
             <ChevronIcon direction="previous" />
@@ -178,6 +188,7 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
                 aria-label={labels.page(item)}
                 aria-current={item === page ? 'page' : undefined}
                 disabled={disabled}
+                aria-disabled={busy || undefined}
                 onClick={() => go(item, `page-${item}`)}
               >
                 {item}
@@ -199,6 +210,7 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
             className="rl-pagination__step"
             data-key="next"
             disabled={disabled || page >= pageCount}
+            aria-disabled={busy || undefined}
             onClick={() => go(page + 1, 'next')}
           >
             <span className="rl-pagination__step-label">{labels.next}</span>
@@ -211,6 +223,7 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
           {labels.status(from, to, totalItems)}
         </p>
       )}
+      </div>
     </nav>
   );
 });

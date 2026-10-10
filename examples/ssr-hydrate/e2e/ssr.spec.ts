@@ -20,11 +20,14 @@ test('server HTML is complete, themed and accessible before any JavaScript runs'
     '<caption',
     'role="tablist"',
     'aria-selected="true"',
-    'class="rl-record__trail"',
     'class="rl-portal"',
   ]) {
     expect(html, needle).toContain(needle);
   }
+  // The record trail is a server-rendered breadcrumb landmark with the current page marked.
+  expect(html).toMatch(/<nav[^>]*class="[^"]*\brl-record__trail\b[^"]*"[^>]*>/);
+  expect(html).toMatch(/<nav[^>]*class="[^"]*\brl-breadcrumb\b/);
+  expect(html).toContain('aria-current="page"');
   // The serialised state cannot break out of its script tag.
   expect(html).toMatch(/window\.__PAGE_DATA__=\{/);
 });

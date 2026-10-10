@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   Button,
   DataTable,
+  paginate,
   Dialog,
   DialogClose,
   Field,
@@ -104,6 +105,8 @@ function CreateDialog({ onCreate }: { onCreate: (input: NewRecord) => void }) {
   );
 }
 
+const PAGE_SIZE = 8;
+
 function Desk({ theme, onThemeChange }: { theme: RhineTheme; onThemeChange: (t: RhineTheme) => void }) {
   const toast = useToast();
   const { records, create, advance, remove, reset } = useRecords();
@@ -112,6 +115,7 @@ function Desk({ theme, onThemeChange }: { theme: RhineTheme; onThemeChange: (t: 
   const [sort, setSort] = React.useState<SortState | null>({ column: 'id', direction: 'ascending' });
   const [activeId, setActiveId] = React.useState<string | null>(records[0]?.id ?? null);
   const [pendingDelete, setPendingDelete] = React.useState<DeskRecord | null>(null);
+  const [page, setPage] = React.useState(1);
 
   const q = query.trim().toLowerCase();
   const rows = sortRows(
@@ -121,6 +125,20 @@ function Desk({ theme, onThemeChange }: { theme: RhineTheme; onThemeChange: (t: 
     sort,
   );
   const active = records.find((r) => r.id === activeId) ?? null;
+  const pageRows = paginate(rows, page, PAGE_SIZE);
+  // Filters and sorting change the result set: start again from page 1.
+  const changeQuery = (v: string) => {
+    setQuery(v);
+    setPage(1);
+  };
+  const changeStatus = (v: RecordStatus | 'all') => {
+    setStatus(v);
+    setPage(1);
+  };
+  const changeSort = (s: SortState) => {
+    setSort(s);
+    setPage(1);
+  };
 
   const columns: DataTableColumn<DeskRecord>[] = [
     { key: 'id', header: '编号', sortable: true, mono: true, rowHeader: true },
@@ -184,12 +202,12 @@ function Desk({ theme, onThemeChange }: { theme: RhineTheme; onThemeChange: (t: 
             </Text>
           </div>
           <form className="desk__filters" role="search" aria-label="筛选记录" onSubmit={(e) => e.preventDefault()}>
-            <Input type="search" aria-label="搜索编号、标题、学科或负责人" placeholder="搜索编号、标题、学科或负责人" value={query} onValueChange={setQuery} />
+            <Input type="search" aria-label="搜索编号、标题、学科或负责人" placeholder="搜索编号、标题、学科或负责人" value={query} onValueChange={changeQuery} />
             <Select
               size="md"
               aria-label="状态"
               value={status}
-              onValueChange={(v) => setStatus((v ?? 'all') as RecordStatus | 'all')}
+              onValueChange={(v) => changeStatus((v ?? 'all') as RecordStatus | 'all')}
               options={[{ value: 'all', label: '全部状态' }, ...Object.entries(statusLabel).map(([value, label]) => ({ value, label }))]}
             />
           </form>
@@ -197,10 +215,11 @@ function Desk({ theme, onThemeChange }: { theme: RhineTheme; onThemeChange: (t: 
             caption="档案记录"
             hideCaption
             columns={columns}
-            rows={rows}
+            rows={pageRows}
             getRowId={(r) => r.id}
             sort={sort}
-            onSortChange={setSort}
+            onSortChange={changeSort}
+            pagination={rows.length > PAGE_SIZE ? { page, onPageChange: setPage, pageSize: PAGE_SIZE, totalItems: rows.length } : undefined}
             emptyText={records.length === 0 ? '还没有记录，点击「新建记录」开始。' : '没有符合条件的记录。'}
           />
         </section>
@@ -210,6 +229,8 @@ function Desk({ theme, onThemeChange }: { theme: RhineTheme; onThemeChange: (t: 
             <>
               <RecordHeader
                 headingLevel={2}
+                trail={[{ label: '档案台' }, { label: statusLabel[active.status] }, { label: active.id }]}
+                trailLabel="记录位置"
                 recordId={active.id}
                 status={{ tone: statusTone[active.status], label: statusLabel[active.status] }}
                 title={active.title}

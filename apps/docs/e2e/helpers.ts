@@ -20,6 +20,7 @@ export const routes = [
   { name: 'menu', hash: '/#/components/menu' },
   { name: 'toast', hash: '/#/components/toast' },
   { name: 'archive', hash: '/#/archive' },
+  { name: 'data', hash: '/#/archive/data' },
   { name: 'scenarios', hash: '/#/archive/scenarios' },
 ] as const;
 

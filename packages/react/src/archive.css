@@ -678,7 +678,8 @@
   opacity: 1;
 }
 
-.rl-table__empty {
+/* td-qualified: `.rl-table td` (0,1,1) would otherwise win and left-align the message. */
+.rl-table td.rl-table__empty {
   padding: var(--rl-space-8) var(--rl-table-cell-x);
   text-align: center;
   color: var(--rl-fg-muted);

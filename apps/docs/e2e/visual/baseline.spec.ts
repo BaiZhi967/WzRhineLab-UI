@@ -18,6 +18,7 @@ const pages = [
   { name: 'field', hash: '/#/components/field' },
   { name: 'choice', hash: '/#/components/choice' },
   { name: 'archive', hash: '/#/archive' },
+  { name: 'data', hash: '/#/archive/data' },
   { name: 'scenarios', hash: '/#/archive/scenarios' },
 ] as const;
 
@@ -94,6 +95,27 @@ test.describe('component close-ups', () => {
       await expect(specimen).toHaveScreenshot(`choice-states-${theme}.png`);
     });
   }
+
+  for (const theme of ['light', 'dark'] as const) {
+    test(`data navigation specimens · ${theme}`, async ({ page }) => {
+      await setSettings(page, { theme, motion: 'reduce' });
+      await open(page, '/#/archive/data');
+      for (const name of ['Pagination', 'Breadcrumb', 'Progress & Meter', 'Stat'] as const) {
+        const region = page.getByRole('region', { name, exact: true });
+        await region.scrollIntoViewIfNeeded();
+        await expect(region).toHaveScreenshot(`data-${name.replace(/[^a-z]+/gi, '-').toLowerCase()}-${theme}.png`);
+      }
+    });
+  }
+
+  test('forced colors · data navigation', async ({ page }) => {
+    await page.emulateMedia({ forcedColors: 'active' });
+    await setSettings(page, { motion: 'reduce' });
+    await open(page, '/#/archive/data');
+    const region = page.getByRole('region', { name: 'Pagination' });
+    await region.scrollIntoViewIfNeeded();
+    await expect(region).toHaveScreenshot('data-pagination-forced-colors.png');
+  });
 
   test('forced colors · choice states', async ({ page }) => {
     await page.emulateMedia({ forcedColors: 'active' });

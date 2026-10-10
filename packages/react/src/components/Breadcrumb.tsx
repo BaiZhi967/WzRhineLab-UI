@@ -70,13 +70,13 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(functio
   if (items.length === 0) return null;
 
   return (
-    <nav {...rest} ref={ref} className={cx('rl-breadcrumb', className)} aria-label={label} data-slot="breadcrumb">
+    <nav {...rest} ref={ref} className={cx('rl-breadcrumb', className)} aria-label={rest['aria-label'] ?? label} data-slot="breadcrumb">
       <ol ref={listRef} className="rl-breadcrumb__list">
         {items.map((item, index) => {
           if (collapsed && index >= hiddenFrom && index < hiddenTo) {
             if (index !== hiddenFrom) return null;
             return (
-              <li key="collapsed" className="rl-breadcrumb__item">
+              <li key="collapsed" className="rl-breadcrumb__item" data-collapsed="">
                 <button type="button" className="rl-breadcrumb__expand" aria-label={expandLabel(items.length)} onClick={expand}>
                   <span aria-hidden="true">…</span>
                 </button>

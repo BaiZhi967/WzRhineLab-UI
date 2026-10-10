@@ -6,7 +6,7 @@
 >
 > **进度（M7）**：表单层已补齐并有测试（[M7 验收记录](development/acceptance/2026-10-10-m7.md)）。
 >
-> **进度（M8）**：进行中。契约见 [ADR-0005](development/adr/0005-data-navigation-contracts.md)。M8 之后按维护者决定先做 M9 覆盖层与反馈，原 Ecosystem 改为 M9.5。
+> **进度（M8）**：已完成并有测试（[M8 验收记录](development/acceptance/2026-10-10-m8.md)，契约 [ADR-0005](development/adr/0005-data-navigation-contracts.md)）。M8 之后按维护者决定先做 M9 覆盖层与反馈，原 Ecosystem 改为 M9.5。
 
 | 里程碑 | 目标 | 核心产物 | 退出门禁 |
 | --- | --- | --- | --- |
