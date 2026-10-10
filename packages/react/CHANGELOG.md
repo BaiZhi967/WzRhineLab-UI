@@ -20,6 +20,7 @@
 - **破坏性（M1-A，ADR-0002）**：入口不再自动引入 CSS。
   - 迁移：在应用入口显式导入 `@wzrhine/tokens/styles.css` 和 `@wzrhine/react/styles.css`。
 - **M2-B**：Popover、Menu、Select、Tooltip 改为 fixed 定位，打开浮层时不再导致页面滚动。
+- **M7 前**：交互底座 Base UI 1.8.0 → 1.9.0（ADR-0001 修订）。上游修复覆盖本项目全部包裹模块（Menu focus guard、Popover/Tooltip 过渡完成判定、Select 大列表性能、Tabs 函数值、Toast 计时器、Field `defaultValue` 告警等），传递依赖 `@base-ui/utils` 0.4.0 → 0.5.0。公开 API 无变化（`api:check` 无漂移），对使用者无需任何改动。
 
 ### Fixed
 - **M2-B**：`RhineProvider` 首次渲染时弹层可能挂到 `<body>`、拿不到主题的问题。
