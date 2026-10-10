@@ -6,6 +6,23 @@ import type { RhineTransitionName } from '@wzrhine/react';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
 import { Segmented } from '../ui/controls';
 
+// MotionPlayer lives in the optional effects package: keep it out of the main chunk.
+const MotionCoreLab = React.lazy(() => import('./MotionCoreLab'));
+
+const patternCatalogue = 'https://github.com/BaiZhi967/WzRhineLab-UI/blob/main/docs/design/MOTION-PATTERNS.md';
+
+const patterns: readonly { name: string; owner: string; reduced: string }[] = [
+  { name: 'press', owner: 'motion/react · scale', reduced: '无缩放，颜色即时' },
+  { name: 'presence / panel', owner: 'MotionPresence · opacity + y', reduced: '仅透明度 ≤120ms' },
+  { name: 'stagger', owner: 'RhineMotionGroup', reduced: '无错峰、无位移' },
+  { name: 'indicator retarget', owner: 'CSS transition · translate（Tabs）', reduced: '直接定位' },
+  { name: 'shared identity', owner: 'motion/react layoutId（ArchiveCard）', reduced: '直接切换' },
+  { name: 'reveal / text-scramble', owner: 'rAF（ArchiveReveal）', reduced: '直接显示最终文本' },
+  { name: 'scan', owner: 'CSS @keyframes（ScanSurface）', reduced: '静态描边' },
+  { name: 'orbit', owner: 'motion/react · SVG rotate', reduced: '不旋转' },
+  { name: 'status-pulse / progress-flow', owner: 'CSS @keyframes', reduced: '静态' },
+];
+
 type Speed = '1' | '0.25';
 type Mode = 'default' | 'reduce';
 
@@ -208,6 +225,51 @@ export function MotionPage() {
             <ComparePane mode="default" speed={speed} />
             <ComparePane mode="reduce" speed={speed} />
           </div>
+        </Specimen>
+        <Specimen
+          id="motion-core"
+          index="05"
+          title="Motion Core · 四通道对照"
+          note="同一演示的 Default / Slow ×0.25 / Reduced / Interrupt；Interrupt 通道在播放中途反向，证明从当前视觉状态接续。"
+        >
+          <div className="sc-lab">
+            <React.Suspense fallback={<p className="sc-small" role="status">正在加载对照演示…</p>}>
+              <MotionCoreLab />
+            </React.Suspense>
+          </div>
+        </Specimen>
+        <Specimen
+          id="motion-patterns"
+          index="06"
+          title="Pattern catalogue"
+          note="每个模式的语义、触发、时长、生命周期、中断、减动、隐藏页、语义 fallback 与性能预算见模式目录；属性所有权见 ADR-0007。"
+        >
+          <div className="sc-table-wrap" tabIndex={0} role="region" aria-label="动效模式（可横向滚动）">
+            <table className="sc-table">
+              <thead>
+                <tr>
+                  <th scope="col">模式</th>
+                  <th scope="col">所有者</th>
+                  <th scope="col">减动</th>
+                </tr>
+              </thead>
+              <tbody>
+                {patterns.map((p) => (
+                  <tr key={p.name}>
+                    <td>
+                      <code className="sc-mono-sm">{p.name}</code>
+                    </td>
+                    <td>{p.owner}</td>
+                    <td>{p.reduced}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="sc-small">
+            beam、particle-field、shader-surface 尚未实现（M11 Rendering Lab 评估）。{' '}
+            <a className="sc-doc-link" href={patternCatalogue}>阅读完整模式目录（docs/design/MOTION-PATTERNS.md）</a>
+          </p>
         </Specimen>
       </SpecimenGrid>
     </div>

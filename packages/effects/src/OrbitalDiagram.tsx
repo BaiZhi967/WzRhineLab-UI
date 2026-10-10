@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { motion } from 'motion/react';
+import { animate as animateValue, motion, useMotionValue } from 'motion/react';
 import { useMotionLifecycle } from '@wzrhine/react';
 import { useEffectTiming } from './clock.js';
 
@@ -45,6 +45,20 @@ export function OrbitalDiagram({ nodes, rings = 3, center, animate = false, peri
   const ref = React.useRef<HTMLDivElement>(null);
   const lifecycle = useMotionLifecycle({ active: animate, viewportRef: ref, reduced: timing.reduced });
   const spinning = lifecycle.running;
+  const rotate = useMotionValue(0);
+  const revolution = period / timing.speed;
+
+  // Running: continue from the current angle. Paused (hidden, off-screen, reduced): hold the angle.
+  // Stopped or never started: back to the rest position.
+  React.useEffect(() => {
+    if (!spinning) {
+      if (lifecycle.state !== 'paused' || timing.reduced) rotate.jump(0);
+      return;
+    }
+    const from = rotate.get() % 360;
+    const controls = animateValue(rotate, [from, from + 360], { duration: revolution, ease: 'linear', repeat: Infinity });
+    return () => controls.stop();
+  }, [spinning, revolution, lifecycle.state, timing.reduced, rotate]);
   const radius = (ring: number) => 36 + (ring * (C - 48)) / Math.max(1, rings - 1);
 
   return (
@@ -59,11 +73,7 @@ export function OrbitalDiagram({ nodes, rings = 3, center, animate = false, peri
             return <line key={i} x1={C + r1 * Math.sin(a)} y1={C - r1 * Math.cos(a)} x2={C + r2 * Math.sin(a)} y2={C - r2 * Math.cos(a)} />;
           })}
         </g>
-        <motion.g
-          style={{ transformOrigin: `${C}px ${C}px` }}
-          animate={spinning ? { rotate: 360 } : { rotate: 0 }}
-          transition={spinning ? { duration: period / timing.speed, ease: 'linear', repeat: Infinity } : { duration: 0 }}
-        >
+        <motion.g className="rl-orbit__rotor" style={{ transformOrigin: `${C}px ${C}px`, rotate }}>
           {Array.from({ length: rings }, (_, ring) => (
             <circle key={ring} className="rl-orbit__ring" cx={C} cy={C} r={radius(ring)} data-ring={ring} />
           ))}

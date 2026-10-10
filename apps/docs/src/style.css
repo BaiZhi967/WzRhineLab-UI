@@ -1654,6 +1654,57 @@ body,
   background: var(--rl-bg-surface);
 }
 
+.sc-lab {
+  display: grid;
+  gap: var(--rl-space-8);
+}
+
+.sc-lab-slot {
+  display: grid;
+  align-content: start;
+  gap: var(--rl-space-2);
+  min-height: 132px;
+  min-width: 0;
+}
+
+.sc-lab-panel,
+.sc-lab-detail {
+  display: grid;
+  gap: var(--rl-space-1);
+  padding: var(--rl-space-3);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-surface);
+  min-width: 0;
+}
+
+.sc-doc-link {
+  color: var(--rl-fg-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.sc-doc-link:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.sc-lab-list {
+  display: grid;
+  gap: var(--rl-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sc-lab-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--rl-space-2);
+  padding: var(--rl-space-1) var(--rl-space-2);
+  border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
 /* ---------- Responsive ----------
  * Breakpoints follow where content gets crowded, not device names:
  * ≥1600 wide gutters · <1280 specimen spans collapse · <1024 off-canvas nav · <720 single column.
