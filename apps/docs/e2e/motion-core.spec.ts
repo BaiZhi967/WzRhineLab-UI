@@ -236,9 +236,13 @@ test.describe('interrupts', () => {
     expect(r.atRetarget).toBeGreaterThan(r.near + 2);
     expect(r.atRetarget).toBeLessThan(r.far - 2);
     const after = r.frames.filter((f) => f.t > r.retargetT);
-    // Heads straight back toward the new stop: never past where it was, never back to the start.
-    for (let i = 1; i < after.length; i += 1) expect(after[i]!.x).toBeLessThanOrEqual(after[i - 1]!.x + 0.5);
-    expect(Math.max(...after.map((f) => f.x))).toBeLessThanOrEqual(r.atRetarget + 0.5);
+    // The click lands on the next style recalc, so the indicator may advance one more frame toward
+    // the old target first. From its peak it heads straight back: never reaching the old stop,
+    // never jumping back to the start.
+    const peak = after.reduce((best, f, i) => (f.x > after[best]!.x ? i : best), 0);
+    expect(peak).toBeLessThanOrEqual(1);
+    expect(after[peak]!.x).toBeLessThan(r.far - 2);
+    for (let i = peak + 1; i < after.length; i += 1) expect(after[i]!.x).toBeLessThanOrEqual(after[i - 1]!.x + 0.5);
     expect(Math.min(...after.map((f) => f.x))).toBeGreaterThan(r.near - 1);
     expect(Math.abs(after.at(-1)!.x - r.near)).toBeLessThan(1);
     await expect(line.getByRole('tab', { name: /元数据/ })).toHaveAttribute('aria-selected', 'true');
