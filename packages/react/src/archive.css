@@ -357,6 +357,13 @@
   letter-spacing: var(--rl-tracking-mono);
 }
 
+.rl-archive-identity {
+  display: inline-block;
+  font: var(--rl-type-mono);
+  font-weight: 600;
+  letter-spacing: var(--rl-tracking-mono);
+}
+
 .rl-archive-card__title {
   font: var(--rl-type-body-sm);
   font-weight: 600;

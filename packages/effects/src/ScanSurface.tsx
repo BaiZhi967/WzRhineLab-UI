@@ -7,7 +7,8 @@ import { usePageVisible } from './usePageVisible.js';
  * - One sweep per `scanKey` change, never an idle infinite loop (STYLE.md forbids default infinite scans).
  * - Children render immediately and stay interactive; the sweep is a pointer-events:none overlay.
  * - Reduced motion: no moving line; a brief static outline marks the "scanned" moment instead.
- * - Skipped while the page is hidden.
+ * - Stop conditions (ADR-0007): skipped while the page is hidden, cut short if the page hides mid-sweep,
+ *   cleared on unmount. One-shot, so it does not track the viewport.
  */
 
 export type ScanSurfaceProps = {
@@ -25,6 +26,7 @@ export function ScanSurface({ children, scanKey, duration = 900, onScanEnd, clas
   const visible = usePageVisible();
   const [running, setRunning] = React.useState(false);
   const lastKey = React.useRef(scanKey);
+  const timer = React.useRef<number | undefined>(undefined);
   const latest = React.useRef({ visible, reduced: timing.reduced, ms: timing.scale(duration), onScanEnd });
   latest.current = { visible, reduced: timing.reduced, ms: timing.scale(duration), onScanEnd };
 
@@ -42,8 +44,17 @@ export function ScanSurface({ children, scanKey, duration = 900, onScanEnd, clas
       },
       reduced ? 160 : ms,
     );
+    timer.current = t;
     return () => window.clearTimeout(t);
   }, [scanKey]);
+
+  // Hidden mid-sweep: end it now instead of finishing off-screen.
+  React.useEffect(() => {
+    if (visible || !running) return;
+    window.clearTimeout(timer.current);
+    setRunning(false);
+    latest.current.onScanEnd?.();
+  }, [visible, running]);
 
   const style = { '--rl-scan-duration': `${timing.scale(duration)}ms` } as React.CSSProperties;
 

@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { motion } from 'motion/react';
+import { useMotionLifecycle } from '@wzrhine/react';
 import { useEffectTiming } from './clock.js';
-import { useInViewport, usePageVisible } from './usePageVisible.js';
 
 /**
  * Instrument-style orbital diagram (DESIGN.md "Instrument Accent"): concentric rings with labelled
  * nodes. Decorative structure around real labels, not a data visualisation:
  * - Labels are real text in an accessible list; the SVG is aria-hidden.
- * - Rotation is opt-in (`animate`), stops when off-screen, on hidden tabs and under reduced motion.
+ * - Rotation is opt-in (`animate`), stops when off-screen, on hidden tabs and under reduced motion
+ *   (shared lifecycle, ADR-0007); `data-lifecycle` / `data-paused` expose the current state.
  * - Positions are fixed by `angle` props; nothing is random.
  */
 
@@ -42,14 +43,13 @@ const C = SIZE / 2;
 export function OrbitalDiagram({ nodes, rings = 3, center, animate = false, period = 60, label, className }: OrbitalDiagramProps) {
   const timing = useEffectTiming();
   const ref = React.useRef<HTMLDivElement>(null);
-  const visible = usePageVisible();
-  const inView = useInViewport(ref);
-  const spinning = animate && !timing.reduced && visible && inView;
+  const lifecycle = useMotionLifecycle({ active: animate, viewportRef: ref, reduced: timing.reduced });
+  const spinning = lifecycle.running;
   const radius = (ring: number) => 36 + (ring * (C - 48)) / Math.max(1, rings - 1);
 
   return (
     <div className="rl-orbit-wrap">
-    <div ref={ref} className={['rl-orbit', className].filter(Boolean).join(' ')} data-slot="orbital-diagram" data-spinning={spinning || undefined}>
+    <div ref={ref} className={['rl-orbit', className].filter(Boolean).join(' ')} data-slot="orbital-diagram" data-spinning={spinning || undefined} data-lifecycle={lifecycle.state} data-paused={lifecycle.pauseReason ?? undefined}>
       <svg className="rl-orbit__svg" viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden="true" focusable="false">
         <g className="rl-orbit__ticks">
           {Array.from({ length: 24 }, (_, i) => {
