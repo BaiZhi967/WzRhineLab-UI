@@ -64,7 +64,19 @@
 - [ ] 更新 docs/ROADMAP.md。
 - [ ] 创建 M8 合并 PR。
 
-## M9：生态工程化
+## M9：覆盖层与反馈
+
+- [ ] 写 M9 契约（AlertDialog、Drawer、Alert、EmptyState、Skeleton、Spinner）ADR。
+- [ ] 实现 AlertDialog，并替换现有破坏性确认（设置表单「放弃更改」、实验监测「重置」）。
+- [ ] 实现 Drawer，接入档案检索的详情面板。
+- [ ] 实现 Alert / Callout。
+- [ ] 实现 EmptyState，接入 DataTable 空状态。
+- [ ] 把 M8 DataTable 的骨架与加载指示抽取为 Skeleton / Spinner。
+- [ ] Toast：带操作、可撤销、更新已有通知。
+- [ ] 三内核 E2E、axe、视觉基线、截图审查。
+- [ ] 完成 M9 acceptance。
+
+## M9.5：生态工程化
 
 - [ ] 写 React 18 / React 19 支持策略 ADR。
 - [ ] 写 locale 和默认文案策略 ADR。
@@ -79,7 +91,7 @@
 - [ ] 更新 package changelog。
 - [ ] 决定 npm scope，但暂不发布。
 - [ ] 补齐第三方许可证来源。
-- [ ] 完成 M9 acceptance。
+- [ ] 完成 M9.5 acceptance。
 
 ## M10：Motion Core 2.0
 
@@ -116,7 +128,7 @@
 
 按真实需求择一排期：
 
-- [ ] Drawer。
+- [ ] ~~Drawer~~（提前到 M9）。
 - [ ] Combobox / Autocomplete。
 - [ ] Slider。
 - [ ] NumberField。

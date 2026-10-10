@@ -35,7 +35,8 @@
 - 根目录许可证、npm scope、公开版本号；
 - 公开发布前的变更日志和安装体验；
 - M8 Data & Navigation；
-- M9 Ecosystem 工程化；
+- M9 覆盖层与反馈组件；
+- M9.5 Ecosystem 工程化；
 - 长期的动效模式目录与 Canvas/WebGL 可选渲染实验。
 
 ## 规划文件
@@ -110,5 +111,5 @@ DOM/SVG 展示效果可以留在 @wzrhine/effects。Canvas、WebGL、Rive、Lott
 4. Progress / Meter；
 5. Stat；
 6. 三浏览器、键盘、axe、视觉和真实数据密度验收；
-7. 再进入 M9 Ecosystem，而不是立即引入 3D 或第二套组件底座。
+7. 再进入 M9 覆盖层与反馈组件（AlertDialog、Drawer、Alert、EmptyState、Skeleton），之后是 M9.5 Ecosystem，而不是立即引入 3D 或第二套组件底座。
 

@@ -28,6 +28,7 @@
 - [ADR-0002 源码直出导出与样式入口](development/adr/0002-source-exports-and-style-entry.md)
 - [ADR-0003 Token 对比度校准与 Button variant](development/adr/0003-token-tuning-and-button-variants.md)
 - [ADR-0004 展示动效独立为可选包](development/adr/0004-optional-effects-package.md)
+- [ADR-0005 M8 数据与导航组件契约](development/adr/0005-data-navigation-contracts.md)
 - [Sprint 01 验收记录](development/acceptance/2026-10-09-sprint-01.md)
 - [M1-B 验收记录](development/acceptance/2026-10-09-m1b.md)
 - [M2-A 验收记录](development/acceptance/2026-10-09-m2a.md)
