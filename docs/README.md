@@ -12,7 +12,7 @@
 | [development/CONTRIBUTING.md](development/CONTRIBUTING.md) | 开发约束、commit、分支、评审与测试 |
 | [development/QUALITY-GATES.md](development/QUALITY-GATES.md) | 可执行质量门槛 |
 | [ROADMAP.md](ROADMAP.md) | M0–M9 里程碑摘要、验收与依赖 |
-| [planning/README.md](planning/README.md) | M8–M18 长期路线、组件、动效、质量和执行计划 |
+| [planning/README.md](planning/README.md) | M8–M18 顺序路线、组件、动效、质量和执行计划 |
 | [concepts/README.md](concepts/README.md) | 概念图索引、用途与局限 |
 | [research/REFERENCES.md](research/REFERENCES.md) | 官方 / 社区 / 技术参考资料及授权提醒 |
 
