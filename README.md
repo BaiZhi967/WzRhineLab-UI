@@ -56,7 +56,7 @@ import { Button, RhineProvider } from '@wzrhine/react';
 
 `RhineProvider` 提供 `.rl-theme` 作用域、弹层挂载点、减动策略和通知队列（`useToast()`）；所有弹层组件都必须放在它内部才能拿到主题。
 
-当前内置 Button、IconButton、Surface、StatusBadge、Text、Separator、VisuallyHidden，表单组件 Field、Input、Textarea、Checkbox、CheckboxGroup、RadioGroup、Radio、Switch、Fieldset、Form，Tabs、Tooltip、Dialog、Select、Popover、Menu、Toast，以及档案组件 RecordHeader、MetadataList、ArchiveCard、StatusIndicator、Timeline、DataTable，以及数据与导航组件 Pagination、Breadcrumb、Progress、Meter、Stat，共三十五个组件和 `RhineProvider`（交互底座为 Base UI，见 ADR-0001）。三个包目前仍为 `private`，发布前请勿在外部项目中依赖。
+当前内置 Button、IconButton、Surface、StatusBadge、Text、Separator、VisuallyHidden，表单组件 Field、Input、Textarea、Checkbox、CheckboxGroup、RadioGroup、Radio、Switch、Fieldset、Form，Tabs、Tooltip、Dialog、Select、Popover、Menu、Toast，以及档案组件 RecordHeader、MetadataList、ArchiveCard、StatusIndicator、Timeline、DataTable，以及数据与导航组件 Pagination、Breadcrumb、Progress、Meter、Stat，以及覆盖层与反馈组件 AlertDialog、Drawer、Alert、Callout、EmptyState、Skeleton、Spinner，共四十二个组件和 `RhineProvider`（交互底座为 Base UI，见 ADR-0001）。三个包目前仍为 `private`，发布前请勿在外部项目中依赖。
 
 集成方式参考 [examples/](examples/README.md)：独立 SPA、嵌入非 React 旧页面、SSR 水合。从源码直出期升级请看 [UPGRADING.md](docs/development/UPGRADING.md)。
 

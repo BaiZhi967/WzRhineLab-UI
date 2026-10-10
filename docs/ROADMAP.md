@@ -7,6 +7,8 @@
 > **进度（M7）**：表单层已补齐并有测试（[M7 验收记录](development/acceptance/2026-10-10-m7.md)）。
 >
 > **进度（M8）**：已完成并有测试（[M8 验收记录](development/acceptance/2026-10-10-m8.md)，契约 [ADR-0005](development/adr/0005-data-navigation-contracts.md)）。M8 之后按维护者决定先做 M9 覆盖层与反馈，原 Ecosystem 改为 M9.5。
+>
+> **进度（M9）**：AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner 与 Toast / Dialog 补强已完成并有测试（[M9 验收记录](development/acceptance/2026-10-10-m9.md)，契约 [ADR-0006](development/adr/0006-overlays-feedback-contracts.md)）。
 
 | 里程碑 | 目标 | 核心产物 | 退出门禁 |
 | --- | --- | --- | --- |

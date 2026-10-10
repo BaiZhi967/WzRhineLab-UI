@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-尚未发布到 npm。以下内容为截至 M8 的全部变更，首次发布时会归入 `0.1.0`。
+尚未发布到 npm。以下内容为截至 M9 的全部变更，首次发布时会归入 `0.1.0`。
 
 ### Added
 - **M1-A**：`Button`（primary / accent / secondary / ghost，sm / md / lg，loading 保持焦点并阻止重复提交）、`Surface`、`StatusBadge`；`motion/presets` 与 `useRhineMotion()`。
@@ -15,6 +15,7 @@
 - **M5**：通过 `dist/` 发布 ESM 与 `.d.ts`；`publishConfig.exports` 提供 `.`、`./styles.css`、`./package.json`。
 - **M7**：表单控件 `Textarea`（计数、自动增高）、`Checkbox`（含 indeterminate）、`CheckboxGroup`、`RadioGroup` / `Radio`、`Switch`、`Fieldset`、`Form`（提交时统一校验、聚焦第一个错误、`errors` 显示服务端错误），以及 `Separator`、`VisuallyHidden`。样式在新的 `forms.css` 中，由 `styles.css` 引入，无需额外导入。
 - **M8**：`Pagination`（受控 / 非受控，当前页 `aria-current` 且可聚焦，`busy` 时保持焦点，窄容器紧凑模式）、`Breadcrumb`（折叠中间项、`renderLink` 接入路由）、`Progress`（含不确定态）、`Meter`（`low` / `high` / `optimum` 阈值，状态以文字表达）、`Stat`；辅助函数 `paginate`、`getPaginationItems`、`getMeterState`。`DataTable` 新增 `status`（loading / error）、`onRetry`、`emptyAction`、`pagination`，翻页保留调用方的选中集合。样式在 `data.css`，由 `styles.css` 引入。见 ADR-0005。
+- **M9**：`AlertDialog`（`role="alertdialog"`，初始焦点在取消按钮；`onConfirm` 可返回 Promise，等待中不可取消，失败时保持打开并以 `role="alert"` 提示）、`Drawer` / `DrawerClose`（侧边面板，窄于 40rem 时为底部弹出，可滑动关闭）、`Alert`（`live` 显式选择 off / polite / assertive）、`Callout`（`role="note"`）、`EmptyState`、`Skeleton`、`Spinner`。`Dialog` 新增 `onCloseRequest(reason)` 关闭保护；`DataTable` 新增 `emptyDescription`；`ToastOptions` 新增 `id`（同 id 原地更新并重新计时）与 `action.keepOpen`，`ToastApi` 新增 `promise()`。样式在 `drawer.css`、`status.css`，由 `styles.css` 引入。见 ADR-0006。
 
 ### Changed
 - **破坏性（M1-A，ADR-0003）**：`variant="primary"` 由橙底改为深墨底；橙色信号改用新增的 `variant="accent"`。
@@ -23,6 +24,13 @@
   - 迁移：在应用入口显式导入 `@wzrhine/tokens/styles.css` 和 `@wzrhine/react/styles.css`。
 - **M2-B**：Popover、Menu、Select、Tooltip 改为 fixed 定位，打开浮层时不再导致页面滚动。
 - **M7 前**：交互底座 Base UI 1.8.0 → 1.9.0（ADR-0001 修订）。上游修复覆盖本项目全部包裹模块（Menu focus guard、Popover/Tooltip 过渡完成判定、Select 大列表性能、Tabs 函数值、Toast 计时器、Field `defaultValue` 告警等），传递依赖 `@base-ui/utils` 0.4.0 → 0.5.0。公开 API 无变化（`api:check` 无漂移），对使用者无需任何改动。
+
+### Changed（M9）
+- **行为变化**：点击 Toast 的操作按钮后，默认关闭该通知（此前保持打开）。
+  - 迁移：需要旧行为时传 `action: { label, onClick, keepOpen: true }`。
+- 带操作且未指定 `timeout` 的 Toast 至少停留 10 秒（`max(toastTimeout, 10000)`；`toastTimeout=0` 时仍为 0）。
+- `ToastProvider` 由 Base UI Provider 的别名改为包装组件，属性不变。
+- `Button` 的加载指示、`DataTable` 的首次加载骨架与空状态、`Stat` 的加载骨架改由 `Spinner` / `Skeleton` / `EmptyState` 渲染。原有类名保留，外观不变（既有视觉基线组件区域零差异）；元素额外带 `rl-spinner` / `rl-skeleton` / `rl-empty` 类。
 
 ### Changed（M8，非破坏性）
 - `RecordHeader` 的位置路径改由 `Breadcrumb` 渲染（`maxItems={0}`，从不折叠）。外观不变（既有视觉基线零像素差异），结构与语义不变；`<nav class="rl-record__trail">` 现在同时带 `rl-breadcrumb` 类，内部元素带 `rl-breadcrumb__*` 类。`RecordTrailItem` 改为 `BreadcrumbItem` 的类型别名。
