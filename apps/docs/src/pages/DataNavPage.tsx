@@ -181,7 +181,7 @@ export function DataNavPage() {
           <PagerDemo />
         </Specimen>
         <Specimen id="data-breadcrumb" index="04" title="Breadcrumb" span="half" align="start" note="超过 4 级折叠中间项，点击后原地展开；长标签单行截断，完整文字保留给读屏。">
-          <div className="sc-stack">
+          <div className="sc-stack sc-stack--wide">
             <Breadcrumb items={longPath} label="路径（折叠）" />
             <Breadcrumb items={longPath} label="路径（完整）" maxItems={0} />
           </div>

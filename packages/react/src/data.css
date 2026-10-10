@@ -51,10 +51,25 @@
   min-width: 0;
 }
 
-/* Ancestors give up width four times faster than the current item. No min-width: a minimum
-   larger than a short label ("档案") would widen that item and open a gap. */
+/* Shrinking order: long ancestors first, down to three characters + ellipsis (floor set per item
+   from its text); short or non-text ancestors never shrink (min-width: auto = their content);
+   the current item last, down to a readable minimum at the line end, where extra width is invisible. */
 .rl-breadcrumb__item:not(:last-child) {
+  flex-shrink: 0;
+}
+
+.rl-breadcrumb__item[data-shrink] {
   flex-shrink: 4;
+  min-width: var(--rl-crumb-floor);
+}
+
+.rl-breadcrumb__item[data-shrink]:not(:first-child) {
+  /* "//" separator (two mono glyphs) and its gap are part of the item. */
+  min-width: calc(var(--rl-crumb-floor) + 1.44em + var(--rl-space-2));
+}
+
+.rl-breadcrumb__item:last-child:not(:first-child) {
+  min-width: calc(var(--rl-space-16) + var(--rl-space-6));
 }
 
 /* The expand button never shrinks or truncates. */

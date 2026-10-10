@@ -151,23 +151,40 @@ test.describe('M8 data & navigation in a real browser', () => {
     }
   });
 
-  for (const width of [320, 390, 768, 1280] as const) {
+  for (const width of [320, 390, 768, 1280, 1920] as const) {
     test(`breadcrumb at ${width}px: one line, no overlap, never widens the page`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(url);
       for (const name of ['路径（折叠）', '路径（完整）']) {
         const r = await page.getByRole('navigation', { name }).evaluate((nav) => {
           const items = [...nav.querySelectorAll('li')].map((li) => li.getBoundingClientRect());
+          const labels = [...nav.querySelectorAll<HTMLElement>('.rl-breadcrumb__link, .rl-breadcrumb__current')];
+          const fontSize = parseFloat(getComputedStyle(nav.querySelector('ol')!).fontSize);
+          const unreadable = labels
+            .slice(0, -1)
+            .filter((el) => el.scrollWidth > el.clientWidth + 1)
+            // Truncated ancestors must still show about three CJK glyphs plus the ellipsis.
+            .filter((el) => el.clientWidth < fontSize * 3)
+            .map((el) => `${el.textContent} @${el.clientWidth}px`);
+          const last = labels[labels.length - 1]!;
           return {
             lines: new Set(items.map((i) => Math.round(i.top + i.height / 2))).size,
             overlaps: items.slice(1).filter((i, n) => i.left < items[n]!.right - 1).length,
             scrolls: nav.scrollWidth > nav.clientWidth,
+            unreadable,
+            lastTruncated: last.scrollWidth > last.clientWidth + 1,
+            // Measure against the content box: the nav pads itself to keep focus rings inside the scroll clip.
+            freeAtEnd: Math.round(nav.getBoundingClientRect().right - parseFloat(getComputedStyle(nav).paddingRight) - items[items.length - 1]!.right),
           };
         });
         expect(r.lines, name).toBe(1);
         expect(r.overlaps, name).toBe(0);
-        // The collapsed trail always fits from 320px up; only a long uncollapsed path may scroll inside itself.
-        if (name === '路径（折叠）') expect(r.scrolls, name).toBe(false);
+        expect(r.unreadable, `${name}: ancestors narrower than 3 glyphs + ellipsis`).toEqual([]);
+        // An ellipsis on the current label is only allowed when the trail has used the whole line.
+        if (r.lastTruncated && !r.scrolls) expect(r.freeAtEnd, name).toBeLessThanOrEqual(2);
+        // From 390px up the collapsed trail fits; below that (and for a long uncollapsed path) it scrolls
+        // inside its own box rather than shrinking ancestors into unreadable fragments.
+        if (name === '路径（折叠）' && width >= 390) expect(r.scrolls, name).toBe(false);
       }
       expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBe(0);
     });

@@ -40,6 +40,21 @@ export type BreadcrumbProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'
 const textOf = (node: React.ReactNode): string | undefined =>
   typeof node === 'string' || typeof node === 'number' ? String(node) : undefined;
 
+/** Labels up to this many characters never shrink: truncating them would leave nothing readable. */
+const SHORT_LABEL = 4;
+
+/**
+ * Width (in em of the trail's mono type) of the first three characters plus an ellipsis: the
+ * narrowest an ancestor may get. Only used for labels longer than SHORT_LABEL, so the minimum
+ * is always smaller than the label itself and can never open a gap after it.
+ */
+function shrinkFloor(text: string): number {
+  const wide = (ch: string) => /[\u1100-\u115f\u2e80-\ua4cf\uac00-\ud7a3\uf900-\ufaff\ufe30-\ufe4f\uff00-\uff60\uffe0-\uffe6]/.test(ch);
+  // 1em per CJK glyph, 0.6em per Latin mono glyph, plus the 0.12em caps tracking each.
+  const glyphs = [...text].slice(0, 3).reduce((sum, ch) => sum + (wide(ch) ? 1.12 : 0.72), 0);
+  return Math.round((glyphs + 0.72) * 100) / 100;
+}
+
 export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(function Breadcrumb(
   {
     items,
@@ -83,10 +98,18 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(functio
               </li>
             );
           }
-          const current = index === items.length - 1 && !item.href;
+          const last = index === items.length - 1;
+          const current = last && !item.href;
           const title = textOf(item.label);
+          // Ancestors with a long text label may shrink to a floor; everything else keeps its width.
+          const floor = !last && title && [...title].length > SHORT_LABEL ? shrinkFloor(title) : undefined;
           return (
-            <li key={index} className="rl-breadcrumb__item">
+            <li
+              key={index}
+              className="rl-breadcrumb__item"
+              data-shrink={floor != null || undefined}
+              style={floor != null ? ({ '--rl-crumb-floor': `${floor}em` } as React.CSSProperties) : undefined}
+            >
               {item.href ? (
                 renderLink ? (
                   renderLink({ href: item.href, className: 'rl-breadcrumb__link', title, children: item.label })
