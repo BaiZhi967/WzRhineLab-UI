@@ -1,6 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const port = 4173;
+// PW_PORT lets parallel runs use their own server, build output and results folder.
+const port = Number(process.env.PW_PORT ?? 4173);
+const isolated = process.env.PW_PORT !== undefined;
+const outDir = isolated ? `.pw-dist/${port}` : 'dist';
 
 /**
  * Local-only browser acceptance. Runs against the production build (`vite preview`).
@@ -9,7 +12,7 @@ const port = 4173;
 export default defineConfig({
   testDir: './e2e',
   testIgnore: ['visual/**'],
-  outputDir: './test-results',
+  outputDir: isolated ? `./test-results-${port}` : './test-results',
   // Visual baselines are committed per platform: Chromium renders text differently across OSes.
   snapshotPathTemplate: '{testDir}/__screenshots__/{platform}/{arg}{ext}',
   expect: {
@@ -26,7 +29,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: true,
   retries: 0,
-  reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
+  reporter: [['list'], ['html', { open: 'never', outputFolder: isolated ? `playwright-report-${port}` : 'playwright-report' }]],
   use: {
     baseURL: `http://127.0.0.1:${port}`,
     trace: 'retain-on-failure',
@@ -46,7 +49,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `pnpm build && pnpm preview`,
+    command: isolated
+      ? `pnpm typecheck && pnpm exec vite build --outDir ${outDir} && pnpm exec vite preview --host 127.0.0.1 --port ${port} --strictPort --outDir ${outDir}`
+      : `pnpm build && pnpm preview`,
     url: `http://127.0.0.1:${port}`,
     // Reusing a leftover server once ran the suite against a stale build; opt in explicitly.
     reuseExistingServer: process.env.PW_REUSE_SERVER === '1',
