@@ -1,0 +1,114 @@
+# WzRhineLab-UI 长期规划中心
+
+> 状态：Working plan  
+> 基线：main @ bd220bf（2026-10-10，Base UI 1.9.0 与 M7 Forms 已合入）  
+> 维护方式：规划文档描述目标和门禁，验收记录描述已经真实执行的结果。
+
+本目录是 WzRhineLab-UI 后续规划的统一入口。现有的 design、development 和 acceptance 文档继续作为规范、实现约束和事实记录；本目录负责回答三个问题：
+
+1. 接下来应该做什么；
+2. 为什么按这个顺序做；
+3. 什么证据出现后才可以认为一个阶段完成。
+
+本目录不替代生产代码、测试、tokens、ADR 或验收记录。计划中的内容没有经过实现和检查时，不得在 README、变更日志或对外文档中写成已支持能力。
+
+## 当前基线
+
+当前 main 已经完成：
+
+- React + TypeScript + Motion 的 pnpm workspace；
+- @wzrhine/tokens、@wzrhine/react、@wzrhine/effects 三个包；
+- Base UI 1.9.0 作为唯一 headless 交互底座；
+- 基础原语、Fields、Navigation / Overlay、Data、Rhine archive patterns；
+- M7 表单层：Textarea、Checkbox、CheckboxGroup、RadioGroup、Radio、Switch、Fieldset、Form、Separator、VisuallyHidden；
+- 3 个示例应用：archive-desk、host-embed、ssr-hydrate；
+- 三内核自动化验收、axe 检查、视觉回归基线、package verification；
+- effects 包与 react 核心包之间的依赖边界；
+- 语义 token、主题作用域、Motion 时长与减动规范。
+
+当前明确未完成：
+
+- 屏幕阅读器人工验收；
+- 200% 缩放人工验收；
+- 真实设备触摸、滚动和焦点验收；
+- React 18 的正式验证和支持承诺；
+- 根目录许可证、npm scope、公开版本号；
+- 公开发布前的变更日志和安装体验；
+- M8 Data & Navigation；
+- M9 Ecosystem 工程化；
+- 长期的动效模式目录与 Canvas/WebGL 可选渲染实验。
+
+## 规划文件
+
+| 文件 | 内容 |
+| --- | --- |
+| [2026-2030-roadmap.md](2026-2030-roadmap.md) | 从 M8 到公共生态的阶段路线和依赖关系 |
+| [component-platform-plan.md](component-platform-plan.md) | 组件分层、优先级、API、验收矩阵和领域模式 |
+| [motion-and-rendering-plan.md](motion-and-rendering-plan.md) | CSS、Motion、SVG、Canvas、WebGL 和第三方适配器的长期边界 |
+| [quality-release-and-ecosystem-plan.md](quality-release-and-ecosystem-plan.md) | 质量门禁、兼容性、许可、发布、文档与生态计划 |
+| [execution-backlog.md](execution-backlog.md) | 当前 90 天和后续阶段的可执行任务清单 |
+
+## 计划使用规则
+
+### 1. 以里程碑而不是文件数量判断进度
+
+每个里程碑必须有：
+
+- 可运行的代码或可审阅的文档产物；
+- 对应的单元、E2E、视觉或人工验证；
+- 已知限制；
+- 回滚或延期说明；
+- 下一阶段的交接记录。
+
+新增一个组件文件不等于完成一个组件；加入一个动画库不等于完成动效能力。
+
+### 2. 生产基座保持单一
+
+核心组件继续使用 Base UI 1.9.0、原生语义 HTML、Rhine tokens 和 motion/react。除非新增 ADR 证明现有基座无法满足一个真实需求，否则不混用 Radix、React Aria、Ark UI 或其他行为基座。
+
+### 3. 展示能力必须可选
+
+DOM/SVG 展示效果可以留在 @wzrhine/effects。Canvas、WebGL、Rive、Lottie、GSAP 和其他高成本能力必须通过独立入口、lazy loading、静态 fallback 和明确的性能门禁引入，不得进入 Button、Field、Dialog、DataTable 等基础组件的依赖链。
+
+### 4. 先场景，后组件
+
+一个新组件进入排期前，至少需要一个真实页面场景：
+
+- archive-desk；
+- creator / content workbench；
+- agent / evaluation console；
+- 或明确的文档、设置、数据分析场景。
+
+只有展示概念而没有使用场景的效果，放入 showcase backlog，不进入核心组件排期。
+
+## 阶段状态约定
+
+- Proposed：已提出，尚未完成需求和风险评估；
+- Planned：已进入路线，但没有开始实现；
+- In progress：已有分支或明确实现任务；
+- Validating：代码已完成，等待自动化或人工门禁；
+- Accepted：有验收记录和可复现证据；
+- Deferred：有意延后并记录原因；
+- Rejected：经过评估不再进入路线。
+
+## 维护要求
+
+- 修改组件 API、token、行为底座、渲染边界或许可证策略时，先修改对应 ADR 或规划文档；
+- 每个里程碑结束时更新本目录和 docs/ROADMAP.md；
+- 任何“已通过”“已支持”“可发布”都必须链接到真实验收记录；
+- 不创建自动 GitHub Actions workflow，除非维护者明确批准并重新评估配额；
+- 规划文件使用中文，代码 API 和外部库名称保留原文；
+- commit message 使用中文，按小步、可回滚的范围提交。
+
+## 当前推荐起点
+
+下一个开发里程碑是 M8 Data & Navigation：
+
+1. DataTable 分页和加载态；
+2. Pagination；
+3. Breadcrumb；
+4. Progress / Meter；
+5. Stat；
+6. 三浏览器、键盘、axe、视觉和真实数据密度验收；
+7. 再进入 M9 Ecosystem，而不是立即引入 3D 或第二套组件底座。
+
