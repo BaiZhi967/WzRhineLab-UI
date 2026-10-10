@@ -65,10 +65,25 @@ test.describe('MotionPlayer', () => {
     const player = scanPlayer(page);
     const lane = player.locator('[data-lane="default"]');
     await expect(lane.locator('.rl-scan__line')).toHaveCount(0);
+    // The sweep line lives for one 900 ms sweep. Sample it in the page the moment it mounts:
+    // reading it in a later round-trip raced its unmount under parallel WebKit load (detached node).
+    const sampled = lane.evaluate(
+      (el) =>
+        new Promise<{ pointerEvents: string; animationName: string }>((resolve) => {
+          const read = () => {
+            const line = el.querySelector('.rl-scan__line');
+            if (!line) return false;
+            const cs = getComputedStyle(line);
+            resolve({ pointerEvents: cs.pointerEvents, animationName: cs.animationName });
+            return true;
+          };
+          if (read()) return;
+          const observer = new MutationObserver(() => read() && observer.disconnect());
+          observer.observe(el, { childList: true, subtree: true });
+        }),
+    );
     await player.getByRole('button', { name: '播放' }).click();
-    await expect(lane.locator('.rl-scan__line')).toHaveCount(1);
-    expect(await lane.locator('.rl-scan__line').evaluate((el) => getComputedStyle(el).pointerEvents)).toBe('none');
-    expect(await lane.locator('.rl-scan__line').evaluate((el) => getComputedStyle(el).animationName)).toBe('rl-scan-sweep');
+    expect(await sampled).toEqual({ pointerEvents: 'none', animationName: 'rl-scan-sweep' });
     // Reduced lane is flagged so CSS swaps the travelling sweep for a static outline (asserted below).
     await expect(player.locator('[data-lane="reduced"] .rl-scan')).toHaveAttribute('data-reduced', 'true');
     await expect(lane.locator('.rl-scan__line')).toHaveCount(0, { timeout: 3000 });

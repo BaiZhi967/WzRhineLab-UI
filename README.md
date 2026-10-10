@@ -7,6 +7,7 @@
 ## 当前阶段
 
 - **M7 — Forms（内容补齐阶段）**：在 M6 Release Candidate 的基础上补齐表单层：Textarea、Checkbox、CheckboxGroup、RadioGroup、Switch、Fieldset、Form，以及 Separator、VisuallyHidden（见 [M7 验收记录](docs/development/acceptance/2026-10-10-m7.md)）。后续 M8–M9 规划见 [ROADMAP](docs/ROADMAP.md)。
+- **M8 — Data & Navigation**：Pagination、Breadcrumb、Progress、Meter、Stat，DataTable 加载 / 错误 / 空状态与分页（见 [M8 验收记录](docs/development/acceptance/2026-10-10-m8.md)）。下一步 M9 覆盖层与反馈。
 - **暂不发布到 npm**（维护者决定，先补齐内容）；发布前仍需选定许可证、创建 npm scope 并确认版本号（见 [M6 验收记录](docs/development/acceptance/2026-10-10-m6.md)）。React 18 暂不正式支持。
 - 规范入口：[docs/README.md](docs/README.md)、[DESIGN.md](DESIGN.md)、[docs/ROADMAP.md](docs/ROADMAP.md)。
 - 原型画板：[docs/concepts/README.md](docs/concepts/README.md)。
@@ -55,7 +56,7 @@ import { Button, RhineProvider } from '@wzrhine/react';
 
 `RhineProvider` 提供 `.rl-theme` 作用域、弹层挂载点、减动策略和通知队列（`useToast()`）；所有弹层组件都必须放在它内部才能拿到主题。
 
-当前内置 Button、IconButton、Surface、StatusBadge、Text、Separator、VisuallyHidden，表单组件 Field、Input、Textarea、Checkbox、CheckboxGroup、RadioGroup、Radio、Switch、Fieldset、Form，Tabs、Tooltip、Dialog、Select、Popover、Menu、Toast，以及档案组件 RecordHeader、MetadataList、ArchiveCard、StatusIndicator、Timeline、DataTable，共三十个组件和 `RhineProvider`（交互底座为 Base UI，见 ADR-0001）。三个包目前仍为 `private`，发布前请勿在外部项目中依赖。
+当前内置 Button、IconButton、Surface、StatusBadge、Text、Separator、VisuallyHidden，表单组件 Field、Input、Textarea、Checkbox、CheckboxGroup、RadioGroup、Radio、Switch、Fieldset、Form，Tabs、Tooltip、Dialog、Select、Popover、Menu、Toast，以及档案组件 RecordHeader、MetadataList、ArchiveCard、StatusIndicator、Timeline、DataTable，以及数据与导航组件 Pagination、Breadcrumb、Progress、Meter、Stat，共三十五个组件和 `RhineProvider`（交互底座为 Base UI，见 ADR-0001）。三个包目前仍为 `private`，发布前请勿在外部项目中依赖。
 
 集成方式参考 [examples/](examples/README.md)：独立 SPA、嵌入非 React 旧页面、SSR 水合。从源码直出期升级请看 [UPGRADING.md](docs/development/UPGRADING.md)。
 
@@ -65,4 +66,4 @@ import { Button, RhineProvider } from '@wzrhine/react';
 - [研究摘要](docs/research/RESEARCH-SUMMARY.md) 与 [参考链接](docs/research/REFERENCES.md)。
 
 ## 设计与工程状态
-M0–M7 每个里程碑都有验收记录（[docs/README.md](docs/README.md) 中列出），只记录真实执行过的命令。根目录尚未选择源代码许可证；未配置自动 GitHub Actions（避免配额消耗）。Chromium、Firefox、WebKit 的自动化验收已通过；屏幕阅读器、200% 缩放与真机仍需人工验收。
+M0–M8 每个里程碑都有验收记录（[docs/README.md](docs/README.md) 中列出），只记录真实执行过的命令。根目录尚未选择源代码许可证；未配置自动 GitHub Actions（避免配额消耗）。Chromium、Firefox、WebKit 的自动化验收已通过；屏幕阅读器、200% 缩放与真机仍需人工验收。

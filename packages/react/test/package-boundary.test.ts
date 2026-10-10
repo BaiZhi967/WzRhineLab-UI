@@ -6,7 +6,7 @@ import { motionDurations } from '@wzrhine/tokens';
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 
-const cssFiles = ['../src/components.css', '../src/reset.css', '../src/overlays.css', '../src/feedback.css', '../src/archive.css', '../src/forms.css'];
+const cssFiles = ['../src/components.css', '../src/reset.css', '../src/overlays.css', '../src/feedback.css', '../src/archive.css', '../src/forms.css', '../src/data.css'];
 const stripped = (path: string) =>
   read(path)
     .replace(/\/\*[\s\S]*?\*\//g, '')
@@ -45,6 +45,10 @@ const componentFiles = [
   'VisuallyHidden',
   'Form',
   'fieldParts',
+  'Pagination',
+  'Breadcrumb',
+  'Progress',
+  'Stat',
 ];
 
 function splitTopLevel(selector: string): string[] {
@@ -77,6 +81,7 @@ describe('package boundary', () => {
     expect(entry).toMatch(/@import '\.\/feedback\.css';/);
     expect(entry).toMatch(/@import '\.\/archive\.css';/);
     expect(entry).toMatch(/@import '\.\/forms\.css';/);
+    expect(entry).toMatch(/@import '\.\/data\.css';/);
   });
 
   it('Base UI is only imported through subpaths', () => {

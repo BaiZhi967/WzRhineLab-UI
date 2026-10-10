@@ -1,6 +1,6 @@
 # @wzrhine/react · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 140 个导出（42 components，3 functions & hooks，6 constants，12 interfaces，77 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 164 个导出（47 components，6 functions & hooks，6 constants，16 interfaces，89 types）。
 
 ## Components
 
@@ -23,6 +23,20 @@
 | `title` * | `React.ReactNode` |  |
 | `updatedAt` | `string` | ISO date for <time dateTime>; `updatedLabel` is the visible text (defaults to the ISO string). |
 | `updatedLabel` | `React.ReactNode` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Breadcrumb`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `expandLabel` | `((count: number) => string)` | Accessible name of the expand button; receives the total number of levels. |
+| `items` * | `readonly BreadcrumbItem[]` |  |
+| `label` | `string` | Accessible name of the navigation landmark. |
+| `maxItems` | `number` | Collapse when the path has more than this many items: the first item and the last two stay, the rest hide behind an expand button. `0` never collapses. |
+| `renderLink` | `((props: BreadcrumbLinkProps) => React.ReactNode)` | Render links with a router component instead of `<a>`. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -95,16 +109,24 @@
 | `className` | `string` |  |
 | `columns` * | `readonly DataTableColumn<Row>[]` |  |
 | `density` | `"comfortable" \| "compact"` |  |
+| `emptyAction` | `React.ReactNode` | Optional action under the empty text, e.g. a "clear filters" button. |
 | `emptyText` | `React.ReactNode` |  |
+| `errorText` | `React.ReactNode` |  |
 | `getRowId` * | `(row: Row) => string` |  |
 | `getRowLabel` | `((row: Row) => string)` | Accessible name for a row's checkbox; defaults to the row id. |
 | `hideCaption` | `boolean` | Hide the caption visually (keep it for assistive tech) when a heading already labels the table. |
+| `loadingRows` | `number` | Skeleton rows on first load. |
+| `loadingText` | `React.ReactNode` |  |
+| `onRetry` | `(() => void)` |  |
 | `onSelectionChange` | `((ids: Set<string>) => void)` |  |
 | `onSortChange` | `((sort: SortState) => void)` |  |
+| `pagination` | `DataTablePagination` |  |
+| `retryLabel` | `React.ReactNode` |  |
 | `rows` * | `readonly Row[]` |  |
 | `scrollLabel` | `string` | Accessible label for the horizontal scroll region; defaults to the caption text. |
 | `selectedIds` | `ReadonlySet<string>` | Enables a checkbox column. |
 | `sort` | `SortState \| null` |  |
+| `status` | `DataTableStatus` | `loading`: skeleton rows on first load; with existing rows they stay visible but dimmed. `error`: message + optional retry. Sorting, selection and paging are disabled in both. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -321,6 +343,49 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `Meter`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `aria-label` | `undefined` | The accessible name comes from `label`. |
+| `aria-labelledby` | `undefined` |  |
+| `className` | `string` |  |
+| `description` | `React.ReactNode` |  |
+| `getValueText` | `((formatted: string, value: number) => string)` |  |
+| `hideLabel` | `boolean` |  |
+| `high` | `number` |  |
+| `label` * | `React.ReactNode` |  |
+| `low` | `number` | Values below `low` / above `high` are out of the preferred range (like native <meter>). |
+| `optimum` | `number` | Where the good region is; decides whether low or high values are the warning side. |
+| `size` | `ProgressSize` |  |
+| `stateLabels` | `Partial<Record<MeterState, string>>` | Text for the derived state, appended to the spoken value: e.g. { warning: '偏高' }. |
+| `style` | `React.CSSProperties` |  |
+| `valueText` | `React.ReactNode` | Visible value text; defaults to the formatted value. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Pagination`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `busy` | `boolean` | A page request is in flight: controls ignore presses and announce `aria-disabled`, but stay focusable so keyboard focus is not dropped to <body> while the table reloads. |
+| `defaultPage` | `number` |  |
+| `disabled` | `boolean` | Disable every control. |
+| `labels` | `PaginationLabels` |  |
+| `onPageChange` | `((page: number) => void)` |  |
+| `pageCount` | `number` |  |
+| `pageSize` | `number` |  |
+| `page` | `number` |  |
+| `showStatus` | `boolean` | Show the "第 a–b 条，共 n 条" summary (needs `totalItems` and `pageSize`). |
+| `siblingCount` | `number` | Pages shown on each side of the current page. |
+| `totalItems` | `number` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `Popover`
 
 *component*
@@ -353,6 +418,27 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `children` * | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>>` | The element that closes the popover, e.g. `<Button variant="ghost">完成</Button>`. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Progress`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `aria-label` | `undefined` | The accessible name comes from `label`. |
+| `aria-labelledby` | `undefined` |  |
+| `className` | `string` |  |
+| `description` | `React.ReactNode` |  |
+| `getValueText` | `((formatted: string, value: number \| null) => string)` | Spoken value; defaults to the formatted value, or "进行中" when indeterminate. |
+| `hideLabel` | `boolean` |  |
+| `label` * | `React.ReactNode` |  |
+| `size` | `ProgressSize` |  |
+| `style` | `React.CSSProperties` |  |
+| `tone` | `ProgressTone` |  |
+| `valueText` | `React.ReactNode` | Visible text after the label; defaults to the formatted value (e.g. "42%"). `false` hides it. |
+| `value` * | `number \| null` | Current value between `min` and `max`; `null` while the total is unknown. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -409,7 +495,7 @@
 | `summary` | `React.ReactNode` |  |
 | `title` * | `React.ReactNode` |  |
 | `trailLabel` | `string` | Accessible name of the breadcrumb navigation. |
-| `trail` | `readonly RecordTrailItem[]` | Ancestors of this record. Rendered as a breadcrumb <nav>; the last item is the current page. |
+| `trail` | `readonly BreadcrumbItem[]` | Ancestors of this record. Rendered as a breadcrumb <nav>; the last item is the current page. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -465,6 +551,26 @@
 | `decorative` | `boolean` | Purely visual rule: removed from the accessibility tree. Use for decoration inside a group whose structure is already conveyed by headings or lists. |
 | `orientation` | `SeparatorOrientation` |  |
 | `tone` | `SeparatorTone` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Stat`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `delta` | `StatDelta` |  |
+| `description` | `React.ReactNode` |  |
+| `emptyLabel` | `string` | Spoken text for missing values. |
+| `format` | `Intl.NumberFormatOptions` | Formatting for numeric `value` (Intl.NumberFormat). |
+| `label` * | `React.ReactNode` |  |
+| `loading` | `boolean` |  |
+| `locale` | `Intl.LocalesArgument` |  |
+| `size` | `"sm" \| "md" \| "lg"` |  |
+| `status` | `StatTone` | Business status of the figure; shown as a side rule, never as the only signal. |
+| `unit` | `React.ReactNode` |  |
+| `value` * | `string \| number \| null` | Number or preformatted text. `null` / `undefined` = no data. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -660,6 +766,30 @@
 
 ## Functions & hooks
 
+### `getMeterState`
+
+*function* — Native <meter> rules: the range is split by `low` / `high`; the region containing `optimum` is good, the adjacent region is "suboptimum", the far region "critical". Without thresholds every value is optimum.
+
+```ts
+function getMeterState: (value: number, { min, max, low, high, optimum }: { min?: number; max?: number; low?: number; high?: number; optimum?: number; }) => MeterState
+```
+
+### `getPaginationItems`
+
+*function* — Page list with first, last and `siblingCount` pages on each side of `page`. A gap of one page is shown as that page, not an ellipsis, so the list length stays stable while paging.
+
+```ts
+function getPaginationItems: (page: number, pageCount: number, siblingCount?: number) => PaginationItem[]
+```
+
+### `paginate`
+
+*function* — Rows of one page for client-side pagination. `page` starts at 1.
+
+```ts
+function paginate: <Row>(rows: readonly Row[], page: number, pageSize: number) => Row[]
+```
+
 ### `usePortalContainer`
 
 *function* — Portal target for popups (Dialog, Select, Tooltip, Popover, Menu, Toast). Inside a RhineProvider it is a node within the themed root, so popups inherit --rl-* tokens, theme, density and reduced motion. The value is the element itself (not a ref) so portals re-render once it exists; a null container would otherwise make Base UI fall back to <body> and lose the theme. Returns `undefined` outside a provider.
@@ -745,6 +875,26 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | `label` * | `React.ReactNode` |  |
 | `tone` * | `StatusKind` |  |
 
+### `BreadcrumbItem`
+
+*interface* — Location path (ADR-0005 §4): `<nav>` + ordered list; the last item without `href` is the current page. Separators are CSS-generated, so assistive tech reads only the items. Long paths collapse their middle items behind a button that expands in place.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `href` | `string` | Omit for the current page; items with `href` render as links. |
+| `label` * | `React.ReactNode` |  |
+
+### `BreadcrumbLinkProps`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `className` * | `string` |  |
+| `href` * | `string` |  |
+| `title` | `string` |  |
+
 ### `DataTableColumn`
 
 *interface*
@@ -761,6 +911,19 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | `sortable` | `boolean` | Allow sorting by this column. |
 | `width` | `string` | Fixed column width as a CSS length or token, e.g. `var(--rl-space-16)`. |
 
+### `DataTablePagination`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `labels` | `PaginationLabels` |  |
+| `onPageChange` * | `(page: number) => void` |  |
+| `pageSize` * | `number` |  |
+| `page` * | `number` |  |
+| `siblingCount` | `number` |  |
+| `totalItems` * | `number` | Total rows across all pages; drives the page count and the range summary. |
+
 ### `MetadataItem`
 
 *interface*
@@ -775,6 +938,19 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | `value` * | `React.ReactNode` |  |
 | `wide` | `boolean` | Let a long value span the full row in multi-column layouts. |
 
+### `PaginationLabels`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `compact` | `((page: number, pageCount: number) => string)` | Compact summary shown in narrow containers, e.g. "第 3 / 40 页". |
+| `nav` | `string` |  |
+| `next` | `string` |  |
+| `page` | `((page: number) => string)` |  |
+| `previous` | `string` |  |
+| `status` | `((from: number, to: number, total: number) => string)` | Range summary when `totalItems` is known, e.g. "第 51–75 条，共 1000 条". |
+
 ### `RecordStatus`
 
 *interface*
@@ -783,15 +959,6 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | --- | --- | --- |
 | `label` * | `React.ReactNode` | Visible text; colour never carries the status alone. |
 | `tone` * | `StatusKind` |  |
-
-### `RecordTrailItem`
-
-*interface* — Archive record header: location trail, record ID, status, title, classification, summary, key timestamps and actions. Every field except `title` is optional and is omitted when absent — the header never fabricates IDs, dates or access levels.
-
-| Member | Type | Description |
-| --- | --- | --- |
-| `href` | `string` | Omit for the current record; links render as <a>. |
-| `label` * | `React.ReactNode` |  |
 
 ### `RhineMotion`
 
@@ -829,6 +996,17 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | --- | --- | --- |
 | `column` * | `string` |  |
 | `direction` * | `SortDirection` |  |
+
+### `StatDelta`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `label` | `React.ReactNode` | Context, e.g. "较上周". |
+| `text` | `React.ReactNode` | Displayed change; defaults to the signed number (e.g. "+12", "−3"). |
+| `tone` | `StatTone` |  |
+| `value` * | `number` | Signed change. The sign drives the arrow; it says nothing about good or bad. |
 
 ### `TimelineEvent`
 
@@ -874,6 +1052,10 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 
 *type*
 
+### `BreadcrumbProps`
+
+*type*
+
 ### `ButtonProps`
 
 *type*
@@ -913,6 +1095,14 @@ type ChoiceOrientation = 'vertical' | 'horizontal'
 ### `DataTableProps`
 
 *type*
+
+### `DataTableStatus`
+
+*type* — Data table on a native <table>: real header cells, a caption, sortable columns that report `aria-sort`, optional row selection with named checkboxes, and an empty state. Wide tables scroll horizontally inside a focusable, labelled region instead of shrinking text. Sorting is controlled: the component reports the requested order and the caller supplies sorted rows, so it never reorders data it does not understand. Pagination works the same way (ADR-0005 §6): the table renders the pager and the caller supplies the current page's rows (`paginate()` helps for client-side data).
+
+```ts
+type DataTableStatus = 'ready' | 'loading' | 'error'
+```
 
 ### `DialogCloseProps`
 
@@ -1066,6 +1256,30 @@ type MetadataListLayout = 'inline' | 'stacked'
 type MetadataValue = React.ReactNode
 ```
 
+### `MeterProps`
+
+*type*
+
+### `MeterState`
+
+*type*
+
+```ts
+type MeterState = 'optimum' | 'suboptimum' | 'critical'
+```
+
+### `PaginationItem`
+
+*type* — Page navigation (ADR-0005 §3): a `<nav>` of plain buttons in normal Tab order. The current page keeps `aria-current="page"` and stays focusable so it can be announced. Narrow containers switch to "上一页 · 第 n / m 页 · 下一页" through a container query.
+
+```ts
+type PaginationItem = number | 'ellipsis-start' | 'ellipsis-end'
+```
+
+### `PaginationProps`
+
+*type*
+
 ### `PopoverAlign`
 
 *type*
@@ -1102,6 +1316,26 @@ type PopoverSide = 'top' | 'bottom' | 'left' | 'right'
 type PopoverSize = 'sm' | 'md' | 'lg'
 ```
 
+### `ProgressProps`
+
+*type*
+
+### `ProgressSize`
+
+*type* — Progress vs Meter (ADR-0005 §2): - Progress: a task advancing over time to completion. `value={null}` = indeterminate. - Meter: a static measurement inside a known range; never "complete", never indeterminate. Both need a visible label; the value is announced as formatted text, not colour.
+
+```ts
+type ProgressSize = 'sm' | 'md'
+```
+
+### `ProgressTone`
+
+*type*
+
+```ts
+type ProgressTone = 'neutral' | 'accent' | 'success' | 'warning' | 'danger'
+```
+
 ### `RadioGroupProps`
 
 *type*
@@ -1113,6 +1347,14 @@ type PopoverSize = 'sm' | 'md' | 'lg'
 ### `RecordHeaderProps`
 
 *type*
+
+### `RecordTrailItem`
+
+*type* — Same shape as a Breadcrumb item (ADR-0005 §4).
+
+```ts
+type RecordTrailItem = BreadcrumbItem
+```
 
 ### `RhineDensity`
 
@@ -1176,10 +1418,22 @@ type SeparatorTone = 'subtle' | 'default' | 'strong'
 
 ### `SortDirection`
 
-*type* — Data table on a native <table>: real header cells, a caption, sortable columns that report `aria-sort`, optional row selection with named checkboxes, and an empty state. Wide tables scroll horizontally inside a focusable, labelled region instead of shrinking text. Sorting is controlled: the component reports the requested order and the caller supplies sorted rows, so it never reorders data it does not understand.
+*type*
 
 ```ts
 type SortDirection = 'ascending' | 'descending'
+```
+
+### `StatProps`
+
+*type*
+
+### `StatTone`
+
+*type* — Labelled figure with an optional change (ADR-0005 §5). A rise is not assumed to be good: the caller sets `delta.tone`. Missing values show "—" and are read as "无数据"; the component never substitutes 0.
+
+```ts
+type StatTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info'
 ```
 
 ### `StatusBadgeAppearance`

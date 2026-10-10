@@ -105,6 +105,44 @@ test('keyboard only: open the create dialog, Escape returns focus', async ({ pag
   await expect(trigger).toBeFocused();
 });
 
+test('pagination: 8 rows per page, filters reset to page 1, selection of a record survives paging', async ({ page }) => {
+  // Seed enough local records to need two pages (store reads localStorage on load).
+  await page.evaluate(() => {
+    const now = '2026-10-10';
+    const rows = Array.from({ length: 12 }, (_, i) => ({
+      id: `ARC-${String(i + 1).padStart(4, '0')}`,
+      title: `分页测试记录 ${i + 1}`,
+      discipline: i % 2 ? '材料学' : '生物学',
+      owner: '测试',
+      status: 'draft',
+      created: now,
+      updated: now,
+      summary: '',
+      sample: false,
+      history: [],
+    }));
+    localStorage.setItem('wzrhine-example:archive-desk', JSON.stringify(rows));
+  });
+  await page.reload();
+  const table = page.getByRole('table', { name: '档案记录' });
+  const pager = page.getByRole('navigation', { name: '分页' });
+  await expect(table.getByRole('rowheader')).toHaveCount(8);
+  await expect(pager.getByRole('status')).toHaveText('第 1–8 条，共 12 条');
+  await pager.getByRole('button', { name: '下一页' }).click();
+  await expect(pager.getByRole('button', { name: '下一页' })).toBeDisabled();
+  await expect(pager.getByRole('button', { name: '第 2 页' })).toBeFocused();
+  await expect(table.getByRole('rowheader')).toHaveText(['ARC-0009', 'ARC-0010', 'ARC-0011', 'ARC-0012']);
+  await page.getByRole('button', { name: '查看 ARC-0010' }).click();
+  const detail = page.getByLabel('记录详情');
+  await expect(detail.getByRole('navigation', { name: '记录位置' })).toContainText('ARC-0010');
+  await expect(detail.getByRole('navigation', { name: '记录位置' }).getByText('ARC-0010')).toHaveAttribute('aria-current', 'page');
+  // Filtering shrinks the result set below one page: back to page 1, pager disappears.
+  await page.getByRole('searchbox').fill('材料学');
+  await expect(pager).toBeHidden();
+  await expect(table.getByRole('rowheader')).toHaveCount(6);
+  await expect(detail.getByRole('heading', { level: 2, name: '分页测试记录 10' })).toBeVisible();
+});
+
 test('theme switch applies to the scope and to portalled popups, and persists', async ({ page }) => {
   await page.getByRole('combobox', { name: '主题' }).click();
   await page.getByRole('option', { name: '深色' }).click();

@@ -123,52 +123,7 @@
   border-bottom: var(--rl-border-width) solid var(--rl-border-strong);
 }
 
-.rl-record__trail ol {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--rl-space-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font: var(--rl-type-mono);
-  letter-spacing: var(--rl-tracking-caps);
-  text-transform: uppercase;
-  color: var(--rl-fg-subtle);
-}
-
-.rl-record__trail li {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--rl-space-2);
-}
-
-.rl-record__trail li + li::before {
-  content: '//';
-  color: var(--rl-border-strong);
-}
-
-.rl-record__trail a {
-  color: var(--rl-fg-muted);
-  text-decoration: none;
-  border-radius: var(--rl-radius-xs);
-}
-
-@media (hover: hover) {
-  .rl-record__trail a:hover {
-    color: var(--rl-fg-primary);
-    text-decoration: underline;
-    text-underline-offset: var(--rl-space-1);
-  }
-}
-
-.rl-record__trail a:focus-visible {
-  outline: var(--rl-focus-ring);
-  outline-offset: var(--rl-focus-offset);
-}
-
-.rl-record__trail [aria-current='page'] {
-  color: var(--rl-fg-primary);
-}
+/* The location trail is a Breadcrumb (data.css). */
 
 /* Meta sits beside the title when both fit, and wraps below it otherwise (flex-wrap, no breakpoint). */
 .rl-record__main {
@@ -723,7 +678,8 @@
   opacity: 1;
 }
 
-.rl-table__empty {
+/* td-qualified: `.rl-table td` (0,1,1) would otherwise win and left-align the message. */
+.rl-table td.rl-table__empty {
   padding: var(--rl-space-8) var(--rl-table-cell-x);
   text-align: center;
   color: var(--rl-fg-muted);

@@ -28,7 +28,16 @@ test.describe('Dialog', () => {
     const inside: boolean[] = [];
     for (let i = 0; i < 8; i += 1) {
       await page.keyboard.press(i % 3 === 2 ? 'Shift+Tab' : 'Tab');
-      inside.push(await dialog.evaluate((el) => el.contains(document.activeElement)));
+      // Tab can land on Base UI's focus-guard span, which hands focus back into the dialog on the
+      // next frame (traced in Firefox / WebKit under parallel load). Judge where focus settles.
+      inside.push(
+        await dialog.evaluate(
+          (el) =>
+            new Promise<boolean>((resolve) =>
+              requestAnimationFrame(() => requestAnimationFrame(() => resolve(el.contains(document.activeElement)))),
+            ),
+        ),
+      );
     }
     expect(inside.every(Boolean)).toBe(true);
 

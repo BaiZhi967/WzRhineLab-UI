@@ -4,7 +4,9 @@
 >
 > **当前进度**：M0–M5 已合并（PR #1–#7）：基础组件、导航与浮层、档案组件、可选包 `@wzrhine/effects`（可选 3D 有意延后）、dist 构建与发布流程。M6 已实现并有测试：三个示例应用（独立 SPA / 宿主嵌入 / SSR 水合）、冻结的主题 token 契约、31 张视觉回归基线、升级指南；试用中发现的 3 个库缺陷已修复（[M6 验收记录](development/acceptance/2026-10-10-m6.md)）。三内核自动化验收通过。**仍未完成**：发布审批（维护者需选定许可证、创建 npm scope、确认版本号），以及读屏软件、200% 缩放与真机的人工验收。
 >
-> **进度（M7）**：表单层已补齐并有测试（[M7 验收记录](development/acceptance/2026-10-10-m7.md)）。下一步 M8 Data & Navigation。
+> **进度（M7）**：表单层已补齐并有测试（[M7 验收记录](development/acceptance/2026-10-10-m7.md)）。
+>
+> **进度（M8）**：已完成并有测试（[M8 验收记录](development/acceptance/2026-10-10-m8.md)，契约 [ADR-0005](development/adr/0005-data-navigation-contracts.md)）。M8 之后按维护者决定先做 M9 覆盖层与反馈，原 Ecosystem 改为 M9.5。
 
 | 里程碑 | 目标 | 核心产物 | 退出门禁 |
 | --- | --- | --- | --- |
@@ -16,14 +18,15 @@
 | **M5 Package & Docs** | 对外复用准备 | API docs、Storybook 或自研 explorer、版本/变更/手动发布 | 包导出/安装/许可/无障碍/跨浏览器 |
 | **M6 Release Candidate** | 真实业务集成与稳定 | 3 个示例应用、升级指南、稳定主题、视觉回归基线 | 真实试用问题关闭与发布审批 |
 
-## 内容补齐阶段（M7–M9）
+## 内容补齐阶段（M7–M9.5）
 维护者决定：**暂不发布**，先补齐 [COMPONENTS.md](design/COMPONENTS.md) 规划但未实现的组件；**暂不正式支持 React 18**（peer 声明保持不变，但不做验证，也不承诺）。每个里程碑沿用 M1–M6 的门禁：单测、三内核 E2E、axe、视觉基线、组件文档、验收记录。
 
 | 里程碑 | 目标 | 核心产物 | 退出门禁 |
 | --- | --- | --- | --- |
 | **M7 Forms** | 补齐 Fields 层与基础原语 | Textarea、Checkbox、CheckboxGroup、RadioGroup / Radio、Switch、Fieldset、Separator、VisuallyHidden | 全部接入 Field 语义（标签 / 描述 / 错误 / 禁用）；原生表单提交值正确；「设置表单」场景改用新组件 |
 | **M8 Data & Navigation** | 数据与导航补齐 | Pagination（接入 DataTable）、Breadcrumb（与 RecordHeader trail 共用）、Progress / Meter、Stat；DataTable 加载态 | DataTable 千行分页场景实测；键盘与读屏语义；视觉基线 |
-| **M9 Ecosystem** | 生态与工程化 | `'use client'` 产物指令与 App Router 示例、组件默认文案 locale（ADR）、体积预算门禁 | 示例构建与 E2E；预算超标时 `release:check` 失败 |
+| **M9 Overlays & Feedback** | 覆盖层与反馈补齐 | AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner；Toast / Dialog 补强 | 焦点进出与归还、live region 语义、可中断动效；三内核 E2E 与视觉基线 |
+| **M9.5 Ecosystem** | 生态与工程化 | `'use client'` 产物指令与 App Router 示例、组件默认文案 locale（ADR）、体积预算门禁 | 示例构建与 E2E；预算超标时 `release:check` 失败 |
 
 暂缓：可选 3D、InstrumentPanel、SectionIndex、Combobox（M8 视档案检索需求再定）。
 

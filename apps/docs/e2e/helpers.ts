@@ -20,6 +20,7 @@ export const routes = [
   { name: 'menu', hash: '/#/components/menu' },
   { name: 'toast', hash: '/#/components/toast' },
   { name: 'archive', hash: '/#/archive' },
+  { name: 'data', hash: '/#/archive/data' },
   { name: 'scenarios', hash: '/#/archive/scenarios' },
 ] as const;
 
@@ -43,8 +44,8 @@ export async function findHorizontalOverflow(page: Page) {
     const vw = document.documentElement.clientWidth;
     const offenders: string[] = [];
     for (const el of Array.from(document.querySelectorAll<HTMLElement>('body *'))) {
-      // Intentional inner scrollers: tables, code, overflowing tab lists, and the closed drawer.
-      if (el.closest('.sc-table-wrap, .rl-table-scroll, .sc-code pre, .rl-tabs__list, .sc-sidebar[data-hidden]')) continue;
+      // Intentional inner scrollers: tables, code, overflowing tab lists, long breadcrumbs (ADR-0005), and the closed drawer.
+      if (el.closest('.sc-table-wrap, .rl-table-scroll, .sc-code pre, .rl-tabs__list, .rl-breadcrumb, .sc-sidebar[data-hidden]')) continue;
       const rect = el.getBoundingClientRect();
       if (rect.width === 0 || rect.height === 0) continue;
       if (rect.right > vw + 1 || rect.left < -1) {

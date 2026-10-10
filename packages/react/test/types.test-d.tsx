@@ -95,3 +95,30 @@ describe('M7 form prop types', () => {
     void (<Textarea resize="both" />);
   });
 });
+
+describe('M8 prop types', () => {
+  it('Pagination needs a page count source; DataTable status is a closed union', async () => {
+    const { Pagination, DataTable, Progress, Meter, Stat, Breadcrumb } = await import('../src');
+    void (<Pagination pageCount={3} />);
+    void (<Pagination totalItems={100} pageSize={25} />);
+    // @ts-expect-error pageCount or totalItems + pageSize is required
+    void (<Pagination page={1} />);
+    // @ts-expect-error totalItems needs pageSize
+    void (<Pagination totalItems={100} />);
+    void (<Pagination pageCount={3} onPageChange={(p) => expectTypeOf(p).toEqualTypeOf<number>()} />);
+    // @ts-expect-error unknown status
+    void (<DataTable caption="c" columns={[]} rows={[]} getRowId={() => ''} status="pending" />);
+    // @ts-expect-error Progress needs a label
+    void (<Progress value={1} />);
+    // @ts-expect-error indeterminate is null, not undefined
+    void (<Progress label="x" />);
+    // @ts-expect-error Meter cannot be indeterminate
+    void (<Meter label="x" value={null} />);
+    // @ts-expect-error name comes from label
+    void (<Meter label="x" value={1} aria-label="y" />);
+    // @ts-expect-error Stat needs a label
+    void (<Stat value={1} />);
+    // @ts-expect-error Breadcrumb needs items
+    void (<Breadcrumb />);
+  });
+});

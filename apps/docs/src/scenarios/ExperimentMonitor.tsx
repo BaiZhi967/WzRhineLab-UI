@@ -7,6 +7,7 @@ import {
   Input,
   MetadataList,
   RecordHeader,
+  Progress,
   StatusIndicator,
   Surface,
   Timeline,
@@ -99,6 +100,16 @@ export function ExperimentMonitor() {
             </h3>
             <StatusIndicator tone={state.tone} label={state.label} detail={state.detail} live />
           </div>
+          <Progress
+            label="规程进度"
+            hideLabel
+            size="sm"
+            value={done}
+            max={protocol.length}
+            tone={finished ? 'success' : 'neutral'}
+            getValueText={(_, v) => `已完成 ${v} / ${protocol.length} 步`}
+            valueText={false}
+          />
           <ol className="sc-steps">
             {protocol.map((step, index) => {
               const status = index < done ? 'done' : index === done ? 'current' : 'todo';

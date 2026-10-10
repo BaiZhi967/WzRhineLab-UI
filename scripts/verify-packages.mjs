@@ -248,6 +248,7 @@ const cssChecks = {
   'feedback.css': '.rl-toast-viewport',
   'archive.css': '.rl-table__sort',
   'forms.css': '.rl-switch__thumb',
+  'data.css': '.rl-pagination__page',
 };
 for (const [file, needle] of Object.entries(cssChecks)) {
   if (!css.includes(needle)) fail(`bundled CSS missing ${needle} from ${file} (style entry or @import chain broken)`);

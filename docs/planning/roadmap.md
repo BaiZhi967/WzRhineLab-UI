@@ -20,7 +20,8 @@
 | 顺序 | 核心目标 | 关键结果 |
 | --- | --- | --- |
 | M8 | Data & Navigation | Pagination、Breadcrumb、Progress / Meter、Stat、DataTable loading / pagination |
-| M9 | Ecosystem hardening | App Router / use client 产物策略、locale ADR、体积预算、文档搜索 |
+| M9 | Overlays & Feedback | AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner，Toast / Dialog 补强 |
+| M9.5 | Ecosystem hardening | App Router / use client 产物策略、locale ADR、体积预算、文档搜索 |
 | M10 | Motion Core 2.0 | 统一 motion contract、生命周期、模式目录、减动和中断测试 |
 | M11 | Rendering Lab | Canvas/SVG 性能实验、渲染适配器契约、是否引入 Canvas 的证据 |
 | M12 | Advanced interaction | Combobox、Drawer、Slider、Accordion、CommandPalette、FilterBar |
@@ -32,6 +33,8 @@
 | M18 | Governance and sustainability | 稳定版本策略、贡献者指南、兼容性矩阵、迁移工具、性能预算治理 |
 
 顺序只用于表达前置关系，不代表发布日期或时间承诺。任何阶段只有完成对应门禁后才能关闭。
+
+> **顺序调整（维护者决定，M8 开始时）**：M8 之后先做「覆盖层与反馈组件」（新 M9），原 M9 Ecosystem hardening 改为 M9.5。M10 及之后的编号保持不变，避免所有规划文件与验收记录里的交叉引用失效。Drawer 从 M12 提前到 M9。
 
 ## M8：Data & Navigation
 
@@ -72,7 +75,37 @@
 - 视觉基线只包含有意的变化；
 - 完成文档、示例和验收记录。
 
-## M9：Ecosystem hardening
+## M9：Overlays & Feedback
+
+### 目标
+
+补齐数据页面与表单流程中缺失的覆盖层与反馈组件，让「确认、警告、等待、空结果、侧边详情」都有统一、可访问的实现，而不是每个页面各写一套。
+
+### 主要产物
+
+- AlertDialog（破坏性操作确认，`role="alertdialog"`，初始焦点落在安全选项上）；
+- Drawer（侧边详情 / 筛选面板，基于 Base UI Drawer；窄屏改为底部弹出）；
+- Alert / Callout（页面内的常驻提示：info / success / warning / danger，可关闭）；
+- EmptyState（空结果、无权限、首次使用，带可选操作）；
+- Skeleton 与 Spinner（从 M8 DataTable 的加载态中抽取为公开组件）；
+- Toast 补强：带操作的通知、可撤销操作、更新已有通知；
+- Dialog 补强：表单对话框的提交 / 关闭保护。
+
+### 依赖
+
+- M8 已完成（DataTable 加载、空、错误状态是 Skeleton / EmptyState / Alert 的首个真实场景）；
+- Base UI 1.9.0 的 AlertDialog、Drawer 原语；
+- token 契约冻结。
+
+### 退出门禁
+
+- 焦点进入、循环、Esc 与焦点归还在三内核 E2E 中通过；
+- 破坏性确认默认焦点不在破坏性按钮上；
+- 反馈类组件的 live region 语义（status / alert）正确，不重复宣告；
+- 所有进出场动效可中断，减动时无位移；
+- 320–1920 截图审查、axe、视觉基线、验收记录。
+
+## M9.5：Ecosystem hardening
 
 ### 目标
 
@@ -92,7 +125,7 @@
 
 ### 注意
 
-M9 不负责建立第二个 headless 组件底座，也不负责加入 Canvas 或 WebGL。它只解决“包被安装和使用时是否稳定”。
+M9.5 不负责建立第二个 headless 组件底座，也不负责加入 Canvas 或 WebGL。它只解决“包被安装和使用时是否稳定”。
 
 ## M10：Motion Core 2.0
 
@@ -158,10 +191,9 @@ M9 不负责建立第二个 headless 组件底座，也不负责加入 Canvas �
 
 ### 推荐顺序
 
-1. Drawer；
-2. Combobox / Autocomplete；
-3. Slider；
-4. NumberField；
+1. Combobox / Autocomplete（Drawer 已提前到 M9）；
+2. Slider；
+3. NumberField；
 5. Accordion / Collapsible；
 6. CommandPalette；
 7. FilterBar；

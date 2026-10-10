@@ -22,6 +22,7 @@
 - 基础原语、Fields、Navigation / Overlay、Data、Rhine archive patterns；
 - Agent UI 公共包尚未实现；其目标边界和契约见 Agent UI 平台规划；
 - M7 表单层：Textarea、Checkbox、CheckboxGroup、RadioGroup、Radio、Switch、Fieldset、Form、Separator、VisuallyHidden；
+- M8 数据与导航：Pagination、Breadcrumb、Progress、Meter、Stat，DataTable 加载 / 错误 / 空状态与分页（[验收记录](../development/acceptance/2026-10-10-m8.md)）；
 - 3 个示例应用：archive-desk、host-embed、ssr-hydrate；
 - 三内核自动化验收、axe 检查、视觉回归基线、package verification；
 - effects 包与 react 核心包之间的依赖边界；
@@ -35,8 +36,8 @@
 - React 18 的正式验证和支持承诺；
 - 根目录许可证、npm scope、公开版本号；
 - 公开发布前的变更日志和安装体验；
-- M8 Data & Navigation；
-- M9 Ecosystem 工程化；
+- M9 覆盖层与反馈组件；
+- M9.5 Ecosystem 工程化；
 - 长期的动效模式目录与 Canvas/WebGL 可选渲染实验。
 
 ## 规划文件
@@ -128,6 +129,6 @@ Agent UI 采用独立的 @wzrhine/agent 包。一个真实的 Agent 消费项目
 4. Progress / Meter；
 5. Stat；
 6. 三浏览器、键盘、axe、视觉和真实数据密度验收；
-7. 再进入 M9 Ecosystem，而不是立即引入 3D 或第二套组件底座。
+7. 再进入 M9 覆盖层与反馈组件（AlertDialog、Drawer、Alert、EmptyState、Skeleton），之后是 M9.5 Ecosystem，而不是立即引入 3D 或第二套组件底座。
 
 Agent UI 的实现应按 [Agent UI 平台规划](agent-ui-platform-plan.md) 的依赖顺序推进；遇到 WzRhine 尚未支持的 Combobox、Drawer、Slider 或 Accordion 时，按照 [需求插入流程（PR #11）](https://github.com/BaiZhi967/WzRhineLab-UI/pull/11) 提交最小支持闭环。

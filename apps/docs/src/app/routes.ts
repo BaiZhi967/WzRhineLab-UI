@@ -28,6 +28,7 @@ export const routes = [
   { id: 'menu', path: '/components/menu', label: 'Menu', group: 'navigation', index: '13' },
   { id: 'toast', path: '/components/toast', label: 'Toast', group: 'navigation', index: '14' },
   { id: 'archive', path: '/archive', label: 'Archive patterns', group: 'archive', index: '16' },
+  { id: 'data', path: '/archive/data', label: 'Data & navigation', group: 'archive', index: '20' },
   { id: 'scenarios', path: '/archive/scenarios', label: 'Acceptance scenarios', group: 'archive', index: '17' },
   { id: 'motion', path: '/motion', label: 'Motion', group: 'motion', index: '18' },
   { id: 'effects', path: '/motion/effects', label: 'Showcase effects', group: 'motion', index: '19' },
