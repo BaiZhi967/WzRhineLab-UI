@@ -1,0 +1,516 @@
+/*
+ * WzRhineLab UI · form controls (M7): Textarea, Checkbox, Radio, Switch, choice groups,
+ * Fieldset, Separator. Tokens only; every control keeps a 3:1 boundary and a focus ring.
+ */
+
+:is(.rl-textarea, .rl-choice, .rl-choice-group, .rl-checkbox, .rl-radio, .rl-switch, .rl-fieldset, .rl-separator) {
+  box-sizing: border-box;
+}
+
+:where(.rl-textarea, .rl-choice, .rl-choice-group, .rl-fieldset) *,
+:where(.rl-textarea, .rl-choice, .rl-choice-group, .rl-fieldset) *::before,
+:where(.rl-textarea, .rl-choice, .rl-choice-group, .rl-fieldset) *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- Textarea ---------- */
+.rl-textarea {
+  --rl-textarea-border: var(--rl-border-strong);
+  --rl-textarea-bg: var(--rl-bg-surface);
+
+  display: grid;
+  gap: var(--rl-space-1);
+  width: 100%;
+  min-width: 0;
+}
+
+.rl-textarea__control {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  /* 1lh = one line of the control's own type role, so rows track the font tokens. */
+  min-height: calc(var(--rl-textarea-rows) * 1lh + var(--rl-space-2) * 2 + var(--rl-border-width) * 2);
+  margin: 0;
+  padding: var(--rl-space-2) var(--rl-space-3);
+  border: var(--rl-border-width) solid var(--rl-textarea-border);
+  border-radius: var(--rl-radius-md);
+  background: var(--rl-textarea-bg);
+  color: var(--rl-fg-primary);
+  font: var(--rl-type-body-sm);
+  text-transform: none;
+  letter-spacing: normal;
+  resize: vertical;
+  transition:
+    border-color var(--rl-motion-fast) var(--rl-ease-out),
+    background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-textarea[data-resize='none'] .rl-textarea__control {
+  resize: none;
+}
+
+.rl-textarea[data-auto-resize] .rl-textarea__control {
+  field-sizing: content;
+  /* Without maxRows the variable is unset, the calc is invalid and max-height falls back to none. */
+  max-height: calc(var(--rl-textarea-max-rows) * 1lh + var(--rl-space-2) * 2 + var(--rl-border-width) * 2);
+}
+
+.rl-textarea[data-mono] .rl-textarea__control {
+  font-family: var(--rl-font-mono);
+  letter-spacing: var(--rl-tracking-mono);
+}
+
+.rl-textarea__control::placeholder {
+  color: var(--rl-fg-subtle);
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .rl-textarea:not([data-disabled], [data-readonly]) .rl-textarea__control:hover {
+    --rl-textarea-border: var(--rl-fg-muted);
+  }
+}
+
+.rl-textarea__control:focus-visible,
+.rl-textarea__control:focus {
+  --rl-textarea-border: var(--rl-fg-primary);
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.rl-textarea[data-invalid] .rl-textarea__control,
+.rl-field[data-invalid] .rl-textarea__control {
+  --rl-textarea-border: var(--rl-danger);
+  box-shadow: inset 0 0 0 var(--rl-border-width) var(--rl-danger);
+}
+
+.rl-textarea[data-readonly] .rl-textarea__control {
+  --rl-textarea-bg: var(--rl-bg-readonly);
+  --rl-textarea-border: var(--rl-border-default);
+  resize: none;
+}
+
+.rl-textarea[data-disabled] .rl-textarea__control {
+  --rl-textarea-bg: var(--rl-bg-disabled);
+  --rl-textarea-border: var(--rl-border-default);
+  color: var(--rl-fg-disabled);
+  cursor: not-allowed;
+  resize: none;
+}
+
+.rl-textarea__count {
+  justify-self: end;
+  font: var(--rl-type-mono);
+  color: var(--rl-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rl-textarea__count[data-over] {
+  color: var(--rl-fg-primary);
+  font-weight: 600;
+}
+
+/* ---------- Choice row (Checkbox / Radio / Switch) ---------- */
+.rl-choice {
+  --rl-choice-size: var(--rl-icon-size-lg);
+
+  display: grid;
+  gap: var(--rl-space-1);
+  min-width: 0;
+}
+
+/* The whole row is the label: a large click target with the control on the first text line. */
+.rl-choice__label {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--rl-space-2);
+  width: fit-content;
+  max-width: 100%;
+  min-height: var(--rl-control-height-sm);
+  padding-block: calc((var(--rl-control-height-sm) - var(--rl-choice-size)) / 2);
+  font: var(--rl-type-body-sm);
+  color: var(--rl-fg-primary);
+  cursor: pointer;
+}
+
+/* Inline flow (not flex) so line breaking applies across the label and its markers. */
+.rl-choice__text {
+  display: block;
+  min-width: 0;
+  /* Centre the first line of text on the control. */
+  padding-top: calc((var(--rl-choice-size) - 1lh) / 2);
+  overflow-wrap: anywhere;
+}
+
+.rl-choice__text > .rl-field__required {
+  margin-inline-start: var(--rl-space-1);
+}
+
+/* Word joiner: the marker never wraps onto a line of its own. */
+.rl-choice__text > .rl-field__required::before {
+  content: '\2060';
+}
+
+.rl-choice__description {
+  margin: 0;
+  /* Align under the label text, not under the box. */
+  padding-inline-start: calc(var(--rl-choice-indent, var(--rl-choice-size)) + var(--rl-space-2));
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+}
+
+.rl-choice[data-kind='switch'] {
+  --rl-choice-indent: calc(var(--rl-choice-size) * 1.8);
+}
+
+.rl-choice[data-disabled] .rl-choice__label {
+  color: var(--rl-fg-muted);
+  cursor: not-allowed;
+}
+
+.rl-choice > .rl-field__error {
+  padding-inline-start: calc(var(--rl-choice-indent, var(--rl-choice-size)) + var(--rl-space-2));
+}
+
+/* ---------- Checkbox & Radio box ---------- */
+.rl-checkbox,
+.rl-radio {
+  --rl-box-border: var(--rl-border-strong);
+  --rl-box-bg: var(--rl-bg-surface);
+  --rl-box-fg: var(--rl-fg-inverse);
+
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--rl-choice-size);
+  height: var(--rl-choice-size);
+  border: var(--rl-border-width-strong) solid var(--rl-box-border);
+  background: var(--rl-box-bg);
+  color: var(--rl-box-fg);
+  transition:
+    border-color var(--rl-motion-fast) var(--rl-ease-out),
+    background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-checkbox {
+  border-radius: var(--rl-radius-xs);
+}
+
+.rl-radio {
+  border-radius: var(--rl-radius-round);
+}
+
+@media (hover: hover) {
+  .rl-choice:not([data-disabled]) .rl-choice__label:hover :is(.rl-checkbox, .rl-radio):not([data-readonly]) {
+    --rl-box-border: var(--rl-fg-primary);
+  }
+}
+
+:is(.rl-checkbox, .rl-radio):focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.rl-checkbox:is([data-checked], [data-indeterminate]) {
+  --rl-box-border: var(--rl-bg-inverse);
+  --rl-box-bg: var(--rl-bg-inverse);
+}
+
+.rl-radio[data-checked] {
+  --rl-box-border: var(--rl-bg-inverse);
+}
+
+:is(.rl-checkbox, .rl-radio)[data-invalid] {
+  --rl-box-border: var(--rl-danger);
+}
+
+.rl-checkbox[data-invalid]:is([data-checked], [data-indeterminate]) {
+  --rl-box-bg: var(--rl-danger);
+  --rl-box-fg: var(--rl-fg-on-danger);
+}
+
+:is(.rl-checkbox, .rl-radio)[data-readonly] {
+  --rl-box-border: var(--rl-border-default);
+  --rl-box-bg: var(--rl-bg-readonly);
+  --rl-box-fg: var(--rl-fg-primary);
+}
+
+:is(.rl-checkbox, .rl-radio)[data-disabled] {
+  --rl-box-border: var(--rl-border-default);
+  --rl-box-bg: var(--rl-bg-disabled);
+  --rl-box-fg: var(--rl-fg-disabled);
+}
+
+.rl-checkbox__indicator {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-checkbox__indicator > svg {
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--rl-border-width-strong);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rl-checkbox__indicator:is([data-checked], [data-indeterminate]) {
+  opacity: 1;
+}
+
+.rl-radio__indicator {
+  width: 50%;
+  height: 50%;
+  border-radius: var(--rl-radius-round);
+  background: var(--rl-bg-inverse);
+  opacity: 0;
+  scale: 0.5;
+  transition:
+    opacity var(--rl-motion-fast) var(--rl-ease-out),
+    scale var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-radio__indicator[data-checked] {
+  opacity: 1;
+  scale: 1;
+}
+
+.rl-radio[data-invalid] .rl-radio__indicator {
+  background: var(--rl-danger);
+}
+
+.rl-radio:is([data-disabled], [data-readonly]) .rl-radio__indicator {
+  background: var(--rl-box-fg);
+}
+
+/* ---------- Switch ---------- */
+.rl-switch {
+  --rl-switch-track: var(--rl-bg-subtle);
+  --rl-switch-border: var(--rl-border-strong);
+  --rl-switch-thumb: var(--rl-fg-muted);
+  --rl-switch-width: calc(var(--rl-choice-size) * 1.8);
+  --rl-switch-inset: calc(var(--rl-border-width-strong) + var(--rl-border-width));
+  --rl-thumb-size: calc(var(--rl-choice-size) - var(--rl-switch-inset) * 2);
+
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  width: var(--rl-switch-width);
+  height: var(--rl-choice-size);
+  padding: var(--rl-border-width);
+  border: var(--rl-border-width-strong) solid var(--rl-switch-border);
+  border-radius: var(--rl-radius-round);
+  background: var(--rl-switch-track);
+  transition:
+    border-color var(--rl-motion-fast) var(--rl-ease-out),
+    background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-switch:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+@media (hover: hover) {
+  .rl-choice:not([data-disabled]) .rl-choice__label:hover .rl-switch:not([data-readonly], [data-checked]) {
+    --rl-switch-border: var(--rl-fg-primary);
+  }
+}
+
+.rl-switch[data-checked] {
+  --rl-switch-track: var(--rl-bg-inverse);
+  --rl-switch-border: var(--rl-bg-inverse);
+  --rl-switch-thumb: var(--rl-fg-inverse);
+}
+
+.rl-switch[data-readonly] {
+  --rl-switch-border: var(--rl-border-default);
+}
+
+.rl-switch[data-disabled] {
+  --rl-switch-track: var(--rl-bg-disabled);
+  --rl-switch-border: var(--rl-border-default);
+  --rl-switch-thumb: var(--rl-fg-disabled);
+}
+
+.rl-switch__thumb {
+  display: block;
+  width: var(--rl-thumb-size);
+  height: var(--rl-thumb-size);
+  border-radius: var(--rl-radius-round);
+  background: var(--rl-switch-thumb);
+  /* translate, not left: an interrupted toggle retargets from the current position without layout. */
+  transition:
+    translate var(--rl-motion-base) var(--rl-ease-out),
+    background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-switch__thumb[data-checked] {
+  translate: calc(var(--rl-switch-width) - var(--rl-thumb-size) - var(--rl-switch-inset) * 2) 0;
+}
+
+.rl-switch__thumb[data-checked]:dir(rtl) {
+  translate: calc((var(--rl-switch-width) - var(--rl-thumb-size) - var(--rl-switch-inset) * 2) * -1) 0;
+}
+
+/* ---------- Choice groups (CheckboxGroup / RadioGroup) ---------- */
+.rl-choice-group {
+  display: grid;
+  gap: var(--rl-space-2);
+  min-width: 0;
+}
+
+.rl-choice-group__fieldset {
+  display: grid;
+  gap: var(--rl-space-1);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rl-choice-group__legend {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--rl-space-1);
+  margin-bottom: var(--rl-space-1);
+  padding: 0;
+  font: var(--rl-type-label);
+  color: var(--rl-fg-primary);
+}
+
+.rl-choice-group[data-disabled] .rl-choice-group__legend {
+  color: var(--rl-fg-muted);
+}
+
+.rl-choice-group__items {
+  display: grid;
+  gap: var(--rl-space-1);
+  min-width: 0;
+}
+
+.rl-choice-group__items[data-orientation='horizontal'] {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--rl-space-6);
+  row-gap: var(--rl-space-1);
+}
+
+/* ---------- Fieldset ---------- */
+.rl-fieldset {
+  display: grid;
+  gap: var(--rl-space-4);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rl-fieldset__legend {
+  /* A legend is not a grid item in every engine; float + width makes it one row reliably. */
+  float: left;
+  width: 100%;
+  margin: 0;
+  padding: 0 0 var(--rl-space-2);
+  border-bottom: var(--rl-border-width) solid var(--rl-border-default);
+  font: var(--rl-type-heading-3);
+  color: var(--rl-fg-primary);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.rl-fieldset__legend + * {
+  clear: both;
+}
+
+.rl-fieldset__description {
+  margin: 0;
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+}
+
+.rl-fieldset__body {
+  display: grid;
+  gap: var(--rl-space-4);
+  min-width: 0;
+}
+
+.rl-fieldset[data-disabled] .rl-fieldset__legend {
+  color: var(--rl-fg-muted);
+}
+
+/* ---------- Separator ---------- */
+.rl-separator {
+  --rl-separator-color: var(--rl-border-default);
+
+  flex: none;
+  margin: 0;
+  border: 0;
+  background: var(--rl-separator-color);
+}
+
+.rl-separator[data-tone='subtle'] { --rl-separator-color: var(--rl-border-subtle); }
+.rl-separator[data-tone='strong'] { --rl-separator-color: var(--rl-border-strong); }
+
+.rl-separator[data-orientation='horizontal'] {
+  width: 100%;
+  height: var(--rl-border-width);
+}
+
+.rl-separator[data-orientation='vertical'] {
+  align-self: stretch;
+  width: var(--rl-border-width);
+  min-height: 1em;
+}
+
+/* ---------- VisuallyHidden: reappear on focus (skip links) ---------- */
+.rl-visually-hidden[data-focusable]:focus-within,
+.rl-visually-hidden[data-focusable]:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip-path: none;
+  white-space: normal;
+}
+
+/* ---------- Reduced motion ---------- */
+.rl-theme[data-rl-motion='reduce'] :is(.rl-radio__indicator, .rl-switch__thumb) {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.rl-radio__indicator, .rl-switch__thumb) {
+    transition: none;
+  }
+}
+
+/* ---------- Forced colours (Windows High Contrast) ---------- */
+@media (forced-colors: active) {
+  .rl-textarea__control { border-color: FieldText; }
+  .rl-textarea__control:focus { outline-color: Highlight; }
+  .rl-textarea[data-invalid] .rl-textarea__control,
+  .rl-field[data-invalid] .rl-textarea__control { border-color: Mark; }
+  :is(.rl-checkbox, .rl-radio, .rl-switch) { border-color: ButtonText; background: Canvas; }
+  :is(.rl-checkbox, .rl-radio, .rl-switch):focus-visible { outline-color: Highlight; }
+  .rl-checkbox:is([data-checked], [data-indeterminate]),
+  .rl-switch[data-checked] { border-color: Highlight; background: Highlight; color: HighlightText; }
+  .rl-radio[data-checked] { border-color: Highlight; }
+  .rl-radio__indicator { background: Highlight; }
+  .rl-switch__thumb { background: ButtonText; }
+  .rl-switch__thumb[data-checked] { background: HighlightText; }
+  :is(.rl-checkbox, .rl-radio, .rl-switch)[data-disabled] { border-color: GrayText; }
+  .rl-radio[data-disabled] .rl-radio__indicator,
+  .rl-switch[data-disabled] .rl-switch__thumb { background: GrayText; }
+  .rl-separator { background: CanvasText; }
+}

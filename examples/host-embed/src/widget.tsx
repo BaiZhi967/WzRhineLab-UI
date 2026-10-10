@@ -6,11 +6,12 @@ import {
   Dialog,
   DialogClose,
   Field,
-  Input,
   MetadataList,
   RhineProvider,
   Select,
   StatusBadge,
+  Switch,
+  Textarea,
   Tooltip,
   useToast,
 } from '@wzrhine/react';
@@ -59,6 +60,7 @@ function Widget({ title, onRequest }: Pick<WidgetOptions, 'title' | 'onRequest'>
   const toast = useToast();
   const [record, setRecord] = React.useState<string | null>('ARC-2001');
   const [reason, setReason] = React.useState('');
+  const [urgent, setUrgent] = React.useState(false);
   const selected = rows.find((r) => r.id === record);
 
   return (
@@ -75,6 +77,7 @@ function Widget({ title, onRequest }: Pick<WidgetOptions, 'title' | 'onRequest'>
           />
         </Field>
       </div>
+      <Switch label="加急处理" checked={urgent} onCheckedChange={setUrgent} />
       {selected && (
         <MetadataList
           size="sm"
@@ -100,7 +103,7 @@ function Widget({ title, onRequest }: Pick<WidgetOptions, 'title' | 'onRequest'>
                   onClick={() => {
                     if (!selected) return;
                     onRequest?.(selected.id);
-                    toast.show({ title: `已提交 ${selected.id} 的调阅申请`, status: 'success' });
+                    toast.show({ title: `已提交 ${selected.id} 的${urgent ? '加急' : ''}调阅申请`, status: 'success' });
                     setReason('');
                   }}
                 >
@@ -111,7 +114,7 @@ function Widget({ title, onRequest }: Pick<WidgetOptions, 'title' | 'onRequest'>
           }
         >
           <Field label="事由" optional>
-            <Input value={reason} onValueChange={setReason} maxLength={40} />
+            <Textarea value={reason} onValueChange={setReason} rows={2} maxLength={120} showCount />
           </Field>
         </Dialog>
         <Tooltip content="申请会发送给档案管理员审批。">

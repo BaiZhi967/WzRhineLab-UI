@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {
   Button,
+  Checkbox,
+  CheckboxGroup,
   Dialog,
   DialogClose,
   Field,
@@ -8,12 +10,16 @@ import {
   MetadataList,
   Popover,
   PopoverClose,
+  Radio,
+  RadioGroup,
   Select,
   StatusIndicator,
   Tab,
   TabList,
   TabPanel,
   Tabs,
+  Switch,
+  Textarea,
   useToast,
 } from '@wzrhine/react';
 
@@ -28,6 +34,10 @@ interface Settings {
   retentionDays: string;
   defaultCategory: string;
   contact: string;
+  visibility: string;
+  doubleReview: boolean;
+  reminders: string[];
+  footer: string;
 }
 
 const initial: Settings = {
@@ -36,7 +46,14 @@ const initial: Settings = {
   retentionDays: '365',
   defaultCategory: 'experiment',
   contact: '',
+  visibility: 'internal',
+  doubleReview: true,
+  reminders: [],
+  footer: '',
 };
+
+const reminderLabels: Record<string, string> = { review: '待复核', expiring: '草稿即将过期', weekly: '每周摘要' };
+const visibilityLabels: Record<string, string> = { public: '公开', internal: '内部', restricted: '受限' };
 
 function validate(s: Settings): Partial<Record<keyof Settings, string>> {
   const errors: Partial<Record<keyof Settings, string>> = {};
@@ -45,6 +62,7 @@ function validate(s: Settings): Partial<Record<keyof Settings, string>> {
   const days = Number(s.retentionDays);
   if (!Number.isInteger(days) || days < 30 || days > 3650) errors.retentionDays = '保留天数应为 30–3650 之间的整数。';
   if (s.contact && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.contact)) errors.contact = '请输入有效的邮箱地址，或留空。';
+  if (s.reminders.length > 0 && !s.contact) errors.reminders = '开启提醒需要先填写联系邮箱。';
   return errors;
 }
 
@@ -59,9 +77,12 @@ export function SettingsForm() {
 
   const errors = validate(draft);
   const errorCount = Object.keys(errors).length;
-  const dirty = (Object.keys(draft) as (keyof Settings)[]).some((k) => draft[k] !== saved[k]);
+  const dirty = (Object.keys(draft) as (keyof Settings)[]).some((k) => JSON.stringify(draft[k]) !== JSON.stringify(saved[k]));
   const show = (key: keyof Settings) => (submitted ? errors[key] : undefined);
-  const set = (key: keyof Settings) => (value: string) => setDraft((d) => ({ ...d, [key]: value }));
+  const set =
+    <K extends keyof Settings>(key: K) =>
+    (value: Settings[K]) =>
+      setDraft((d) => ({ ...d, [key]: value }));
 
   React.useEffect(() => {
     if (!saving) return;
@@ -79,15 +100,15 @@ export function SettingsForm() {
     setSubmitted(true);
     if (errorCount > 0) {
       // Open the tab that holds the first invalid field so the error is visible.
-      const fieldTab: Record<keyof Settings, string> = {
+      const fieldTab: Partial<Record<keyof Settings, string>> = {
         labName: 'general',
         contact: 'general',
+        reminders: 'general',
         idPrefix: 'archive',
         retentionDays: 'archive',
-        defaultCategory: 'archive',
       };
-      const first = (['labName', 'contact', 'idPrefix', 'retentionDays'] as const).find((k) => errors[k]);
-      if (first) setTab(fieldTab[first]);
+      const first = (['labName', 'contact', 'reminders', 'idPrefix', 'retentionDays'] as const).find((k) => errors[k]);
+      if (first) setTab(fieldTab[first]!);
       toast.show({ title: `有 ${errorCount} 项需要修正`, status: 'danger', priority: 'high' });
       return;
     }
@@ -109,7 +130,7 @@ export function SettingsForm() {
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabList aria-label="设置分组">
-          <Tab value="general" meta={submitted && (errors.labName || errors.contact) ? '!' : undefined}>
+          <Tab value="general" meta={submitted && (errors.labName || errors.contact || errors.reminders) ? '!' : undefined}>
             常规
           </Tab>
           <Tab value="archive" meta={submitted && (errors.idPrefix || errors.retentionDays) ? '!' : undefined}>
@@ -125,6 +146,22 @@ export function SettingsForm() {
           <Field label="联系邮箱" optional description="用于接收复核提醒。" error={show('contact')} invalid={!!show('contact')}>
             <Input type="email" value={draft.contact} onValueChange={set('contact')} autoComplete="email" />
           </Field>
+          <CheckboxGroup
+            label="邮件提醒"
+            optional
+            orientation="horizontal"
+            value={draft.reminders}
+            onValueChange={set('reminders')}
+            invalid={!!show('reminders')}
+            error={show('reminders')}
+          >
+            {Object.entries(reminderLabels).map(([value, label]) => (
+              <Checkbox key={value} value={value} label={label} />
+            ))}
+          </CheckboxGroup>
+          <Field label="记录页脚" optional description="显示在每份导出记录的末尾，可多行。">
+            <Textarea value={draft.footer} onValueChange={set('footer')} rows={2} autoResize maxRows={6} maxLength={200} showCount />
+          </Field>
         </TabPanel>
 
         <TabPanel value="archive" keepMounted className="sc-settings__panel">
@@ -134,6 +171,17 @@ export function SettingsForm() {
           <Field label="草稿保留天数" required error={show('retentionDays')} invalid={!!show('retentionDays')}>
             <Input value={draft.retentionDays} onValueChange={set('retentionDays')} inputMode="numeric" suffix="天" mono />
           </Field>
+          <RadioGroup label="新建记录默认可见范围" orientation="horizontal" value={draft.visibility} onValueChange={(v) => set('visibility')(String(v))}>
+            <Radio value="public" label="公开" />
+            <Radio value="internal" label="内部" />
+            <Radio value="restricted" label="受限" description="需项目负责人授权。" />
+          </RadioGroup>
+          <Switch
+            label="启用双人复核"
+            description="记录需两名成员复核后才能归档。"
+            checked={draft.doubleReview}
+            onCheckedChange={set('doubleReview')}
+          />
           <Field label="默认类别">
             <Select
               value={draft.defaultCategory}
@@ -168,6 +216,10 @@ export function SettingsForm() {
               { label: '编号示例', value: `${saved.idPrefix}-0001`, mono: true },
               { label: '草稿保留', value: `${saved.retentionDays} 天`, mono: true },
               { label: '联系邮箱', value: saved.contact },
+              { label: '默认可见范围', value: visibilityLabels[saved.visibility] },
+              { label: '双人复核', value: saved.doubleReview ? '启用' : '关闭' },
+              { label: '邮件提醒', value: saved.reminders.map((r) => reminderLabels[r]).join('、') },
+              { label: '记录页脚', value: saved.footer },
             ]}
             empty="placeholder"
           />

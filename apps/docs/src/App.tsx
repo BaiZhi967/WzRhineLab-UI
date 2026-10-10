@@ -15,6 +15,7 @@ import { SurfacePage } from './pages/SurfacePage';
 import { IconButtonPage } from './pages/IconButtonPage';
 import { TextPage } from './pages/TextPage';
 import { FieldPage } from './pages/FieldPage';
+import { ChoicePage } from './pages/ChoicePage';
 import { TabsPage } from './pages/TabsPage';
 import { TooltipPage } from './pages/TooltipPage';
 import { DialogPage } from './pages/DialogPage';
@@ -158,6 +159,8 @@ export default function App() {
         return <TextPage />;
       case 'field':
         return <FieldPage />;
+      case 'choice':
+        return <ChoicePage />;
       case 'tabs':
         return <TabsPage />;
       case 'tooltip':

@@ -215,7 +215,41 @@ test.describe('Scenario · 设置表单', () => {
     await expect(form.getByRole('status').first()).toContainText('已保存');
     await form.getByRole('tab', { name: '概览' }).click();
     await expect(form.locator('dl')).toContainText('LAB-0001');
-    await expect(form.locator('dl dd[data-empty]')).toContainText('未记录');
+    await expect(form.locator('dl dd[data-empty]').first()).toContainText('未记录');
+  });
+
+  test('choice controls: switch, radio, checkbox group cross-validation and textarea reach the summary', async ({ page }) => {
+    await page.goto('/#/archive/scenarios');
+    await page.getByRole('tab', { name: '设置表单' }).click();
+    const form = page.getByRole('form', { name: '档案设置' });
+    const reminders = form.getByRole('group', { name: /邮件提醒/ });
+    await reminders.getByRole('checkbox', { name: '每周摘要' }).click();
+    await form.getByRole('textbox', { name: /记录页脚/ }).fill('示例机构\n仅供演示');
+    await form.getByRole('button', { name: '保存设置' }).click();
+    // Reminders need a contact address: the group shows its error and the save is blocked.
+    await expect(reminders).toHaveAttribute('data-invalid', '');
+    await expect(reminders).toHaveAccessibleDescription(/开启提醒需要先填写联系邮箱/);
+    await expect(reminders.getByRole('checkbox', { name: '每周摘要' })).toHaveAttribute('aria-invalid', 'true');
+    await form.getByRole('textbox', { name: /联系邮箱/ }).fill('lab@example.org');
+
+    await form.getByRole('tab', { name: '档案规则' }).click();
+    const visibility = form.getByRole('radiogroup', { name: '新建记录默认可见范围' });
+    await visibility.getByRole('radio', { name: '内部' }).focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(visibility.getByRole('radio', { name: '受限' })).toHaveAttribute('aria-checked', 'true');
+    const review = form.getByRole('switch', { name: '启用双人复核' });
+    await expect(review).toHaveAttribute('aria-checked', 'true');
+    await review.press('Space');
+    await expect(review).toHaveAttribute('aria-checked', 'false');
+
+    await form.getByRole('button', { name: '保存设置' }).click();
+    await expect(page.locator('.rl-toast').filter({ hasText: '设置已保存' })).toBeVisible({ timeout: 4000 });
+    await form.getByRole('tab', { name: '概览' }).click();
+    const summary = form.locator('dl');
+    await expect(summary).toContainText('受限');
+    await expect(summary).toContainText('关闭');
+    await expect(summary).toContainText('每周摘要');
+    await expect(summary).toContainText('仅供演示');
   });
 
   test('discard asks for confirmation and restores saved values', async ({ page }) => {
