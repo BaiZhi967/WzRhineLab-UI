@@ -46,7 +46,10 @@
 | [component-platform-plan.md](component-platform-plan.md) | 组件分层、优先级、API、验收矩阵和领域模式 |
 | [motion-and-rendering-plan.md](motion-and-rendering-plan.md) | CSS、Motion、SVG、Canvas、WebGL 和第三方适配器的长期边界 |
 | [quality-release-and-ecosystem-plan.md](quality-release-and-ecosystem-plan.md) | 质量门禁、兼容性、许可、发布、文档与生态计划 |
-| [execution-backlog.md](execution-backlog.md) | 当前 90 天和后续阶段的可执行任务清单 |
+| [execution-backlog.md](execution-backlog.md) | 当前和后续阶段的可执行任务清单 |
+- [demand-insertion-workflow.md](demand-insertion-workflow.md) | 真实需求插入、Agent 引导问询、消费项目验收和路线回填 |
+- [templates/component-demand.md](templates/component-demand.md) | 组件需求记录与范围确认模板 |
+
 
 ## 计划使用规则
 
@@ -80,6 +83,17 @@ DOM/SVG 展示效果可以留在 @wzrhine/effects。Canvas、WebGL、Rive、Lott
 - 或明确的文档、设置、数据分析场景。
 
 只有展示概念而没有使用场景的效果，放入 showcase backlog，不进入核心组件排期。
+
+
+### 5. 真实需求可以插入，但必须可回填
+
+当其他项目的真实页面被缺少的组件阻塞时，可以提前实现目标里程碑中的一个最小支持子集。Agent 必须先按 [真实需求插入与 Agent 引导流程](demand-insertion-workflow.md) 逐步询问，一次只确认一个关键问题，不要求用户一次填写完整表单。
+
+插入前必须记录场景、归属、最小范围、必要依赖、组件库验收、消费项目验收、主线暂停点和恢复点。提前完成组件不等于完成整个目标里程碑；消费项目未真实接入时，不能写成已解决。
+
+### 6. 评分用于排序，不是阻塞门槛
+
+组件优先级评分用于比较候选项。真实项目的明确阻塞可以提前进入插入队列，即使当前只有一个消费项目或一个页面。涉及第二套 headless 底座、渲染内核、公共 package 边界或许可证变化时，必须先做 ADR 或架构评估。
 
 ## 阶段状态约定
 
