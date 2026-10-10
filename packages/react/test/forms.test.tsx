@@ -531,3 +531,40 @@ describe('reduced motion', () => {
     expect(screen.getByRole('checkbox')).toHaveAttribute('aria-checked', 'true');
   });
 });
+
+describe('Form', () => {
+  it('shows server errors from `errors` on Field, CheckboxGroup and RadioGroup by name', () => {
+    render(
+      <Form errors={{ title: '标题与 ARC-1024 重复。', channels: '该账号不能接收短信。', level: ['需要更高权限。'] }}>
+        <Field name="title" label="标题" error="请填写标题。">
+          <Input defaultValue="样本" />
+        </Field>
+        <CheckboxGroup label="通知方式" name="channels" defaultValue={['sms']}>
+          <Checkbox value="sms" label="短信" />
+        </CheckboxGroup>
+        <RadioGroup label="级别" name="level" defaultValue="secret">
+          <Radio value="secret" label="机密" />
+        </RadioGroup>
+      </Form>,
+    );
+    expect(screen.getByRole('textbox', { name: '标题' })).toHaveAccessibleDescription('标题与 ARC-1024 重复。');
+    expect(screen.getByRole('group', { name: '通知方式' })).toHaveAccessibleDescription('该账号不能接收短信。');
+    expect(screen.getByRole('radiogroup', { name: '级别' })).toHaveAccessibleDescription('需要更高权限。');
+    expect(screen.queryByText('请填写标题。')).toBeNull();
+  });
+
+  it('a named field without `error` text renders no empty error row on native failure', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <Form onSubmit={(e) => e.preventDefault()}>
+        <Field name="code" label="编号">
+          <Input required />
+        </Field>
+        <Button type="submit">提交</Button>
+      </Form>,
+    );
+    await user.click(screen.getByRole('button', { name: '提交' }));
+    await waitFor(() => expect(screen.getByRole('textbox', { name: '编号' })).toHaveAttribute('aria-invalid', 'true'));
+    expect(container.querySelector('.rl-field__error')).toBeNull();
+  });
+});

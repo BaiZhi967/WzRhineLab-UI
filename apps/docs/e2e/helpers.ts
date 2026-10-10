@@ -9,6 +9,7 @@ export const routes = [
   { name: 'status-badge', hash: '/#/components/status-badge' },
   { name: 'text', hash: '/#/components/text' },
   { name: 'field', hash: '/#/components/field' },
+  { name: 'choice', hash: '/#/components/choice' },
   { name: 'motion', hash: '/#/motion' },
   { name: 'effects', hash: '/#/motion/effects' },
   { name: 'tabs', hash: '/#/components/tabs' },

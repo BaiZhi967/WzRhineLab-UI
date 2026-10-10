@@ -121,7 +121,7 @@ export const Checkbox = React.forwardRef<HTMLElement, CheckboxProps>(function Ch
     >
       {control}
       {describe}
-      {error != null && <FieldErrorMessage error={error} match={invalid ? true : undefined} />}
+      {(error != null || name != null) && <FieldErrorMessage error={error} match={invalid ? true : undefined} name={name} />}
     </BaseField.Root>
   );
 });
@@ -201,7 +201,7 @@ export const CheckboxGroup = React.forwardRef<HTMLDivElement, CheckboxGroupProps
         </div>
       </BaseFieldset.Root>
       {description != null && <BaseField.Description className="rl-field__description">{description}</BaseField.Description>}
-      {error != null && <FieldErrorMessage error={error} match={invalid ? true : undefined} />}
+      {(error != null || name != null) && <FieldErrorMessage error={error} match={invalid ? true : undefined} name={name} />}
     </BaseField.Root>
   );
 });

@@ -4,7 +4,7 @@
 - 源码：`packages/react/src/components/Field.tsx`、`Input.tsx` · Showcase：`#/components/field`
 
 ## 用途 / 非用途
-用于单行文本、编号、数值输入及其标签、说明和错误。**不用于**：多行文本（Textarea，M2）、选择（Select，M2）、开关（Switch，M2）。
+用于单行文本、编号、数值输入及其标签、说明和错误。**不用于**：多行文本（`Textarea`）、选择（`Select`、`RadioGroup`）、开关（`Switch`），见 [forms.md](forms.md)。
 
 ## API
 ```tsx

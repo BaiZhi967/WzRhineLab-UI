@@ -75,7 +75,7 @@ export const Field = React.forwardRef<HTMLDivElement, FieldProps>(function Field
       <div className="rl-field__body">
         {children}
         {description != null && <BaseField.Description className="rl-field__description">{description}</BaseField.Description>}
-        {error != null && <FieldErrorMessage error={error} match={match} />}
+        {(error != null || rest.name != null) && <FieldErrorMessage error={error} match={match} name={rest.name} />}
       </div>
     </BaseField.Root>
   );

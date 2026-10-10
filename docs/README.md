@@ -34,9 +34,10 @@
 - [M4 验收记录](development/acceptance/2026-10-09-m4.md)
 - [M5 验收记录](development/acceptance/2026-10-09-m5.md)
 - [M6 验收记录](development/acceptance/2026-10-10-m6.md) · [示例应用](../examples/README.md)
+- [M7 验收记录](development/acceptance/2026-10-10-m7.md)
 - [发布流程 RELEASING](development/RELEASING.md) · [升级指南 UPGRADING](development/UPGRADING.md) · [第三方许可证](development/THIRD-PARTY-LICENSES.md)
 - API 参考（自动生成）：[tokens](api/tokens.md) · [react](api/react.md) · [effects](api/effects.md)
-- 组件文档：[Field & Input](components/field.md) · [IconButton · Text](components/icon-button-text.md) · [Provider · Tabs · Tooltip · Dialog · Select](components/overlays.md) · [Popover · Menu · Toast](components/popover-menu-toast.md) · [Archive patterns](components/archive.md) · [Showcase effects](components/effects.md)
+- 组件文档：[Field & Input](components/field.md) · [Choice · Textarea · Fieldset · Form](components/forms.md) · [IconButton · Text](components/icon-button-text.md) · [Provider · Tabs · Tooltip · Dialog · Select](components/overlays.md) · [Popover · Menu · Toast](components/popover-menu-toast.md) · [Archive patterns](components/archive.md) · [Showcase effects](components/effects.md)
 - [Windows 资源导入脚本](../scripts/import-visual-assets.ps1)
 - [Showcase 源码](../apps/docs/src/App.tsx)
 

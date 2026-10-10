@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-尚未发布到 npm。以下内容为截至 M5 的全部变更，首次发布时会归入 `0.1.0`。
+尚未发布到 npm。以下内容为截至 M7 的全部变更，首次发布时会归入 `0.1.0`。
 
 ### Added
 - **M1-A**：`Button`（primary / accent / secondary / ghost，sm / md / lg，loading 保持焦点并阻止重复提交）、`Surface`、`StatusBadge`；`motion/presets` 与 `useRhineMotion()`。
@@ -13,6 +13,7 @@
 - **M2-B**：`Popover` / `PopoverClose`、`Menu` 及其子项、`useToast` / `ToastViewport` / `ToastProvider`。`RhineProvider` 默认挂载通知队列。
 - **M3**：`RecordHeader`、`MetadataList`、`ArchiveCard`、`StatusIndicator`、`Timeline`、`DataTable`。字段为空时自动隐藏，组件不会编造数据。
 - **M5**：通过 `dist/` 发布 ESM 与 `.d.ts`；`publishConfig.exports` 提供 `.`、`./styles.css`、`./package.json`。
+- **M7**：表单控件 `Textarea`（计数、自动增高）、`Checkbox`（含 indeterminate）、`CheckboxGroup`、`RadioGroup` / `Radio`、`Switch`、`Fieldset`、`Form`（提交时统一校验、聚焦第一个错误、`errors` 显示服务端错误），以及 `Separator`、`VisuallyHidden`。样式在新的 `forms.css` 中，由 `styles.css` 引入，无需额外导入。
 
 ### Changed
 - **破坏性（M1-A，ADR-0003）**：`variant="primary"` 由橙底改为深墨底；橙色信号改用新增的 `variant="accent"`。
@@ -20,6 +21,9 @@
 - **破坏性（M1-A，ADR-0002）**：入口不再自动引入 CSS。
   - 迁移：在应用入口显式导入 `@wzrhine/tokens/styles.css` 和 `@wzrhine/react/styles.css`。
 - **M2-B**：Popover、Menu、Select、Tooltip 改为 fixed 定位，打开浮层时不再导致页面滚动。
+
+### Changed（M7，非破坏性）
+- `Field` 与新控件共用标签和错误部件，DOM 与外观不变（31 张既有视觉基线中组件区域零像素差异）。放在 `Form` 内并设置了 `name` 的 `Field` 会显示 `errors` 中对应的服务端错误。
 
 ### Fixed
 - **M2-B**：`RhineProvider` 首次渲染时弹层可能挂到 `<body>`、拿不到主题的问题。

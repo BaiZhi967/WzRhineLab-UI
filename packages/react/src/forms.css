@@ -133,15 +133,22 @@
   cursor: pointer;
 }
 
+/* Inline flow (not flex) so line breaking applies across the label and its markers. */
 .rl-choice__text {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--rl-space-1);
+  display: block;
   min-width: 0;
   /* Centre the first line of text on the control. */
   padding-top: calc((var(--rl-choice-size) - 1lh) / 2);
   overflow-wrap: anywhere;
+}
+
+.rl-choice__text > .rl-field__required {
+  margin-inline-start: var(--rl-space-1);
+}
+
+/* Word joiner: the marker never wraps onto a line of its own. */
+.rl-choice__text > .rl-field__required::before {
+  content: '\2060';
 }
 
 .rl-choice__description {

@@ -19,6 +19,7 @@ export const routes = [
   { id: 'status-badge', path: '/components/status-badge', label: 'StatusBadge', group: 'components', index: '05' },
   { id: 'text', path: '/components/text', label: 'Text', group: 'components', index: '06' },
   { id: 'field', path: '/components/field', label: 'Field & Input', group: 'components', index: '07' },
+  { id: 'choice', path: '/components/choice', label: 'Choice & Textarea', group: 'components', index: '15' },
   { id: 'tabs', path: '/components/tabs', label: 'Tabs', group: 'navigation', index: '08' },
   { id: 'tooltip', path: '/components/tooltip', label: 'Tooltip', group: 'navigation', index: '09' },
   { id: 'dialog', path: '/components/dialog', label: 'Dialog', group: 'navigation', index: '10' },

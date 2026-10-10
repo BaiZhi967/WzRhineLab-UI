@@ -80,7 +80,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(func
         </div>
       </BaseFieldset.Root>
       {description != null && <BaseField.Description className="rl-field__description">{description}</BaseField.Description>}
-      {error != null && <FieldErrorMessage error={error} match={match} />}
+      {(error != null || name != null) && <FieldErrorMessage error={error} match={match} name={name} />}
     </BaseField.Root>
   );
 });
