@@ -5,6 +5,7 @@
 | [../DESIGN.md](../DESIGN.md) | 设计总纲：产品目标、审美逻辑与设计决策 |
 | [design/STYLE.md](design/STYLE.md) | 配色 / 字体 / 布局 / 状态 / 密度与主题 |
 | [design/MOTION.md](design/MOTION.md) | Motion 设计原则、时长、缓动、生命周期、减动 |
+| [design/MOTION-PATTERNS.md](design/MOTION-PATTERNS.md) | 动效模式目录：每个模式的语义、触发、时长、生命周期、中断、减动、隐藏页、fallback、预算 |
 | [design/COMPONENTS.md](design/COMPONENTS.md) | 分类、命名、组件 API、验收矩阵 |
 | [design/ICONS.md](design/ICONS.md) | 图标语法、尺寸、对齐与许可 |
 | [design/ACCESSIBILITY.md](design/ACCESSIBILITY.md) | WCAG 2.2 AA 目标与测试方案 |
@@ -29,6 +30,7 @@
 - [ADR-0003 Token 对比度校准与 Button variant](development/adr/0003-token-tuning-and-button-variants.md)
 - [ADR-0004 展示动效独立为可选包](development/adr/0004-optional-effects-package.md)
 - [ADR-0005 M8 数据与导航组件契约](development/adr/0005-data-navigation-contracts.md)
+- [ADR-0007 M10 动效属性所有权与 Motion Core 契约](development/adr/0007-motion-ownership.md)
 - [Sprint 01 验收记录](development/acceptance/2026-10-09-sprint-01.md)
 - [M1-B 验收记录](development/acceptance/2026-10-09-m1b.md)
 - [M2-A 验收记录](development/acceptance/2026-10-09-m2a.md)
