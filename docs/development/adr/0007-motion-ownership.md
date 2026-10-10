@@ -29,7 +29,6 @@ M1–M9 的动效分散在各组件里：Dialog 用 motion/react，Popover / Toa
 | 宽高 | CSS transition（只限指示器）；其余不做动画 | Tabs 指示器 `width` |
 | SVG `transform`（旋转） | motion/react motion value | OrbitalDiagram 转子 |
 | SVG / 装饰性扫描线 | CSS `@keyframes` | ScanSurface 扫描线 |
-| 侧边 / 底部面板位移 | CSS transition（Base UI 滑动写同一 transform） | `Drawer`（ADR-0006 §4） |
 | 逐帧文本（scramble） | `requestAnimationFrame`，effects 内部 | ArchiveReveal |
 | 无限循环（脉冲、骨架、不确定进度） | CSS `@keyframes`，`--rl-motion-loop` | StatusIndicator 脉冲、`Skeleton`（DataTable / Stat 骨架）、Progress 不确定态 |
 | 加载旋转 | motion/react `rotate` + `transition.loop` | `Spinner`（Button 的加载指示也用它；M9 合入后复核一致） |
