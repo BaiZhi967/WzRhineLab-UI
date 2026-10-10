@@ -1,6 +1,6 @@
 # @wzrhine/react · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 115 个导出（32 components，3 functions & hooks，6 constants，12 interfaces，62 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 140 个导出（42 components，3 functions & hooks，6 constants，12 interfaces，77 types）。
 
 ## Components
 
@@ -38,6 +38,48 @@
 | `loading` | `boolean` | Blocks activation and announces busy state while keeping focus and the accessible name. |
 | `size` | `ButtonSize` |  |
 | `variant` | `ButtonVariant` | Visual weight. `primary` = ink fill; `accent` = research-orange signal, use once per view. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Checkbox`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `aria-label` | `undefined` | The name comes from `label`; a second naming channel would drift from the visible text. |
+| `aria-labelledby` | `undefined` |  |
+| `className` | `string` |  |
+| `description` | `React.ReactNode` |  |
+| `error` | `React.ReactNode` | Error text for a standalone checkbox (e.g. a required confirmation). Ignored inside a group. |
+| `hideLabel` | `boolean` | Keep the label for assistive tech only. |
+| `invalid` | `boolean` | Drive the error state from an external validator; pair with `error`. |
+| `label` * | `React.ReactNode` | Visible label and accessible name. Use `hideLabel` where the context already shows it (table rows). |
+| `style` | `React.CSSProperties` |  |
+| `validationMode` | `FieldValidationMode` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `CheckboxGroup`
+
+*component* — <CheckboxGroup label="通知方式" name="channels" defaultValue={['email']}> <Checkbox value="email" label="邮件" /> <Checkbox value="digest" label="每周摘要" /> </CheckboxGroup>
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `className` | `string` |  |
+| `description` | `React.ReactNode` |  |
+| `disabled` | `boolean` |  |
+| `error` | `React.ReactNode` |  |
+| `invalid` | `boolean` |  |
+| `label` * | `React.ReactNode` | Rendered as the fieldset legend; names the group. |
+| `name` | `string` | Form field name; every checked item submits its `value` under it. |
+| `optional` | `boolean` |  |
+| `orientation` | `ChoiceOrientation` |  |
+| `required` | `boolean` | Visual marker only; enforce "at least one" with `validate`. |
+| `style` | `React.CSSProperties` |  |
+| `validate` | `((value: unknown, formValues: Form.Values) => string \| string[] \| null \| void \| Promise<string \| string[] \| null \| void>)` | Custom validation over the checked values; return an error string or null. |
+| `validationMode` | `FieldValidationMode` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -114,6 +156,32 @@
 | `layout` | `"stacked" \| "inline"` | Stack (default) or place the label in a fixed-width column on wide containers. |
 | `optional` | `boolean` | Visually de-emphasised "(可选)" suffix for optional fields in mostly-required forms. |
 | `required` | `boolean` | Visual + semantic required marker. Also set `required` on the control for native validation. |
+| `style` | `React.CSSProperties` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Fieldset`
+
+*component* — Groups related fields under a visible legend (a native `<fieldset>`):
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `className` | `string` |  |
+| `description` | `React.ReactNode` | Read after the legend as the group's description. |
+| `disabled` | `boolean` | `disabled` disables every Field and control inside, including Base UI ones. |
+| `legend` * | `React.ReactNode` | Section title; names the group for assistive tech. |
+| `style` | `React.CSSProperties` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Form`
+
+*component* — `<form>` on Base UI Form. On submit it validates every Field / CheckboxGroup / RadioGroup inside, shows their errors, moves focus to the first invalid control and only then calls `onSubmit`. `errors` maps field `name`s to server-side messages after a failed submission. A plain `<form>` still works, but then errors only appear per field on change / blur.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` |  |
 | `style` | `React.CSSProperties` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
@@ -288,6 +356,44 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `Radio`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `aria-label` | `undefined` | The name comes from `label`; a second naming channel would drift from the visible text. |
+| `aria-labelledby` | `undefined` |  |
+| `className` | `string` |  |
+| `description` | `React.ReactNode` |  |
+| `label` * | `React.ReactNode` |  |
+| `style` | `React.CSSProperties` |  |
+| `value` * | `string` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `RadioGroup`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `className` | `string` |  |
+| `description` | `React.ReactNode` |  |
+| `disabled` | `boolean` |  |
+| `error` | `React.ReactNode` | Shown when nothing is chosen on submit (`required`) or when `invalid` is set. |
+| `invalid` | `boolean` |  |
+| `label` * | `React.ReactNode` |  |
+| `name` | `string` |  |
+| `optional` | `boolean` |  |
+| `orientation` | `ChoiceOrientation` |  |
+| `required` | `boolean` |  |
+| `style` | `React.CSSProperties` |  |
+| `validationMode` | `FieldValidationMode` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `RecordHeader`
 
 *component*
@@ -350,6 +456,18 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `Separator`
+
+*component* — Thin rule between groups of content (`role="separator"`). It is never the only boundary of an interactive region (DESIGN.md §3); focus, error and selection have their own styles.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `decorative` | `boolean` | Purely visual rule: removed from the accessibility tree. Use for decoration inside a group whose structure is already conveyed by headings or lists. |
+| `orientation` | `SeparatorOrientation` |  |
+| `tone` | `SeparatorTone` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `StatusBadge`
 
 *component*
@@ -386,6 +504,22 @@
 | `bordered` | `boolean` | Show a 1px outline. Decorative only; never the sole interactive boundary. |
 | `padding` | `SurfacePadding` |  |
 | `tone` | `SurfaceTone` | Layer tone. Hierarchy is expressed through tone first, shadow only for `raised`. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Switch`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `aria-label` | `undefined` | The name comes from `label`; a second naming channel would drift from the visible text. |
+| `aria-labelledby` | `undefined` |  |
+| `className` | `string` |  |
+| `description` | `React.ReactNode` |  |
+| `hideLabel` | `boolean` |  |
+| `label` * | `React.ReactNode` |  |
+| `style` | `React.CSSProperties` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -459,6 +593,26 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `Textarea`
+
+*component* — Multi-line text on Base UI Field.Control: inside `<Field>` it picks up label, description, error and validity like `Input`; standalone it needs `aria-label`.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `autoResize` | `boolean` | Grow with the content (where `field-sizing` is supported) between `rows` and `maxRows`. |
+| `className` | `string` |  |
+| `defaultValue` | `string` |  |
+| `invalid` | `boolean` | Mark invalid outside a Field (inside a Field, validity comes from Field). |
+| `maxRows` | `number` | Upper bound for `autoResize`, in lines. Beyond it the textarea scrolls. |
+| `mono` | `boolean` |  |
+| `onValueChange` | `((value: string, eventDetails: BaseField.Control.ChangeEventDetails) => void)` |  |
+| `resize` | `TextareaResize` |  |
+| `showCount` | `boolean` | Shows "已输入 n / maxLength" under the control and links it as a description. Requires `maxLength`. |
+| `style` | `React.CSSProperties` |  |
+| `value` | `string` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `Timeline`
 
 *component*
@@ -490,6 +644,17 @@
 | `onOpenChange` | `((open: boolean) => void)` |  |
 | `open` | `boolean` |  |
 | `side` | `TooltipSide` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `VisuallyHidden`
+
+*component* — Content for assistive tech only: still in the accessibility tree, removed from layout. Not a way to hide focusable controls unless `focusable` makes them reappear on focus.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `as` | `VisuallyHiddenElement` |  |
+| `focusable` | `boolean` | Become visible while it or a descendant has focus (skip links). |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -526,7 +691,7 @@ function useToast: () => ToastApi
 *const* — Duration tokens in seconds, derived from the shared token manifest.
 
 ```ts
-const duration: Record<"instant" | "press" | "fast" | "base" | "panel" | "scene" | "showcase", number>
+const duration: Record<"base" | "instant" | "press" | "fast" | "panel" | "scene" | "showcase", number>
 ```
 
 ### `ease`
@@ -586,7 +751,7 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 
 | Member | Type | Description |
 | --- | --- | --- |
-| `align` | `"start" \| "end" \| "center"` |  |
+| `align` | `"center" \| "start" \| "end"` |  |
 | `cell` | `((row: Row) => React.ReactNode)` | Cell content. Defaults to `String(row[key])` when the row has that property. |
 | `header` * | `React.ReactNode` |  |
 | `hideHeader` | `boolean` | Header text visually hidden but kept for screen readers (e.g. an actions column). |
@@ -729,6 +894,22 @@ type ButtonSize = 'sm' | 'md' | 'lg'
 type ButtonVariant = 'primary' | 'accent' | 'secondary' | 'ghost'
 ```
 
+### `CheckboxGroupProps`
+
+*type*
+
+### `CheckboxProps`
+
+*type*
+
+### `ChoiceOrientation`
+
+*type*
+
+```ts
+type ChoiceOrientation = 'vertical' | 'horizontal'
+```
+
 ### `DataTableProps`
 
 *type*
@@ -757,12 +938,24 @@ type DialogSize = 'sm' | 'md' | 'lg'
 
 *type*
 
+### `FieldsetProps`
+
+*type*
+
 ### `FieldValidationMode`
 
 *type*
 
 ```ts
 type FieldValidationMode = 'onSubmit' | 'onBlur' | 'onChange'
+```
+
+### `FormProps`
+
+*type*
+
+```ts
+type FormProps = Omit<BaseFormProps, 'className' | 'style' | 'render'> & { className?: string; style?: React.CSSProperties; }
 ```
 
 ### `IconButtonProps`
@@ -909,6 +1102,14 @@ type PopoverSide = 'top' | 'bottom' | 'left' | 'right'
 type PopoverSize = 'sm' | 'md' | 'lg'
 ```
 
+### `RadioGroupProps`
+
+*type*
+
+### `RadioProps`
+
+*type*
+
 ### `RecordHeaderProps`
 
 *type*
@@ -952,6 +1153,26 @@ type RhineTransitionName = keyof typeof transition
 ### `SelectProps`
 
 *type*
+
+### `SeparatorOrientation`
+
+*type*
+
+```ts
+type SeparatorOrientation = 'horizontal' | 'vertical'
+```
+
+### `SeparatorProps`
+
+*type*
+
+### `SeparatorTone`
+
+*type*
+
+```ts
+type SeparatorTone = 'subtle' | 'default' | 'strong'
+```
 
 ### `SortDirection`
 
@@ -1021,6 +1242,10 @@ type SurfacePadding = 'none' | 'sm' | 'md' | 'lg'
 type SurfaceTone = 'default' | 'subtle' | 'raised'
 ```
 
+### `SwitchProps`
+
+*type*
+
 ### `TabListProps`
 
 *type*
@@ -1055,6 +1280,18 @@ type TabsSize = 'sm' | 'md'
 
 ```ts
 type TabsVariant = 'line' | 'segmented'
+```
+
+### `TextareaProps`
+
+*type*
+
+### `TextareaResize`
+
+*type*
+
+```ts
+type TextareaResize = 'vertical' | 'none'
 ```
 
 ### `TextElement`
@@ -1107,5 +1344,21 @@ type ToastStatus = Exclude<StatusKind, 'neutral'> | 'neutral'
 
 ```ts
 type TooltipSide = 'top' | 'bottom' | 'left' | 'right'
+```
+
+### `VisuallyHiddenElement`
+
+*type*
+
+```ts
+type VisuallyHiddenElement = 'span' | 'div' | 'p' | 'h2' | 'h3' | 'label' | 'legend'
+```
+
+### `VisuallyHiddenProps`
+
+*type*
+
+```ts
+type VisuallyHiddenProps = React.HTMLAttributes<HTMLElement> & { as?: VisuallyHiddenElement; /** Become visible while it or a descendant has focus (skip links). */ focusable?: boolean; }
 ```
 

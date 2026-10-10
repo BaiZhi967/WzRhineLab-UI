@@ -27,7 +27,7 @@ export function App() {
 
 - 入口没有 CSS 副作用：样式需要按上面的方式显式导入（ADR-0002）。
 - Dialog、Select、Tooltip、Popover、Menu、Toast 必须放在 `RhineProvider` 内，才能继承主题和减动设置。
-- 组件：Button、IconButton、Surface、StatusBadge、Text、Field、Input、Tabs、Tooltip、Dialog、Select、Popover、Menu、Toast、RecordHeader、MetadataList、ArchiveCard、StatusIndicator、Timeline、DataTable。
+- 组件：Button、IconButton、Surface、StatusBadge、Text、Separator、VisuallyHidden、Field、Input、Textarea、Checkbox、CheckboxGroup、RadioGroup、Radio、Switch、Fieldset、Form、Tabs、Tooltip、Dialog、Select、Popover、Menu、Toast、RecordHeader、MetadataList、ArchiveCard、StatusIndicator、Timeline、DataTable。
 
 文档：
 - 组件说明：[docs/components](https://github.com/BaiZhi967/WzRhineLab-UI/blob/main/docs/components)

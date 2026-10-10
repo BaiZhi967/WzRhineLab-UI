@@ -91,6 +91,14 @@ test('host :root variables and global element rules do not leak into the widget'
   expect(styles.buttonHeight).toBe(32);
   expect(styles.cellBorderTop).toBe('0px');
   expect(styles.titleTransform).toBe('none');
+
+  // M7 controls: the host's `svg { 48px }`, `input` and `* { content-box }` rules must not reach them.
+  const sw = await scope.evaluate((el) => {
+    const track = el.querySelector<HTMLElement>('.rl-switch')!.getBoundingClientRect();
+    const thumb = el.querySelector<HTMLElement>('.rl-switch__thumb')!.getBoundingClientRect();
+    return { track: [track.width, track.height], thumb: [thumb.width, thumb.height] };
+  });
+  expect(sw).toEqual({ track: [36, 20], thumb: [14, 14] });
 });
 
 test('worst case: host stylesheet loaded after the widget still cannot resize or restyle it', async ({ page }) => {
@@ -109,6 +117,8 @@ test('worst case: host stylesheet loaded after the widget still cannot resize or
         badge: box('.rl-badge'),
         select: box('.rl-select'),
         tableRow: box('.rl-table tbody tr'),
+        switch: box('.rl-switch'),
+        switchThumb: box('.rl-switch__thumb'),
         buttonTransform: getComputedStyle(pick('.rl-button')).textTransform,
         cellBorder: getComputedStyle(pick('.rl-table td')).borderTopWidth,
       };

@@ -247,6 +247,7 @@ const cssChecks = {
   'overlays.css': '.rl-dialog__backdrop',
   'feedback.css': '.rl-toast-viewport',
   'archive.css': '.rl-table__sort',
+  'forms.css': '.rl-switch__thumb',
 };
 for (const [file, needle] of Object.entries(cssChecks)) {
   if (!css.includes(needle)) fail(`bundled CSS missing ${needle} from ${file} (style entry or @import chain broken)`);

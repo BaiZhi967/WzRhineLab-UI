@@ -16,6 +16,7 @@ const pages = [
   { name: 'foundations', hash: '/#/foundations' },
   { name: 'button', hash: '/#/components/button' },
   { name: 'field', hash: '/#/components/field' },
+  { name: 'choice', hash: '/#/components/choice' },
   { name: 'archive', hash: '/#/archive' },
   { name: 'scenarios', hash: '/#/archive/scenarios' },
 ] as const;
@@ -82,5 +83,24 @@ test.describe('component close-ups', () => {
     await setSettings(page, { motion: 'reduce' });
     await open(page, '/#/components/field');
     await expect(page).toHaveScreenshot('field-forced-colors.png');
+  });
+
+  for (const theme of ['light', 'dark'] as const) {
+    test(`choice states · ${theme}`, async ({ page }) => {
+      await setSettings(page, { theme, motion: 'reduce' });
+      await open(page, '/#/components/choice');
+      const specimen = page.getByRole('region', { name: 'States' });
+      await specimen.scrollIntoViewIfNeeded();
+      await expect(specimen).toHaveScreenshot(`choice-states-${theme}.png`);
+    });
+  }
+
+  test('forced colors · choice states', async ({ page }) => {
+    await page.emulateMedia({ forcedColors: 'active' });
+    await setSettings(page, { motion: 'reduce' });
+    await open(page, '/#/components/choice');
+    const specimen = page.getByRole('region', { name: 'States' });
+    await specimen.scrollIntoViewIfNeeded();
+    await expect(specimen).toHaveScreenshot('choice-states-forced-colors.png');
   });
 });

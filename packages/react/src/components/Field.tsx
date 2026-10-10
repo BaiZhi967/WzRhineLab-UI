@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Field as BaseField } from '@base-ui/react/field';
 import { cx } from '../utils/cx.js';
+import { FieldErrorMessage, LabelText } from './fieldParts.js';
 
 /**
  * Form field built on Base UI Field (ADR-0001): label, description and error are
@@ -69,26 +70,12 @@ export const Field = React.forwardRef<HTMLDivElement, FieldProps>(function Field
       data-required={required || undefined}
     >
       <BaseField.Label className="rl-field__label">
-        <span>{label}</span>
-        {required && (
-          <span className="rl-field__required" aria-hidden="true">
-            *
-          </span>
-        )}
-        {optional && !required && <span className="rl-field__optional">（可选）</span>}
+        <LabelText label={label} required={required} optional={optional} />
       </BaseField.Label>
       <div className="rl-field__body">
         {children}
         {description != null && <BaseField.Description className="rl-field__description">{description}</BaseField.Description>}
-        {error != null && (
-          <BaseField.Error className="rl-field__error" match={match}>
-            <svg className="rl-field__error-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-              <path d="M8 1.75 15 14.25H1L8 1.75Z" />
-              <path d="M8 6.5v3.25M8 11.75v.01" />
-            </svg>
-            <span>{error}</span>
-          </BaseField.Error>
-        )}
+        {(error != null || rest.name != null) && <FieldErrorMessage error={error} match={match} name={rest.name} />}
       </div>
     </BaseField.Root>
   );
