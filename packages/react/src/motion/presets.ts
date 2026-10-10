@@ -21,6 +21,8 @@ export const transition = {
   base: { duration: duration.base, ease: ease.out },
   panel: { duration: duration.panel, ease: ease.out },
   scene: { duration: duration.scene, ease: ease.inOut },
+  /** User-triggered showcase scenes only (MOTION.md); never on a base component. */
+  showcase: { duration: duration.showcase, ease: ease.inOut },
   loop: { duration: motionLoopMs / 1000, ease: 'linear', repeat: Infinity },
   instant: { duration: 0 },
 } as const satisfies Record<string, Transition>;
