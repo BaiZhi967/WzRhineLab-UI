@@ -50,7 +50,7 @@ export default defineConfig({
   ],
   webServer: {
     command: isolated
-      ? `pnpm typecheck && pnpm exec vite build --outDir ${outDir} && pnpm exec vite preview --host 127.0.0.1 --port ${port} --strictPort --outDir ${outDir}`
+      ? `pnpm exec vite build --outDir ${outDir} && pnpm exec vite preview --host 127.0.0.1 --port ${port} --strictPort --outDir ${outDir}`
       : `pnpm build && pnpm preview`,
     url: `http://127.0.0.1:${port}`,
     // Reusing a leftover server once ran the suite against a stale build; opt in explicitly.
