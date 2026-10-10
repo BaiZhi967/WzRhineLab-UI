@@ -49,17 +49,21 @@ test.describe('interrupts', () => {
       (button as HTMLElement).click();
       await sleep(700);
       stop = true;
-      return { frames, atReopen, reopenT };
+      // The exiting popup is taken back, not replaced by a fresh one that starts from opacity 0.
+      const sameNode = pop !== null && document.querySelector('.rl-dialog') === pop;
+      return { frames, atReopen, reopenT, sameNode };
     });
     // Reopened while the old popup was still fading out (not after it was gone).
     expect(r.atReopen).toBeGreaterThan(0);
     expect(r.atReopen).toBeLessThan(1);
     // Never two popups on any frame.
     expect(Math.max(...r.frames.map((f) => f.n))).toBe(1);
-    // After the reopen the popup is never unmounted and never restarts from opacity 0.
+    // After the reopen the popup is never unmounted: the same element reverses from its current
+    // opacity (it may fade a little further for a frame before React commits under load) up to 1.
     const after = r.frames.filter((f) => f.t > r.reopenT);
-    expect(after.every((f) => f.n === 1), JSON.stringify({ atReopen: r.atReopen, reopenT: r.reopenT, frames: r.frames.map((f) => [Math.round(f.t), f.n, Math.round(f.o * 100) / 100]) })).toBe(true);
-    expect(Math.min(...after.map((f) => f.o))).toBeGreaterThan(0.02);
+    expect(after.every((f) => f.n === 1)).toBe(true);
+    expect(r.sameNode).toBe(true);
+    expect(Math.min(...after.map((f) => f.o))).toBeGreaterThan(0);
     expect(after.at(-1)!.o).toBe(1);
     const dialog = page.getByRole('dialog', { name: '确认归档' });
     await expect(dialog).toBeVisible();
@@ -108,7 +112,9 @@ test.describe('interrupts', () => {
     const show = page.getByRole('button', { name: '显示通知' });
     await expect(show).toBeVisible();
     await settle(page);
-    const r = await show.evaluate(async (button) => {
+    // Precondition: the dismiss must land mid-enter. On a heavily loaded runner a frame can be longer
+    // than the whole enter, so try again (after the previous toast is gone) until it does.
+    const attempt = () => show.evaluate(async (button) => {
       const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
       const ty = (el: Element) => new DOMMatrixReadOnly(getComputedStyle(el).transform).m42;
       const frames: { t: number; n: number; y: number }[] = [];
@@ -154,6 +160,11 @@ test.describe('interrupts', () => {
       stop = true;
       return { frames, start, atClose, closeT, exitTransition, left: document.querySelectorAll('.rl-toast').length };
     });
+    let r = await attempt();
+    for (let i = 0; i < 4 && !(r.atClose > 2 && r.atClose < r.start); i += 1) {
+      await expect(page.locator('.rl-toast')).toHaveCount(0, { timeout: 8000 });
+      r = await attempt();
+    }
     // Dismissed mid-enter: between the off-screen start and the rest position.
     expect(r.atClose).toBeGreaterThan(2);
     expect(r.atClose).toBeLessThan(r.start);
@@ -183,7 +194,8 @@ test.describe('interrupts', () => {
     const line = page.getByRole('region', { name: 'Line' });
     await expect(line.getByRole('tab').first()).toBeVisible();
     await settle(page);
-    const r = await line.evaluate(async (root) => {
+    // Precondition: the retarget must land mid-flight; retry from the first tab if a slow frame overshot it.
+    const attempt = () => line.evaluate(async (root) => {
       const tabs = Array.from(root.querySelectorAll<HTMLElement>('[role="tab"]'));
       const list = root.querySelector('[role="tablist"]')!;
       const ind = root.querySelector('.rl-tabs__indicator')!;
@@ -213,6 +225,12 @@ test.describe('interrupts', () => {
       stop = true;
       return { from, far, near, atRetarget, retargetT, frames };
     });
+    let r = await attempt();
+    for (let i = 0; i < 4 && !(r.atRetarget > r.near + 2 && r.atRetarget < r.far - 2); i += 1) {
+      await line.getByRole('tab').first().click();
+      await settle(page);
+      r = await attempt();
+    }
     // Mid-flight at retarget time: strictly between the stops.
     expect(r.atRetarget).toBeGreaterThan(r.near + 2);
     expect(r.atRetarget).toBeLessThan(r.far - 2);
@@ -278,8 +296,9 @@ test.describe('ArchiveCard shared identity', () => {
       const e = frames[lane]!.at(-1)!;
       return frames[lane]!.filter((f) => between(f.y, s.y, e.y)).length;
     };
-    // Several distinct in-between frames: a continuous move, not a jump.
-    expect(travel('default')).toBeGreaterThanOrEqual(3);
+    // Seen between the two places: a continuous move. A jump never produces such a frame (reverse
+    // validated by removing layoutId); under heavy parallel load WebKit may only paint one or two.
+    expect(travel('default')).toBeGreaterThanOrEqual(1);
     // Reduced: never seen between the two places.
     expect(travel('reduced')).toBe(0);
   });
@@ -310,6 +329,9 @@ test.describe('MotionPresence and RhineMotionGroup (lab)', () => {
     await settle(page);
     const r = await player.evaluate(async (root) => {
       const lanes = ['default', 'reduced'] as const;
+      // Scheduled opacity delay per item, read from the running WAAPI animation. Frame sampling alone
+      // cannot resolve a 24ms step when a loaded runner paints every 50–100ms.
+      const delays: Record<string, (number | undefined)[]> = { default: [], reduced: [] };
       const firstVisible: Record<string, number[]> = { default: [], reduced: [] };
       const transformed: Record<string, boolean> = { default: false, reduced: false };
       let frame = 0;
@@ -321,6 +343,13 @@ test.describe('MotionPresence and RhineMotionGroup (lab)', () => {
             const cs = getComputedStyle(el);
             if (firstVisible[lane]![i] === undefined && Number(cs.opacity) > 0.02) firstVisible[lane]![i] = frame;
             if (cs.transform !== 'none' && new DOMMatrixReadOnly(cs.transform).m42 !== 0) transformed[lane] = true;
+            if (delays[lane]![i] === undefined) {
+              const anim = el.getAnimations().find((a) => {
+                const kf = (a.effect as KeyframeEffect | null)?.getKeyframes() ?? [];
+                return kf.some((k) => 'opacity' in k);
+              });
+              if (anim) delays[lane]![i] = Number(anim.effect!.getTiming().delay ?? 0);
+            }
           });
         }
         if (!stop) requestAnimationFrame(loop);
@@ -330,20 +359,19 @@ test.describe('MotionPresence and RhineMotionGroup (lab)', () => {
       await new Promise((res) => setTimeout(res, 700));
       stop = true;
       const count = root.querySelectorAll('[data-lane="default"] [data-rl-motion-item]').length;
-      return { firstVisible, transformed, count };
+      return { firstVisible, transformed, count, delays };
     });
     expect(r.count).toBe(7);
+    // Schedule: 24ms per item, capped at the fast token (120ms): items 5 and 6 share the cap.
+    expect(r.delays.default!.map((v) => Math.round(v ?? -1))).toEqual([0, 24, 48, 72, 96, 120, 120]);
+    // And on screen: no item appears before the one above it.
     const d = r.firstVisible.default!;
     expect(d).toHaveLength(7);
-    // Ordered: no item starts before the one above it; the first and fifth are visibly apart.
     for (let i = 1; i < d.length; i += 1) expect(d[i]!).toBeGreaterThanOrEqual(d[i - 1]!);
-    expect(d[4]!).toBeGreaterThan(d[0]!);
-    // Cap: items 5 and 6 (index × 24ms = 120 and 144 → capped at 120ms) start on the same frame.
-    expect(d[6]).toBe(d[5]);
     expect(r.transformed.default).toBe(true);
-    // Reduced: everything at once, no offset.
-    const red = r.firstVisible.reduced!;
-    expect(new Set(red).size).toBe(1);
+    // Reduced: no stagger, no offset.
+    expect(r.delays.reduced!.every((v) => (v ?? 0) === 0)).toBe(true);
+    expect(new Set(r.firstVisible.reduced!).size).toBe(1);
     expect(r.transformed.reduced).toBe(false);
   });
 
@@ -415,9 +443,22 @@ test.describe('effects stop while the page is hidden', () => {
     const card = page.getByRole('region', { name: 'In context' });
     const reveal = card.locator('.rl-reveal');
     await expect(reveal).toHaveAttribute('data-state', 'concealed');
-    await card.getByRole('button', { name: '显示位置' }).click();
-    await expect(reveal).toHaveAttribute('data-state', 'animating');
-    await setPageHidden(page, true);
+    // Click and hide two frames later in one evaluate: a Playwright round-trip between them can be
+    // longer than the whole 640ms reveal on a loaded runner.
+    await card.getByRole('button', { name: '显示位置' }).evaluate(
+      (button) =>
+        new Promise<void>((resolve) => {
+          (button as HTMLElement).click();
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+              Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' });
+              document.dispatchEvent(new Event('visibilitychange'));
+              resolve();
+            }),
+          );
+        }),
+    );
     const glyphs = card.locator('.rl-reveal__glyphs');
     const frozen = await glyphs.textContent();
     await page.waitForTimeout(900);
