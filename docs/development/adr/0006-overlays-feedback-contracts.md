@@ -70,7 +70,7 @@ M8 的 DataTable 已经有加载、空、错误三种状态，但骨架、空结
 <Callout tone="info" title="关于样例数据">本页数值由固定种子生成，不代表真实监测。</Callout>
 ```
 - `tone`：`neutral` / `info` / `success` / `warning` / `danger`（默认 `info`）。颜色之外必有图标与文字，状态不只靠颜色。
-- **Alert** 是页面内的状态消息。`live` 显式选择宣告方式：`off`（默认，页面加载时就存在的提示，不宣告）、`polite`（`role="status"`）、`assertive`（`role="alert"`，只用于失败与需要立刻处理的情况）。同一消息只有一个 live 容器，不与 Toast 重复宣告。
+- **Alert** 是页面内的状态消息。`live` 显式选择宣告方式：`off`（默认，页面加载时就存在的提示，不宣告）、`polite`（`role="status"`）、`assertive`（`role="alert"`，只用于失败与需要立刻处理的情况）。同一消息只有一个 live 容器，不与 Toast 重复宣告。live 角色放在消息文字的容器上，不放在根节点，操作按钮与关闭按钮不进入宣告内容；polite 宣告要求容器先挂载、再改变内容。
 - **Callout** 是说明性旁注，`role="note"`，永不宣告，不可关闭。
 - 可关闭：传 `onDismiss` 时显示关闭按钮（名称默认「关闭提示」，`dismissLabel` 可改）。组件不持有隐藏状态；关闭后焦点去向由调用方决定（文档要求移到相邻的合理位置，Showcase 示例移到触发区域）。
 - 无动效（出现 / 消失由调用方决定是否包在 presence 中）。
@@ -93,8 +93,8 @@ M8 的 DataTable 已经有加载、空、错误三种状态，但骨架、空结
 ### 8. Toast 补强
 - `show({ id })`：同一 `id` 再次 `show` 时原地更新并重置计时（Base UI 去重），用于「已复制」这类重复操作，不堆叠。
 - `action.onClick` 执行后**默认关闭该通知**（`action.keepOpen` 可保留）；Base UI 的 Action 本身不关闭。
-- 带操作的通知若未指定 `timeout`，默认至少 10 秒；悬停、聚焦时暂停（已有）。可撤销操作不能只靠通知撤销，页面上必须仍有等效入口或结果可见（文档约定）。
-- `toast.promise(promise, { loading, success, error })`：一条通知从「处理中」更新为成功或失败；失败默认 `priority: 'high'` 且不自动消失。
+- 带操作的通知若未指定 `timeout`，默认取 `max(toastTimeout, 10000)`（Provider 的 `toastTimeout` 为 0 时仍为 0）；`update()` 不套用该下限。为此 `ToastProvider` 由 Base UI 别名改为包装组件（属性不变），向下传递默认超时。悬停、聚焦时暂停（已有）。可撤销操作不能只靠通知撤销，页面上必须仍有等效入口或结果可见（文档约定）。
+- `toast.promise(promise, { loading, success, error })`：一条通知从「处理中」更新为成功或失败。每个阶段可以是字符串（作为标题）、选项或 `(result) => …`；loading 默认 `info` 并以 Spinner 代替状态图标；失败默认 `danger`、`priority: 'high'` 且不自动消失，调用方字段可以覆盖。
 - 新增 `update` 的状态切换不重复宣告标题未变的内容（Base UI 只在内容变化时更新 live region）。
 
 ### 9. 动效与减动汇总
