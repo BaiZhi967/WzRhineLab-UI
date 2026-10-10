@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { cx } from '../utils/cx.js';
 import { Button } from './Button.js';
+import { EmptyState } from './EmptyState.js';
 import { Pagination } from './Pagination.js';
 import type { PaginationLabels } from './Pagination.js';
+import { Skeleton } from './Skeleton.js';
 
 /**
  * Data table on a native <table>: real header cells, a caption, sortable columns that
@@ -66,7 +68,10 @@ export type DataTableProps<Row> = {
   onSelectionChange?: (ids: Set<string>) => void;
   /** Accessible name for a row's checkbox; defaults to the row id. */
   getRowLabel?: (row: Row) => string;
+  /** Empty-state title (rendered by EmptyState size="sm", as a paragraph). */
   emptyText?: React.ReactNode;
+  /** Secondary line under the empty text, e.g. how to get results. */
+  emptyDescription?: React.ReactNode;
   /** Optional action under the empty text, e.g. a "clear filters" button. */
   emptyAction?: React.ReactNode;
   /**
@@ -113,6 +118,7 @@ export function DataTable<Row>({
   onSelectionChange,
   getRowLabel,
   emptyText = '没有符合条件的记录',
+  emptyDescription,
   emptyAction,
   status = 'ready',
   loadingRows = 5,
@@ -262,7 +268,7 @@ export function DataTable<Row>({
               <tr key={`skeleton-${i}`} className="rl-table__skeleton-row" aria-hidden="true">
                 {Array.from({ length: columnCount }, (_, c) => (
                   <td key={c}>
-                    <span className="rl-table__skeleton" />
+                    <Skeleton className="rl-table__skeleton" width={i % 2 === 1 ? '50%' : '70%'} />
                   </td>
                 ))}
               </tr>
@@ -270,8 +276,14 @@ export function DataTable<Row>({
           ) : rows.length === 0 ? (
             <tr>
               <td colSpan={columnCount} className="rl-table__empty">
-                {emptyText}
-                {emptyAction != null && <div className="rl-table__empty-action">{emptyAction}</div>}
+                <EmptyState
+                  size="sm"
+                  kind="no-results"
+                  icon={null}
+                  title={emptyText}
+                  description={emptyDescription}
+                  action={emptyAction}
+                />
               </td>
             </tr>
           ) : (

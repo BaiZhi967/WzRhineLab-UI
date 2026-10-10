@@ -11,6 +11,8 @@
 @import './archive.css';
 @import './forms.css';
 @import './data.css';
+@import './drawer.css';
+@import './status.css';
 
 /* Component roots use class specificity so a host `* { box-sizing }` loaded later cannot win. */
 :is(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-text, .rl-field, .rl-input, .rl-tabs, .rl-tooltip, .rl-dialog, .rl-select, .rl-select__popup, .rl-popover, .rl-menu, .rl-toast, .rl-record, .rl-meta, .rl-status, .rl-archive-card, .rl-timeline, .rl-table-scroll, .rl-table) {
@@ -172,27 +174,7 @@
   pointer-events: none;
 }
 
-.rl-spinner {
-  width: var(--rl-icon-size-md);
-  height: var(--rl-icon-size-md);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: var(--rl-border-width-strong);
-}
-
-.rl-spinner__track {
-  opacity: 0.25;
-}
-
-.rl-spinner__arc {
-  stroke-dasharray: 28 100;
-  stroke-linecap: round;
-}
-
-/* Reduced motion: a static, fuller arc still reads as "in progress" next to aria-busy. */
-.rl-spinner[data-reduced] .rl-spinner__arc {
-  stroke-dasharray: 70 100;
-}
+/* The spinner itself is the public Spinner (status.css). */
 
 /* ---------- Surface ---------- */
 .rl-surface {

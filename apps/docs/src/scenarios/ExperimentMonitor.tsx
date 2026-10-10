@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {
+  AlertDialog,
   Button,
-  Dialog,
-  DialogClose,
   Field,
   Input,
   MetadataList,
@@ -163,23 +162,13 @@ export function ExperimentMonitor() {
         </Surface>
       </div>
 
-      <Dialog
+      <AlertDialog
         open={confirmReset}
         onOpenChange={setConfirmReset}
         title="重置演示流程？"
         description="将清空已完成的步骤与时间线。"
-        size="sm"
-        dismissOnOutsideClick={false}
-        actions={
-          <>
-            <DialogClose>
-              <Button variant="ghost">取消</Button>
-            </DialogClose>
-            <DialogClose>
-              <Button onClick={reset}>重置</Button>
-            </DialogClose>
-          </>
-        }
+        confirmLabel="重置"
+        onConfirm={reset}
       />
     </div>
   );

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MotionConfig } from 'motion/react';
 import { describe, expect, it, vi } from 'vitest';
 import { RhineProvider } from '@wzrhine/react';
 import { ArchiveReveal, EffectClock, MotionPlayer, OrbitalDiagram, ScanSurface, useEffectTiming } from '../src';
@@ -297,6 +298,17 @@ describe('MotionPlayer', () => {
       expect(lane(name)).toHaveTextContent('play=0 active=false');
     }
     expect(screen.getByRole('button', { name: '重置' })).toBeDisabled();
+  });
+
+  it('a surrounding reduced-motion preference is kept in every lane (lanes never re-enable motion)', () => {
+    render(
+      <MotionConfig reducedMotion="always">
+        <MotionPlayer title="档案解密" demo={(p) => <Demo {...p} />} />
+      </MotionConfig>,
+    );
+    for (const name of ['default', 'slow', 'reduced', 'interrupt']) {
+      expect(lane(name)).toHaveTextContent('reduced=true');
+    }
   });
 
   it('can show a subset of lanes', () => {

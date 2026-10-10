@@ -14,6 +14,16 @@ import { cx } from '../utils/cx.js';
 
 export type DialogSize = 'sm' | 'md' | 'lg';
 
+/** Why the user is trying to close the dialog (ADR-0006 §3). */
+export type DialogCloseReason = 'escape' | 'outside' | 'close-button' | 'trigger';
+
+const closeReasons: Partial<Record<string, DialogCloseReason>> = {
+  'escape-key': 'escape',
+  'outside-press': 'outside',
+  'close-press': 'close-button',
+  'trigger-press': 'trigger',
+};
+
 export type DialogProps = {
   /** Element that opens the dialog (usually a Button). Omit when opening programmatically. */
   trigger?: React.ReactElement<Record<string, unknown>>;
@@ -34,6 +44,11 @@ export type DialogProps = {
   dismissOnOutsideClick?: boolean;
   /** Element to focus on open; defaults to the first tabbable element. */
   initialFocus?: React.RefObject<HTMLElement | null>;
+  /**
+   * Called before a user-initiated close. Return `false` to keep the dialog open (focus stays put),
+   * e.g. to ask "放弃未保存的更改？" in a nested AlertDialog. Programmatic `open={false}` skips it.
+   */
+  onCloseRequest?: (reason: DialogCloseReason) => boolean | void;
   className?: string;
 };
 
@@ -53,6 +68,7 @@ export function Dialog({
   size = 'md',
   dismissOnOutsideClick = true,
   initialFocus,
+  onCloseRequest,
   className,
 }: DialogProps) {
   const [uncontrolled, setUncontrolled] = React.useState(defaultOpen);
@@ -70,7 +86,16 @@ export function Dialog({
   return (
     <BaseDialog.Root
       open={open}
-      onOpenChange={(next) => setOpen(next)}
+      onOpenChange={(next, eventDetails) => {
+        if (!next && onCloseRequest) {
+          const reason = closeReasons[eventDetails.reason];
+          if (reason && onCloseRequest(reason) === false) {
+            eventDetails.cancel();
+            return;
+          }
+        }
+        setOpen(next);
+      }}
       onOpenChangeComplete={(isOpen) => {
         if (!isOpen) onClosed?.();
       }}

@@ -1,0 +1,353 @@
+/*
+ * WzRhineLab UI · status & placeholders (ADR-0006 §5–7): Alert, Callout, EmptyState, Skeleton, Spinner.
+ * Imported by components.css; tokens only. Tone colour is used for the icon, border and title
+ * (manifest pairs `--rl-<tone>` on `--rl-<tone>-subtle`); body text stays `--rl-fg-primary`.
+ */
+
+/* ---------- Alert & Callout ---------- */
+.rl-alert {
+  --rl-alert-fg: var(--rl-info);
+  --rl-alert-bg: var(--rl-info-subtle);
+  --rl-alert-border: var(--rl-info);
+  --rl-alert-icon: var(--rl-info);
+
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--rl-space-2) var(--rl-space-3);
+  min-width: 0;
+  padding: var(--rl-space-3) var(--rl-space-4);
+  border: var(--rl-border-width) solid var(--rl-alert-border);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-alert-bg);
+  color: var(--rl-fg-primary);
+  font: var(--rl-type-body-sm);
+}
+
+.rl-alert[data-tone='neutral'] {
+  --rl-alert-fg: var(--rl-fg-primary);
+  --rl-alert-bg: var(--rl-bg-subtle);
+  --rl-alert-border: var(--rl-border-default);
+  --rl-alert-icon: var(--rl-fg-muted);
+}
+
+.rl-alert[data-tone='success'] {
+  --rl-alert-fg: var(--rl-success);
+  --rl-alert-bg: var(--rl-success-subtle);
+  --rl-alert-border: var(--rl-success);
+  --rl-alert-icon: var(--rl-success);
+}
+
+.rl-alert[data-tone='warning'] {
+  --rl-alert-fg: var(--rl-warning);
+  --rl-alert-bg: var(--rl-warning-subtle);
+  --rl-alert-border: var(--rl-warning);
+  --rl-alert-icon: var(--rl-warning);
+}
+
+.rl-alert[data-tone='danger'] {
+  --rl-alert-fg: var(--rl-danger);
+  --rl-alert-bg: var(--rl-danger-subtle);
+  --rl-alert-border: var(--rl-danger);
+  --rl-alert-icon: var(--rl-danger);
+}
+
+/* Callout: quieter side note, a single rule on the start edge instead of a full frame. */
+.rl-callout {
+  border-color: transparent;
+  border-inline-start: var(--rl-border-width-strong) solid var(--rl-alert-border);
+  border-radius: var(--rl-radius-xs);
+}
+
+.rl-alert__message {
+  grid-column: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rl-space-2);
+  min-width: 0;
+}
+
+.rl-alert__icon {
+  display: inline-flex;
+  flex: none;
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+  /* Centre on the first text line (title or body). */
+  margin-top: calc((1lh - var(--rl-icon-size-md)) / 2);
+  color: var(--rl-alert-icon);
+}
+
+.rl-alert__glyph,
+.rl-alert__icon > svg {
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--rl-border-width-strong);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rl-alert__text {
+  display: grid;
+  gap: var(--rl-space-1);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.rl-alert__title {
+  margin: 0;
+  font: var(--rl-type-label);
+  color: var(--rl-alert-fg);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.rl-alert__body {
+  margin: 0;
+  color: var(--rl-fg-primary);
+}
+
+.rl-alert__body > :where(p) {
+  margin: 0;
+}
+
+/* Below the text, aligned with it (past the icon), so long copy never squeezes the action. */
+.rl-alert__action {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rl-space-2);
+  padding-inline-start: calc(var(--rl-icon-size-md) + var(--rl-space-2));
+}
+
+.rl-alert__dismiss {
+  grid-column: 2;
+  grid-row: 1;
+  /* Keep the 32px target without growing the alert. */
+  margin-block: calc(var(--rl-space-1) * -1);
+  margin-inline-end: calc(var(--rl-space-2) * -1);
+}
+
+.rl-alert__close-icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--rl-border-width-strong);
+  stroke-linecap: round;
+}
+
+/* ---------- EmptyState ---------- */
+.rl-empty {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--rl-space-2);
+  min-width: 0;
+  padding: var(--rl-space-8) var(--rl-space-4);
+  text-align: center;
+  color: var(--rl-fg-primary);
+  white-space: normal;
+}
+
+.rl-empty[data-size='sm'] {
+  gap: var(--rl-space-1);
+  padding: var(--rl-space-4);
+}
+
+/* DataTable's empty cell already pads and colours the message; keep its M8 look (no icon,
+   cell text style, action one step below). */
+.rl-table__empty > .rl-empty[data-size] {
+  gap: 0;
+  padding: 0;
+  color: inherit;
+}
+
+.rl-table__empty > .rl-empty[data-size] .rl-empty__title {
+  max-width: none;
+  font: inherit;
+  color: inherit;
+}
+
+.rl-table__empty > .rl-empty[data-size] .rl-empty__description {
+  margin-top: var(--rl-space-1);
+}
+
+.rl-table__empty > .rl-empty[data-size] .rl-empty__action {
+  display: block;
+  margin-top: var(--rl-space-3);
+}
+
+.rl-empty__icon {
+  display: inline-flex;
+  flex: none;
+  width: var(--rl-space-8);
+  height: var(--rl-space-8);
+  margin-bottom: var(--rl-space-1);
+  color: var(--rl-fg-muted);
+}
+
+.rl-empty[data-size='sm'] .rl-empty__icon {
+  width: var(--rl-icon-size-lg);
+  height: var(--rl-icon-size-lg);
+}
+
+.rl-empty__glyph,
+.rl-empty__icon > svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--rl-border-width);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rl-empty[data-size='sm'] .rl-empty__glyph {
+  stroke-width: var(--rl-border-width-strong);
+}
+
+/* Title may be a host-styled h2–h6: reset what a host stylesheet could leak in. */
+.rl-empty__title {
+  margin: 0;
+  max-width: calc(var(--rl-field-label-width) * 3);
+  font: var(--rl-type-heading-3);
+  font-family: var(--rl-font-body);
+  color: var(--rl-fg-primary);
+  text-transform: none;
+  letter-spacing: normal;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.rl-empty[data-size='sm'] .rl-empty__title {
+  font: var(--rl-type-label);
+}
+
+.rl-empty__description {
+  margin: 0;
+  max-width: calc(var(--rl-field-label-width) * 3);
+  font: var(--rl-type-body-sm);
+  color: var(--rl-fg-muted);
+  overflow-wrap: anywhere;
+  /* Centred CJK text: avoid a lone glyph on the last line. */
+  text-wrap: pretty;
+}
+
+.rl-empty[data-size='sm'] .rl-empty__description {
+  font: var(--rl-type-meta);
+}
+
+.rl-empty__action {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--rl-space-2);
+  margin-top: var(--rl-space-2);
+}
+
+/* ---------- Skeleton ---------- */
+.rl-skeleton {
+  display: block;
+  flex: none;
+  width: var(--rl-skeleton-width, 100%);
+  height: var(--rl-skeleton-height, 1lh);
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-bg-subtle);
+  animation: rl-skeleton-pulse var(--rl-motion-loop) var(--rl-ease-in-out) infinite alternate;
+}
+
+.rl-skeleton[data-shape='block'] {
+  height: var(--rl-skeleton-height, var(--rl-space-16));
+  border-radius: var(--rl-radius-sm);
+}
+
+.rl-skeleton[data-shape='circle'] {
+  width: var(--rl-skeleton-width, var(--rl-skeleton-height, var(--rl-space-8)));
+  height: var(--rl-skeleton-height, var(--rl-skeleton-width, var(--rl-space-8)));
+  border-radius: var(--rl-radius-round);
+}
+
+/* Multi-line text: the width applies to the paragraph; each line keeps a text-like rhythm. */
+.rl-skeleton-lines {
+  display: grid;
+  gap: var(--rl-space-1);
+  width: var(--rl-skeleton-width, 100%);
+  min-width: 0;
+}
+
+.rl-skeleton-lines > .rl-skeleton {
+  width: 100%;
+  height: var(--rl-skeleton-height, calc(1lh - var(--rl-space-1)));
+}
+
+.rl-skeleton-lines > .rl-skeleton[data-last] {
+  width: 60%;
+}
+
+@keyframes rl-skeleton-pulse {
+  from { opacity: 1; }
+  to { opacity: 0.45; }
+}
+
+/* ---------- Spinner ---------- */
+.rl-spinner {
+  display: inline-flex;
+  flex: none;
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+}
+
+.rl-spinner[data-size='sm'] {
+  width: var(--rl-icon-size-sm);
+  height: var(--rl-icon-size-sm);
+}
+
+.rl-spinner[data-size='lg'] {
+  width: var(--rl-icon-size-lg);
+  height: var(--rl-icon-size-lg);
+}
+
+.rl-spinner__svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--rl-border-width-strong);
+}
+
+.rl-spinner__track {
+  opacity: 0.25;
+}
+
+.rl-spinner__arc {
+  stroke-dasharray: 28 100;
+  stroke-linecap: round;
+}
+
+/* Reduced motion: a static, fuller arc still reads as "in progress" next to aria-busy. */
+.rl-spinner[data-reduced] .rl-spinner__arc {
+  stroke-dasharray: 70 100;
+}
+
+/* ---------- Reduced motion ---------- */
+.rl-theme[data-rl-motion='reduce'] .rl-skeleton {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rl-skeleton {
+    animation: none;
+  }
+}
+
+/* ---------- Forced colours (Windows High Contrast) ---------- */
+@media (forced-colors: active) {
+  .rl-alert { border-color: CanvasText; }
+  .rl-callout { border-color: transparent; border-inline-start-color: CanvasText; }
+  .rl-alert__icon,
+  .rl-empty__icon { color: CanvasText; }
+  .rl-skeleton { background: GrayText; }
+}

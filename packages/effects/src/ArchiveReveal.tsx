@@ -8,7 +8,9 @@ import { usePageVisible } from './usePageVisible.js';
  * - The real text is always in the accessibility tree; the scramble is aria-hidden decoration.
  * - Toggling `revealed` mid-flight reverses from the current progress, never restarting.
  * - Reduced motion (OS, provider, or EffectClock) swaps instantly with no glyph cycling.
- * - The loop pauses while the page is hidden and stops once settled.
+ * - The loop pauses while the page is hidden (shared `usePageVisible`, ADR-0007), resumes from the
+ *   current progress, and stops once settled or unmounted. It is short and one-shot, so it does not
+ *   track the viewport.
  * Never use it to delay business data: pass content that is already loaded.
  */
 

@@ -1,5 +1,7 @@
 # MOTION · React 动效规范（Draft 0.1）
 
+> 模式目录（每个已实现模式的完整字段）见 [MOTION-PATTERNS.md](MOTION-PATTERNS.md)；属性所有权、预设与 token 映射、按属性类型的减动解析、生命周期契约见 [ADR-0007](../development/adr/0007-motion-ownership.md)。
+
 ## 动效原则
 **可解释、精确、克制、可中断**。每个动画必须传达：反馈 / 空间关系 / 状态身份 / 任务过程。优先使用 opacity 与 transform，不应为了「科技感」默认启用持续闪动、错乱字符或全屏扫光。
 

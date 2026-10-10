@@ -26,6 +26,9 @@ import { ToastPage } from './pages/ToastPage';
 import { ArchivePage } from './pages/ArchivePage';
 import { ScenariosPage } from './pages/ScenariosPage';
 import { DataNavPage } from './pages/DataNavPage';
+import { AlertDialogPage } from './pages/AlertDialogPage';
+import { DrawerPage } from './pages/DrawerPage';
+import { FeedbackPage } from './pages/FeedbackPage';
 
 // Optional effects package is code-split so the main Showcase chunk never includes it.
 const ShowcaseEffectsPage = React.lazy(() =>
@@ -176,6 +179,12 @@ export default function App() {
         return <MenuPage />;
       case 'toast':
         return <ToastPage />;
+      case 'alert-dialog':
+        return <AlertDialogPage />;
+      case 'drawer':
+        return <DrawerPage />;
+      case 'feedback':
+        return <FeedbackPage />;
       case 'archive':
         return <ArchivePage />;
       case 'data':

@@ -4,6 +4,9 @@ coverage/
 .playwright/
 playwright-report/
 test-results/
+test-results-*/
+playwright-report-*/
+.pw-dist/
 .DS_Store
 *.tsbuildinfo
 *.log

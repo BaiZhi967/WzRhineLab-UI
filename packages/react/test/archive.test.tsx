@@ -357,7 +357,8 @@ describe('DataTable', () => {
 
   it('renders an empty state spanning all columns', () => {
     render(<DataTable caption="空" columns={columns} rows={[]} getRowId={(r: Rec) => r.id} emptyText="没有匹配的记录" />);
-    const cell = screen.getByText('没有匹配的记录');
+    // The text sits in EmptyState (ADR-0006 §6) inside the spanning cell.
+    const cell = screen.getByText('没有匹配的记录').closest('td');
     expect(cell).toHaveAttribute('colspan', '4');
   });
 

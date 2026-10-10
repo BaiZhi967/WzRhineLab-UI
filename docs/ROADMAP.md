@@ -7,6 +7,10 @@
 > **进度（M7）**：表单层已补齐并有测试（[M7 验收记录](development/acceptance/2026-10-10-m7.md)）。
 >
 > **进度（M8）**：已完成并有测试（[M8 验收记录](development/acceptance/2026-10-10-m8.md)，契约 [ADR-0005](development/adr/0005-data-navigation-contracts.md)）。M8 之后按维护者决定先做 M9 覆盖层与反馈，原 Ecosystem 改为 M9.5。
+>
+> **进度（M9）**：AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner 与 Toast / Dialog 补强已完成并有测试（[M9 验收记录](development/acceptance/2026-10-10-m9.md)，契约 [ADR-0006](development/adr/0006-overlays-feedback-contracts.md)）。
+>
+> **进度（M10）**：Motion Core 2.0 已实现并有测试（[M10 验收记录](development/acceptance/2026-10-10-m10.md)，契约 [ADR-0007](development/adr/0007-motion-ownership.md)，[模式目录](design/MOTION-PATTERNS.md)）：MotionPresence、RhineMotionGroup、按属性类型的减动、统一可见性与生命周期、Dialog / Popover / Toast / Tabs / ArchiveCard 中断 E2E、全路由减动扫描。与 M9 并行开发，合入后统一复验。
 
 | 里程碑 | 目标 | 核心产物 | 退出门禁 |
 | --- | --- | --- | --- |

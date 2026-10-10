@@ -475,15 +475,6 @@
   color: var(--rl-fg-muted);
 }
 
-.rl-stat__skeleton {
-  display: inline-block;
-  width: calc(var(--rl-space-16) * 1.25);
-  height: 1lh;
-  border-radius: var(--rl-radius-xs);
-  background: var(--rl-bg-subtle);
-  animation: rl-skeleton-pulse var(--rl-motion-loop) var(--rl-ease-in-out) infinite alternate;
-}
-
 /* ---------- DataTable states & pagination ---------- */
 .rl-table-frame {
   display: grid;
@@ -517,23 +508,7 @@
   transition: opacity var(--rl-motion-fast) var(--rl-ease-out);
 }
 
-.rl-table__skeleton {
-  display: block;
-  width: 70%;
-  height: 1lh;
-  border-radius: var(--rl-radius-xs);
-  background: var(--rl-bg-subtle);
-  animation: rl-skeleton-pulse var(--rl-motion-loop) var(--rl-ease-in-out) infinite alternate;
-}
-
-.rl-table__skeleton-row:nth-child(even) .rl-table__skeleton {
-  width: 50%;
-}
-
-@keyframes rl-skeleton-pulse {
-  from { opacity: 1; }
-  to { opacity: 0.45; }
-}
+/* First-load skeleton cells and the empty state render Skeleton / EmptyState (status.css). */
 
 .rl-table__loading {
   margin: 0;
@@ -585,9 +560,7 @@
   transition: none;
 }
 
-.rl-theme[data-rl-motion='reduce'] .rl-progress[data-indeterminate] .rl-progress__indicator,
-.rl-theme[data-rl-motion='reduce'] .rl-table__skeleton,
-.rl-theme[data-rl-motion='reduce'] .rl-stat__skeleton {
+.rl-theme[data-rl-motion='reduce'] .rl-progress[data-indeterminate] .rl-progress__indicator {
   animation: none;
 }
 
@@ -609,9 +582,7 @@
     background: repeating-linear-gradient(-45deg, var(--rl-progress-fill) 0 var(--rl-space-1), transparent var(--rl-space-1) var(--rl-space-2));
   }
 
-  .rl-progress[data-indeterminate] .rl-progress__indicator,
-  .rl-table__skeleton,
-  .rl-stat__skeleton {
+  .rl-progress[data-indeterminate] .rl-progress__indicator {
     animation: none;
   }
 }
@@ -626,6 +597,4 @@
   .rl-progress__track { border: var(--rl-border-width) solid CanvasText; }
   .rl-progress__indicator { background: Highlight; }
   .rl-stat { border-inline-start-color: CanvasText; }
-  .rl-table__skeleton,
-  .rl-stat__skeleton { background: GrayText; }
 }

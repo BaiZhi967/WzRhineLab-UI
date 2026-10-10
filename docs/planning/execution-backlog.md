@@ -6,8 +6,8 @@
 
 - 主分支：main；
 - Base UI：1.9.0；
-- 当前里程碑：M8 Data & Navigation 已完成；
-- 下一里程碑：M9 覆盖层与反馈；
+- 当前里程碑：M9 覆盖层与反馈、M10 Motion Core 2.0 已完成；
+- 下一里程碑：M9.5 生态工程化；
 - 发布状态：暂不发布；
 - React 18：未正式验证；
 - 自动 CI：暂不创建；
@@ -112,15 +112,19 @@
 
 ## M9：覆盖层与反馈
 
-- [ ] 写 M9 契约（AlertDialog、Drawer、Alert、EmptyState、Skeleton、Spinner）ADR。
-- [ ] 实现 AlertDialog，并替换现有破坏性确认（设置表单「放弃更改」、实验监测「重置」）。
-- [ ] 实现 Drawer，接入档案检索的详情面板。
-- [ ] 实现 Alert / Callout。
-- [ ] 实现 EmptyState，接入 DataTable 空状态。
-- [ ] 把 M8 DataTable 的骨架与加载指示抽取为 Skeleton / Spinner。
-- [ ] Toast：带操作、可撤销、更新已有通知。
-- [ ] 三内核 E2E、axe、视觉基线、截图审查。
-- [ ] 完成 M9 acceptance。
+- [x] 写 M9 契约（AlertDialog、Drawer、Alert、EmptyState、Skeleton、Spinner）ADR。
+- [x] 实现 AlertDialog，并替换现有破坏性确认（设置表单「放弃更改」、实验监测「重置」，以及 archive-desk 的删除确认）。
+- [x] 实现 Drawer，接入档案检索的详情面板（单列布局时）。
+- [x] 实现 Alert / Callout。
+- [x] 实现 EmptyState，接入 DataTable 空状态。
+- [x] 把 M8 DataTable 的骨架与加载指示抽取为 Skeleton / Spinner（Button、Stat 一并改用）。
+- [x] Toast：带操作、可撤销、更新已有通知（id 去重、操作后默认关闭、promise）。
+- [x] Dialog：关闭保护（`onCloseRequest`）。
+- [x] 三内核 E2E、axe、视觉基线、截图审查。
+- [ ] 人工键盘、读屏与真机验收（未做，见 M9 验收记录「未覆盖」）。
+- [x] 完成 M9 acceptance。
+
+证据：[M9 验收记录](../development/acceptance/2026-10-10-m9.md)、[ADR-0006](../development/adr/0006-overlays-feedback-contracts.md)。
 
 ## M9.5：生态工程化
 
@@ -141,20 +145,20 @@
 
 ## M10：Motion Core 2.0
 
-- [ ] 建立 motion pattern 目录。
-- [ ] 写 motion ownership ADR。
-- [ ] 统一 CSS / Motion / SVG 的属性边界。
-- [ ] 提炼 RhineMotionGroup。
-- [ ] 提炼 MotionPresence。
-- [ ] 统一 page visibility pause。
-- [ ] 增加 start / pause / resume / stop 生命周期。
-- [ ] 为 Dialog、Popover、Toast、Tabs 增加 interrupt 测试。
-- [ ] 为 ArchiveCard 增加 shared identity 验证。
-- [ ] 为 text reveal 提供语义 fallback。
-- [ ] 为 effects 循环动画提供停止条件。
-- [ ] 增加 Default / Slow / Reduced / Interrupt showcase。
-- [ ] 重新验证 reduced motion。
-- [ ] 完成 M10 acceptance。
+- [x] 建立 motion pattern 目录。
+- [x] 写 motion ownership ADR。
+- [x] 统一 CSS / Motion / SVG 的属性边界。
+- [x] 提炼 RhineMotionGroup。
+- [x] 提炼 MotionPresence。
+- [x] 统一 page visibility pause。
+- [x] 增加 start / pause / resume / stop 生命周期。
+- [x] 为 Dialog、Popover、Toast、Tabs 增加 interrupt 测试。
+- [x] 为 ArchiveCard 增加 shared identity 验证。
+- [x] 为 text reveal 提供语义 fallback。
+- [x] 为 effects 循环动画提供停止条件。
+- [x] 增加 Default / Slow / Reduced / Interrupt showcase。
+- [x] 重新验证 reduced motion。
+- [x] 完成 M10 acceptance（[验收记录](../development/acceptance/2026-10-10-m10.md)；人工读屏 / 真机 / 低帧率设备未验收）。
 
 ## M11：Rendering Lab
 
