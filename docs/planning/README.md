@@ -46,7 +46,7 @@
 | [component-platform-plan.md](component-platform-plan.md) | 组件分层、优先级、API、验收矩阵和领域模式 |
 | [motion-and-rendering-plan.md](motion-and-rendering-plan.md) | CSS、Motion、SVG、Canvas、WebGL 和第三方适配器的长期边界 |
 | [quality-release-and-ecosystem-plan.md](quality-release-and-ecosystem-plan.md) | 质量门禁、兼容性、许可、发布、文档与生态计划 |
-| [execution-backlog.md](execution-backlog.md) | 当前可执行任务和后续阶段的可执行任务清单 |
+| [execution-backlog.md](execution-backlog.md) | 当前和后续阶段的可执行任务清单 |
 - [demand-insertion-workflow.md](demand-insertion-workflow.md) | 真实需求插入、Agent 引导问询、消费项目验收和路线回填 |
 - [templates/component-demand.md](templates/component-demand.md) | 组件需求记录与范围确认模板 |
 
