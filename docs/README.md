@@ -11,7 +11,7 @@
 | [development/ARCHITECTURE.md](development/ARCHITECTURE.md) | workspace、包结构、依赖边界与发布约束 |
 | [development/CONTRIBUTING.md](development/CONTRIBUTING.md) | 开发约束、commit、分支、评审与测试 |
 | [development/QUALITY-GATES.md](development/QUALITY-GATES.md) | 可执行质量门槛 |
-| [ROADMAP.md](ROADMAP.md) | M0–M9 里程碑、验收与依赖 |
+| [ROADMAP.md](ROADMAP.md) | M0–M9 里程碑摘要、验收与依赖 |\n| [planning/README.md](planning/README.md) | M8–M18 长期路线、组件、动效、质量和执行计划 |
 | [concepts/README.md](concepts/README.md) | 概念图索引、用途与局限 |
 | [research/REFERENCES.md](research/REFERENCES.md) | 官方 / 社区 / 技术参考资料及授权提醒 |
 
@@ -20,7 +20,7 @@
 
 ## 额外资料与导入
 - [研究摘要](research/RESEARCH-SUMMARY.md)
-- [研究参考链接](research/REFERENCES.md)
+- [长期规划中心](planning/README.md)\n- [研究参考链接](research/REFERENCES.md)
 - [视觉原件清单](research/ASSET-MANIFEST.md)
 - [ADR-0001 交互底座 · Base UI（Accepted）](development/adr/0001-headless-primitives.md)
 - [ADR-0002 源码直出导出与样式入口](development/adr/0002-source-exports-and-style-entry.md)
