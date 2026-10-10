@@ -13,6 +13,49 @@
 - 自动 CI：暂不创建；
 - 遗留人工验收：读屏、200% 缩放、真机。
 
+
+## 需求插入队列
+
+真实消费项目可以提出当前主线之外的组件需求。所有插入需求先使用 [组件需求记录模板](templates/component-demand.md)，由 Agent 按 [真实需求插入与 Agent 引导流程](demand-insertion-workflow.md) 逐步补充信息。
+
+### 需求插入清单
+
+- [ ] 记录消费项目、页面、用户目标、当前替代方案和阻塞。
+- [ ] 判断类型：mainline / ahead-of-line / architecture-blocked / consumer-local。
+- [ ] 判断归属：基础组件 / Rhine 领域模式 / 消费项目组合 / Effects 适配器。
+- [ ] 写本次必须支持和明确延后的范围。
+- [ ] 写 API、状态矩阵、键盘、读屏、reduced motion、响应式和 SSR 约定。
+- [ ] 列出最小前置依赖，不绕过 Base UI、tokens 和既有 package 边界。
+- [ ] 记录当前主线任务、暂停点和恢复点。
+- [ ] 记录组件库验收和消费项目验收。
+- [ ] 输出范围卡并确认后再实现。
+- [ ] 组件库通过后接入消费项目，状态进入 Consumer validating。
+- [ ] 完成消费项目真实页面验收。
+- [ ] 回填目标里程碑、删除重复待办、记录剩余增强。
+- [ ] 恢复原主线；如果插入需求连续增加，先做一次主线重排。
+
+### 范围卡最小字段
+
+```text
+消费项目：
+真实页面：
+当前阻塞：
+当前替代方案：
+组件归属：
+插入类型：
+目标里程碑：
+本次支持：
+本次延后：
+必要依赖：
+组件库验收：
+消费项目验收：
+主线暂停点：
+主线恢复点：
+路线回填位置：
+```
+
+拒绝或延期时，必须记录原因、保留的最小替代方案和未来重新触发条件。
+
 ## M8-1：设计和行为契约
 
 - [x] 阅读并确认 DataTable 当前分页、排序、选择和 loading API。
@@ -169,6 +212,88 @@
 - [ ] TraceSummary。
 
 每个领域模式必须经过至少一个真实页面验证，并确保不绑定后端模型。
+
+## Agent UI 平台：拟议 @wzrhine/agent
+
+### 设计与契约
+
+- [ ] 确认 @wzrhine/agent 的 package 边界和依赖方向。
+- [ ] 定义 Conversation、Message、MessagePart、Run、Tool、Approval、Questionnaire、Artifact 和 Sync view-model。
+- [ ] 定义 runStatus、syncStatus、actionStatus 三个状态轴。
+- [ ] 定义 actionId、targetId、baseRevision 和 unknown 回执。
+- [ ] 定义 capability、禁用原因和 action callback。
+- [ ] 定义 renderer、slots、children 和 render props 的使用边界。
+- [ ] 定义 Markdown、Code、Diff、Artifact 和 Terminal renderer 接口。
+- [ ] 定义多实例、portal、DOM id、draft 和 scroll 隔离。
+- [ ] 建立静态 Agent fixture，不依赖 Wpi DTO。
+- [ ] 为公开类型建立 API report 和变更规则。
+
+### 第一组：Shell、Conversation、Message
+
+- [ ] 建立 packages/agent workspace 包骨架。
+- [ ] 实现 AgentShell、AgentHeader、AgentSidebar、AgentWorkspace。
+- [ ] 实现 ConversationList、ConversationItem、ConversationSearch。
+- [ ] 实现 MessageList、Message、MessagePart、MessageActions。
+- [ ] 实现 default、loading、empty、error、unknown 状态。
+- [ ] 验证稳定 ID、revision、sequence、去重和未知 part fallback。
+- [ ] 验证键盘、focus、live-region 和 reduced-motion。
+
+### 第二组：Composer 和消息流
+
+- [ ] 实现 Composer、ComposerInput、ComposerToolbar。
+- [ ] 保留中文 IME、selection、Token Mirror 和光标恢复。
+- [ ] 实现 MentionPicker、CommandPicker、AttachmentList、FileReferenceList。
+- [ ] 实现 SendStopButton 和 actionStatus。
+- [ ] 实现流式内容、JumpToLatest、阅读锚点和历史加载。
+- [ ] 验证重复事件、旧 revision、断线重放和快速切换会话。
+- [ ] 验证 compositionstart、compositionend、Enter、Backspace、Delete、粘贴和撤销。
+
+### 第三组：工具和运行过程
+
+- [ ] 实现 RunStatus、RunPhase、ToolActivity、ToolGroup、ToolCall。
+- [ ] 实现 ToolInput、ToolOutput、ProcessOutput、ActivityFeed。
+- [ ] 实现 RunSummary、ContextUsage、截断和权限不足状态。
+- [ ] 支持摘要、惰性展开、分页或外部 renderer。
+- [ ] 验证大输出、错误输出、未知工具和输出中断。
+- [ ] 验证工具详情展开时的焦点和屏幕阅读器语义。
+
+### 第四组：审批和问卷
+
+- [ ] 实现 ApprovalPanel、ApprovalCard、PermissionSummary。
+- [ ] 实现 ApprovalEvidence 和 approvalAvailability。
+- [ ] 表现 pending、submitting、unknown、approved、rejected、expired。
+- [ ] 保留缺少材料时禁用批准但允许拒绝。
+- [ ] 实现 Questionnaire、QuestionCard、QuestionnaireProgress。
+- [ ] 实现草稿串行保存、关闭前 flush、revision 防回退和 unknown 重试。
+- [ ] 验证 actionId、operationId、canonical record 和材料 revision。
+
+### 第五组：Artifact、文件和代码
+
+- [ ] 实现 ArtifactList、ArtifactCard、ArtifactPreview。
+- [ ] 实现 Citation、SourceList、FileReference。
+- [ ] 实现 FilePreview、CodePreview、DiffPreview、TerminalOutput。
+- [ ] 支持 renderer 替换、未知类型 fallback、加载、缺失、禁止和过期状态。
+- [ ] 不把文件读取、下载、Tauri open 或终端连接放入公共包。
+- [ ] 验证大文件和高密度输出的懒加载或摘要策略。
+
+### 第六组：Wpi-Agent 接入
+
+- [ ] 建立 Wpi view-model adapter，不直接传入 agent-client DTO。
+- [ ] 接入 Agent Header、Conversation、Message、Composer 和 RunStatus。
+- [ ] 接入 Tool、Approval、Questionnaire、Artifact 和 File renderer。
+- [ ] 保留 Wpi Query、持久化、权限真实性、文件系统和 Tauri。
+- [ ] 完成真实流式、断线、审批未知回执和问卷恢复验证。
+- [ ] 删除已经被 @wzrhine/agent 替代的 Wpi 视觉重复实现。
+
+### 动效和质量
+
+- [ ] 使用 motion/react 和 Rhine tokens 建立 Agent motion patterns。
+- [ ] 验证消息进入、工具展开、审批出现、Send/Stop、AgentSpark 和侧栏切换。
+- [ ] 验证中断、快速反向、卸载、隐藏页和 reduced-motion。
+- [ ] 验证 320 / 390 / 768 / 1280 / 1920 布局。
+- [ ] 验证 Chromium / Firefox / WebKit、axe、键盘和静态 fixture。
+- [ ] 完成 Wpi-Agent 消费项目验收。
+- [ ] 更新 Agent UI acceptance 记录和路线回填。
 
 ## M14：人工无障碍和国际化
 

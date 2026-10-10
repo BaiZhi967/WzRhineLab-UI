@@ -25,7 +25,7 @@
 | M10 | Motion Core 2.0 | 统一 motion contract、生命周期、模式目录、减动和中断测试 |
 | M11 | Rendering Lab | Canvas/SVG 性能实验、渲染适配器契约、是否引入 Canvas 的证据 |
 | M12 | Advanced interaction | Combobox、Drawer、Slider、Accordion、CommandPalette、FilterBar |
-| M13 | Rhine domain patterns | InstrumentPanel、SectionIndex、ExperimentTimeline、InspectorPanel、EvidencePanel |
+| M13 | Rhine domain patterns and Agent UI | InstrumentPanel、EvidencePanel、AgentRunCard、Message、Tool、Approval、Questionnaire、Artifact patterns；拟议 @wzrhine/agent |
 | M14 | Accessibility & internationalization | 屏幕阅读器、200% 缩放、真机、RTL、locale、日期时间策略 |
 | M15 | Public release | 许可证、npm scope、版本、changelog、公开文档和安装验证 |
 | M16 | Source distribution | registry、源码模板、CLI 评估、示例生成 |
@@ -203,6 +203,19 @@ M9.5 不负责建立第二个 headless 组件底座，也不负责加入 Canvas 
 
 DatePicker 必须等 locale、时区、日期库、RTL 和提交格式策略确定后再做。
 
+### Agent UI 前置关系
+
+Agent UI 会优先消费真实场景中需要的高级交互能力：
+
+- Combobox / Autocomplete：模型、技能、文件引用和 mention；
+- Drawer：窄窗口 Agent 详情和文件预览；
+- Slider / NumberField：模型执行参数；
+- Accordion / Collapsible：工具详情、上下文和审批材料；
+- CommandPalette：快捷命令和全局 Agent 操作；
+- FileUpload：附件和拖放引用。
+
+这些组件可以在真实 Wpi-Agent 阻塞时按需求插入流程提前交付。提前交付只关闭当前组件的最小闭环，不关闭整个 M12。
+
 ## M13：Rhine domain patterns
 
 ### 目标
@@ -224,6 +237,34 @@ DatePicker 必须等 locale、时区、日期库、RTL 和提交格式策略确�
 - TraceSummary。
 
 这些组件必须使用 slots、children、render props 或 column definitions，不应该绑定某个后端 API 或数据库模型。
+
+### Agent UI 平台
+
+Agent 领域模式扩展为独立的 @wzrhine/agent 包，纳入以下公共组件族：
+
+- Shell：AgentShell、AgentHeader、AgentSidebar、AgentWorkspace；
+- Conversation：ConversationList、ConversationItem、ConversationSearch；
+- Message：MessageList、Message、MessagePart、StreamingText、JumpToLatest；
+- Composer：Composer、MentionPicker、CommandPicker、AttachmentList、SendStopButton；
+- Execution：RunStatus、ToolActivity、ToolCall、ToolOutput、ProcessOutput、RunSummary；
+- Approval：ApprovalPanel、PermissionSummary、ApprovalEvidence；
+- Questionnaire：Questionnaire、QuestionCard、QuestionnaireRecovery；
+- Artifact：ArtifactCard、ArtifactPreview、Citation、FileReference、CodePreview、DiffPreview；
+- Multi-agent：TaskList、SubagentActivity、TraceSummary、RunComparison。
+
+公共包只接收 view-model 快照并发出 actions。Wpi-Agent 和其他消费项目继续负责查询、缓存、事件恢复、权限真实性、文件系统、终端、Tauri 和运行时协议。
+
+### M13 Agent UI 退出门禁
+
+- 公开 view-model、actions、capability 和 renderer 契约；
+- 至少有静态 fixture 和 Wpi-Agent 真实消费页面；
+- 消息流能够处理稳定 ID、revision、sequence、去重和断线恢复；
+- Composer 能够处理中文 IME、光标、引用和发送/停止；
+- Approval 能够表现 pending、submitting、unknown、acknowledged 和材料缺失；
+- Questionnaire 能够表现草稿、flush、revision 和 unknown 提交；
+- 动效使用 motion/react，支持中断、页面隐藏和 reduced-motion；
+- 不依赖 Wpi DTO、Tauri、Query 或具体 Agent SDK；
+- 组件库和消费项目分别完成行为、a11y、视觉和构建验收。
 
 ## M14：Accessibility & internationalization
 

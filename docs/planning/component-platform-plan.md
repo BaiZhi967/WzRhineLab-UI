@@ -2,7 +2,7 @@
 
 ## 1. 组件分层
 
-WzRhineLab-UI 使用六层结构：
+WzRhineLab-UI 使用七层结构：
 
 | 层级 | 责任 | 当前状态 |
 | --- | --- | --- |
@@ -11,6 +11,7 @@ WzRhineLab-UI 使用六层结构：
 | Navigation / Overlay | Tabs、Menu、Popover、Dialog、Toast、路径 | 基础已完成，Breadcrumb 待做 |
 | Data | Table、Pagination、Progress、Meter、Stat | DataTable 已有，M8 补齐 |
 | Rhine Patterns | 归档、实验、Agent、证据和指标场景 | 首批已完成，M13 扩展 |
+| Agent UI | Agent Shell、消息、Composer、工具、审批、问卷、Artifact 和多 Agent 组合 | 拟议 @wzrhine/agent，M13 分阶段建设 |
 | Effects | 展示型视觉效果和渲染适配器 | DOM/SVG 已有，Canvas/WebGL 后置 |
 
 ### 分层规则
@@ -20,6 +21,8 @@ WzRhineLab-UI 使用六层结构：
 - Navigation / Overlay 不拥有业务状态；
 - Data 提供展示和交互契约，不绑定请求库；
 - Rhine Patterns 通过 slots、children 和 render props 注入业务内容；
+- Agent UI 依赖 Primitives、Fields、Navigation / Overlay、Data 和 Motion contract，但不依赖消费项目 DTO、请求库、Tauri 或 Agent SDK；
+- Agent UI 通过 view-model、actions、capabilities 和 renderer 接入不同运行时；
 - Effects 不阻塞业务结果、不替代语义 DOM；
 - WebGL 不得进入 @wzrhine/react 依赖链。
 
@@ -101,6 +104,32 @@ README 当前将这些列为三十个组件和 RhineProvider。后续统计以�
 - RunComparison；
 - TraceSummary。
 
+### Agent UI 候选
+
+Agent UI 不再只以 AgentRunCard 的形式列在 Rhine Patterns 中，而是规划为独立包：
+
+- AgentShell、AgentHeader、AgentSidebar、AgentWorkspace；
+- ConversationList、ConversationItem、ConversationSearch；
+- MessageList、Message、MessagePart、StreamingText、JumpToLatest；
+- Composer、MentionPicker、CommandPicker、AttachmentList、SendStopButton；
+- RunStatus、ToolActivity、ToolCall、ToolOutput、ProcessOutput、RunSummary；
+- ApprovalPanel、ApprovalEvidence、PermissionSummary；
+- Questionnaire、QuestionCard、QuestionnaireRecovery；
+- ArtifactCard、ArtifactPreview、Citation、SourceList、FileReference；
+- FilePreview、CodePreview、DiffPreview、TerminalOutput；
+- TaskList、SubagentActivity、TraceSummary、RunComparison。
+
+这些组件的公共接口只能接受应用无关的 view-model 和 actions。Wpi-Agent 的 agent-client、TanStack Query、MCP 事实校验、Tauri 和文件系统逻辑留在 adapter。
+
+### Agent UI 的晋升标准
+
+- 当前页面存在真实 Agent 操作场景；
+- 组件行为可以用静态 fixture 复现；
+- 没有依赖 Wpi DTO 或某个 Agent SDK；
+- 组件的异步状态、unknown 回执、焦点和减动行为可以测试；
+- 至少完成组件库验收和一个真实消费项目验收；
+- 已知限制、本次延后能力和路线回填位置已记录。
+
 领域模式的验收页面：
 
 1. Archive Desk：检索、路径、记录详情、数据表；
@@ -164,6 +193,49 @@ README 当前将这些列为三十个组件和 RhineProvider。后续统计以�
 - 手动屏幕阅读器；
 - 真实设备；
 - 反向测试：删除关键语义或样式时测试是否能失败。
+
+
+## 7. 真实需求插入与归属
+
+完整流程见 [真实需求插入与 Agent 引导流程](demand-insertion-workflow.md)，记录字段见 [组件需求记录模板](templates/component-demand.md)。
+
+### 插入类型
+
+| 类型 | 说明 | 处理方式 |
+| --- | --- | --- |
+| mainline | 按当前 M8–M18 顺序推进 | 直接进入当前主线任务 |
+| ahead-of-line | 后续里程碑的依赖已经满足，真实项目需要提前使用 | 交付最小支持子集，映射目标里程碑并回填 |
+| architecture-blocked | 依赖未决 ADR、行为底座或渲染实验 | 只做评估、实验或文档，不假装完成组件 |
+| consumer-local | 与业务数据、权限、账号、接口或文件系统绑定 | 留在消费项目，可提取通用子组件 |
+
+### Agent 引导顺序
+
+Agent 应按以下顺序收集信息，并在每一步复用已知答案：
+
+1. 真实页面、用户目标、阻塞和当前替代方案；
+2. 基础组件、Rhine 领域模式、消费项目组合或 Effects 适配器归属；
+3. 最小支持范围和明确延后范围；
+4. API、受控 / 非受控、状态矩阵、键盘和屏幕阅读器语义；
+5. 动效、reduced motion、响应式、长文本和 SSR；
+6. 依赖闭包、目标里程碑、主线暂停点和恢复点；
+7. 组件库与消费项目的双层验收；
+8. 输出范围卡并等待确认，再进入实现。
+
+用户没有给出足够信息时，Agent 应继续提问；信息已经明确时，不重复询问。新增组件的优先级评分用于排序，不取代真实场景和依赖判断。
+
+### 最小支持闭环
+
+提前交付的组件至少需要：
+
+- 一个真实消费场景；
+- 明确的 API 和状态矩阵；
+- 键盘、focus、屏幕阅读器和 reduced motion 约定；
+- 响应式、长文本、SSR 和宿主样式风险说明；
+- 组件库测试、文档和 package 验证；
+- 消费项目的安装、真实数据、构建和页面验收；
+- 目标里程碑、插入原因、主线恢复点和剩余增强记录。
+
+组件库完成、消费项目尚未验证时，状态只能是库内完成或 Consumer validating，不能标记为 Promoted。
 
 ## 4. API 规则
 
@@ -245,5 +317,5 @@ Stack、Cluster、Container、Grid 等布局组件只有在真实项目中出现
 | 实现成本 | 高且依赖未定 | 中等 | 可复用现有基座 |
 | 测试可行性 | 难以稳定验证 | 可做视觉验证 | 可做行为和语义验证 |
 
-总分 9 分以上进入近期排期；6–8 分进入候选；5 分以下保留在概念或领域层。
+总分用于排序：高分候选优先进入主线，6–8 分进入候选，低分保留在概念或领域层。真实消费项目的明确阻塞可以通过需求插入流程提前处理，不受总分硬门槛阻断。
 
