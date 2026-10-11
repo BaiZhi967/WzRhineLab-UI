@@ -39,7 +39,10 @@ test('Chinese query, no-result state and Escape to clear', async ({ page }) => {
   await expect(search.getByRole('list')).toHaveCount(0);
 });
 
-test('keyboard: Tab from the field reaches the first result', async ({ page }) => {
+test('keyboard: Tab from the field reaches the first result', async ({ page, browserName }) => {
+  // WebKit's default Tab skips links (Safari's "Press Tab to highlight each item" is off and
+  // Playwright cannot enable it), as in interaction.spec.ts; Tab order is asserted in Chromium and Firefox.
+  test.skip(browserName === 'webkit', 'WebKit default Tab skips links');
   await page.goto('/#/');
   const input = page.getByRole('searchbox', { name: '搜索组件、文档与 API' });
   await input.focus();

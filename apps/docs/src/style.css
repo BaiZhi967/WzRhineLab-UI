@@ -1909,8 +1909,7 @@ body,
   margin: 0;
   padding: var(--rl-space-1);
   list-style: none;
-  max-height: 50vh;
-  overflow-y: auto;
+  /* No inner scroll: Firefox makes a scrollable list its own tab stop. Results are capped at 12 and the sidebar scrolls. */
   border: var(--rl-border-width) solid var(--rl-border-subtle);
   border-radius: var(--rl-radius-sm);
   background: var(--rl-bg-raised);
