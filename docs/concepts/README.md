@@ -2,6 +2,8 @@
 
 这八张图均是针对 WzRhineLab UI 创建的原创概念探索，**非官方明日方舟美术素材**。展示方向而非工程真值；图中 AI 生成的文字、假读数、交互面积、颜色/时长数值不作为验收依据。
 
+> Agent UI 产品线另有独立的概念图册（46 个组件、逐项规格与语义线框源页），见 [concepts/agent/README.md](agent/README.md)；本页只覆盖上述基础设计系统八图。
+
 ## 目录结构与图片命名
 最终计划采用 `docs/concepts/images/`，原始 PNG 与经过压缩的展示 WebP 分开保存：
 1. `01-research-ui-overview.png` —— 设计系统首页、科研设备与模块入口。

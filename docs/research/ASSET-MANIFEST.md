@@ -24,3 +24,19 @@
 
 **本记录不虚报已提交的二进制文件**；它们需经仓库所支持的 Git push / 资源导入流程归档。ZIP 已含完整目录和校验表。
 - 归档记录：2026-10-09 由 `scripts/import-visual-assets.ps1` 导入并提交（5ddee17，17 个文件），已在 `main`。
+
+## Agent 组件概念图册（2026-10-11 导入）
+
+第二批概念资源：`WzRhine_Agent_Component_Atlas`（Agent UI 平台规划配套图册），来源为维护者本机交付目录（无 ZIP / SHA256SUMS 交付表）。相对交付原件的整理与校验记录见 [concepts/agent/README.md](../concepts/agent/README.md) 的「导入记录」一节。
+
+| 内容 | 数量 | 仓库路径 | 规格 |
+| --- | --- | --- | --- |
+| 版面级概念图 + 总览拼版 | 13 | `docs/concepts/agent/images/`（编号 05–17 + `contact-sheet.png`） | 1600×1000 PNG |
+| 单组件图 | 46 | `docs/concepts/agent/images/01-*.png` … `46-*.png` | 1600×1000 PNG |
+| 语义线框 HTML 源页 | 46 | `docs/concepts/agent/source-pages/` | 每个约 17 KB |
+| 机读元数据 / 逐项规格 / 离线浏览器 | 3 | `manifest.json` / `COMPONENT-SPECS.md` / `index.html` | — |
+
+- 剔除项：5 张与编号文件 SHA-256 完全一致的中文名重复 PNG、顶层冗余 `contact-sheet.jpg`（保留无损 PNG 版）。
+- 目录内自带 `SHA256SUMS.txt`（109 个文件），本次以工作区文件实时计算生成；入库提交后可据此复验。
+- 未做项：未生成 WebP 预览对（现有 8 张基础概念图有 PNG + WebP 对，本册暂只有 PNG，如需文档站加速可后补）；许可说明沿用项目整体状态——源代码许可证尚未选定。
+- 归档记录：2026-10-11 手动导入（非 `import-visual-assets.ps1`），**尚未提交**，待 Git 提交与 push 后在本节补记提交号。

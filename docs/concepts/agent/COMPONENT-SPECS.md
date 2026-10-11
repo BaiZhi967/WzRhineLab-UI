@@ -1,0 +1,2172 @@
+# WzRhineLab UI Agent 组件逐项设计规格
+
+共 46 个独立组件，每个组件一图。
+
+> 所有 Props、状态矩阵均为设计建议，不能据此声称已在 @wzrhine/agent 实现。
+
+## 导航
+
+- [01 AgentShell — 智能体工作区容器](#01-agentshell--智能体工作区容器)
+- [02 AgentHeader — 对话标题与操作栏](#02-agentheader--对话标题与操作栏)
+- [03 ConversationList — 会话索引列表](#03-conversationlist--会话索引列表)
+- [04 ConversationRow — 单条会话记录](#04-conversationrow--单条会话记录)
+- [05 AgentMessage — 对话消息](#05-agentmessage--对话消息)
+- [06 MessagePart — 消息内容片段](#06-messagepart--消息内容片段)
+- [07 MessageList — 消息流容器](#07-messagelist--消息流容器)
+- [08 ThinkingBlock — 思考摘要块](#08-thinkingblock--思考摘要块)
+- [09 AgentProcess — 运行过程与调用轮次](#09-agentprocess--运行过程与调用轮次)
+- [10 RunStatus — 智能体运行状态](#10-runstatus--智能体运行状态)
+- [11 ToolActivity — 工具活动分组](#11-toolactivity--工具活动分组)
+- [12 ToolRecord — 单次工具调用记录](#12-toolrecord--单次工具调用记录)
+- [13 CodeModeToolTree — Code Mode 嵌套调用树](#13-codemodetooltree--Code Mode 嵌套调用树)
+- [14 Composer — 智能体输入器](#14-composer--智能体输入器)
+- [15 MentionMenu — 文件与上下文引用菜单](#15-mentionmenu--文件与上下文引用菜单)
+- [16 SlashCommandMenu — 斜杠命令与技能选择](#16-slashcommandmenu--斜杠命令与技能选择)
+- [17 AttachmentList — 附件与文件引用条](#17-attachmentlist--附件与文件引用条)
+- [18 SendStopButton — 发送与停止动作](#18-sendstopbutton--发送与停止动作)
+- [19 ModelPicker — 模型与执行强度选择](#19-modelpicker--模型与执行强度选择)
+- [20 ApprovalPanel — 工具权限审批](#20-approvalpanel--工具权限审批)
+- [21 QuestionnaireCard — Agent 向用户提问](#21-questionnairecard--Agent 向用户提问)
+- [22 PersistentTerminal — 持久终端面板](#22-persistentterminal--持久终端面板)
+- [23 TerminalRow — 终端索引项](#23-terminalrow--终端索引项)
+- [24 SubAgentCard — 子 Agent 任务卡](#24-subagentcard--子 Agent 任务卡)
+- [25 AgentSpark — Agent 活动指示](#25-agentspark--Agent 活动指示)
+- [26 AgentSidePane — 上下文详情面板](#26-agentsidepane--上下文详情面板)
+- [27 ContextUsage — 上下文与 Token 用量](#27-contextusage--上下文与 Token 用量)
+- [28 PinnedSummary — 固定摘要卡](#28-pinnedsummary--固定摘要卡)
+- [29 ArtifactCard — 生成产物卡](#29-artifactcard--生成产物卡)
+- [30 FilePreview — 文件材料预览](#30-filepreview--文件材料预览)
+- [31 DiffPreview — 代码或文件差异预览](#31-diffpreview--代码或文件差异预览)
+- [32 CitationChip — 引用与来源标签](#32-citationchip--引用与来源标签)
+- [33 ActivityLedger — 运行事件记录](#33-activityledger--运行事件记录)
+- [34 ErrorRecoveryNotice — 错误与恢复提示](#34-errorrecoverynotice--错误与恢复提示)
+- [35 JumpToLatest — 返回最新消息按钮](#35-jumptolatest--返回最新消息按钮)
+- [36 RunSummary — 运行结果摘要](#36-runsummary--运行结果摘要)
+- [37 FileReadTool — 文件读取工具详情](#37-filereadtool--文件读取工具详情)
+- [38 FileWriteTool — 文件写入工具详情](#38-filewritetool--文件写入工具详情)
+- [39 EditFileTool — 定向文件编辑详情](#39-editfiletool--定向文件编辑详情)
+- [40 ApplyPatchTool — 多块补丁工具详情](#40-applypatchtool--多块补丁工具详情)
+- [41 ManageFilesTool — 批量文件管理工具](#41-managefilestool--批量文件管理工具)
+- [42 RunCommandTool — 系统命令调用详情](#42-runcommandtool--系统命令调用详情)
+- [43 MCPExecuteTool — MCP 远端工具调用](#43-mcpexecutetool--MCP 远端工具调用)
+- [44 NativeModelTool — 原生模型调用材料](#44-nativemodeltool--原生模型调用材料)
+- [45 ToolOutput — 工具结果与结构化输出](#45-tooloutput--工具结果与结构化输出)
+- [46 ToolHistory — 完整工具审计历史](#46-toolhistory--完整工具审计历史)
+
+## 01. AgentShell — 智能体工作区容器
+
+**所属层级：** 01 / 工作台
+
+**设计目标：** 承载 Agent 对话、上下文面板和输入区的可组合结构；提供插槽但不负责路由或业务请求。
+
+![AgentShell 独立概念图](images/01-agent-shell.png)
+
+### 结构 Anatomy
+
+- Header 顶栏
+- Conversation 主要阅读区
+- Composer 停靠区
+- ContextPanel 可选详情面板
+- ResizeHandle 可选拖拽分隔
+
+### 状态 State matrix
+
+- `full 完整布局`
+- `context-open 详情展开`
+- `compact 紧凑布局`
+- `empty 无会话`
+
+### 交互与行为
+槽位可独立组合；窗口变窄时优先隐藏辅助面板而非压缩阅读列；分隔条可键盘调整。
+
+### 可访问性
+main、complementary 和 region 语义明确；分隔条支持方向键、Home/End、焦点恢复。
+
+### 动效与降级
+面板显隐只用单轴位移和透明度；布局变化可中断；减动时立即呈现最终位置。
+
+### 公开接口建议
+`slots: header / conversation / composer / context; contextOpen; onContextOpenChange`
+
+### 验收要点
+宽屏、窄屏及 200% 缩放下阅读列可用；面板状态不丢失；无布局抖动。
+
+### 概念图示例
+三栏研究工作台：会话 / 对话 / 上下文，主对话阅读宽度独立保持。
+
+---
+
+## 02. AgentHeader — 对话标题与操作栏
+
+**所属层级：** 01 / 工作台
+
+**设计目标：** 展示当前会话标题、Agent 身份、运行状态、来源关系以及上下文和更多操作入口。
+
+![AgentHeader 独立概念图](images/02-agent-header.png)
+
+### 结构 Anatomy
+
+- Back / Fork 来源按钮
+- Title 可截断标题
+- AgentIdentity Agent 识别
+- RunBadge 运行状态
+- ContextToggle 侧栏切换
+- Actions 操作按钮
+
+### 状态 State matrix
+
+- `idle 静止`
+- `running 运行中`
+- `subagent 子任务`
+- `pending 操作待处理`
+- `narrow 窄宽`
+
+### 交互与行为
+更名入口仅在 hover / focus-within 出现但预留空间；标题截断后可读取全名。
+
+### 可访问性
+所有图标按钮有可访问名称；侧栏开关 aria-pressed 与实际状态同步。
+
+### 动效与降级
+状态点可短暂呼吸；标题和操作按钮不随更新跳动；减动保留静态图标。
+
+### 公开接口建议
+`title; identity; status; onRename; onToggleContext; actionSlots`
+
+### 验收要点
+标题过长不压缩状态和操作；键盘能触发全部入口，焦点可见。
+
+### 概念图示例
+分析项目结构 · Research Agent · 运行中；右侧设置、更多和详情切换。
+
+---
+
+## 03. ConversationList — 会话索引列表
+
+**所属层级：** 01 / 工作台
+
+**设计目标：** 展示置顶、最近、归档会话并提供检索、选中、未读标记与列表操作。
+
+![ConversationList 独立概念图](images/03-conversation-list.png)
+
+### 结构 Anatomy
+
+- SearchInput 搜索
+- SectionHeading 分组
+- ConversationRow 行
+- SelectionGhost 选中背景
+- EmptyState 空列表
+- ListViewport 滚动容器
+
+### 状态 State matrix
+
+- `loading 加载`
+- `default 常规`
+- `selected 选中`
+- `search-empty 无结果`
+- `archived 已归档`
+- `error 失败`
+
+### 交互与行为
+搜索采用外部提供的数据或回调；背景刷新不能自动切换用户正在阅读的会话。
+
+### 可访问性
+明确列表、组和选中状态；逐行操作可用键盘访问；hover 入口在焦点状态也显现。
+
+### 动效与降级
+选中背景可平滑移动；筛选和虚拟列表变化时保留可中断规则。
+
+### 公开接口建议
+`items; selectedId; sections; search; onSelect; onSearch; renderActions`
+
+### 验收要点
+上百条会话时保持响应；独立滚动；选中项在刷新后不意外变更。
+
+### 概念图示例
+置顶 / 最近 / 归档；正在运行的琥珀状态点和完成未读标记。
+
+---
+
+## 04. ConversationRow — 单条会话记录
+
+**所属层级：** 01 / 工作台
+
+**设计目标：** 在有限横向空间内呈现标题、时间、活动状态、未读与二级操作。
+
+![ConversationRow 独立概念图](images/04-conversation-row.png)
+
+### 结构 Anatomy
+
+- StatusDot 状态点
+- Title 会话名
+- Time 时间
+- Unread 未读计数
+- MoreMenu 行菜单
+- ActiveIndicator 选中标记
+
+### 状态 State matrix
+
+- `default 默认`
+- `hover 悬停`
+- `selected 选中`
+- `running 运行`
+- `unread 未读`
+- `disabled 禁用`
+
+### 交互与行为
+主点击用于切换会话，二级菜单避免冒泡；长标题单行截断且保持时间可见。
+
+### 可访问性
+行的按钮具有名称与选中语义；焦点进入时显示菜单；状态不能仅靠颜色。
+
+### 动效与降级
+选中高亮背景移动，减动直接切换；未读变化不影响行高。
+
+### 公开接口建议
+`item; selected; unread; onSelect; onPin; onArchive; onMore`
+
+### 验收要点
+长中文、长英文、无标题、运行中同时未读均不挤压或误触。
+
+### 概念图示例
+海洋标本分析 | 14:26 | 运行中 / 选中 / 未读 2。
+
+---
+
+## 05. AgentMessage — 对话消息
+
+**所属层级：** 02 / 对话与思考
+
+**设计目标：** 承载 User、Assistant、System 等消息的语义结构、内容片段和操作区域。
+
+![AgentMessage 独立概念图](images/05-agent-message.png)
+
+### 结构 Anatomy
+
+- Avatar 身份
+- Header 来源与时间
+- Body 消息正文
+- Parts 不同内容类型
+- Actions 复制等操作
+- Metadata 状态与序列
+
+### 状态 State matrix
+
+- `user 用户`
+- `assistant 助手`
+- `streaming 流式`
+- `edited 编辑`
+- `error 错误`
+- `partial 部分输出`
+
+### 交互与行为
+消息数据由外部归一化；不同 Part 用 renderer 插槽呈现；同一个 messageId 保持稳定身份。
+
+### 可访问性
+正文选择和复制可用；流式播报节流；复制操作和内容结构有独立标签。
+
+### 动效与降级
+只在新消息首次进入时动画；流式更新不反复整体入场；减动静态呈现。
+
+### 公开接口建议
+`message; parts; renderPart; streaming; actions; onRetry`
+
+### 验收要点
+长文本、Markdown、代码、附件、失败等状态下布局不跳动。
+
+### 概念图示例
+一条用户消息 + 一条带分析摘要、代码片段和工具引用的助手消息。
+
+---
+
+## 06. MessagePart — 消息内容片段
+
+**所属层级：** 02 / 对话与思考
+
+**设计目标：** 统一渲染文本、Markdown、代码、图片、引用、工具和结构化数据，同时保留扩展插槽。
+
+![MessagePart 独立概念图](images/06-message-part.png)
+
+### 结构 Anatomy
+
+- PartType 类型识别
+- Renderer 内容渲染
+- Fallback 不支持提示
+- Metadata 类型元数据
+- Actions 片段操作
+
+### 状态 State matrix
+
+- `text 文本`
+- `markdown 富文本`
+- `code 代码`
+- `image 图片`
+- `tool 工具`
+- `unsupported 未知类型`
+
+### 交互与行为
+按 partId 稳定渲染并按需加载重型 renderer；未知类型保留原始可读摘要。
+
+### 可访问性
+结构化内容保留真实文本；代码可以键盘复制；图片需要替代文本。
+
+### 动效与降级
+大型 Part 延迟渲染，不阻塞消息滚动；减动优先完整内容。
+
+### 公开接口建议
+`part; renderers; fallback; onOpen; onCopy`
+
+### 验收要点
+支持至少六种内容；未知类型不能白屏；多实例不串状态。
+
+### 概念图示例
+Markdown、代码块、图像材料、引用和未知类型的单一 Part 对照。
+
+---
+
+## 07. MessageList — 消息流容器
+
+**所属层级：** 02 / 对话与思考
+
+**设计目标：** 负责消息顺序、阅读列、流式期间的滚动锚定、回到底部入口和列表状态。
+
+![MessageList 独立概念图](images/07-message-list.png)
+
+### 结构 Anatomy
+
+- Viewport 可滚动区
+- MessageItem 消息条目
+- Anchor 阅读锚点
+- JumpToLatest 跳底按钮
+- LoadEarlier 历史加载
+
+### 状态 State matrix
+
+- `empty 空列表`
+- `streaming 流式`
+- `reading-history 查看历史`
+- `loading-earlier 载入旧消息`
+- `error 错误`
+
+### 交互与行为
+用户向上阅读时停止自动跟随；新消息到达时保持阅读位置；顺序由适配器提供。
+
+### 可访问性
+可用屏幕阅读器浏览按消息分组的内容，新增内容合理播报，不强制焦点跳转。
+
+### 动效与降级
+仅新增项做轻量入场；不对整个长列表做 layout 动画。
+
+### 公开接口建议
+`messages; isStreaming; atLatest; onJumpLatest; onLoadEarlier`
+
+### 验收要点
+长历史、流式文本、工具输出展开和跨会话切换时不意外滚动。
+
+### 概念图示例
+中央阅读列：正在流式输出，下方“返回最新”，上方已展开历史记录。
+
+---
+
+## 08. ThinkingBlock — 思考摘要块
+
+**所属层级：** 02 / 对话与思考
+
+**设计目标：** 显示允许公开展示的思考摘要、步骤和最新活动，不假定存在可展示的完整私有推理。
+
+![ThinkingBlock 独立概念图](images/08-thinking-block.png)
+
+### 结构 Anatomy
+
+- DisclosureTrigger 折叠按钮
+- PhaseLabel 思考状态
+- LatestLine 最新活动
+- Elapsed 耗时
+- Details 公开过程
+- TruncatedNotice 截取提示
+
+### 状态 State matrix
+
+- `collapsed 折叠`
+- `expanded 展开`
+- `streaming 更新中`
+- `completed 完成`
+- `interrupted 中断`
+- `truncated 截取`
+
+### 交互与行为
+默认紧凑折叠；允许用户主动展开；摘要来自可公开显示的结构化运行记录。
+
+### 可访问性
+触发器使用 aria-expanded / aria-controls；摘要变化时避免高频打断读屏。
+
+### 动效与降级
+只对详情高度和图标旋转做短动画；减动时瞬时切换，信息不丢失。
+
+### 公开接口建议
+`label; status; summary; latestLine; elapsed; expanded; onExpandedChange`
+
+### 验收要点
+折叠/展开可键盘操作；思考中更新不丢失阅读和选区。
+
+### 概念图示例
+思考 2.1 · 正在核对相关文件；展开显示公开阶段记录与耗时。
+
+---
+
+## 09. AgentProcess — 运行过程与调用轮次
+
+**所属层级：** 02 / 对话与思考
+
+**设计目标：** 把模型调用轮次、阶段文本、思考摘要和嵌套工具操作编排成可浏览的过程记录。
+
+![AgentProcess 独立概念图](images/09-agent-process.png)
+
+### 结构 Anatomy
+
+- RunHeader 当前运行
+- CallHeader 第 N 轮
+- StageRow 阶段信息
+- ThinkingBlock 思考区
+- ToolTree 工具树
+- Truncation 提示
+
+### 状态 State matrix
+
+- `active 进行中`
+- `collapsed 折叠`
+- `expanded 展开`
+- `completed 完成`
+- `interrupted 中断`
+- `truncated 截取`
+
+### 交互与行为
+按调用轮次与 blockId 稳定定位；缺失记录时显示迟到引用入口，不伪造执行结果。
+
+### 可访问性
+树结构使用可理解的层级与展开语义；过程截取保留完整记录入口。
+
+### 动效与降级
+当前步骤强调单点；新工具行入场可中断；减动静态展示状态变更。
+
+### 公开接口建议
+`process; calls; active; details; renderTool; expanded`
+
+### 验收要点
+嵌套工具、过程截取、延迟载入、模型调用中断均可复现。
+
+### 概念图示例
+第 2 轮：思考摘要 / Code Mode / read_file / edit_file / 完成。
+
+---
+
+## 10. RunStatus — 智能体运行状态
+
+**所属层级：** 02 / 对话与思考
+
+**设计目标：** 以统一图标、文案、色调表达运行轴状态，同时与连接同步和用户动作回执分离。
+
+![RunStatus 独立概念图](images/10-run-status.png)
+
+### 结构 Anatomy
+
+- Icon 状态图标
+- Label 状态文字
+- Phase 可选阶段
+- Elapsed 耗时
+- Hint 可选说明
+
+### 状态 State matrix
+
+- `idle`
+- `queued`
+- `preparing`
+- `thinking`
+- `responding`
+- `executing_tool`
+- `waiting_user`
+- `waiting_approval`
+- `saving`
+- `completed`
+- `failed`
+- `cancelled`
+
+### 交互与行为
+必须区分 runStatus、syncStatus 和 actionStatus；未知回执不能误显示成功。
+
+### 可访问性
+状态变化支持 role=status；警告或必须操作才使用强提示；含可读文案。
+
+### 动效与降级
+运行中可低频活动标识；减动使用静态符号，不依赖闪烁。
+
+### 公开接口建议
+`runStatus; phase; syncStatus; actionStatus; labelOverride`
+
+### 验收要点
+所有状态都能单凭图标和文字识别；同步失败不改变真实运行状态。
+
+### 概念图示例
+十二种状态芯片 + 主状态组件：执行工具中 / 连接恢复中 / 操作回执未知。
+
+---
+
+## 11. ToolActivity — 工具活动分组
+
+**所属层级：** 03 / 工具与执行
+
+**设计目标：** 聚合本轮工具调用，并提供展开详情、操作数量、已完成进度和完整历史入口。
+
+![ToolActivity 独立概念图](images/11-tool-activity.png)
+
+### 结构 Anatomy
+
+- GroupHeader 工具组标题
+- Count 次数
+- Elapsed 运行耗时
+- ToolRows 工具行
+- Disclosure 展开
+- HistoryLink 历史入口
+
+### 状态 State matrix
+
+- `collapsed 折叠`
+- `running 运行中`
+- `completed 完成`
+- `partial 部分记录`
+- `error 错误`
+
+### 交互与行为
+工具行按 sequence/id 唯一化；历史与实时记录重叠时由适配器去重。
+
+### 可访问性
+列表展开按钮有 aria-expanded；长工具名和输出不覆盖操作按钮。
+
+### 动效与降级
+折叠与行首次进入使用小幅动效；大量工具行关闭逐项布局动画。
+
+### 公开接口建议
+`tools; active; elapsed; expanded; onOpenHistory; renderTool`
+
+### 验收要点
+多个工具同时运行、超长记录和分页历史无重复行。
+
+### 概念图示例
+3 个操作 · 18.4s：read_file 已完成、edit_file 待审批、run_command 运行中。
+
+---
+
+## 12. ToolRecord — 单次工具调用记录
+
+**所属层级：** 03 / 工具与执行
+
+**设计目标：** 统一显示工具名称、目标、权限来源、结果摘要和按需展开的输入/输出。
+
+![ToolRecord 独立概念图](images/12-tool-record.png)
+
+### 结构 Anatomy
+
+- ToolName 名称
+- Subject 对象
+- Status 结果
+- Category 分类
+- Disclosure 展开
+- Arguments 参数
+- Result 输出
+
+### 状态 State matrix
+
+- `queued`
+- `running`
+- `waiting_approval`
+- `partial`
+- `completed`
+- `failed`
+- `denied`
+- `cancelled`
+- `unknown`
+
+### 交互与行为
+展开时可延迟加载完整审计记录；只显示摘要时不能冒充完整结果。
+
+### 可访问性
+操作行按钮具备完整可访问名称；输出区保持可选择、可复制。
+
+### 动效与降级
+状态变化不重置已展开内容；短动画且不干扰长日志阅读。
+
+### 公开接口建议
+`operationId; toolName; subject; status; result; onLoadDetails`
+
+### 验收要点
+工具缺失、结果迟到、部分输出和日志截取时仍可追踪来源。
+
+### 概念图示例
+read_file、edit_file、run_command 三种内容共用 ToolRecord 外壳。
+
+---
+
+## 13. CodeModeToolTree — Code Mode 嵌套调用树
+
+**所属层级：** 03 / 工具与执行
+
+**设计目标：** 可视化一个 Code Mode 脚本及其派生工具的父子关系，不把不同工具合并为同一状态。
+
+![CodeModeToolTree 独立概念图](images/13-code-mode-tool-tree.png)
+
+### 结构 Anatomy
+
+- ParentCall 父任务
+- ScriptDisclosure 脚本查看
+- ChildRows 子工具
+- TreeConnector 连接线
+- Outcome 执行结果
+
+### 状态 State matrix
+
+- `running 运行`
+- `partially-completed 部分成功`
+- `failed-child 子调用失败`
+- `expanded 展开`
+- `truncated 截取`
+
+### 交互与行为
+节点以 parentBlockId 构建稳定树结构；父级完成不代表所有外部副作用都成功。
+
+### 可访问性
+层级可用列表/tree 语义或清晰分组；展开按钮状态正确。
+
+### 动效与降级
+入场单轴；深层子树可减少动画，避免频繁重排。
+
+### 公开接口建议
+`root; blocks; renderTool; onViewScript; expandedIds`
+
+### 验收要点
+深层嵌套、脚本截取、失败子调用可辨认。
+
+### 概念图示例
+Code Mode → read_directory → read_file → apply_patch，其中补丁等待审批。
+
+---
+
+## 14. Composer — 智能体输入器
+
+**所属层级：** 04 / 输入与选择
+
+**设计目标：** 提供多行输入、文件/技能 token、模型和权限选择以及发送、停止与草稿状态。
+
+![Composer 独立概念图](images/14-composer.png)
+
+### 结构 Anatomy
+
+- Textarea 可访问输入
+- TokenMirror 行内标记
+- AttachmentSlot 附件
+- Toolbar 工具栏
+- SendStopAction 操作
+- Feedback 反馈
+
+### 状态 State matrix
+
+- `empty 空态`
+- `focused 聚焦`
+- `multiline 多行`
+- `mentions 引用`
+- `sending 发送`
+- `running 可停止`
+- `failed 草稿恢复`
+
+### 交互与行为
+真实 textarea 负责输入法和选区；镜像仅负责 token 样式；发送前保持引用一致性。
+
+### 可访问性
+中文 IME 组合期间 Enter 不发送；方向键、Tab、Esc 与 mention 菜单约定明确。
+
+### 动效与降级
+高度变化使用稳定测量，菜单出现不遮挡光标；减动关闭旋转和位移。
+
+### 公开接口建议
+`value; onValueChange; onSend; onStop; attachments; mentions; modelSlot; modeSlot`
+
+### 验收要点
+中文输入法、光标、撤销、token 整体删除、草稿回收均通过。
+
+### 概念图示例
+@src 和 /analyze 内联 Token、多行正文、附件、模型切换和发送/停止按钮。
+
+---
+
+## 15. MentionMenu — 文件与上下文引用菜单
+
+**所属层级：** 04 / 输入与选择
+
+**设计目标：** 在输入 `@` 时显示可选文件、材料、上下文目标，支持键盘选择和分组搜索。
+
+![MentionMenu 独立概念图](images/15-mention-menu.png)
+
+### 结构 Anatomy
+
+- Anchor 光标锚点
+- SearchQuery 过滤词
+- Group 分组
+- Option 候选
+- Path 文件路径
+- Highlight 匹配文字
+
+### 状态 State matrix
+
+- `open`
+- `loading`
+- `results`
+- `empty`
+- `error`
+- `disabled`
+- `drilled-folder`
+
+### 交互与行为
+由 Composer 提供 caret 和文本范围；Esc 关闭后相同 query 不应立即自动重开。
+
+### 可访问性
+可用上下箭头与 Enter 选择；输入焦点留在 textarea；列表使用合适的 aria 模式。
+
+### 动效与降级
+在 Composer 上方出现，避让窗口；减动不滑动。
+
+### 公开接口建议
+`query; options; activeIndex; anchor; onSelect; onClose`
+
+### 验收要点
+中文 IME、文件名重名、长路径、异步加载时选择稳定。
+
+### 概念图示例
+@ 查询弹层：文件 3 项 / 数据集 2 项 / 当前上下文，带完整路径与类型。
+
+---
+
+## 16. SlashCommandMenu — 斜杠命令与技能选择
+
+**所属层级：** 04 / 输入与选择
+
+**设计目标：** 在 `/` 输入后提供命令、技能和快捷操作的分组候选列表。
+
+![SlashCommandMenu 独立概念图](images/16-slash-command-menu.png)
+
+### 结构 Anatomy
+
+- Query 查询
+- CommandGroup 命令组
+- SkillGroup 技能组
+- Item 候选
+- Shortcut 快捷键
+- DisabledReason 不可用原因
+
+### 状态 State matrix
+
+- `default`
+- `filtered`
+- `selected`
+- `disabled`
+- `empty`
+- `loading`
+
+### 交互与行为
+候选选择只插入命令或分发显式动作，不自行执行网络或系统命令。
+
+### 可访问性
+方向键/Enter/Escape 行为与 Composer 兼容；屏幕阅读器能读出命令说明。
+
+### 动效与降级
+单次淡入；高亮项不使用不可控位移动效。
+
+### 公开接口建议
+`commands; skills; activeIndex; query; onSelect`
+
+### 验收要点
+同名别名、不可用技能、列表滚动和光标恢复通过。
+
+### 概念图示例
+/analyze /search /summarize + 技能列表，说明与快捷键在右侧。
+
+---
+
+## 17. AttachmentList — 附件与文件引用条
+
+**所属层级：** 04 / 输入与选择
+
+**设计目标：** 管理已附加的文件、图片和关联材料，并展示上传、引用、失效与移除操作。
+
+![AttachmentList 独立概念图](images/17-attachment-list.png)
+
+### 结构 Anatomy
+
+- FileIcon 文件图标
+- Name 名称
+- Meta 体积/类型
+- Thumbnail 缩略图
+- Status 上传或引用状态
+- Remove 移除
+
+### 状态 State matrix
+
+- `ready`
+- `uploading`
+- `failed`
+- `stale-reference`
+- `disabled`
+- `image`
+- `file`
+
+### 交互与行为
+移除的是 UI 引用动作，是否删除远端文件由业务 adapter 决定。
+
+### 可访问性
+删除按钮可访问，长文件名截断可读取完整名称；上传状态可播报。
+
+### 动效与降级
+进度变化不强制移动卡片；缩略图可静态加载。
+
+### 公开接口建议
+`items; onRemove; onRetry; renderPreview`
+
+### 验收要点
+图片、PDF、未知文件、重复名称和失败恢复显示正确。
+
+### 概念图示例
+report.pdf / sample.png / measurement.csv，含引用状态与移除入口。
+
+---
+
+## 18. SendStopButton — 发送与停止动作
+
+**所属层级：** 04 / 输入与选择
+
+**设计目标：** 根据当前输入和运行状态切换发送、停止、忙碌、禁用等可操作动作。
+
+![SendStopButton 独立概念图](images/18-send-stop-button.png)
+
+### 结构 Anatomy
+
+- Icon 图标
+- Label 可访问名称
+- BusyIndicator 忙碌标识
+- HitArea 交互面积
+- PendingFeedback 待确认
+
+### 状态 State matrix
+
+- `ready 可发送`
+- `empty 禁用`
+- `sending 发送中`
+- `running 可停止`
+- `cancelling 停止中`
+- `unknown 回执未知`
+
+### 交互与行为
+停止命令发出不等于运行已停止；回执未知时应显示明确状态，不重复创建动作。
+
+### 可访问性
+label 从“发送”变为“停止生成”；按钮切换不导致焦点丢失。
+
+### 动效与降级
+两图标轻微交叉淡入；减动直接替换图标。
+
+### 公开接口建议
+`canSend; runStatus; actionStatus; onSend; onStop`
+
+### 验收要点
+输入为空、运行正在终止、消息排队时不存在误发送。
+
+### 概念图示例
+发送 → 运行中显示停止 → 停止待确认 → 发送恢复。
+
+---
+
+## 19. ModelPicker — 模型与执行强度选择
+
+**所属层级：** 04 / 输入与选择
+
+**设计目标：** 为当前 Agent 选择 Provider、Model 和 reasoning/effort 等可配置执行选项。
+
+![ModelPicker 独立概念图](images/19-model-picker.png)
+
+### 结构 Anatomy
+
+- Trigger 选择器
+- ProviderGroup 提供商
+- ModelOption 模型
+- Capability 能力标识
+- Effort 强度
+- UnavailableReason 不可用原因
+
+### 状态 State matrix
+
+- `closed`
+- `open`
+- `selected`
+- `disabled`
+- `loading`
+- `error`
+
+### 交互与行为
+受控选择结果由外部更新；切换时不要重置 Composer 草稿。
+
+### 可访问性
+菜单支持键盘导航、搜索和不可用原因朗读；焦点关闭后返回触发器。
+
+### 动效与降级
+二层下钻单轴动效；减动瞬时切换。
+
+### 公开接口建议
+`providers; selectedModel; effort; onModelChange; onEffortChange`
+
+### 验收要点
+不可用模型不可选择，长模型名不溢出；Tauri/Web 中位置正确。
+
+### 概念图示例
+Provider A → vision-1 / text-1，Effort Fast / Balanced / Deep。
+
+---
+
+## 20. ApprovalPanel — 工具权限审批
+
+**所属层级：** 05 / 人工干预
+
+**设计目标：** 向用户展示拟执行操作的完整依据、风险和批准范围，并发出批准或拒绝动作。
+
+![ApprovalPanel 独立概念图](images/20-approval-panel.png)
+
+### 结构 Anatomy
+
+- OperationId 标识
+- Subject 操作对象
+- AuthorizationReason 权限原因
+- MaterialPreview 完整材料
+- DecisionActions 允许/拒绝
+- Receipt 回执
+
+### 状态 State matrix
+
+- `waiting`
+- `material-loading`
+- `unavailable`
+- `submitting`
+- `unknown`
+- `approved`
+- `rejected`
+- `expired`
+
+### 交互与行为
+缺材料时禁止允许但仍能拒绝；按钮点击只发出 action，真实校验在宿主 adapter。
+
+### 可访问性
+含明确的操作描述、风险和批准范围；焦点进入、退出与禁用原因可读。
+
+### 动效与降级
+展开详情可轻量显示；reduced motion 不影响审核信息。
+
+### 公开接口建议
+`operation; authorization; material; canApprove; onApprove; onReject`
+
+### 验收要点
+未知回执、材料不完整、权限过期、重复点击均安全处理。
+
+### 概念图示例
+apply_patch 修改 config.py 的 3 行 Diff；允许一次 / 拒绝一次；详情缺失时仅拒绝可用。
+
+---
+
+## 21. QuestionnaireCard — Agent 向用户提问
+
+**所属层级：** 05 / 人工干预
+
+**设计目标：** 展示 Agent 提出的单选、多选、文本等问题，支持分页、草稿和提交回执。
+
+![QuestionnaireCard 独立概念图](images/21-questionnaire-card.png)
+
+### 结构 Anatomy
+
+- QuestionHeader 问题标题
+- PageIndex 页数
+- Options 选项
+- CustomAnswer 自定义文本
+- DraftStatus 草稿状态
+- SubmitControls 上下页与提交
+
+### 状态 State matrix
+
+- `waiting`
+- `drafting`
+- `saving`
+- `submit-pending`
+- `unknown`
+- `completed`
+- `expired`
+
+### 交互与行为
+问卷是信息收集，不授予工具权限；提交 unknown 时保留相同 revision 和答案供对账。
+
+### 可访问性
+使用 radiogroup/checkbox、aria-current 和 alert 语义；提交错误保留焦点和草稿。
+
+### 动效与降级
+分页切换轻量位移；减动瞬时切换。
+
+### 公开接口建议
+`questionnaire; revision; draft; onSaveDraft; onSubmit; onSkip`
+
+### 验收要点
+关闭前 flush、版本防回退、组合输入和网络未知回执通过。
+
+### 概念图示例
+问题 2/3：需要何种报告？单选、多选及补充说明，草稿保存状态。
+
+---
+
+## 22. PersistentTerminal — 持久终端面板
+
+**所属层级：** 06 / 终端与子代理
+
+**设计目标：** 展示有独立生命周期的终端会话、输入、输出、状态与停止操作。
+
+![PersistentTerminal 独立概念图](images/22-persistent-terminal.png)
+
+### 结构 Anatomy
+
+- TerminalTabs 终端标签
+- TerminalIdentity ID/CWD
+- Console 日志
+- Prompt 输入
+- SessionStatus 生命周期
+- Controls 停止与检查
+
+### 状态 State matrix
+
+- `running`
+- `waiting-input`
+- `closing`
+- `stop-unconfirmed`
+- `unknown`
+- `ended`
+- `read-only-history`
+
+### 交互与行为
+命令工具返回不代表终端关闭；停止请求必须等待确认；只读继承记录不可交互。
+
+### 可访问性
+终端有名称，键盘操作和滚动锚点明确；状态文字不能只靠颜色。
+
+### 动效与降级
+输出新增节流，背景不可见时降低绘制；减动不动画光标。
+
+### 公开接口建议
+`terminalId; cwd; sessionStatus; readOnly; output; onInput; onStop`
+
+### 验收要点
+终端后续仍运行、停止未确认、未知状态、继承历史均区分。
+
+### 概念图示例
+term-7f3a /workspace；命令执行完但 PTY 仍活动，支持输入与状态查询。
+
+---
+
+## 23. TerminalRow — 终端索引项
+
+**所属层级：** 06 / 终端与子代理
+
+**设计目标：** 在侧栏摘要中显示终端名称、会话状态、最近命令、工作目录和操作权限。
+
+![TerminalRow 独立概念图](images/23-terminal-row.png)
+
+### 结构 Anatomy
+
+- Name 名称
+- Backend PTY/进程
+- LastCommand 最近命令
+- Cwd 目录
+- SessionBadge 会话状态
+- StopAction 停止入口
+
+### 状态 State matrix
+
+- `unclosed`
+- `ended`
+- `unknown`
+- `inherited`
+- `stop-pending`
+
+### 交互与行为
+各组可折叠；当前终端和继承只读终端分别呈现。
+
+### 可访问性
+整行打开与停止按钮为不同操作；只读状态有明确描述。
+
+### 动效与降级
+行内状态短过渡，列表不会因为波动重排。
+
+### 公开接口建议
+`terminal; onOpen; onStop; readOnly`
+
+### 验收要点
+长目录被截断且可读取；不可停止的终端没有虚假停止按钮。
+
+### 概念图示例
+未关闭 / 已结束 / 状态待确认 / 继承的终端记录分组。
+
+---
+
+## 24. SubAgentCard — 子 Agent 任务卡
+
+**所属层级：** 06 / 终端与子代理
+
+**设计目标：** 展示子 Agent 的身份、父任务、执行阶段、独立结果和查看详情入口。
+
+![SubAgentCard 独立概念图](images/24-subagent-card.png)
+
+### 结构 Anatomy
+
+- AgentIdentity 身份
+- ParentRef 父任务
+- TaskSummary 任务摘要
+- RunStatus 状态
+- PartialUsage 部分用量
+- OpenDetail 查看
+
+### 状态 State matrix
+
+- `queued`
+- `preparing`
+- `running`
+- `waiting_children`
+- `waiting_user`
+- `needs_attention`
+- `completed`
+- `failed`
+- `interrupted`
+
+### 交互与行为
+父子任务分开追踪；用量是部分值时必须显式标注，不根据状态推算百分比进度。
+
+### 可访问性
+有层级语义、状态文本、操作名称；可键盘跳转子任务。
+
+### 动效与降级
+短状态变化但不自动滚动父面板；减动静态。
+
+### 公开接口建议
+`agent; parentConversationId; status; summary; usage; onOpen`
+
+### 验收要点
+父任务切换、子任务失败/等待用户和多子任务并发可独立显示。
+
+### 概念图示例
+research-agent 运行中，test-agent 等待子任务，summary-agent 已完成。
+
+---
+
+## 25. AgentSpark — Agent 活动指示
+
+**所属层级：** 06 / 终端与子代理
+
+**设计目标：** 用极小图形和状态文字提示 Agent 正在分析、执行、等待或已结束。
+
+![AgentSpark 独立概念图](images/25-agent-spark.png)
+
+### 结构 Anatomy
+
+- Glyph 点阵/图形
+- Label 状态文本
+- Phase 状态阶段
+- ReducedMotion 静态替代
+
+### 状态 State matrix
+
+- `thinking`
+- `responding`
+- `executing_tool`
+- `waiting_user`
+- `completed`
+- `error`
+
+### 交互与行为
+仅用于辅助识别当前状态，不承载唯一信息；由外部运行阶段驱动。
+
+### 可访问性
+装饰图形 aria-hidden，旁侧文字用于可访问状态。
+
+### 动效与降级
+可控制低频点阵相位；页面不可见暂停，减动渲染静态帧。
+
+### 公开接口建议
+`phase; size; label; animate`
+
+### 验收要点
+12 个图标实例不占用大量 CPU；低功耗和减动下状态不丢失。
+
+### 概念图示例
+九点视觉指示：思考、工具、审批等待、完成六组静态帧。
+
+---
+
+## 26. AgentSidePane — 上下文详情面板
+
+**所属层级：** 07 / 上下文与产物
+
+**设计目标：** 集中显示摘要、引用文件、终端、问卷、子任务和运行详情的上下文容器。
+
+![AgentSidePane 独立概念图](images/26-agent-side-pane.png)
+
+### 结构 Anatomy
+
+- Tabs 分类
+- PinnedSummary 摘要
+- Files 文件
+- Terminals 终端
+- Questions 问卷
+- PaneControls 展开/关闭
+
+### 状态 State matrix
+
+- `closed`
+- `summary`
+- `files`
+- `terminal`
+- `questions`
+- `loading`
+- `error`
+
+### 交互与行为
+打开侧栏不应不可控地压缩阅读列；各 Tab 保留必要独立滚动位置。
+
+### 可访问性
+有 complementary/region 名称；开关操作能恢复焦点；窄屏使用抽屉/Sheet。
+
+### 动效与降级
+面板单轴开合，Tab 切换不大范围漂移；减动直接就位。
+
+### 公开接口建议
+`open; activeTab; sections; onClose; onTabChange; renderContent`
+
+### 验收要点
+右侧 Tab 与会话一致；窄屏、200% 缩放和双屏切换正常。
+
+### 概念图示例
+Summary / Files / Terminal / Questions / Subagents 五个详情入口。
+
+---
+
+## 27. ContextUsage — 上下文与 Token 用量
+
+**所属层级：** 07 / 上下文与产物
+
+**设计目标：** 显示上下文使用量、工具调用数量和预算消耗，明确精确值、估算与部分数据区别。
+
+![ContextUsage 独立概念图](images/27-context-usage.png)
+
+### 结构 Anatomy
+
+- MetricLabel 指标
+- Value 当前值
+- Maximum 上限
+- ProgressBar 视觉进度
+- Validity 数据完整度
+
+### 状态 State matrix
+
+- `known`
+- `estimated`
+- `partial`
+- `unknown`
+- `near-limit`
+- `over-limit`
+
+### 交互与行为
+仅在有可靠分母时绘制精确百分比；部分数据必须标注 partial。
+
+### 可访问性
+progressbar 有 value/max 与可读文本；不会只用进度条表达信息。
+
+### 动效与降级
+数值平滑过渡可选；减动直接更新，不闪烁。
+
+### 公开接口建议
+`used; max; unit; completeness; label`
+
+### 验收要点
+未知 max、部分统计、超过上限和大数格式均可正确显示。
+
+### 概念图示例
+Tokens 12.4k / 32k · 39%；Tool calls 3 / 6，部分用量标识。
+
+---
+
+## 28. PinnedSummary — 固定摘要卡
+
+**所属层级：** 07 / 上下文与产物
+
+**设计目标：** 展示当前会话的重要上下文、关键材料和可回到源记录的引用。
+
+![PinnedSummary 独立概念图](images/28-pinned-summary.png)
+
+### 结构 Anatomy
+
+- Title 标题
+- Description 摘要
+- SourceTags 关联材料
+- Status 摘要状态
+- PinAction 固定
+- Disclosure 折叠
+
+### 状态 State matrix
+
+- `collapsed`
+- `expanded`
+- `updating`
+- `stale`
+- `missing`
+
+### 交互与行为
+摘要更新不自动覆盖用户正在编辑的内容，允许查看数据来源。
+
+### 可访问性
+标题与来源可读，折叠按钮标明展开状态。
+
+### 动效与降级
+折叠短过渡、内容更新不整卡入场；减动静态。
+
+### 公开接口建议
+`summary; sources; status; pinned; onPin; onOpenSource`
+
+### 验收要点
+长摘要、来源失效与多会话独立显示正确。
+
+### 概念图示例
+研究目标、数据范围、关键上下文，显示 4 Sources / 3 Tools。
+
+---
+
+## 29. ArtifactCard — 生成产物卡
+
+**所属层级：** 07 / 上下文与产物
+
+**设计目标：** 展示 Agent 生成的文件、报告、图片和结构化产物，以及查看、打开和保存操作。
+
+![ArtifactCard 独立概念图](images/29-artifact-card.png)
+
+### 结构 Anatomy
+
+- Preview 缩略图
+- Title 产物名
+- Type 类型
+- Meta 大小/版本
+- Status 保存状态
+- Actions 打开/下载
+
+### 状态 State matrix
+
+- `generating`
+- `partial`
+- `saved`
+- `failed`
+- `unavailable`
+- `stale`
+
+### 交互与行为
+仅在产物确实持久化后显示已保存；部分输出保留对应说明。
+
+### 可访问性
+操作按钮具备明确目的；预览内容需要可读替代文本。
+
+### 动效与降级
+生成中可使用低频进度；列表新产物轻量入场；减动静态。
+
+### 公开接口建议
+`artifact; status; onOpen; onDownload; renderPreview`
+
+### 验收要点
+文件缺失、部分保存、未完成、下载失败均有清晰文案。
+
+### 概念图示例
+analysis-report.md、figure_01.png、results.csv 三类产物状态。
+
+---
+
+## 30. FilePreview — 文件材料预览
+
+**所属层级：** 07 / 上下文与产物
+
+**设计目标：** 提供文件内容的只读预览、原始内容、元数据和外部打开入口。
+
+![FilePreview 独立概念图](images/30-file-preview.png)
+
+### 结构 Anatomy
+
+- FileHeader 文件名
+- PreviewTab 预览
+- RawTab 原始
+- MetadataTab 元数据
+- ContentRenderer 内容
+- OpenAction 打开
+
+### 状态 State matrix
+
+- `loading`
+- `text`
+- `image`
+- `binary`
+- `error`
+- `large-file`
+- `unavailable`
+
+### 交互与行为
+大文件需要限制读取并支持分块；文件系统接口由消费者提供。
+
+### 可访问性
+标签键盘可切换，文本可选择，图片有 alt，错误可重试。
+
+### 动效与降级
+切换 Tab 平滑但不触发大规模 transform；减动静态。
+
+### 公开接口建议
+`file; renderer; onLoad; onOpenExternal; mode`
+
+### 验收要点
+超大文件、未知 MIME、版本变更与缩窄侧栏均可用。
+
+### 概念图示例
+specimen.png 预览 / raw / metadata，以及可查看来源的说明区。
+
+---
+
+## 31. DiffPreview — 代码或文件差异预览
+
+**所属层级：** 07 / 上下文与产物
+
+**设计目标：** 用稳定的行号、增删行和文件路径展示 Agent 提议或已执行的变更。
+
+![DiffPreview 独立概念图](images/31-diff-preview.png)
+
+### 结构 Anatomy
+
+- Path 文件路径
+- Hunk 变更区块
+- LineNumbers 行号
+- Added 增加行
+- Removed 删除行
+- Copy 复制
+- Status 版本冲突
+
+### 状态 State matrix
+
+- `preview`
+- `proposed`
+- `applied`
+- `conflict`
+- `truncated`
+- `unavailable`
+
+### 交互与行为
+区分“待批准的提案”和“已应用结果”；冲突需重新读取而不是自动重放。
+
+### 可访问性
+红绿不是唯一标记，增删字符和行号明确；可选中文本。
+
+### 动效与降级
+仅局部展开，无闪烁和无必要的流动特效。
+
+### 公开接口建议
+`diff; filePath; revision; status; onViewFull`
+
+### 验收要点
+无换行文本、长行、二进制变化、版本冲突可正确退化。
+
+### 概念图示例
+config.py 变更：-debug=true、+debug=false、+log_level=info。
+
+---
+
+## 32. CitationChip — 引用与来源标签
+
+**所属层级：** 07 / 上下文与产物
+
+**设计目标：** 在回答中标记文件、网页、代码、数据集等证据来源并支持打开详情。
+
+![CitationChip 独立概念图](images/32-citation-chip.png)
+
+### 结构 Anatomy
+
+- SourceIcon 类型图标
+- Index 序号
+- ShortLabel 名称
+- HoverCard 摘要
+- OpenSource 打开
+
+### 状态 State matrix
+
+- `default`
+- `hover`
+- `focused`
+- `unavailable`
+- `selected`
+
+### 交互与行为
+标签只呈现真实已绑定来源；失效链接需要可见状态，不能伪造可打开目标。
+
+### 可访问性
+可用链接或按钮语义，键盘聚焦可阅读完整引用标题。
+
+### 动效与降级
+hover 微变化，不使正文行高跳动；减动静态。
+
+### 公开接口建议
+`citation; sourceType; index; onOpen; unavailable`
+
+### 验收要点
+行内多个引用不换行异常；不可用来源有替代说明。
+
+### 概念图示例
+[1] ARC-7742 研究报告；[2] archive.md；[3] 数据集。
+
+---
+
+## 33. ActivityLedger — 运行事件记录
+
+**所属层级：** 07 / 上下文与产物
+
+**设计目标：** 按来源类型与时间顺序呈现 Agent、工具、系统和用户的审计事件。
+
+![ActivityLedger 独立概念图](images/33-activity-ledger.png)
+
+### 结构 Anatomy
+
+- FilterTabs 过滤
+- EventRow 事件
+- Time 时间
+- Actor 来源
+- Outcome 结果
+- DetailLink 详情
+
+### 状态 State matrix
+
+- `all`
+- `agent`
+- `tool`
+- `system`
+- `user`
+- `loading`
+- `empty`
+
+### 交互与行为
+事件由 adapter 标准化；过滤不改变真实事件顺序或历史。
+
+### 可访问性
+事件有结构化时间和可读状态；筛选控件支持键盘。
+
+### 动效与降级
+新事件只在列表可见且用户位于最新位置时轻量进入。
+
+### 公开接口建议
+`events; filter; onFilterChange; onOpenEvent`
+
+### 验收要点
+大量事件、乱序抵达与分页不会重复或闪烁。
+
+### 概念图示例
+All / Agent / Tool / System / User；10:24 文件读取、10:25 用户批准、10:26 运行完成。
+
+---
+
+## 34. ErrorRecoveryNotice — 错误与恢复提示
+
+**所属层级：** 08 / 状态与恢复
+
+**设计目标：** 明确告诉用户哪些内容已保留、哪些动作仍未确认，以及可安全执行的恢复操作。
+
+![ErrorRecoveryNotice 独立概念图](images/34-error-recovery-notice.png)
+
+### 结构 Anatomy
+
+- Severity 风险级别
+- Message 可读说明
+- Evidence 现存输出
+- NextAction 安全恢复
+- Details 诊断链接
+
+### 状态 State matrix
+
+- `retryable`
+- `save-pending`
+- `cancel-unconfirmed`
+- `tool-side-effects`
+- `unknown`
+- `resolved`
+
+### 交互与行为
+本地保存重试不能重新调用模型；有副作用的工具不能默认自动重放。
+
+### 可访问性
+重要错误 role=alert；恢复按钮文本明确作用对象。
+
+### 动效与降级
+只用清晰的状态切换；错误不反复闪烁。
+
+### 公开接口建议
+`errorCode; message; preserved; safeActions; onAction`
+
+### 验收要点
+停止未确认、保存失败、超时与工具副作用未确认状态真实可区分。
+
+### 概念图示例
+已有输出已保留 | 仅重试本地保存 / 核对工具结果 / 检查状态。
+
+---
+
+## 35. JumpToLatest — 返回最新消息按钮
+
+**所属层级：** 08 / 状态与恢复
+
+**设计目标：** 当用户正在查看历史对话时提供回到最新消息的明确操作。
+
+![JumpToLatest 独立概念图](images/35-jump-to-latest.png)
+
+### 结构 Anatomy
+
+- FloatingButton 浮动按钮
+- UnreadCounter 新增数
+- ArrowIcon 方向
+- AccessibleLabel 描述
+
+### 状态 State matrix
+
+- `hidden-at-bottom`
+- `visible`
+- `new-messages`
+- `loading`
+
+### 交互与行为
+到达底部自动隐藏；用户手动上滚时不强制跟随。
+
+### 可访问性
+可键盘激活；使用明确的“返回最新消息”名称。
+
+### 动效与降级
+出现与消失可轻量淡入；减动直接显隐。
+
+### 公开接口建议
+`atLatest; unreadCount; onJump`
+
+### 验收要点
+流式高频和历史加载时不抢夺用户滚动。
+
+### 概念图示例
+返回最新消息 · 3 条新活动，居中悬浮在消息区下缘。
+
+---
+
+## 36. RunSummary — 运行结果摘要
+
+**所属层级：** 08 / 状态与恢复
+
+**设计目标：** 总结本轮完成情况、耗时、工具数量、产物和失败恢复路径。
+
+![RunSummary 独立概念图](images/36-run-summary.png)
+
+### 结构 Anatomy
+
+- RunTitle 运行名
+- Outcome 状态
+- Metrics 指标
+- Tools 工具计数
+- Artifacts 产物
+- Actions 查看过程/详情
+
+### 状态 State matrix
+
+- `running`
+- `completed`
+- `partial`
+- `failed`
+- `cancelled`
+- `saving`
+
+### 交互与行为
+区分运行成功和持久化成功；工具操作可能产生副作用，需要单独提醒。
+
+### 可访问性
+状态和统计具有可访问文本，操作按钮可聚焦。
+
+### 动效与降级
+完成态只做一次短反馈；减动静态。
+
+### 公开接口建议
+`run; metrics; artifacts; status; onOpenTrace`
+
+### 验收要点
+部分成功、保存中、重试保存、取消时正确保留历史。
+
+### 概念图示例
+本轮运行完成 · 4 次工具 · 2 个产物 · 12.4s；查看过程。
+
+---
+
+## 37. FileReadTool — 文件读取工具详情
+
+**所属层级：** 09 / 工具专项
+
+**设计目标：** 只读文件的调用面板，明确路径、读取范围、字符或字节偏移以及结果是否截取。
+
+![FileReadTool 独立概念图](images/37-file-read-tool.png)
+
+### 结构 Anatomy
+
+- FilePath 文件路径
+- ReadRange 读取范围
+- Preview 文本预览
+- ResultInfo EOF/下次偏移
+- Status 读取结果
+- MoreAction 继续读取
+
+### 状态 State matrix
+
+- `loading`
+- `success`
+- `partial`
+- `truncated`
+- `not-found`
+- `error`
+
+### 交互与行为
+文件内容可以逐段读取；已经读到部分内容不能声称读取了全文；下一偏移来自真实结果。
+
+### 可访问性
+路径和行号可读；输出可选择复制；错误描述含文件名。
+
+### 动效与降级
+只显示加载状态变化，已呈现文本不循环入场。
+
+### 公开接口建议
+`tool; filePath; range; text; resultInfo; onReadMore`
+
+### 验收要点
+分页读取、EOF、文件不存在和材料被截取时行为正确。
+
+### 概念图示例
+read_file /src/agent.ts：第 1–80 行已读取，尚有后续内容。
+
+---
+
+## 38. FileWriteTool — 文件写入工具详情
+
+**所属层级：** 09 / 工具专项
+
+**设计目标：** 展示新建或覆盖文件的拟写入内容、目标文件版本和批准前的完整材料。
+
+![FileWriteTool 独立概念图](images/38-file-write-tool.png)
+
+### 结构 Anatomy
+
+- TargetPath 目标路径
+- WriteMode 写入方式
+- Proposal 拟写入内容
+- ExpectedVersion 版本约束
+- ApprovalStatus 审批
+- Outcome 实际结果
+
+### 状态 State matrix
+
+- `proposed`
+- `waiting-approval`
+- `material-loading`
+- `approved`
+- `conflict`
+- `failed`
+
+### 交互与行为
+目标文件版本变化时提示重新获取最新材料；拒绝与批准是独立操作。
+
+### 可访问性
+危险操作有明确的文件名、写入方式和受影响内容，允许按钮满足就绪门禁。
+
+### 动效与降级
+展开写入预览不使用大型布局动画；变更符号保持静态可读。
+
+### 公开接口建议
+`operation; targetPath; proposal; expectedVersion; materialReady; onApprove`
+
+### 验收要点
+提案未完整、文件已存在、并发写入和授权拒绝均能安全降级。
+
+### 概念图示例
+write_file：生成 report.md；完整写入提案与目标状态。
+
+---
+
+## 39. EditFileTool — 定向文件编辑详情
+
+**所属层级：** 09 / 工具专项
+
+**设计目标：** 呈现定向替换操作的旧内容、预期新内容、修改范围和版本校验结果。
+
+![EditFileTool 独立概念图](images/39-edit-file-tool.png)
+
+### 结构 Anatomy
+
+- FilePath 文件
+- EditRange 编辑范围
+- Before 原始片段
+- After 修改片段
+- Revision 修订
+- Status 操作结果
+
+### 状态 State matrix
+
+- `proposed`
+- `waiting-approval`
+- `applied`
+- `conflict`
+- `partial`
+- `failed`
+
+### 交互与行为
+只有预期旧内容和版本符合时才能执行更改；冲突时要求重新核对。
+
+### 可访问性
+用增删标记和颜色双重传达变更，文本可选择复制。
+
+### 动效与降级
+折叠差异区平滑；减动直接显示 diff。
+
+### 公开接口建议
+`filePath; range; before; after; expectedVersion; onReview`
+
+### 验收要点
+上下文变化、跨行编辑和内容截取下不展示虚假成功。
+
+### 概念图示例
+edit_file：将 debug=true 改为 false，保留补丁前后片段。
+
+---
+
+## 40. ApplyPatchTool — 多块补丁工具详情
+
+**所属层级：** 09 / 工具专项
+
+**设计目标：** 针对多文件或多 hunk 的补丁呈现完整差异范围、检查状态和最终应用结果。
+
+![ApplyPatchTool 独立概念图](images/40-apply-patch-tool.png)
+
+### 结构 Anatomy
+
+- PatchHeader 补丁标题
+- ChangedFiles 文件数
+- Hunks 变更块
+- DiffView 差异
+- Conflict 冲突
+- Actions 核对操作
+
+### 状态 State matrix
+
+- `queued`
+- `waiting-approval`
+- `validating`
+- `applied`
+- `conflict`
+- `error`
+
+### 交互与行为
+执行前确保补丁与目标 revision 对应；不在失败后自动重放可能产生副作用的操作。
+
+### 可访问性
+显示每个文件的独立状态，版本冲突明示具体文件。
+
+### 动效与降级
+hunk 折叠按需渲染；已看过的 diff 不在状态刷新时跳动。
+
+### 公开接口建议
+`patch; files; revision; materialReady; onInspect`
+
+### 验收要点
+跨文件补丁、部分冲突和未知应用结果都能明确展示。
+
+### 概念图示例
+apply_patch：2 files、3 hunks、+6 / −3；单文件冲突。
+
+---
+
+## 41. ManageFilesTool — 批量文件管理工具
+
+**所属层级：** 09 / 工具专项
+
+**设计目标：** 展示移动、重命名、删除等批量文件操作的操作清单、目标路径和风险。
+
+![ManageFilesTool 独立概念图](images/41-manage-files-tool.png)
+
+### 结构 Anatomy
+
+- Manifest 操作清单
+- OperationType 类型
+- SourcePath 源位置
+- TargetPath 目标
+- RiskNotice 风险
+- Decision 审批
+
+### 状态 State matrix
+
+- `proposed`
+- `loading-manifest`
+- `waiting-approval`
+- `partial`
+- `completed`
+- `error`
+
+### 交互与行为
+操作清单必须按原始材料可审计；缺少完整清单时只能拒绝或重载。
+
+### 可访问性
+删除等危险操作显示明确对象和无法自动撤销的提示。
+
+### 动效与降级
+清单滚动独立，无自动播放和位移动效。
+
+### 公开接口建议
+`manifest; page; materialReady; onLoadMore; onDecision`
+
+### 验收要点
+多页操作清单、路径冲突和部分完成可逐项核查。
+
+### 概念图示例
+manage_files：移动 2 项、重命名 1 项、删除 1 项；完整清单。
+
+---
+
+## 42. RunCommandTool — 系统命令调用详情
+
+**所属层级：** 09 / 工具专项
+
+**设计目标：** 展示系统命令、工作目录、解释器、执行期限、退出码及终端生命周期差异。
+
+![RunCommandTool 独立概念图](images/42-run-command-tool.png)
+
+### 结构 Anatomy
+
+- Command 完整命令
+- Cwd 工作目录
+- Interpreter 解释器
+- Output stdout/stderr
+- ExitCode 退出码
+- TerminalRef 持久终端
+
+### 状态 State matrix
+
+- `waiting-approval`
+- `running`
+- `returned`
+- `nonzero-exit`
+- `timed-out`
+- `cancel-unconfirmed`
+
+### 交互与行为
+本次工具调用返回不代表持久终端已关闭；非零退出需要检查输出，不能盲目重试。
+
+### 可访问性
+命令文本可选择；权限范围和外部副作用在审批前有说明。
+
+### 动效与降级
+终端输出不逐字符动效，仅保留需要的自动跟随。
+
+### 公开接口建议
+`command; cwd; shell; execution; terminalRef; onOpenTerminal`
+
+### 验收要点
+前台退出、后台存活、超时和停止未确认都有独立标记。
+
+### 概念图示例
+run_command：python verify.py，exit 1，查看持久终端。
+
+---
+
+## 43. MCPExecuteTool — MCP 远端工具调用
+
+**所属层级：** 09 / 工具专项
+
+**设计目标：** 呈现 MCP server、tool、catalog revision、完整参数、远端结果与安全确认。
+
+![MCPExecuteTool 独立概念图](images/43-mcp-execute-tool.png)
+
+### 结构 Anatomy
+
+- Server 服务
+- ToolName 工具
+- CatalogRevision 版本
+- Arguments 参数
+- Approval 操作批准
+- RemoteOutcome 远端回执
+
+### 状态 State matrix
+
+- `awaiting-approval`
+- `executing`
+- `unknown`
+- `completed`
+- `failed`
+- `catalog-stale`
+
+### 交互与行为
+catalog 版本或 server revision 变化时不能继续信任旧材料；未知回执需对账。
+
+### 可访问性
+远端目标和参数必须可审阅；批准状态不能仅由本地按钮决定。
+
+### 动效与降级
+参数更新不强制折叠已展开区域；减动保留状态变化。
+
+### 公开接口建议
+`server; tool; arguments; catalogRevision; operationId; onInspect`
+
+### 验收要点
+版本漂移、远端超时和结果待确认下不显示假成功。
+
+### 概念图示例
+mcp.execute：服务器、工具名、JSON 参数、revision、结果待核对。
+
+---
+
+## 44. NativeModelTool — 原生模型调用材料
+
+**所属层级：** 09 / 工具专项
+
+**设计目标：** 展示图片生成、图片分类等模型工具使用的提供商、模型、输入材料和输出保存状态。
+
+![NativeModelTool 独立概念图](images/44-native-model-tool.png)
+
+### 结构 Anatomy
+
+- Provider 提供商
+- Model 模型
+- Material 输入材料
+- Params 模型参数
+- GeneratedResult 生成结果
+- SaveStatus 落盘状态
+
+### 状态 State matrix
+
+- `waiting-approval`
+- `running`
+- `partial-material`
+- `generated`
+- `saving`
+- `saved`
+- `failed`
+
+### 交互与行为
+审批前可核对完整输入和模型；部分保存不能被标为全部成功。
+
+### 可访问性
+输入材料尺寸、文件类型和发送目标可读；结果预览有替代文本。
+
+### 动效与降级
+模型运行显示非定量活动，未知进度不虚构百分比。
+
+### 公开接口建议
+`provider; model; inputMaterials; resultMaterials; onOpenMaterial`
+
+### 验收要点
+模型生成完成但文件未保存、返回部分材料和失败时正确说明。
+
+### 概念图示例
+models_generate_images / models_classify：输入图像、模型路由与结果材料。
+
+---
+
+## 45. ToolOutput — 工具结果与结构化输出
+
+**所属层级：** 09 / 工具专项
+
+**设计目标：** 将文本、JSON、列表、文件材料和截取日志呈现为统一可展开结果容器。
+
+![ToolOutput 独立概念图](images/45-tool-output.png)
+
+### 结构 Anatomy
+
+- OutputHeader 内容摘要
+- Kind 输出类型
+- Preview 片段
+- TruncatedNotice 截取
+- Copy 复制
+- OpenFull 完整读取
+
+### 状态 State matrix
+
+- `loading`
+- `text`
+- `json`
+- `partial`
+- `truncated`
+- `complete`
+- `unavailable`
+
+### 交互与行为
+大输出只显示受限片段并提供独立材料读取，不能把展示上限当作执行结果截断。
+
+### 可访问性
+代码可复制、列表可浏览；错误与空输出使用明晰文案。
+
+### 动效与降级
+内容更新只局部刷新；不对大量日志做位移动画。
+
+### 公开接口建议
+`output; kind; truncated; onLoadMore; onCopy`
+
+### 验收要点
+长输出、JSON 嵌套、异常字符和懒加载都不阻塞消息列表。
+
+### 概念图示例
+工具结果：JSON 响应、文本输出、部分结果与“加载完整记录”。
+
+---
+
+## 46. ToolHistory — 完整工具审计历史
+
+**所属层级：** 09 / 工具专项
+
+**设计目标：** 提供按 sequence 分页的可核对工具执行历史，并区分实时行与历史记录。
+
+![ToolHistory 独立概念图](images/46-tool-history.png)
+
+### 结构 Anatomy
+
+- HistoryTrigger 历史入口
+- Count 总数
+- OperationRow 操作
+- Pagination 分页
+- DetailLoad 详情拉取
+- Retry 错误重试
+
+### 状态 State matrix
+
+- `collapsed`
+- `loading`
+- `loaded`
+- `next-page`
+- `empty`
+- `error`
+
+### 交互与行为
+历史顺序由 operation sequence 决定；相同 operationId 不得重复展示。
+
+### 可访问性
+分页入口与事件数量可访问；失败时保持已经加载的记录。
+
+### 动效与降级
+分页追加低干扰，不重排前面已阅读行。
+
+### 公开接口建议
+`scope; pages; nextSequence; onLoadPage; onOpenOperation`
+
+### 验收要点
+跨页去重、迟到记录、请求失败和会话切换能正确恢复。
+
+### 概念图示例
+完整工具记录：read_file、edit_file、run_command，按 sequence 加载更多。
+
+---
