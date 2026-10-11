@@ -35,6 +35,22 @@ export type ContextMenuProps = {
   className?: string;
 };
 
+/**
+ * Not every engine turns Shift+F10 / the ContextMenu key into a `contextmenu` event on the focused
+ * element, so the keyboard path is explicit: it dispatches one at the element's centre. Base UI
+ * opens on it; if the browser also fires its own, opening again is a no-op.
+ */
+function openFromKeyboard(event: React.KeyboardEvent<HTMLElement>) {
+  const isShortcut = (event.key === 'F10' && event.shiftKey) || event.key === 'ContextMenu';
+  if (!isShortcut || event.defaultPrevented) return;
+  event.preventDefault();
+  const target = event.currentTarget;
+  const rect = target.getBoundingClientRect();
+  target.dispatchEvent(
+    new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 }),
+  );
+}
+
 export function ContextMenu({ trigger, children, open, defaultOpen, onOpenChange, disabled, className }: ContextMenuProps) {
   const container = usePortalContainer();
   const ownTabIndex = trigger.props.tabIndex as number | undefined;
@@ -48,6 +64,7 @@ export function ContextMenu({ trigger, children, open, defaultOpen, onOpenChange
       <BaseContextMenu.Trigger
         render={trigger}
         tabIndex={ownTabIndex ?? 0}
+        onKeyDown={disabled ? undefined : openFromKeyboard}
         className="rl-context-menu__trigger"
         data-slot="context-menu-trigger"
       />

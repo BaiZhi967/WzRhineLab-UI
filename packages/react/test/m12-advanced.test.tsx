@@ -398,6 +398,20 @@ describe('ContextMenu', () => {
     await waitFor(() => expect(target).toHaveFocus());
   });
 
+  it('Shift+F10 and the ContextMenu key open it without relying on the browser', async () => {
+    const user = userEvent.setup();
+    render(<Row />);
+    const target = screen.getByText('REC-0142');
+    target.focus();
+    await user.keyboard('{Shift>}{F10}{/Shift}');
+    await screen.findByRole('menu');
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('menu')).toBeNull());
+    await waitFor(() => expect(target).toHaveFocus());
+    fireEvent.keyDown(target, { key: 'ContextMenu' });
+    await screen.findByRole('menu');
+  });
+
   it('keeps an explicit tabIndex and supports controlled open', async () => {
     const onOpenChange = vi.fn();
     const { rerender } = render(
