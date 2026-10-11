@@ -13,6 +13,7 @@ export interface RouteDef {
 export const routes = [
   { id: 'overview', path: '/', label: 'Overview', group: 'start', index: '00' },
   { id: 'foundations', path: '/foundations', label: 'Foundations', group: 'foundations', index: '01' },
+  { id: 'locale', path: '/foundations/locale', label: 'Locale & messages', group: 'foundations', index: '24' },
   { id: 'button', path: '/components/button', label: 'Button', group: 'components', index: '02' },
   { id: 'icon-button', path: '/components/icon-button', label: 'IconButton', group: 'components', index: '03' },
   { id: 'surface', path: '/components/surface', label: 'Surface', group: 'components', index: '04' },

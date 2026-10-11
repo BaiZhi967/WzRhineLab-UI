@@ -1,4 +1,5 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { duration, transition } from '../src';
@@ -56,6 +57,58 @@ const componentFiles = [
   'Skeleton',
   'Spinner',
 ];
+
+/**
+ * Source without comments. Strings and template literals are kept (with their contents), so a
+ * `//` inside a string is not mistaken for a comment.
+ */
+function stripComments(source: string): string {
+  let out = '';
+  let i = 0;
+  while (i < source.length) {
+    const ch = source[i]!;
+    const next = source[i + 1];
+    if (ch === '/' && next === '/') {
+      while (i < source.length && source[i] !== '\n') i += 1;
+    } else if (ch === '/' && next === '*') {
+      const end = source.indexOf('*/', i + 2);
+      i = end === -1 ? source.length : end + 2;
+    } else if (ch === "'" || ch === '"' || ch === '`') {
+      const start = i;
+      i += 1;
+      while (i < source.length && source[i] !== ch) i += source[i] === '\\' ? 2 : 1;
+      i += 1;
+      out += source.slice(start, i);
+    } else {
+      out += ch;
+      i += 1;
+    }
+  }
+  return out;
+}
+
+/** CJK ideographs, kana, hangul and full-width punctuation (（）、，。：). */
+const CJK = /[\u3000-\u303f\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af\uff00-\uffef]/;
+
+/** Lines of `source` (comments removed) that contain CJK text. */
+function cjkLines(source: string): string[] {
+  return stripComments(source)
+    .split('\n')
+    .filter((line) => CJK.test(line))
+    .map((line) => line.trim());
+}
+
+/** The single source of built-in copy (ADR-0009 §2). */
+const MESSAGE_TABLE = 'provider/messages.tsx';
+const sourceDirs = ['components', 'provider'];
+// Resolved from this file (not `new URL('../src/')`, which Vite rewrites as an asset URL).
+const srcRoot = join(dirname(fileURLToPath(import.meta.url)), '..', 'src');
+const sourceFiles = () =>
+  sourceDirs.flatMap((dir) =>
+    readdirSync(join(srcRoot, dir))
+      .filter((name) => /\.tsx?$/.test(name))
+      .map((name) => `${dir}/${name}`),
+  );
 
 function splitTopLevel(selector: string): string[] {
   const parts: string[] = [];
@@ -145,6 +198,26 @@ describe('package boundary', () => {
     }
     expect(transition.press.duration).toBe(motionDurations.press / 1000);
     expect(transition.instant.duration).toBe(0);
+  });
+
+  it('component and provider code contains no CJK text outside the message table (ADR-0009)', () => {
+    const files = sourceFiles();
+    expect(files).toContain(MESSAGE_TABLE);
+    expect(files.length).toBeGreaterThan(componentFiles.length);
+    for (const file of files) {
+      if (file === MESSAGE_TABLE) continue;
+      expect(cjkLines(read(`../src/${file}`)), file).toEqual([]);
+    }
+    // The table itself must keep the Chinese defaults, or the rule above proves nothing.
+    expect(cjkLines(read(`../src/${MESSAGE_TABLE}`)).length).toBeGreaterThan(20);
+  });
+
+  it('the CJK rule ignores comments but catches literals, JSX text and templates', () => {
+    expect(cjkLines("// 注释\n/* 块注释\n 第二行 */\n/** 文档 */\nconst url = 'https://x.test';")).toEqual([]);
+    expect(cjkLines("const a = '关闭';")).toEqual(["const a = '关闭';"]);
+    expect(cjkLines('<span>（可选）</span>')).toHaveLength(1);
+    expect(cjkLines('const t = `第 ${n} 页`; // ok')).toHaveLength(1);
+    expect(cjkLines("const s = '//'; const b = '取消';")).toHaveLength(1);
   });
 
   it('components never hard-code animation numbers', () => {

@@ -20,7 +20,8 @@
 default currentColor；hover 继承按钮/链接；active/selected 与 focus-visible 区分；disabled 不依赖仅降低 opacity。危险、警告需组合明确名称和辅助形状。
 
 ## 来源和版权
-早期默认采用 lucide-react 作为占位和技术参考，锁定版本并保留许可；真正品牌/研究类 icon 另写原创 SVG，禁止直接抠图、描摹游戏资源。提交任何新图标应附来源、语义定义、SVG 视口、截图与许可信息。
+早期默认采用 lucide-react 作为占位和技术参考，锁定版本并保留许可；真正品牌/研究类 icon 另写原创 SVG，禁止直接抠图、描摹游戏资源。
+> 现状（2026-10-11）：实际没有引入 lucide-react 或任何图标依赖。Showcase 图标是 `apps/docs/src/icons.tsx` 中的原创 24×24 线性 SVG（1.75 stroke、round cap/join、`currentColor`）；组件内部的状态与控件图标是各组件源码内联的原创 SVG（多为 16×16 viewBox），默认 `aria-hidden`。提交任何新图标应附来源、语义定义、SVG 视口、截图与许可信息。
 
 ## 验收
 16/20/24px 原始像素检查：视觉居中、线条厚度、边缘留白、光学补偿；同时检查暗色、禁用、RTL方向（箭头类）、屏幕阅读器名称及高倍率缩放。

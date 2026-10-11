@@ -14,3 +14,6 @@ playwright-report-*/
 .env.*
 !.env.example
 .worktree/
+# Next.js example (examples/next-app-router): build output and the generated type stub
+.next/
+next-env.d.ts

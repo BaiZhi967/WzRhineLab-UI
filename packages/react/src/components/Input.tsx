@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Input as BaseInput } from '@base-ui/react/input';
 import { cx } from '../utils/cx.js';

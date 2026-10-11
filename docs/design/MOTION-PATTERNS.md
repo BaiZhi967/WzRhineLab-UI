@@ -12,14 +12,14 @@
 | 模式 | 状态 | 所有者 | 实现 |
 | --- | --- | --- | --- |
 | [press](#press) | 已实现 | motion/react `scale` | Button、IconButton |
-| [presence / panel](#presence--panel) | 已实现 | motion/react 或 CSS（按组件） | MotionPresence、Dialog、Popover、Toast |
+| [presence / panel](#presence--panel) | 已实现 | motion/react 或 CSS（按组件） | MotionPresence、Dialog、AlertDialog、Popover、Toast |
 | [stagger](#stagger) | 已实现 | motion/react | RhineMotionGroup / RhineMotionItem |
 | [indicator retarget](#indicator-retarget) | 已实现 | CSS transition `translate` / `width` | Tabs |
 | [shared identity（shared-layout）](#shared-identity) | 已实现 | motion/react `layoutId` | ArchiveCard `motion="identity"` + ArchiveIdentity |
 | [reveal / text-scramble](#reveal--text-scramble) | 已实现 | rAF（effects） | ArchiveReveal |
 | [scan](#scan) | 已实现 | CSS `@keyframes` | ScanSurface |
 | [orbit](#orbit) | 已实现 | motion/react motion value（SVG） | OrbitalDiagram |
-| [status-pulse / progress-flow / skeleton / spinner](#status-pulse--progress-flow--skeleton--spinner) | 已实现 | CSS `@keyframes`；Button spinner 为 motion/react | StatusIndicator、Progress、DataTable / Stat 骨架、Button |
+| [status-pulse / progress-flow / skeleton / spinner](#status-pulse--progress-flow--skeleton--spinner) | 已实现 | CSS `@keyframes`；Spinner 为 motion/react | StatusIndicator、Progress、Skeleton（DataTable / Stat 骨架）、Spinner（Button、Toast promise） |
 | beam | **未实现（M11）** | — | — |
 | particle-field | **未实现（M11）** | Canvas 2D | — |
 | shader-surface | **未实现（M11）** | WebGL | — |
@@ -44,7 +44,7 @@
 - 语义：空间关系。面板从哪里出现、退到哪里。
 - 触发：`show` / `open` 变化。
 - 不适用：页面加载时就存在的内容（默认 `initial={false}`，直接出现）；需要拖动跟手的面板（Drawer，见 ADR-0006 §4，transform 归 CSS）。
-- 时长 / 缓动 / token：`MotionPresence` 预设 `fade`（fast 120ms，0 位移）、`panel`（panel 280ms，8px 上移）、`rise`（base 200ms，4px）；Dialog 面板 `panel` + 8px，遮罩 `fast`；Popover / Menu `--rl-motion-fast` 透明度 + `scale 0.98`；Toast `--rl-motion-panel` 透明度 + `transform`。全部 `ease.out`。
+- 时长 / 缓动 / token：`MotionPresence` 预设 `fade`（fast 120ms，0 位移）、`panel`（panel 280ms，8px 上移）、`rise`（base 200ms，4px）；Dialog / AlertDialog 面板 `panel` + 8px，遮罩 `fast`；Popover / Menu `--rl-motion-fast` 透明度 + `scale 0.98`；Toast `--rl-motion-panel` 透明度 + `transform`。全部 `ease.out`。
 - 生命周期：一次性进出场；退出完成后卸载（`onExitComplete` / Base UI `onOpenChangeComplete`）。
 - 中断：中途切换从当前视觉状态反向（motion `AnimatePresence`、CSS transition 都可中断），不会出现第二个弹层，不排队。E2E 按帧验证：Dialog 退出中重新打开时透明度从当前值回升且始终只有一个弹层；Popover 快速开关结束于打开且焦点在内；Toast 进场中关闭时从当前位置连续退出。
 - 减动：位移和缩放去掉（`transform` → `instant`），只保留不超过 120ms 的淡入淡出（`opacity` → `min(预设, fast)`）。
@@ -140,17 +140,17 @@
 
 ## status-pulse / progress-flow / skeleton / spinner
 - 语义：过程表达。连接在线、任务进行中、内容加载中。
-- 触发：`StatusIndicator pulse`（仅真实在线连接）、`Progress` 不确定态、DataTable / Stat 加载态、Button `loading`。
+- 触发：`StatusIndicator pulse`（仅真实在线连接）、`Progress` 不确定态、`Skeleton`（DataTable 首次加载、Stat `loading` 也由它渲染）、`Spinner`（Button `loading`、Toast `promise` 的处理中阶段也由它渲染）。
 - 不适用：装饰；已完成的任务；有确定百分比时不用不确定态。
-- 时长 / 缓动 / token：`--rl-motion-loop` 900ms；脉冲 2 × loop；`rl-progress-travel`、`rl-skeleton-pulse` 为 `--rl-ease-in-out` 往返；Button spinner 为 motion/react `rotate` + `transition.loop`（linear）。
+- 时长 / 缓动 / token：`--rl-motion-loop` 900ms；脉冲 2 × loop；`rl-progress-travel`、`rl-skeleton-pulse`（Skeleton，`status.css`）为 `--rl-ease-in-out` 往返；Spinner 为 motion/react `rotate` + `transition.loop`（linear）。
 - 生命周期：随状态属性存在而运行，状态结束即移除；不跟踪视口。
 - 中断：状态变化时直接移除，不等循环结束。
-- 减动：所有 `@keyframes` 在两种减动条件下都是 `animation: none`（package-boundary 测试强制）；不确定进度改为静态条纹；spinner 停止旋转（`data-reduced`）。E2E `reduced-motion.spec.ts` 在全部路由上验证没有无限循环。
+- 减动：所有 `@keyframes` 在两种减动条件下都是 `animation: none`（package-boundary 测试强制）；不确定进度改为静态条纹；Skeleton 为静态色块；Spinner 停止旋转并显示较长的静态弧线（`data-reduced`，读 `useRhineMotion().reduced`，同时尊重系统与 Provider）。E2E `reduced-motion.spec.ts` 在全部路由上验证没有无限循环。
 - 页面隐藏：CSS 动画由浏览器在后台标签页节流；不额外暂停。
-- 语义 fallback：`aria-busy`、`role="progressbar"`（不确定态无 `aria-valuenow`）、Button 的 `aria-busy` 与可见文字；动效不承载状态。
+- 语义 fallback：`aria-busy`、`role="progressbar"`（不确定态无 `aria-valuenow`）、Button 的 `aria-busy` 与可见文字；Skeleton 始终 `aria-hidden`，由容器负责 `aria-busy` 与「正在加载」文字；Spinner 传 `label` 时为 `role="status"`，不传时为装饰（`aria-hidden`）。动效不承载状态。
 - 性能预算：`opacity` / `scale` / `translate` 关键帧；同屏骨架数量受表格行数限制。
-- 视觉基线：`data-progress-meter-*`、`data-stat-*`、`data-*-1280/390`（减动下的静态状态）。
-- 许可证和来源：原创。M9 的独立 Skeleton / Spinner 组件合入后按 ADR-0006 §7 与本条复核。
+- 视觉基线：`data-progress-meter-*`、`data-stat-*`、`data-*-1280/390`、`feedback-skeleton-*`、`feedback-spinner-*`（减动下的静态状态）。
+- 许可证和来源：原创。M9 的 Skeleton / Spinner 组件合入后已按 ADR-0006 §7 与本条复核（ADR-0007 §1 所有权表同步更新）；Button、DataTable、Stat 改由它们渲染后，既有视觉基线组件区域零差异（M9 验收记录）。
 
 ## beam
 未实现（M11）。规划用途：表达两个节点之间的数据流。进入条件见规划 §8。

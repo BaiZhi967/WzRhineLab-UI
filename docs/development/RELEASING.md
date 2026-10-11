@@ -19,9 +19,11 @@
 | `pnpm build:packages` | 用 `tsc -p tsconfig.build.json` 构建三个包到 `dist/`，并复制 CSS |
 | `pnpm api:report` | 根据 `dist/*.d.ts` 重新生成 `docs/api/*.md` |
 | `pnpm api:check` | API 报告与构建结果不一致时失败，用来在评审中暴露公开 API 的变化 |
-| `pnpm license:audit` | 审计运行时依赖树的许可证（白名单），生成 `THIRD-PARTY-LICENSES.md` |
+| `pnpm docs:check` | 文档搜索索引（`apps/docs/src/search-index.json`）与路由、文档标题、API 报告不一致时失败；`pnpm docs:index` 重新生成 |
+| `pnpm license:audit` | 审计运行时依赖树的许可证（白名单），记录每个依赖的许可文件、版权声明与上游仓库，缺少许可文件时失败；生成 `THIRD-PARTY-LICENSES.md` |
 | `pnpm verify:packages` | 打包后在**工作区之外**的临时项目中安装 tarball 并逐项验证，见下文 |
-| `pnpm release:check` | 依次执行 `check`、`api:check`、`license:audit`、`verify:packages` |
+| `pnpm size:check` | 构建后用 esbuild 压缩打包各入口并统计 gzip 体积，超出 `size-budget.json` 预算即失败（ADR-0008 §3，见 [SIZE.md](SIZE.md)） |
+| `pnpm release:check` | 依次执行 `check`、`api:check`、`docs:check`、`license:audit`、`verify:packages`、`size:check` |
 | `pnpm release:dry` | 跑完全部门禁并执行 `pnpm publish --dry-run`，同时列出尚未满足的发布前置条件 |
 | `node scripts/release.mjs <ver> --publish` | 真正发布；任一前置条件不满足就拒绝，没有跳过开关 |
 
@@ -30,9 +32,13 @@
 2. 在临时目录新建一个使用方项目，安装三个 tarball 以及 npm 上的 react、react-dom、motion。
 3. 用 `skipLibCheck: false` 的严格模式类型检查使用方代码；并用 `@ts-expect-error` 确认错误用法（未知 variant、缺少名称的 IconButton）会被发布出去的类型拒绝。
 4. 在纯 Node ESM 下用 `react-dom/server` 渲染组件。
-5. 用 Vite 打包：tokens 和每个 CSS 分片（components / overlays / feedback / archive）都必须出现；没有引入 effects 的应用中不能出现 effects 代码。
+5. 用 Vite 打包：tokens、`components.css` 以及它 `@import` 的全部八个分片（reset / overlays / feedback / archive / forms / data / drawer / status）都必须出现，每个分片用一个只属于它的选择器检查；没有引入 effects 的应用中不能出现 effects 代码。
+6. `'use client'` 指令（ADR-0008 §2）：以源码为准，运行时使用 React 的模块必须带指令、纯模块不得带；打包后 tarball 中每个 `dist/*.js` 的指令与其源码一致，且不存在找不到源码的产物文件。
 
-两项反向测试已经实际跑过：删掉一个 `@import` 后 verify 失败；把 `ButtonVariant` 放宽为 `string` 后类型检查失败。这说明上述检查确实能拦住对应的回归。
+反向测试已经实际跑过：删掉一个 `@import`（含 M9.5 新增的 drawer 分片）后 verify 失败；把 `ButtonVariant` 放宽为 `string` 后类型检查失败；删掉组件源码的指令、给纯模块加上指令、去掉 tarball 中产物的指令，三种情况都失败。这说明上述检查确实能拦住对应的回归。
+
+### `size:check` 体积门禁
+`release:check` 的最后一步。度量对象是 `dist/` 产物，`react` / `react-dom` / `motion` 视为外部依赖，`@base-ui/react` 与 `@wzrhine/tokens` 计入体积。任一条目的 gzip 体积超过预算、预算与度量条目不一致、或只导入 `Button` 的体积达到全量入口的 25%（tree-shaking 失效）时退出码为 1。度量方式、当前数值和修改预算的流程见 [SIZE.md](SIZE.md)。
 
 ## 发布前置条件（`release.mjs --publish` 强制）
 - [ ] **维护者选定许可证**：在仓库根目录加入 `LICENSE`，三个包都填写相同的 `license` 字段。**目前未选定**，README 中已注明。

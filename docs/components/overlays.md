@@ -22,7 +22,7 @@ import '@wzrhine/react/styles.css';
 | `motion` | `user` | `user` 跟随系统；`reduce` 强制减少动态效果（CSS 与 motion/react 同时生效） |
 | `tooltipDelay` | `500` | 悬停打开 Tooltip 的延迟（ms），相邻触发器之间切换为即时 |
 
-Dialog、Select、Tooltip 通过 `usePortalContainer()` 挂载到最近的 Provider。不放在 Provider 内时，Base UI 会挂到 `<body>`，弹层将拿不到主题 tokens。
+所有弹层（Dialog、AlertDialog、Drawer、Select、Tooltip、Popover、Menu、Toast）通过 `usePortalContainer()` 挂载到最近的 Provider。另有 `toastTimeout`（默认 5000ms）、`toastLimit`（同时显示的上限，默认 3）、`toasts`（嵌套 Provider 默认不再挂第二个通知队列）；通知用法见 [Popover · Menu · Toast](popover-menu-toast.md)。不放在 Provider 内时，Base UI 会挂到 `<body>`，弹层将拿不到主题 tokens。
 
 ## Tabs
 ```tsx
@@ -71,6 +71,7 @@ Dialog、Select、Tooltip 通过 `usePortalContainer()` 挂载到最近的 Provi
 | `size` | `sm` 400 / `md` 520 / `lg` 720px（`--rl-dialog-width-*`） |
 | `dismissOnOutsideClick` | 破坏性确认建议设为 `false` |
 | `initialFocus` | 打开时聚焦的元素 ref |
+| `onCloseRequest(reason)` | 用户发起关闭前调用（M9，ADR-0006 §3）。`reason` 为 `escape` / `outside` / `close-button`（`DialogClose`）/ `trigger`；返回 `false` 取消本次关闭，弹窗保持打开、焦点不动。程序设置 `open={false}` 不经过它。用法见 [AlertDialog · Dialog 关闭保护](alert-dialog.md) |
 
 Base UI 负责焦点陷阱、Esc 关闭、页面滚动锁定、背景隔离和焦点归还。Motion：遮罩 120ms；面板 280ms 并上浮 8px；减动时只淡入淡出，不位移。快速连续开关不会残留弹窗。
 
@@ -87,6 +88,6 @@ Base UI 负责焦点陷阱、Esc 关闭、页面滚动锁定、背景隔离和�
 - Motion：弹层 fast 120ms 淡入并下移 4px，减动时只淡入。弹层会避开视口边缘。
 
 ## 测试
-- 单测：`packages/react/test/overlays.test.tsx`（17 项）。
+- 单测：`packages/react/test/overlays.test.tsx`（17 项）；Dialog `onCloseRequest` 在 `alert-dialog.test.tsx` 与类型测试 `alert-dialog.test-d.tsx`。
 - 浏览器：`apps/docs/e2e/overlays.spec.ts`（Dialog 9 项、Select 5 项、Tabs 4 项、Tooltip 3 项）。
 - 响应式与 axe：已纳入全站 `responsive.spec.ts` 与 `a11y.spec.ts`。

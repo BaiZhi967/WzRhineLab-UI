@@ -1,0 +1,30 @@
+/* Next.js example page layout; values are tokens. */
+body {
+  margin: 0;
+}
+
+.next-root {
+  min-height: 100vh;
+}
+
+.next-page {
+  display: grid;
+  gap: var(--rl-space-6);
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--rl-space-6);
+  box-sizing: border-box;
+}
+
+.next-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rl-space-3);
+}
+
+@media (max-width: 520px) {
+  .next-page {
+    padding: var(--rl-space-4);
+  }
+}

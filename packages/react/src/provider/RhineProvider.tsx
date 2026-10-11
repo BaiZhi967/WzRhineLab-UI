@@ -1,9 +1,13 @@
+'use client';
+
 import * as React from 'react';
 import { MotionConfig } from 'motion/react';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import { ToastProvider, ToastViewport } from '../components/Toast.js';
 import { cx } from '../utils/cx.js';
 import { PortalContext } from './portal.js';
+import { RhineLocaleProvider, useResolvedLocale } from './messages.js';
+import type { RhineMessagesOverrides } from './messages.js';
 
 export { usePortalContainer } from './portal.js';
 
@@ -27,6 +31,15 @@ export type RhineProviderProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'chi
    * preview region shares the app's single toast viewport.
    */
   toasts?: boolean;
+  /**
+   * Built-in copy for this subtree (ADR-0009), merged per namespace over the outer provider's
+   * table (or `zhCN`). Component props still win.
+   */
+  messages?: RhineMessagesOverrides;
+  /** Number locale for Stat, Pagination, Progress / Meter; defaults to the outer provider's, else `zh-CN`. */
+  locale?: string;
+  /** Written as `lang` on the `.rl-theme` root (popups mount inside it) when set; otherwise inherited. */
+  lang?: string;
   children: React.ReactNode;
 };
 
@@ -46,6 +59,9 @@ export const RhineProvider = React.forwardRef<HTMLDivElement, RhineProviderProps
     toastTimeout = 5000,
     toastLimit = 3,
     toasts,
+    messages,
+    locale,
+    lang,
     className,
     children,
     ...rest
@@ -53,6 +69,7 @@ export const RhineProvider = React.forwardRef<HTMLDivElement, RhineProviderProps
   ref,
 ) {
   const nested = React.useContext(NestingContext);
+  const localeValue = useResolvedLocale(messages, locale);
   const withToasts = toasts ?? !nested;
   const [portalNode, setPortalNode] = React.useState<HTMLDivElement | null>(null);
   const value = React.useMemo(() => ({ container: portalNode }), [portalNode]);
@@ -61,6 +78,7 @@ export const RhineProvider = React.forwardRef<HTMLDivElement, RhineProviderProps
     <div
       {...rest}
       ref={ref}
+      lang={lang}
       className={cx('rl-theme', className)}
       data-rl-theme={theme}
       data-rl-density={density}
@@ -74,19 +92,21 @@ export const RhineProvider = React.forwardRef<HTMLDivElement, RhineProviderProps
 
   return (
     <NestingContext.Provider value>
-      <MotionConfig reducedMotion={motion === 'reduce' ? 'always' : 'user'}>
-        <BaseTooltip.Provider delay={tooltipDelay}>
-          <PortalContext.Provider value={value}>
-            {withToasts ? (
-              <ToastProvider timeout={toastTimeout} limit={toastLimit}>
-                {scope}
-              </ToastProvider>
-            ) : (
-              scope
-            )}
-          </PortalContext.Provider>
-        </BaseTooltip.Provider>
-      </MotionConfig>
+      <RhineLocaleProvider value={localeValue}>
+        <MotionConfig reducedMotion={motion === 'reduce' ? 'always' : 'user'}>
+          <BaseTooltip.Provider delay={tooltipDelay}>
+            <PortalContext.Provider value={value}>
+              {withToasts ? (
+                <ToastProvider timeout={toastTimeout} limit={toastLimit}>
+                  {scope}
+                </ToastProvider>
+              ) : (
+                scope
+              )}
+            </PortalContext.Provider>
+          </BaseTooltip.Provider>
+        </MotionConfig>
+      </RhineLocaleProvider>
     </NestingContext.Provider>
   );
 });

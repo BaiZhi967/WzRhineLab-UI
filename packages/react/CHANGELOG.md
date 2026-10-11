@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-尚未发布到 npm。以下内容为截至 M9 的全部变更，首次发布时会归入 `0.1.0`。
+尚未发布到 npm。以下内容为截至 M9.5 的全部变更，首次发布时会归入 `0.1.0`。
 
 ### Added
 - **M1-A**：`Button`（primary / accent / secondary / ghost，sm / md / lg，loading 保持焦点并阻止重复提交）、`Surface`、`StatusBadge`；`motion/presets` 与 `useRhineMotion()`。
@@ -17,6 +17,15 @@
 - **M8**：`Pagination`（受控 / 非受控，当前页 `aria-current` 且可聚焦，`busy` 时保持焦点，窄容器紧凑模式）、`Breadcrumb`（折叠中间项、`renderLink` 接入路由）、`Progress`（含不确定态）、`Meter`（`low` / `high` / `optimum` 阈值，状态以文字表达）、`Stat`；辅助函数 `paginate`、`getPaginationItems`、`getMeterState`。`DataTable` 新增 `status`（loading / error）、`onRetry`、`emptyAction`、`pagination`，翻页保留调用方的选中集合。样式在 `data.css`，由 `styles.css` 引入。见 ADR-0005。
 - **M9**：`AlertDialog`（`role="alertdialog"`，初始焦点在取消按钮；`onConfirm` 可返回 Promise，等待中不可取消，失败时保持打开并以 `role="alert"` 提示）、`Drawer` / `DrawerClose`（侧边面板，窄于 40rem 时为底部弹出，可滑动关闭）、`Alert`（`live` 显式选择 off / polite / assertive）、`Callout`（`role="note"`）、`EmptyState`、`Skeleton`、`Spinner`。`Dialog` 新增 `onCloseRequest(reason)` 关闭保护；`DataTable` 新增 `emptyDescription`；`ToastOptions` 新增 `id`（同 id 原地更新并重新计时）与 `action.keepOpen`，`ToastApi` 新增 `promise()`。样式在 `drawer.css`、`status.css`，由 `styles.css` 引入。见 ADR-0006。
 - **M10（ADR-0007）**：Motion Core。`MotionPresence`（`fade` / `panel` / `rise` 预设，中途反向、隐藏后卸载）、`RhineMotionGroup` / `RhineMotionItem`（每项 24ms 错峰，总延迟上限 120ms，减动时无错峰无位移）；`resolveMotion` 与 `useRhineMotion().resolve(kind, name)`：按属性类型减动（颜色 / 透明度保留不超过 120ms 的淡入，位移 / 布局直接到位，循环停止）；`MotionSpeed` / `useMotionSpeed`（仅用于审查慢放）；`useMotionLifecycle`（start / pause / resume / stop，页面隐藏、离开视口、减动时暂停并给出原因）；`usePageVisible` / `useInViewport`（全库唯一的可见性来源）；`useLatestGuard`（过期异步结果守卫）；`transition.showcase` 预设（700ms，每个时长 token 现在都有同名预设）。`ArchiveCard` 新增可选 `motion="identity"` 与 `ArchiveIdentity`：记录编号从卡片连续移动到详情（`scene`，减动时直接切换），默认关闭。
+
+- **M9.5（ADR-0008、ADR-0009）**：默认文案表 `RhineMessages` 与 `zhCN`（内置默认，逐字不变）/ `enUS`（参考译文）、`useRhineMessages()`、`RhineMessagesProvider`；`RhineProvider` 新增 `messages`、`locale`（数字格式，默认 `zh-CN`）与 `lang`（写到 `.rl-theme` 根元素）。此前无法覆盖的内置文字现在都可覆盖：DataTable 全选 / 行选择 / 已选摘要、Toast 关闭按钮与通知视口名称、Field「（可选）」、MetadataList「未记录」、Textarea 计数、Stat 的加载与方向文字、Meter 读屏值。`Progress` / `Meter` 新增 `locale` 属性。优先级：组件属性 > 最近 Provider 的 `messages` > `zhCN`。见 [locale.md](../../docs/components/locale.md)。
+
+### Changed（M9.5）
+- **破坏性（声明层面，ADR-0008）**：peer `react` / `react-dom` 由 `^18.2.0 || ^19.0.0` 收窄为 `^19.0.0`。React 18 项目安装时会收到 peer 冲突提示；此前也未正式支持 React 18。
+  - 迁移：升级到 React 19。
+- 运行时使用 React 的模块在产物首行带 `'use client'`，Next.js App Router 的服务端组件可以直接导入组件，不再需要包装文件；需要函数 props 的组件（如 DataTable）仍要放在使用者自己的 `'use client'` 文件中。
+- `paginate`、`getPaginationItems`、`getMeterState` 移到不带指令的纯模块，服务端组件可以直接调用；从入口导入的写法不变。
+- 默认文案改为从文案表读取，默认输出逐字不变（既有单测、SSR 示例与视觉基线保证）；组件源码中不再出现中文字面量（package-boundary 测试）。
 
 ### Changed
 - **破坏性（M1-A，ADR-0003）**：`variant="primary"` 由橙底改为深墨底；橙色信号改用新增的 `variant="accent"`。
@@ -53,7 +62,7 @@
 - **M6**：DataTable 渲染单元格时把 `key` 展开进 JSX，React 19 在开发模式与 SSR 中会输出告警。
 
 ### Requirements
-- peer：`react` / `react-dom` ^18.2 || ^19，`motion` ^12。
+- peer：`react` / `react-dom` ^19（M9.5 起），`motion` ^12。
 - 所有弹层组件必须放在 `RhineProvider` 内。
 
 升级步骤见 [UPGRADING.md](https://github.com/BaiZhi967/WzRhineLab-UI/blob/main/docs/development/UPGRADING.md)。

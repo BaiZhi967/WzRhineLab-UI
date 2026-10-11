@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["react", "react-dom", "node"],
+    "allowJs": false,
+    "plugins": [{ "name": "next" }]
+  },
+  "include": ["next-env.d.ts", "app", "e2e", "next.config.ts", "playwright.config.ts", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", ".next"]
+}

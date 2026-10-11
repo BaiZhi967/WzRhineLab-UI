@@ -13,7 +13,7 @@ import { ArchiveReveal, MotionPlayer, OrbitalDiagram, ScanSurface } from '@wzrhi
 2. **只在用户主动触发时播放**，不在业务页默认开启无限循环（STYLE.md 禁止默认无限扫描）。
 3. **可中断**：播放中途反向时，从当前进度回退，不重新开始，也不排队。
 4. **减动等价**：系统偏好、`RhineProvider motion="reduce"` 或 `EffectClock reduced` 任一生效时，直接切换到结果，不做位移或字形循环。
-5. **生命周期**：页面隐藏时暂停逐帧循环；轨道离开视口时停止旋转；动画完成或卸载时取消 `requestAnimationFrame`。
+5. **生命周期**：页面隐藏时暂停逐帧循环；轨道离开视口时停止旋转；动画完成或卸载时取消 `requestAnimationFrame`。M10 起全部循环使用 `@wzrhine/react` 的共享生命周期与可见性来源（`useMotionLifecycle`、`usePageVisible` / `useInViewport`，ADR-0007 §4–5），本包的 `usePageVisible` / `useInViewport` 是同一实现的重新导出。
 6. **确定性**：解密字形由文字、进度和帧号计算得出，不使用随机数（测试强制），截图与测试稳定。
 
 ## ArchiveReveal
@@ -26,10 +26,10 @@ import { ArchiveReveal, MotionPlayer, OrbitalDiagram, ScanSurface } from '@wzrhi
 ```tsx
 <ScanSurface scanKey={scanCount} onScanEnd={…}><RecordCard /></ScanSurface>
 ```
-每次 `scanKey` 变化扫描一遍，900ms，ease-in-out。挂载时不扫描；相同的 key 重新渲染也不会再扫。扫描线 `pointer-events: none`，内容一直可以操作。减动时改为约 160ms 的静态描边。
+每次 `scanKey` 变化扫描一遍，900ms，ease-in-out。挂载时不扫描；相同的 key 重新渲染也不会再扫。扫描线 `pointer-events: none`，内容一直可以操作。减动时改为约 160ms 的静态描边。页面隐藏时立即结束本次扫描并触发 `onScanEnd`，隐藏期间请求的扫描不运行（M10）。
 
 ## OrbitalDiagram
-「仪器」视觉语法的装饰结构：同心细线圆环、节点、准星。标签是真实的无障碍列表（`label` 为列表名称），图形 `aria-hidden`。节点位置由 `angle` 决定。`animate` 需显式开启，减动、页面隐藏或离开视口时停止。容器较窄时图例换到图形下方。
+「仪器」视觉语法的装饰结构：同心细线圆环、节点、准星。标签是真实的无障碍列表（`label` 为列表名称），图形 `aria-hidden`。节点位置由 `angle` 决定。`animate` 需显式开启，减动、页面隐藏或离开视口时停止。M10 起暂停（页面隐藏、离开视口）时保持当前角度，恢复后从该角度接续；关闭 `animate` 或减动时回到 0°。`data-lifecycle`（`idle` / `running` / `paused` / `stopped`）与 `data-paused`（`reduced` / `hidden` / `offscreen`）给出当前状态。容器较窄时图例换到图形下方。
 
 ## MotionPlayer
 MOTION.md 要求展示动画时提供 Default / Slow ×0.25 / Reduced / Interrupt 四种状态。MotionPlayer 把同一个演示并排渲染成四个通道，由同一个播放按钮驱动：
@@ -59,5 +59,5 @@ MOTION.md 要求展示动画时提供 Default / Slow ×0.25 / Reduced / Interrup
 Showcase 用 `React.lazy` 按需加载效果页，生成独立的 5.4 kB JS 和 1.6 kB CSS（gzip）；E2E 验证其他页面不会请求这个分包。
 
 ## 测试
-- 单测 `packages/effects/test`：scramble 7 项、计时与组件 22 项、包边界 6 项。
-- 浏览器 `apps/docs/e2e/effects.spec.ts`：通道布局 4 项、MotionPlayer 4 项、减动扫描 1 项、页面内效果 4 项、明暗 axe 2 项。Chromium、Firefox、WebKit 均通过。
+- 单测 `packages/effects/test`（共 45 项）：scramble 7 项、计时与组件 23 项、生命周期 9 项（M10，`lifecycle.test.tsx`）、包边界 6 项。
+- 浏览器 `apps/docs/e2e/effects.spec.ts`：通道布局 4 项、MotionPlayer 4 项、减动扫描 1 项、页面内效果 5 项（含「效果代码只在本页加载」）、明暗 axe 2 项。Chromium、Firefox、WebKit 均通过。M10 的隐藏页暂停与轨道接续另见 `motion-core.spec.ts`。

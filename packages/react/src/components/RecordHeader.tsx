@@ -1,4 +1,7 @@
+'use client';
+
 import * as React from 'react';
+import { useRhineMessages } from '../provider/messages.js';
 import { cx } from '../utils/cx.js';
 import { Breadcrumb } from './Breadcrumb.js';
 import type { BreadcrumbItem } from './Breadcrumb.js';
@@ -52,12 +55,14 @@ export const RecordHeader = React.forwardRef<HTMLElement, RecordHeaderProps>(fun
     meta,
     actions,
     headingLevel = 1,
-    trailLabel = '档案位置',
+    trailLabel: trailLabelProp,
     className,
     ...rest
   },
   ref,
 ) {
+  const messages = useRhineMessages();
+  const trailLabel = trailLabelProp ?? messages.recordHeader.trail;
   const Heading = `h${headingLevel}` as 'h1' | 'h2' | 'h3';
   const terms = (classification ?? []).filter((term) => !isEmptyValue(term));
   const hasMeta = (meta ?? []).some((item) => !isEmptyValue(item.value));

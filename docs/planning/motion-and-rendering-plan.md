@@ -48,7 +48,7 @@ Motion 和 React Spring 不应该同时写同一个元素的 transform。GSAP �
 
 ## 3. Rhine Motion contract
 
-计划在 M10 建立以下内部能力：
+以下内部能力已在 M10 建立（契约见 [ADR-0007](../development/adr/0007-motion-ownership.md)，模式见 [MOTION-PATTERNS.md](../design/MOTION-PATTERNS.md)，验收见 [M10 验收记录](../development/acceptance/2026-10-10-m10.md)）。下面的类型草案是规划时的写法，实际实现为 `transition.*` 预设（instant / press / release / fast / base / panel / scene / showcase / loop）、`RhineProvider motion="user | reduce"` 与 `useMotionLifecycle()`（state 为 idle / running / paused / stopped）：
 
 ~~~ts
 type RhineMotionPreset =
@@ -70,28 +70,28 @@ type EffectLifecycle = {
 };
 ~~~
 
-实际公开 API 可以更小，基础组件使用语义 prop：
+实际公开 API 可以更小，基础组件使用语义 prop。下例是规划时的示意；M10 实际只采用了 `ArchiveCard motion="none | identity"`，Dialog、Toast 等组件内部使用固定预设，**没有** `motion` prop（ADR-0007 §8）：
 
 ~~~tsx
-<Dialog motion="panel" />
-<Toast motion="fast" />
-<ArchiveCard motion="identity" />
+<Dialog motion="panel" />   // 示意，未采用
+<Toast motion="fast" />     // 示意，未采用
+<ArchiveCard motion="identity" />  // 已实现（M10）
 ~~~
 
 不要把底层 Motion 的完整 animate、variants、transition 对象扩散到每个业务页面。
 
-### 计划中的公共能力
+### 计划中的公共能力（M10 后的状态）
 
-- RhineMotionProvider；
-- MotionConfig；
-- useRhineMotion；
-- MotionPresence；
-- RhineMotionGroup；
-- named variants；
-- page visibility pause；
-- reduced-motion resolver；
-- animation cancellation；
-- stale async result guard。
+- RhineMotionProvider：**未做，有意延后**（ADR-0007「留给 M11」）；沿用 `RhineProvider motion` + `MotionConfig`；
+- MotionConfig：已采用（`RhineProvider` 内部设置 `reducedMotion`，应用也可自行包裹）；
+- useRhineMotion：已实现，返回 `reduced`、`speed`、`get`、`resolve`；
+- MotionPresence：已实现（预设 fade / panel / rise）；
+- RhineMotionGroup：已实现（配合 RhineMotionItem）；
+- named variants：以语义预设实现（`transition.*`、MotionPresence 预设），不公开任意 variants；
+- page visibility pause：已实现（`usePageVisible`、`useInViewport`、`useMotionLifecycle`）；
+- reduced-motion resolver：已实现（`resolveMotion`，按属性类型降级）；
+- animation cancellation：由 motion/react 的目标接续承担，三内核中断 E2E 覆盖；没有单独的公开 API；
+- stale async result guard：已实现（`useLatestGuard`）。
 
 ## 4. 时间和曲线
 
@@ -137,7 +137,7 @@ reduced motion 不能只等于把所有视觉效果删除，也不能只把 dura
 
 ## 6. 动效模式目录
 
-M10 开始维护：
+M10 起维护于 [MOTION-PATTERNS.md](../design/MOTION-PATTERNS.md)（beam、particle-field、shader-surface 标为未实现，留给 M11）：
 
 - orbit；
 - beam；

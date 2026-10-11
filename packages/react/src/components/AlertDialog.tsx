@@ -1,6 +1,9 @@
+'use client';
+
 import * as React from 'react';
 import { AlertDialog as BaseAlertDialog } from '@base-ui/react/alert-dialog';
 import { AnimatePresence, motion } from 'motion/react';
+import { useRhineMessages } from '../provider/messages.js';
 import { usePortalContainer } from '../provider/portal.js';
 import { useRhineMotion } from '../motion/useRhineMotion.js';
 import { cx } from '../utils/cx.js';
@@ -59,16 +62,19 @@ export function AlertDialog({
   eyebrow,
   children,
   confirmLabel,
-  cancelLabel = '取消',
+  cancelLabel: cancelLabelProp,
   tone = 'danger',
   onConfirm,
-  errorText = '操作未完成，请重试。',
+  errorText: errorTextProp,
   open: openProp,
   defaultOpen = false,
   onOpenChange,
   onClosed,
   className,
 }: AlertDialogProps) {
+  const messages = useRhineMessages();
+  const cancelLabel = cancelLabelProp === undefined ? messages.alertDialog.cancel : cancelLabelProp;
+  const errorText = errorTextProp === undefined ? messages.alertDialog.error : errorTextProp;
   const [uncontrolled, setUncontrolled] = React.useState(defaultOpen);
   const controlled = openProp !== undefined;
   const open = controlled ? openProp : uncontrolled;

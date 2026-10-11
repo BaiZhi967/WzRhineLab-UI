@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { useEffectTiming } from './clock.js';
 import { scrambleCells, stepToward } from './scramble.js';

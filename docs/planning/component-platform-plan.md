@@ -2,14 +2,15 @@
 
 ## 1. 组件分层
 
-WzRhineLab-UI 使用七层结构：
+WzRhineLab-UI 使用八层结构（Feedback 层在 M9 新增）：
 
 | 层级 | 责任 | 当前状态 |
 | --- | --- | --- |
 | Primitives | 语义元素、尺寸、视觉表面、辅助技术工具 | 基本完成 |
 | Fields | Field 语义、表单控件、错误和提交 | M7 已完成首批 |
-| Navigation / Overlay | Tabs、Menu、Popover、Dialog、Toast、路径 | 基础已完成，Breadcrumb 待做 |
-| Data | Table、Pagination、Progress、Meter、Stat | DataTable 已有，M8 补齐 |
+| Navigation / Overlay | Tabs、Menu、Popover、Dialog、AlertDialog、Drawer、Toast、路径 | M8 补齐 Breadcrumb / Pagination，M9 补齐 AlertDialog / Drawer |
+| Data | Table、Pagination、Progress、Meter、Stat | M8 已完成 |
+| Feedback | Alert、Callout、EmptyState、Skeleton、Spinner | M9 已完成 |
 | Rhine Patterns | 归档、实验、Agent、证据和指标场景 | 首批已完成，M13 扩展 |
 | Agent UI | Agent Shell、消息、Composer、工具、审批、问卷、Artifact 和多 Agent 组合 | 拟议 @wzrhine/agent，M13 分阶段建设 |
 | Effects | 展示型视觉效果和渲染适配器 | DOM/SVG 已有，Canvas/WebGL 后置 |
@@ -59,11 +60,23 @@ WzRhineLab-UI 使用七层结构：
 - ArchiveCard；
 - StatusIndicator；
 - Timeline；
-- DataTable。
+- DataTable；
+- Pagination（M8）；
+- Breadcrumb（M8）；
+- Progress（M8）；
+- Meter（M8）；
+- Stat（M8）；
+- AlertDialog（M9）；
+- Drawer（M9）；
+- Alert（M9）；
+- Callout（M9）；
+- EmptyState（M9）；
+- Skeleton（M9）；
+- Spinner（M9）。
 
-README 当前将这些列为三十个组件和 RhineProvider。后续统计以实际导出和 API 报告为准，不以文件数量为准。
+README 当前将这些列为四十二个组件和 RhineProvider；M10 另外新增 Motion Core 导出（MotionPresence、RhineMotionGroup / RhineMotionItem、ArchiveIdentity 等，见 [ADR-0007](../development/adr/0007-motion-ownership.md)）。后续统计以实际导出（`packages/react/src/index.ts`）和 [API 报告](../api/react.md) 为准，不以文件数量为准。
 
-### M8 必做
+### M8 必做（已完成，见 [M8 验收记录](../development/acceptance/2026-10-10-m8.md)）
 
 | 组件 | 使用场景 | 关键验收 |
 | --- | --- | --- |
@@ -75,10 +88,20 @@ README 当前将这些列为三十个组件和 RhineProvider。后续统计以�
 | DataTable loading | 请求等待 | skeleton / busy / empty 区分 |
 | DataTable pagination | 大数据表 | 保留焦点、选中和排序状态 |
 
-### M9 之后评估再做（Drawer 已提前到 M9）
+### M9 已完成（见 [M9 验收记录](../development/acceptance/2026-10-10-m9.md)、[ADR-0006](../development/adr/0006-overlays-feedback-contracts.md)）
+
+| 组件 | 使用场景 | 关键验收 |
+| --- | --- | --- |
+| AlertDialog | 破坏性操作确认 | `role="alertdialog"`、初始焦点在安全选项、焦点归还 |
+| Drawer | 档案检索详情（单列布局） | 窄屏底部弹出、焦点进出、Esc |
+| Alert / Callout | 页面常驻提示 | live 显式选择、不重复宣告 |
+| EmptyState | DataTable 空状态、无结果 | 标题层级、可选操作 |
+| Skeleton / Spinner | 加载态（从 M8 DataTable 抽取） | 容器 `aria-busy`、减动停止循环 |
+| Toast / Dialog 补强 | 可撤销操作、表单关闭保护 | 操作后默认关闭、`onCloseRequest` |
+
+### M12 及之后评估再做（Drawer 已提前到 M9 并交付）
 
 - Combobox；
-- Drawer；
 - Slider；
 - NumberField；
 - Accordion；

@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { useReducedMotionConfig } from 'motion/react';
 import { useInViewport, usePageVisible } from './visibility.js';

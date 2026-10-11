@@ -1,5 +1,8 @@
+'use client';
+
 import * as React from 'react';
 import { Field as BaseField } from '@base-ui/react/field';
+import { useRhineLocale } from '../provider/messages.js';
 import { cx } from '../utils/cx.js';
 
 type BaseControlProps = React.ComponentProps<typeof BaseField.Control>;
@@ -60,6 +63,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(fun
   ref,
 ) {
   const countId = React.useId();
+  const { messages, formatNumber } = useRhineLocale();
   const [length, setLength] = React.useState(() => (value ?? defaultValue ?? '').length);
   const current = value !== undefined ? value.length : length;
   const counting = showCount && maxLength != null;
@@ -100,7 +104,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(fun
       />
       {counting && (
         <span id={countId} className="rl-textarea__count" data-over={current >= maxLength! || undefined}>
-          已输入 {current} / {maxLength}
+          {messages.textarea.count(current, maxLength!, formatNumber)}
         </span>
       )}
     </span>

@@ -1,4 +1,7 @@
+'use client';
+
 import * as React from 'react';
+import { useRhineMessages } from '../provider/messages.js';
 import { cx } from '../utils/cx.js';
 import type { StatusKind } from './StatusBadge.js';
 
@@ -31,13 +34,14 @@ export type TimelineProps = Omit<React.OlHTMLAttributes<HTMLOListElement>, 'chil
 };
 
 export const Timeline = React.forwardRef<HTMLOListElement, TimelineProps>(function Timeline(
-  { events, emptyText = '暂无记录', className, ...rest },
+  { events, emptyText, className, ...rest },
   ref,
 ) {
+  const messages = useRhineMessages();
   if (events.length === 0) {
     return (
       <p className={cx('rl-timeline__empty', className)} data-slot="timeline">
-        {emptyText}
+        {emptyText === undefined ? messages.timeline.empty : emptyText}
       </p>
     );
   }
