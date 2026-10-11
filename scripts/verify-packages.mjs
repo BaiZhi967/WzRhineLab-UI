@@ -21,7 +21,7 @@ import { join, resolve } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 
 const root = resolve(import.meta.dirname, '..');
-const packages = ['tokens', 'react', 'effects'];
+const packages = ['tokens', 'react', 'effects', 'agent-core', 'agent'];
 const keep = process.argv.includes('--keep');
 const log = (msg) => console.log(`\u001b[36m[verify]\u001b[0m ${msg}`);
 const fail = (msg) => {
@@ -87,7 +87,9 @@ for (const [name, tgz] of Object.entries(tarballs)) {
   if (list.some((f) => /^package\/(src|test)\//.test(f) || /\.test\.[jt]sx?$/.test(f))) fail(`${name}: tarball contains src/ or tests`);
   if (JSON.stringify(manifest).includes('workspace:')) fail(`${name}: workspace: protocol leaked into the published manifest`);
   if (!manifest.types || !manifest.exports?.['.']?.types) fail(`${name}: missing type declarations in exports`);
-  if (!Array.isArray(manifest.sideEffects) || !manifest.sideEffects.includes('**/*.css')) fail(`${name}: sideEffects must list CSS only`);
+  // agent-core ships no CSS: `sideEffects: false`. Every other package lists CSS only.
+  const sideEffectsOk = name === '@wzrhine/agent-core' ? manifest.sideEffects === false : Array.isArray(manifest.sideEffects) && manifest.sideEffects.includes('**/*.css');
+  if (!sideEffectsOk) fail(`${name}: sideEffects must list CSS only (agent-core: false)`);
   for (const doc of ['package/README.md', 'package/CHANGELOG.md']) {
     if (!list.includes(doc)) fail(`${name}: ${doc.replace('package/', '')} missing from tarball`);
   }
@@ -114,15 +116,18 @@ function usesReactAtRuntime(file, code) {
 const pureModules = {
   '@wzrhine/react': ['index', 'utils/cx', 'motion/presets', 'components/pagination-utils', 'components/meter-utils'],
   '@wzrhine/effects': ['index', 'scramble', 'usePageVisible'],
+  '@wzrhine/agent': ['index', 'utils/cx', 'provider/messages/status'],
 };
 const walkSrc = (dir) =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walkSrc(join(dir, e.name)) : [join(dir, e.name)]));
-for (const [name, dirName] of [['@wzrhine/react', 'react'], ['@wzrhine/effects', 'effects']]) {
+for (const [name, dirName] of [['@wzrhine/react', 'react'], ['@wzrhine/effects', 'effects'], ['@wzrhine/agent', 'agent']]) {
   const srcDir = join(root, 'packages', dirName, 'src');
   const entries = readTarball(tarballs[name]);
   const expected = new Map();
   for (const file of walkSrc(srcDir)) {
     if (!/\.tsx?$/.test(file) || /\.test\.tsx?$|\.d\.ts$/.test(file)) continue;
+    // Sample data for tests and the showcase only; excluded from the build (tsconfig.build.json).
+    if (file.includes(`${join('src', 'fixtures')}`)) continue;
     const rel = file.slice(srcDir.length + 1).replace(/\\/g, '/').replace(/\.tsx?$/, '');
     const code = readFileSync(file, 'utf8');
     const client = startsWithUseClient(code);
@@ -167,6 +172,8 @@ writeFileSync(
         '@wzrhine/tokens': `file:${tarballs['@wzrhine/tokens']}`,
         '@wzrhine/react': `file:${tarballs['@wzrhine/react']}`,
         '@wzrhine/effects': `file:${tarballs['@wzrhine/effects']}`,
+        '@wzrhine/agent-core': `file:${tarballs['@wzrhine/agent-core']}`,
+        '@wzrhine/agent': `file:${tarballs['@wzrhine/agent']}`,
         react: '19.3.0',
         'react-dom': '19.3.0',
         motion: '12.43.0',
@@ -182,6 +189,7 @@ writeFileSync(
         overrides: {
           '@wzrhine/tokens': `file:${tarballs['@wzrhine/tokens']}`,
           '@wzrhine/react': `file:${tarballs['@wzrhine/react']}`,
+          '@wzrhine/agent-core': `file:${tarballs['@wzrhine/agent-core']}`,
         },
       },
     },
@@ -241,12 +249,30 @@ export function Effects() {
 `,
 );
 writeFileSync(
+  join(app, 'src/Agent.tsx'),
+  `import '@wzrhine/agent/styles.css';
+import { AgentSpark, AgentStatus, runStatusMeta, toPlainText, encodeToken } from '@wzrhine/agent';
+import type { MessageView, RunStatus } from '@wzrhine/agent';
+import { mergeById } from '@wzrhine/agent-core';
+const status: RunStatus = 'running';
+export const messages: MessageView[] = mergeById([], [{ id: 'm1', role: 'user', status: 'complete', parts: [] }]);
+export const text: string = toPlainText(encodeToken('@', 'a.ts'));
+export function Agent() {
+  const meta = runStatusMeta[status];
+  return <><AgentSpark phase="thinking" /><AgentStatus glyph={meta.glyph} tone={meta.tone} label="运行中" /></>;
+}
+`,
+);
+writeFileSync(
   join(app, 'src/type-errors.tsx'),
   `import { Button, IconButton } from '@wzrhine/react';
 // @ts-expect-error unknown variant must be rejected by the published types
 export const a = <Button variant="danger">x</Button>;
 // @ts-expect-error IconButton requires an accessible name
 export const b = <IconButton icon={null} />;
+import type { RunStatus } from '@wzrhine/agent-core';
+// @ts-expect-error snake_case status names are not part of the contract (ADR-0011 §3)
+export const c: RunStatus = 'waiting_approval';
 `,
 );
 writeFileSync(join(app, 'index.html'), '<!doctype html><div id="root"></div><script type="module" src="/src/main.tsx"></script>');
@@ -254,7 +280,8 @@ writeFileSync(
   join(app, 'src/main.tsx'),
   `import { createRoot } from 'react-dom/client';
 import { App } from './App';
-createRoot(document.getElementById('root')!).render(<App />);
+import { Agent } from './Agent';
+createRoot(document.getElementById('root')!).render(<><App /><Agent /></>);
 `,
 );
 writeFileSync(
@@ -263,9 +290,10 @@ writeFileSync(
 import { createElement as h } from 'react';
 import { Button, RhineProvider, StatusBadge, Text } from '@wzrhine/react';
 import { ArchiveReveal } from '@wzrhine/effects';
+import { AgentSpark, AgentStatus } from '@wzrhine/agent';
 import { motionDurations } from '@wzrhine/tokens';
-const html = renderToString(h(RhineProvider, { theme: 'dark' }, h(Button, null, '保存'), h(StatusBadge, { status: 'info' }, '审核中'), h(Text, { variant: 'mono' }, 'ARC-1'), h(ArchiveReveal, { text: 'ARC-1024', revealed: true })));
-for (const needle of ['rl-theme', 'data-rl-theme="dark"', 'rl-button', '保存', 'rl-badge', 'rl-reveal', 'ARC-1024']) {
+const html = renderToString(h(RhineProvider, { theme: 'dark' }, h(Button, null, '保存'), h(StatusBadge, { status: 'info' }, '审核中'), h(Text, { variant: 'mono' }, 'ARC-1'), h(ArchiveReveal, { text: 'ARC-1024', revealed: true }), h(AgentSpark, { phase: 'thinking' }), h(AgentStatus, { glyph: 'active', tone: 'accent', label: '运行中' })));
+for (const needle of ['rl-theme', 'data-rl-theme="dark"', 'rl-button', '保存', 'rl-badge', 'rl-reveal', 'ARC-1024', 'rl-agent-spark', 'data-phase="thinking"', 'rl-agent-status', '运行中']) {
   if (!html.includes(needle)) { console.error('SSR output missing ' + needle); process.exit(1); }
 }
 if (motionDurations.press !== 80) process.exit(1);
@@ -307,6 +335,8 @@ const cssChecks = {
   'data.css': '.rl-pagination__page',
   'drawer.css': '.rl-drawer__viewport',
   'status.css': '.rl-callout',
+  'disclosure.css': '.rl-collapsible__panel',
+  'agent.css': '.rl-agent-spark__dot',
 };
 for (const [file, needle] of Object.entries(cssChecks)) {
   if (!css.includes(needle)) fail(`bundled CSS missing ${needle} from ${file} (style entry or @import chain broken)`);

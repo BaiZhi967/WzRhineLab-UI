@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * API reference generator / checker for the three publishable packages.
+ * API reference generator / checker for the publishable packages.
  *
  * Reads each package's built declarations (dist/index.d.ts, run `pnpm build:packages` first) with the
  * TypeScript compiler API and writes docs/api/<package>.md listing every public export with its kind,
@@ -23,6 +23,8 @@ const packages = [
   { dir: 'tokens', name: '@wzrhine/tokens' },
   { dir: 'react', name: '@wzrhine/react' },
   { dir: 'effects', name: '@wzrhine/effects' },
+  { dir: 'agent-core', name: '@wzrhine/agent-core' },
+  { dir: 'agent', name: '@wzrhine/agent' },
 ];
 
 const flags = ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseAliasDefinedOutsideCurrentScope | ts.TypeFormatFlags.WriteArrowStyleSignature;
