@@ -88,7 +88,14 @@ export { Spinner } from './components/Spinner.js';
 export type { SpinnerProps, SpinnerSize } from './components/Spinner.js';
 export { Collapsible } from './components/Collapsible.js';
 export type { CollapsibleProps } from './components/Collapsible.js';
-// @m12-f1-exports (M12 group 1: Accordion, Slider, NumberField, ContextMenu)
+export { Accordion, AccordionItem } from './components/Accordion.js';
+export type { AccordionHeadingLevel, AccordionItemData, AccordionItemProps, AccordionProps } from './components/Accordion.js';
+export { Slider } from './components/Slider.js';
+export type { SliderChangeValue, SliderMark, SliderProps } from './components/Slider.js';
+export { NumberField } from './components/NumberField.js';
+export type { NumberFieldProps } from './components/NumberField.js';
+export { ContextMenu } from './components/ContextMenu.js';
+export type { ContextMenuProps } from './components/ContextMenu.js';
 // @m12-f2-exports (M12 group 2: Combobox, CommandPalette, FileDropZone)
 export { DataTable } from './components/DataTable.js';
 export type {

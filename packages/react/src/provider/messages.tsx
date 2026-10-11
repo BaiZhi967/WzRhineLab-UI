@@ -62,6 +62,14 @@ export interface RhineMessages {
     /** Spoken text of an empty value shown as "—" (`empty="placeholder"`). */
     missing: string;
   };
+  numberField: {
+    /** Accessible name of the decrement stepper button. */
+    decrement: string;
+    /** Accessible name of the increment stepper button. */
+    increment: string;
+    /** `aria-roledescription` of the text input (Base UI defaults to English "Number field"). */
+    roleDescription: string;
+  };
   pagination: {
     nav: string;
     previous: string;
@@ -129,6 +137,7 @@ export const zhCN: RhineMessages = {
   drawer: { close: '关闭' },
   field: { optional: '（可选）' },
   metadataList: { missing: '未记录' },
+  numberField: { decrement: '减少', increment: '增加', roleDescription: '数字输入框' },
   pagination: {
     nav: '分页',
     previous: '上一页',
@@ -164,6 +173,7 @@ export const enUS: RhineMessages = {
   drawer: { close: 'Close' },
   field: { optional: '(optional)' },
   metadataList: { missing: 'Not recorded' },
+  numberField: { decrement: 'Decrease', increment: 'Increase', roleDescription: 'Number field' },
   pagination: {
     nav: 'Pagination',
     previous: 'Previous',
