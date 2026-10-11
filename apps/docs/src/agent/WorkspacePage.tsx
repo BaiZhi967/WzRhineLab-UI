@@ -1,11 +1,12 @@
 import * as React from 'react';
-import type { ArtifactView, ContextUsageView, FilePreviewMode, FilePreviewView, LedgerFilterKey, PinnedSummaryView, RunSummaryView, TerminalView } from '@wzrhine/agent';
+import type { ArtifactView, ContextUsageView, FilePreviewMode, FilePreviewView, LedgerFilterKey, MaterialPageView, PinnedSummaryView, RunSummaryView, SubagentView, TerminalView } from '@wzrhine/agent';
 import {
   ActivityLedger,
   ArtifactList,
   CompactionNotice,
   ContextUsage,
   FilePreview,
+  FilePreviewTabs,
   PersistentTerminal,
   PinnedSummary,
   RunSummary,
@@ -383,6 +384,224 @@ function CompactionDemo() {
   );
 }
 
+/** Terminal with newer output, notes, call history and a stored-output pager (all 示例). */
+function TerminalExtrasDemo() {
+  const base: TerminalView = {
+    ...sampleTerminals[0]!,
+    id: 'term-f',
+    name: '终端 F',
+    status: 'idle',
+    stoppable: false,
+    newerOutput: true,
+    notes: ['空闲为推断（示例）', '结果待保存（示例）'],
+    history: [
+      { id: 'h-1', command: 'python classify.py --batch 1', status: 'returned', exitCode: 0, at: '2026-10-09T08:12:00Z' },
+      { id: 'h-2', command: 'pytest -q tests/test_reef.py', status: 'failed', exitCode: 1, at: '2026-10-09T08:14:30Z' },
+      { id: 'h-3', command: './sync.sh', status: 'unknown', at: '2026-10-09T08:16:05Z' },
+    ],
+  };
+  const [terminal, setTerminal] = React.useState(base);
+  const [log, setLog] = React.useState('尚未操作');
+  const pageOf = (offset: number): MaterialPageView => {
+    const lines = Array.from({ length: 60 }, (_, i) => `[示例] 第 ${i + 1} 行终端输出`);
+    const slice = lines.slice(offset, offset + 20);
+    const end = offset + slice.length;
+    return { offset, length: slice.length, total: lines.length, unit: 'lines', complete: end >= lines.length, nextOffset: end >= lines.length ? undefined : end, content: slice.join('\n'), status: 'ready' };
+  };
+  const [history, setHistory] = React.useState<number[]>([]);
+  const [page, setPage] = React.useState<MaterialPageView>(() => pageOf(0));
+  return (
+    <div className="sc-card-list" data-testid="terminal-extras">
+      <PersistentTerminal
+        terminal={terminal}
+        onReadLatest={() => {
+          setTerminal((t) => ({ ...t, newerOutput: false, output: `${t.output ?? ''}\n最新输出已读取（示例）` }));
+          setLog('读取最新输出');
+        }}
+        onLoadMoreHistory={() => setLog('加载更早的调用（示例：没有更多）')}
+      />
+      <p className="sc-small">已保存的输出按页读取（示例）：</p>
+      <PersistentTerminal
+        terminal={{ ...base, id: 'term-g', name: '终端 G', newerOutput: false, notes: undefined, history: undefined, status: 'ended', exitCode: 0 }}
+        page={page}
+        pager={{
+          canGoBack: history.length > 0,
+          onFirst: () => {
+            setHistory([]);
+            setPage(pageOf(0));
+          },
+          onPrevious: () => {
+            setPage(pageOf(history[history.length - 1] ?? 0));
+            setHistory((h) => h.slice(0, -1));
+          },
+          onNext: (next) => {
+            setHistory((h) => [...h, page.offset]);
+            setPage(pageOf(next));
+          },
+        }}
+      />
+      <p className="sc-small" aria-live="polite">
+        最近操作：{log}
+      </p>
+    </div>
+  );
+}
+
+/** Context usage with provider-neutral statistics (示例 values; missing values show —). */
+const statsUsage: ContextUsageView = {
+  ...sampleContextUsage,
+  stats: [
+    {
+      id: 'cache',
+      title: '缓存（示例）',
+      rows: [
+        { label: '命中率', value: 62.5, unit: 'percent' },
+        { label: '缓存读取', value: 8_000, unit: 'tokens' },
+        { label: '缓存写入', unit: 'tokens' },
+      ],
+    },
+    {
+      id: 'speed',
+      title: '速度（示例）',
+      rows: [
+        { label: '首字延迟', value: 840, unit: 'ms' },
+        { label: '生成速度', value: 42.3, unit: 'tokens-per-s', completeness: 'estimated' },
+        { label: '请求次数', value: 3, unit: 'count' },
+      ],
+    },
+  ],
+};
+
+function ContextStatsDemo() {
+  return (
+    <div className="sc-card-list" data-testid="context-stats">
+      <div className="sc-row">
+        <ContextUsage usage={statsUsage} variant="ring" openOnHover />
+        <span className="sc-small">悬停、聚焦或点击打开（示例）</span>
+      </div>
+      <ContextUsage usage={statsUsage} variant="full" />
+    </div>
+  );
+}
+
+const inheritedAgents: SubagentView[] = [
+  ...sampleSubagents.slice(0, 2),
+  { id: 's-old-1', name: '旧版核查（示例）', task: '上一轮留下的文件核查记录', status: 'completed', inherited: true, usage: { tokens: 2_100, completeness: 'exact' }, resultAvailable: true },
+  { id: 's-old-2', name: '旧版汇总（示例）', task: '上一轮中断的汇总', status: 'interrupted', inherited: true },
+];
+
+function SubagentInheritedDemo() {
+  const [log, setLog] = React.useState('尚未操作');
+  return (
+    <div className="sc-card-list">
+      <SubAgentList agents={inheritedAgents} groupInherited onOpen={(id) => setLog(`查看子任务 ${id}`)} onOpenSnapshot={(id) => setLog(`查看快照 ${id}`)} />
+      <p className="sc-small" aria-live="polite">
+        最近操作：{log}
+      </p>
+    </div>
+  );
+}
+
+const tabFiles: FilePreviewView[] = [
+  { ...codeFileForTabs(), id: 't-code' },
+  { id: 't-md', name: 'notes-with-a-rather-long-file-name.md', path: '/workspace/reef/docs/notes-with-a-rather-long-file-name.md', kind: 'markdown', status: 'ready', content: '# 观察记录（示例）\n\n- 珊瑚 12\n- 海绵 4' },
+  { id: 't-ext', name: 'secret.env', path: '/home/user/secret.env', kind: 'text', status: 'error', reason: '没有读取权限（示例）' },
+];
+
+function codeFileForTabs(): FilePreviewView {
+  return { ...codeFile, path: '/workspace/reef/src/classify.py' };
+}
+
+const openTargets = [
+  { id: 'editor', label: '代码编辑器（示例）' },
+  { id: 'system', label: '系统默认应用（示例）' },
+  { id: 'folder', label: '文件管理器（示例）', group: 'reveal' as const },
+];
+
+/** Open files as tabs, each a FilePreview with the split "open with" control and a breadcrumb. */
+function FileTabsDemo() {
+  const [open, setOpen] = React.useState(tabFiles);
+  const [active, setActive] = React.useState(tabFiles[0]!.id);
+  const [log, setLog] = React.useState('尚未操作');
+  const reopen = React.useRef<HTMLButtonElement>(null);
+  return (
+    <div className="sc-card-list" data-testid="file-tabs">
+      {open.length > 0 ? (
+        <FilePreviewTabs
+          tabs={open.map((f) => ({ id: f.id, name: f.name, kind: f.kind }))}
+          activeId={active}
+          onActivate={setActive}
+          onCloseTab={(id) => {
+            setOpen((list) => list.filter((f) => f.id !== id));
+            setLog(`关闭 ${id}`);
+          }}
+          onCloseAll={() => {
+            setOpen([]);
+            setLog('关闭全部');
+          }}
+          returnFocusRef={reopen}
+          renderPanel={(id) => {
+            const f = open.find((x) => x.id === id)!;
+            return (
+              <FilePreview
+                file={f}
+                headingLevel={4}
+                breadcrumbRoot="/workspace/reef"
+                openTargets={openTargets}
+                defaultOpenTarget="editor"
+                onOpenWith={(target, file) => setLog(`用 ${target} 打开 ${file.name}（示例）`)}
+                onCopyPath={(path) => setLog(`复制路径 ${path}（示例）`)}
+                onReference={(file) => setLog(`引用 ${file.name}（示例）`)}
+                onReload={() => setLog('重新读取（示例）')}
+                onRetry={() => setLog('重试读取（示例）')}
+              />
+            );
+          }}
+        />
+      ) : (
+        <p className="sc-small">没有打开的文件（示例）</p>
+      )}
+      <div className="sc-row">
+        <Button
+          ref={reopen}
+          size="sm"
+          variant="secondary"
+          onClick={() => {
+            setOpen(tabFiles);
+            setActive(tabFiles[0]!.id);
+          }}
+        >
+          重新打开示例文件
+        </Button>
+        <span className="sc-small" aria-live="polite">
+          最近操作：{log}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function CompactionExtrasDemo() {
+  return (
+    <div className="sc-card-list">
+      <CompactionNotice status="running" phase="compacting" elapsedMs={5_200} onCancel={() => undefined} />
+      <CompactionNotice status="interrupted" />
+    </div>
+  );
+}
+
+function ArtifactTruncatedDemo() {
+  const [log, setLog] = React.useState('尚未操作');
+  return (
+    <div className="sc-card-list">
+      <ArtifactList artifacts={sampleArtifacts.slice(0, 2)} truncated onShowAll={() => setLog('查看全部产物（示例）')} />
+      <p className="sc-small" aria-live="polite">
+        最近操作：{log}
+      </p>
+    </div>
+  );
+}
+
 export function AgentWorkspacePage() {
   return (
     <>
@@ -396,6 +615,9 @@ export function AgentWorkspacePage() {
         <Specimen id="ws-terminal-states" index="22" title="终端状态" span="half" description="空闲（命令已返回）、状态待确认、仅部分捕获、加载更早输出。">
           <TerminalStates />
         </Specimen>
+        <Specimen id="ws-terminal-extras" index="22" title="终端 · 新输出、说明、调用记录、分页" description="快照之后有新输出时提示「有新输出，读取最新」；说明以小字列出；调用记录为有序列表（命令、状态文字、退出码、时间）；已保存输出可用 ChunkPager 翻页。">
+          <TerminalExtrasDemo />
+        </Specimen>
         <Specimen id="ws-terminal-list" index="23" title="TerminalList · TerminalRow" span="half" description="按未关闭 / 状态待确认 / 已结束 / 继承记录分组；打开与停止是两个按钮。" note="组内顺序保持传入顺序，状态波动不重排。">
           <TerminalListDemo />
         </Specimen>
@@ -405,17 +627,35 @@ export function AgentWorkspacePage() {
         <Specimen id="ws-context" index="27" title="ContextUsage" description="只有可靠上限时才画百分比；未知上限显示虚线圆环与文字，不出现 role=meter。" note="ring 变体点击或 Enter 打开 Popover。">
           <ContextDemo />
         </Specimen>
+        <Specimen id="ws-context-stats" index="27" title="ContextUsage · 统计" span="half" description="缓存命中率、首字延迟、生成速度等统计按分组以 <dl> 显示；缺失值显示「—」，不显示 0。" note="ring 变体 openOnHover：悬停也可打开 Popover。">
+          <ContextStatsDemo />
+        </Specimen>
+        <Specimen id="ws-subagents-inherited" index="24" title="SubAgentList · 继承记录" span="half" description="继承的子任务记录是只读快照：不显示待处理提示，只提供「查看快照」；可单独分组。">
+          <SubagentInheritedDemo />
+        </Specimen>
         <Specimen id="ws-summary" index="28" title="PinnedSummary" span="half" description="折叠、固定、来源（失效来源禁用并说明原因）、更新中 / 可能过期 / 暂无。">
           <SummaryDemo />
         </Specimen>
         <Specimen id="ws-compaction" index="CN" title="CompactionNotice" span="half" description="整理中（可取消）、完成（token 变化 + 摘要）、取消、失败（/compact 重试）、待保存。">
           <CompactionDemo />
         </Specimen>
+        <Specimen id="ws-compaction-extras" index="CN" title="CompactionNotice · 阶段与中断" span="half" description="整理中显示子阶段；中断后保留旧上下文并提示 /compact 重试。">
+          <CompactionExtrasDemo />
+        </Specimen>
+        <Specimen id="ws-artifacts-truncated" index="29" title="ArtifactList · 部分列出" span="half" description="宿主只列出部分产物时说明「部分产物未列出」，不编造数量。">
+          <ArtifactTruncatedDemo />
+        </Specimen>
         <Specimen id="ws-artifacts" index="29" title="ArtifactList · ArtifactCard" description="只有真正保存后才显示「已保存」；生成中无百分比；失败可重试；删除 / 不可用不能打开。" note="新增产物一次轻量入场（AgentEntrance row）。">
           <ArtifactDemo />
         </Specimen>
         <Specimen id="ws-file" index="30" title="FilePreview" description="预览 / 原始 / 元数据标签可用方向键切换；大文件分块；文件已更新可重新加载；二进制可在外部打开。">
           <FileDemo />
+        </Specimen>
+        <Specimen id="ws-file-tabs" index="30" title="FilePreviewTabs · 打开方式" description="已打开文件的标签条：←/→、Home/End 切换并激活，Delete 或中键关闭，Esc 关闭全部；关闭当前标签时焦点移到相邻标签。面板内为带路径面包屑与「打开方式」拆分按钮的 FilePreview。" note="拆分按钮的菜单：打开方式、在文件夹中显示、复制路径、在对话中引用。工作区外文件显示「外部」。">
+          {/* The tab strip scrolls inside itself; the wrapper marks it as an intentional scroller. */}
+          <div className="sc-table-wrap" style={{ padding: 'var(--rl-space-1)', background: 'none' }}>
+            <FileTabsDemo />
+          </div>
         </Specimen>
         <Specimen id="ws-ledger" index="33" title="ActivityLedger" description="按 sequence 排序、按 id 去重；筛选只隐藏，不改变顺序。" note="挂载后新到的事件才有入场。">
           <LedgerDemo />

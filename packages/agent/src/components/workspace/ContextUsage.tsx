@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Meter, Popover } from '@wzrhine/react';
 import type { PopoverAlign, PopoverSide } from '@wzrhine/react';
 import { usageLevel, usagePercent } from '@wzrhine/agent-core';
-import type { ContextUsageView } from '@wzrhine/agent-core';
+import type { ContextUsageView, UsageStatRow, UsageStatSection } from '@wzrhine/agent-core';
 import { useAgentFormat, useAgentMessages } from '../../provider/AgentMessages.js';
 import { AgentIcon } from '../../primitives/icons.js';
 import { cx } from '../../utils/cx.js';
@@ -23,6 +23,8 @@ export type ContextUsageProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'chil
   /** Popover placement for `ring`. */
   side?: PopoverSide;
   align?: PopoverAlign;
+  /** `ring`: also open the Popover on hover (focus and click still open it). */
+  openOnHover?: boolean;
   messages?: WorkspaceMessagesProp;
 };
 
@@ -141,11 +143,13 @@ function Breakdown({ usage, m }: { usage: ContextUsageView; m: ReturnType<typeof
  * drawn only when `usagePercent` returns a number (exact or estimated value with a reliable max);
  * unknown or partial data shows text without a `role="meter"`. Non-exact numbers always carry
  * 「估计值」 / 「部分数据」. Near (≥ 80%) and over the limit add a warning sentence, not only colour.
+ * `usage.stats` (cache hit rate, TTFT, TPS…) render in the full view and the popover as one
+ * `<dl>` per section; a missing value shows 「—」 (read as 「无数据」), never 0.
  *
  * Motion: none of its own (the Popover has its CSS transition); values update directly.
  */
 export const ContextUsage = React.forwardRef<HTMLDivElement, ContextUsageProps>(function ContextUsage(
-  { usage, variant = 'full', side = 'top', align = 'end', messages: override, className, ...rest },
+  { usage, variant = 'full', side = 'top', align = 'end', openOnHover, messages: override, className, ...rest },
   ref,
 ) {
   const d = useDerived(usage, override);
@@ -158,6 +162,7 @@ export const ContextUsage = React.forwardRef<HTMLDivElement, ContextUsageProps>(
           side={side}
           align={align}
           size="sm"
+          openOnHover={openOnHover}
           title={m.contextTitle}
           trigger={
             <button type="button" className="rl-agent-context__trigger" data-level={level} aria-label={m.contextTrigger(tag ? `${summary} · ${tag}` : summary)}>
@@ -193,12 +198,72 @@ function ContextUsageDetail({ usage, d }: { usage: ContextUsageView; d: ReturnTy
       <Measure usage={usage} d={d} size="md" />
       <Warning level={d.level} m={d.m} />
       <Breakdown usage={usage} m={d.m} />
+      <Stats sections={usage.stats} m={d.m} />
       {usage.note && (
         <p className="rl-agent-context__note">
           <AgentIcon name="info" />
           {usage.note}
         </p>
       )}
+    </div>
+  );
+}
+
+function Stats({ sections, m }: { sections?: UsageStatSection[]; m: ReturnType<typeof useWorkspaceMessages> }) {
+  const status = useAgentMessages().status;
+  const format = useAgentFormat();
+  const id = React.useId();
+  const shown = (sections ?? []).filter((s) => s.rows.length > 0);
+  if (shown.length === 0) return null;
+  const valueOf = (row: UsageStatRow): string => {
+    const v = row.value!;
+    switch (row.unit) {
+      case 'ms':
+        return m.contextStatValue(format.duration(v), 'ms');
+      case 'tokens':
+        return m.contextStatValue(format.compact(v), 'tokens');
+      case 'percent':
+        return m.contextStatValue(format.number(Math.round(v * 10) / 10), 'percent');
+      case 'tokens-per-s':
+        return m.contextStatValue(format.number(Math.round(v * 10) / 10), 'tokens-per-s');
+      default:
+        return m.contextStatValue(format.number(v), 'count');
+    }
+  };
+  return (
+    <div className="rl-agent-context__stats" role="group" aria-label={m.contextStats}>
+      {shown.map((section, i) => {
+        const titleId = `${id}-${i}`;
+        return (
+          <section key={section.id} className="rl-agent-context__stat-section" aria-labelledby={titleId}>
+            <p id={titleId} className="rl-agent-context__stat-title">
+              {section.title}
+            </p>
+            <dl className="rl-agent-context__stat-list">
+              {section.rows.map((row, j) => {
+                const missing = row.value === undefined || !Number.isFinite(row.value) || row.completeness === 'unknown';
+                const tag = !missing && row.completeness ? completenessTag(row.completeness, status.completeness) : undefined;
+                return (
+                  <div key={`${row.label}-${j}`} className="rl-agent-context__stat">
+                    <dt>{row.label}</dt>
+                    <dd data-missing={missing || undefined}>
+                      {missing ? (
+                        <>
+                          <span aria-hidden="true">—</span>
+                          <span className="rl-agent-sr">{m.contextStatMissing}</span>
+                        </>
+                      ) : (
+                        valueOf(row)
+                      )}
+                      {tag && <span className="rl-agent-context__tag">{tag}</span>}
+                    </dd>
+                  </div>
+                );
+              })}
+            </dl>
+          </section>
+        );
+      })}
     </div>
   );
 }

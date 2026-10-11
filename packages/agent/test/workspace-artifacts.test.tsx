@@ -109,7 +109,9 @@ describe('FilePreview', () => {
     const user = userEvent.setup();
     render(<FilePreview file={file({ external: true, version: '7' })} />);
     const section = screen.getByRole('region', { name: 'classify.py' });
-    expect(section).toHaveTextContent('src/classify.py');
+    const crumbs = within(section).getByRole('navigation', { name: 'classify.py 的路径' });
+    expect(within(crumbs).getAllByRole('listitem').map((li) => li.textContent)).toEqual(['src', 'classify.py']);
+    expect(crumbs).toHaveAttribute('title', 'src/classify.py');
     expect(section).toHaveTextContent('外部');
     expect(section).toHaveTextContent('版本 7');
     const content = screen.getByRole('region', { name: 'classify.py 内容' });

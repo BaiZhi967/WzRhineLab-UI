@@ -98,6 +98,29 @@ test('diff shows a visible +/− sign column and spoken add/remove', async ({ pa
   await expect(diff.locator('.rl-agent-sr', { hasText: '删除' }).first()).toBeAttached();
 });
 
+test('chunk pager: next / previous follow the returned offsets', async ({ page }) => {
+  await page.goto(url);
+  const pager = page.getByTestId('chunk-pager').getByRole('group', { name: '示例清单 manifest.csv', exact: true });
+  await expect(pager).toContainText('第 1–40 行 / 104');
+  await expect(pager).toContainText('片段');
+  const prev = pager.getByRole('button', { name: '上一页' });
+  const next = pager.getByRole('button', { name: '下一页' });
+  await expect(prev).toHaveAttribute('aria-disabled', 'true');
+  await next.click();
+  await expect(pager).toContainText('第 41–80 行 / 104');
+  await expect(prev).not.toHaveAttribute('aria-disabled', 'true');
+  await next.focus();
+  await page.keyboard.press('Enter');
+  await expect(pager).toContainText('第 81–104 行 / 104');
+  await expect(pager).toContainText('已读至末尾');
+  await expect(next).toHaveAttribute('aria-disabled', 'true');
+  await expect(next).toBeFocused();
+  await prev.click();
+  await expect(pager).toContainText('第 41–80 行 / 104');
+  await pager.getByRole('button', { name: '返回开头' }).click();
+  await expect(pager).toContainText('第 1–40 行 / 104');
+});
+
 test('axe: no WCAG A/AA violations', async ({ page }) => {
   await page.goto(url);
   await expect(page.getByRole('heading', { level: 1, name: 'Tools' })).toBeVisible();

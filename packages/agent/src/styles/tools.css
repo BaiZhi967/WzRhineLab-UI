@@ -826,8 +826,96 @@
 .rl-agent-command__exit { font: var(--rl-type-mono); color: var(--rl-fg-muted); }
 .rl-agent-command__exit[data-failed] { color: var(--rl-danger); }
 
+/* ---------- ChunkPager ---------- */
+.rl-agent-pager {
+  box-sizing: border-box;
+  display: grid;
+  gap: var(--rl-space-2);
+  min-width: 0;
+}
+
+.rl-agent-pager__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rl-space-1) var(--rl-space-2);
+  margin: 0;
+  min-width: 0;
+}
+
+.rl-agent-pager__range {
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-mono);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.rl-agent-pager__extent {
+  padding: 0 var(--rl-space-1);
+  border: var(--rl-border-width) dashed var(--rl-border-strong);
+  border-radius: var(--rl-radius-xs);
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-meta);
+  white-space: nowrap;
+}
+
+.rl-agent-pager__extent[data-complete] {
+  border-style: solid;
+  border-color: var(--rl-success);
+  color: var(--rl-success);
+}
+
+.rl-agent-pager__scroll {
+  box-sizing: border-box;
+  max-width: 100%;
+  max-height: var(--rl-agent-output-max-height);
+  overflow: auto;
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-subtle);
+  color: var(--rl-fg-primary);
+}
+
+.rl-agent-pager__scroll:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.rl-agent-pager__pre {
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--rl-space-2) var(--rl-space-3);
+  font: var(--rl-type-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.rl-agent-pager__empty {
+  margin: 0;
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-meta);
+}
+
+.rl-agent-pager__error,
+.rl-agent-pager__reason {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.rl-agent-pager__reason {
+  color: var(--rl-fg-muted);
+}
+
+.rl-agent-pager__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rl-space-1);
+}
+
 /* ---------- forced colours ---------- */
 @media (forced-colors: active) {
+  .rl-agent-pager__scroll,
+  .rl-agent-pager__extent { border-color: CanvasText; }
   .rl-agent-tool-chip,
   .rl-agent-notice,
   .rl-agent-tool-button { border: var(--rl-border-width) solid CanvasText; }

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import type { FileDiffView, ToolCallView, ToolOutputView } from '@wzrhine/agent';
-import { CodeModeToolTree, DiffPreview, MultiFileDiff, ToolActivity, ToolHistory, ToolOutput, ToolRecord } from '@wzrhine/agent';
+import type { FileDiffView, MaterialPageView, ToolCallView, ToolOutputView } from '@wzrhine/agent';
+import { ChunkPager, CodeModeToolTree, DiffPreview, MultiFileDiff, ToolActivity, ToolHistory, ToolOutput, ToolRecord } from '@wzrhine/agent';
 import { Button } from '@wzrhine/react';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
 import { sampleTools } from '../../../../packages/agent/src/fixtures/session';
@@ -706,6 +706,69 @@ function LazyRecordDemo() {
   );
 }
 
+/** Sample stored material (示例): 3 pages of 40 lines each; the "adapter" returns the next offset. */
+const MATERIAL_LINES = Array.from({ length: 104 }, (_, i) => `R-${String(i + 1).padStart(3, '0')}.png, 示例分类 ${['珊瑚', '海绵', '藻类'][i % 3]}`);
+const PAGE_SIZE = 40;
+
+function readMaterialPage(offset: number, failOnce: boolean): MaterialPageView {
+  if (failOnce) return { offset, length: 0, unit: 'lines', total: MATERIAL_LINES.length, complete: false, status: 'error', reason: '示例：快照读取超时' };
+  const slice = MATERIAL_LINES.slice(offset, offset + PAGE_SIZE);
+  const end = offset + slice.length;
+  const complete = end >= MATERIAL_LINES.length;
+  return {
+    offset,
+    length: slice.length,
+    total: MATERIAL_LINES.length,
+    unit: 'lines',
+    complete,
+    nextOffset: complete ? undefined : end,
+    content: slice.join('\n'),
+    status: 'ready',
+  };
+}
+
+/** ChunkPager with a host-side offset history (the component never computes offsets). */
+function ChunkPagerDemo() {
+  const later = useTimers();
+  const [history, setHistory] = React.useState<number[]>([]);
+  const [page, setPage] = React.useState<MaterialPageView>(() => readMaterialPage(0, false));
+  const [failNext, setFailNext] = React.useState(false);
+  const [newer, setNewer] = React.useState(false);
+  const go = (offset: number, nextHistory: number[]) => {
+    setHistory(nextHistory);
+    setPage((p) => ({ ...p, offset, status: 'loading', content: undefined }));
+    const fail = failNext;
+    setFailNext(false);
+    later(() => setPage(readMaterialPage(offset, fail)), 400);
+  };
+  return (
+    <div className="sc-card-list" data-testid="chunk-pager">
+      <ChunkPager
+        page={page}
+        label="示例清单 manifest.csv"
+        canGoBack={history.length > 0}
+        onFirst={() => go(0, [])}
+        onPrevious={() => go(history[history.length - 1] ?? 0, history.slice(0, -1))}
+        onNext={(next) => go(next, [...history, page.offset].slice(-32))}
+        onRetry={() => go(page.offset, history)}
+        newer={newer}
+        onReadLatest={() => {
+          setNewer(false);
+          go(0, []);
+        }}
+      />
+      <div className="sc-row">
+        <Button size="sm" variant="ghost" onClick={() => setFailNext(true)} disabled={failNext}>
+          下次翻页失败（示例）
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => setNewer(true)} disabled={newer}>
+          模拟有更新的快照（示例）
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function DisplayTruncatedDemo() {
   const later = useTimers();
   const [lines, setLines] = React.useState(6);
@@ -999,6 +1062,17 @@ export function AgentToolsPage() {
                 </div>
               ))}
             </div>
+          </Wide>
+        </Specimen>
+        <Specimen
+          id="tools-pager"
+          index="45"
+          title="ChunkPager"
+          description="分页读取已保存的材料：范围「第 a–b 行 / N」、已读至末尾 / 片段；下一页只在运行时给出 nextOffset 时可用，上一页依赖宿主的偏移历史。不能操作的按钮保留焦点并说明原因。"
+          note="示例适配器延迟 0.4s；加载时 Skeleton，失败显示原因与重试。"
+        >
+          <Wide>
+            <ChunkPagerDemo />
           </Wide>
         </Specimen>
         <Specimen

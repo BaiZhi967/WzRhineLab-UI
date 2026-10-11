@@ -7,14 +7,18 @@ import { useAgentFormat } from '../../provider/AgentMessages.js';
 import { AgentSpark } from '../../primitives/AgentSpark.js';
 import { StatusGlyph } from '../../primitives/StatusGlyph.js';
 import { cx } from '../../utils/cx.js';
-import type { CompactionStatus } from '../../provider/messages/workspace.js';
+import type { CompactionPhase, CompactionStatus } from '../../provider/messages/workspace.js';
 import { useWorkspaceMessages } from './shared.js';
 import type { WorkspaceMessagesProp } from './shared.js';
 
-export type { CompactionStatus };
+export type { CompactionPhase, CompactionStatus };
 
 export type CompactionNoticeProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> & {
   status: CompactionStatus;
+  /** Sub-step of a running compaction, shown as a sub-label. */
+  phase?: CompactionPhase;
+  /** Hint after a failed / interrupted compaction; default 「可输入 /compact 重试」. `null` hides it. */
+  retryHint?: React.ReactNode;
   tokensBefore?: number;
   tokensAfter?: number;
   /** Elapsed time of a running compaction (the host updates it; nothing polls here). */
@@ -38,6 +42,7 @@ const settledGlyph: Record<Exclude<CompactionStatus, 'running'>, { glyph: Status
   completed: { glyph: 'compacting', tone: 'success' },
   cancelled: { glyph: 'stopped', tone: 'neutral' },
   failed: { glyph: 'failed', tone: 'danger' },
+  interrupted: { glyph: 'unknown', tone: 'warning' },
   'save-pending': { glyph: 'saving', tone: 'warning' },
 };
 
@@ -45,12 +50,16 @@ const settledGlyph: Record<Exclude<CompactionStatus, 'running'>, { glyph: Status
  * CompactionNotice (Wpi context compaction bar): a strip in the message flow for one context
  * compaction. Running: AgentSpark (executing rhythm) + 「正在整理上下文」 + elapsed + cancel.
  * Completed: token delta 「32K → 12K token」 and an optional summary disclosure (Collapsible).
- * Failed: hint 「可输入 /compact 重试」. Save pending: 「重试保存」. The title is a polite status, so
- * the transition to a settled state is announced once.
+ * `phase` adds a sub-label while running (「准备中」 / 「正在生成摘要」 / 「正在保存结果」).
+ * Failed and interrupted (the run stopped before the compaction settled; the old context is kept)
+ * show `retryHint`, default 「可输入 /compact 重试」. Save pending: 「重试保存」. The title is a polite
+ * status, so the transition to a settled state is announced once.
  */
 export const CompactionNotice = React.forwardRef<HTMLDivElement, CompactionNoticeProps>(function CompactionNotice(
   {
     status,
+    phase,
+    retryHint,
     tokensBefore,
     tokensAfter,
     elapsedMs,
@@ -73,6 +82,7 @@ export const CompactionNotice = React.forwardRef<HTMLDivElement, CompactionNotic
   const delta = tokensBefore !== undefined && tokensAfter !== undefined ? m.compactionDelta(format.compact(tokensBefore), format.compact(tokensAfter)) : undefined;
   const text = summary?.trim();
   const glyph = running ? undefined : settledGlyph[status];
+  const hint = retryHint === undefined ? m.compactionRetryHint : retryHint;
 
   return (
     <div {...rest} ref={ref} className={cx('rl-agent-compaction', className)} data-status={status}>
@@ -80,10 +90,11 @@ export const CompactionNotice = React.forwardRef<HTMLDivElement, CompactionNotic
         {running ? <AgentSpark phase="executing" /> : <StatusGlyph name={glyph!.glyph} tone={glyph!.tone} />}
         <p className="rl-agent-compaction__title" role="status">
           <span>{m.compactionStatus[status]}</span>
+          {running && phase && <span className="rl-agent-compaction__phase">{m.compactionPhase[phase]}</span>}
           {!running && delta && <span className="rl-agent-compaction__delta">{delta}</span>}
         </p>
         {running && elapsedMs !== undefined && <span className="rl-agent-compaction__elapsed">{format.duration(elapsedMs)}</span>}
-        {status === 'failed' && <span className="rl-agent-compaction__hint">{m.compactionRetryHint}</span>}
+        {(status === 'failed' || status === 'interrupted') && hint != null && hint !== false && <span className="rl-agent-compaction__hint">{hint}</span>}
         {running && onCancel && (
           <Button size="sm" variant="ghost" loading={busy} onClick={() => void onCancel()}>
             {m.compactionCancel}

@@ -3,8 +3,11 @@
 import * as React from 'react';
 import { Button, Input, Tab, TabList, TabPanel, Tabs } from '@wzrhine/react';
 import { terminalStatusMeta } from '@wzrhine/agent-core';
-import type { AgentActionHandler, TerminalSessionStatus, TerminalView } from '@wzrhine/agent-core';
-import { useAgentMessages } from '../../provider/AgentMessages.js';
+import type { AgentActionHandler, AgentTone, MaterialPageView, StatusGlyphName, TerminalSessionStatus, TerminalView } from '@wzrhine/agent-core';
+import { useAgentFormat, useAgentMessages } from '../../provider/AgentMessages.js';
+import { ChunkPager } from '../tools/ChunkPager.js';
+import type { ChunkPagerActions } from '../tools/ChunkPager.js';
+import { StatusGlyph } from '../../primitives/StatusGlyph.js';
 import { AgentStatus, statusProps } from '../../primitives/AgentStatus.js';
 import { AgentIcon } from '../../primitives/icons.js';
 import { cx } from '../../utils/cx.js';
@@ -32,6 +35,14 @@ export type PersistentTerminalProps = Omit<React.HTMLAttributes<HTMLElement>, 'c
   onStop?: AgentActionHandler<[terminal: TerminalView]>;
   /** Loads older output (`terminal.outputTruncated`). The scroll position is kept. */
   onLoadEarlier?: AgentActionHandler<[terminal: TerminalView]>;
+  /** Reads the newest output (`terminal.newerOutput`); draws 「有新输出，读取最新」. */
+  onReadLatest?: AgentActionHandler<[terminal: TerminalView]>;
+  /** Loads earlier entries of `terminal.history`. */
+  onLoadMoreHistory?: AgentActionHandler<[terminal: TerminalView]>;
+  /** One page of stored output; replaces the live tail with a `ChunkPager`. */
+  page?: MaterialPageView;
+  /** Paging callbacks for `page` (`canGoBack` defaults to false). */
+  pager?: Partial<ChunkPagerActions>;
   headingLevel?: HeadingLevel;
   /** Hide the name heading (e.g. inside `TerminalTabs`, where the tab already names it). */
   hideName?: boolean;
@@ -48,11 +59,30 @@ export type PersistentTerminalProps = Omit<React.HTMLAttributes<HTMLElement>, 'c
  * is focusable for keyboard scrolling. The input is a labelled single-line field; Enter sends,
  * except while an IME composition is active.
  *
+ * `terminal.newerOutput` (the loaded snapshot is older than the session) adds 「有新输出，读取最新」
+ * (`onReadLatest`); `terminal.notes` render as small notes; `terminal.history` is an ordered list
+ * 「调用记录」 (command, glyph + status text, exit code, `<time>`) with `onLoadMoreHistory`. With
+ * `page` the stored output is read through a `ChunkPager` instead of the live tail.
+ *
  * Motion: none. The cursor is a static block; the console follows new output only while the
  * reader is at the bottom, otherwise a 「有新输出」 button appears.
  */
 export const PersistentTerminal = React.forwardRef<HTMLElement, PersistentTerminalProps>(function PersistentTerminal(
-  { terminal, onInput, onStop, onLoadEarlier, headingLevel = 3, hideName = false, messages: override, className, ...rest },
+  {
+    terminal,
+    onInput,
+    onStop,
+    onLoadEarlier,
+    onReadLatest,
+    onLoadMoreHistory,
+    page,
+    pager,
+    headingLevel = 3,
+    hideName = false,
+    messages: override,
+    className,
+    ...rest
+  },
   ref,
 ) {
   const m = useWorkspaceMessages(override);
@@ -144,8 +174,32 @@ export const PersistentTerminal = React.forwardRef<HTMLElement, PersistentTermin
           {terminal.receipt.reason ? ` · ${terminal.receipt.reason}` : ''}
         </p>
       )}
-      <TerminalConsole terminal={terminal} messages={m} onLoadEarlier={onLoadEarlier} showCursor={canInput} />
+      {terminal.notes && terminal.notes.length > 0 && (
+        <ul className="rl-agent-terminal__notes" aria-label={m.terminalNotes}>
+          {terminal.notes.map((note, i) => (
+            <li key={i} className="rl-agent-terminal__note">
+              <AgentIcon name="info" />
+              <span>{note}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {terminal.newerOutput && onReadLatest && (
+        <div className="rl-agent-terminal__latest">
+          <Button size="sm" variant="secondary" iconStart={<AgentIcon name="arrow-down" />} onClick={() => void onReadLatest(terminal)}>
+            {m.terminalReadLatest}
+          </Button>
+        </div>
+      )}
+      {page ? (
+        <ChunkPager {...pager} className="rl-agent-terminal__pager" page={page} label={m.terminalOutput(terminal.name)} canGoBack={pager?.canGoBack ?? false} />
+      ) : (
+        <TerminalConsole terminal={terminal} messages={m} onLoadEarlier={onLoadEarlier} showCursor={canInput} />
+      )}
       {canInput && <TerminalInput terminal={terminal} onInput={onInput!} messages={m} />}
+      {terminal.history && terminal.history.length > 0 && (
+        <TerminalHistory terminal={terminal} onLoadMore={onLoadMoreHistory} messages={m} />
+      )}
     </section>
   );
 });
@@ -246,6 +300,61 @@ function TerminalConsole({
   );
 }
 
+const historyGlyph: Record<NonNullable<TerminalView['history']>[number]['status'], { glyph: StatusGlyphName; tone: AgentTone }> = {
+  running: { glyph: 'active', tone: 'info' },
+  returned: { glyph: 'done', tone: 'success' },
+  failed: { glyph: 'failed', tone: 'danger' },
+  unknown: { glyph: 'unknown', tone: 'warning' },
+};
+
+function TerminalHistory({
+  terminal,
+  onLoadMore,
+  messages: m,
+}: {
+  terminal: TerminalView;
+  onLoadMore?: PersistentTerminalProps['onLoadMoreHistory'];
+  messages: ReturnType<typeof useWorkspaceMessages>;
+}) {
+  const format = useAgentFormat();
+  const id = React.useId();
+  const items = terminal.history ?? [];
+  return (
+    <section className="rl-agent-terminal__history" aria-labelledby={`${id}-title`}>
+      <p id={`${id}-title`} className="rl-agent-terminal__history-title">
+        {m.terminalHistory}
+      </p>
+      {onLoadMore && (
+        <Button size="sm" variant="ghost" className="rl-agent-terminal__history-more" iconStart={<AgentIcon name="arrow-up" />} onClick={() => void onLoadMore(terminal)}>
+          {m.terminalHistoryLoadMore}
+        </Button>
+      )}
+      <ol className="rl-agent-terminal__history-list">
+        {items.map((item) => {
+          const g = historyGlyph[item.status] ?? historyGlyph.unknown;
+          return (
+            <li key={item.id} className="rl-agent-terminal__history-item" data-status={item.status}>
+              <code className="rl-agent-terminal__history-command" title={item.command}>
+                {item.command}
+              </code>
+              <span className="rl-agent-terminal__history-status" data-tone={g.tone}>
+                <StatusGlyph name={g.glyph} tone={g.tone} />
+                <span>{m.terminalHistoryStatus[item.status] ?? m.terminalHistoryStatus.unknown}</span>
+              </span>
+              {item.exitCode !== undefined && <span className="rl-agent-terminal__history-exit">{m.terminalExitCode(item.exitCode)}</span>}
+              {item.at && (
+                <time className="rl-agent-terminal__history-time" dateTime={item.at}>
+                  {format.time(item.at)}
+                </time>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
 function TerminalInput({
   terminal,
   onInput,
@@ -322,6 +431,8 @@ export type TerminalTabsProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'chil
   onInput?: PersistentTerminalProps['onInput'];
   onStop?: PersistentTerminalProps['onStop'];
   onLoadEarlier?: PersistentTerminalProps['onLoadEarlier'];
+  onReadLatest?: PersistentTerminalProps['onReadLatest'];
+  onLoadMoreHistory?: PersistentTerminalProps['onLoadMoreHistory'];
   headingLevel?: HeadingLevel;
   messages?: WorkspaceMessagesProp;
 };
@@ -338,6 +449,8 @@ export function TerminalTabs({
   onInput,
   onStop,
   onLoadEarlier,
+  onReadLatest,
+  onLoadMoreHistory,
   headingLevel,
   messages: override,
   className,
@@ -369,6 +482,8 @@ export function TerminalTabs({
               onInput={onInput}
               onStop={onStop}
               onLoadEarlier={onLoadEarlier}
+              onReadLatest={onReadLatest}
+              onLoadMoreHistory={onLoadMoreHistory}
               headingLevel={headingLevel}
               hideName
               messages={override}

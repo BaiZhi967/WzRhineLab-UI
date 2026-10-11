@@ -1,10 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import type { ToolOutputView } from '@wzrhine/agent-core';
+import type { MaterialPageView, ToolOutputView } from '@wzrhine/agent-core';
 import { Skeleton } from '@wzrhine/react';
 import { useAgentFormat, useAgentMessages } from '../../provider/AgentMessages.js';
 import { cx } from '../../utils/cx.js';
+import { ChunkPager } from './ChunkPager.js';
+import type { ChunkPagerActions } from './ChunkPager.js';
 import { ActionButton, CopyButton, Notice, prettyJson } from './shared.js';
 
 /**
@@ -18,7 +20,9 @@ import { ActionButton, CopyButton, Notice, prettyJson } from './shared.js';
  * - `execution` → 「工具输出已达上限，结果本身被截断」: nothing more exists to load.
  *
  * `status: 'loading'` shows a skeleton inside an `aria-busy` container; `unavailable` says so
- * instead of pretending the output is empty. No motion of its own.
+ * instead of pretending the output is empty. With `page` (stored material read page by page) the
+ * body is a `ChunkPager` instead of the inline preview; `pager` carries its callbacks.
+ * No motion of its own.
  */
 export type ToolOutputProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'> & {
   output: ToolOutputView;
@@ -36,10 +40,14 @@ export type ToolOutputProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'
   onCopyText?: (text: string) => void | Promise<void>;
   /** Hide the copy button. */
   copyable?: boolean;
+  /** One page of the stored output; replaces the inline body with a `ChunkPager`. */
+  page?: MaterialPageView;
+  /** Paging callbacks for `page` (`canGoBack` defaults to false). */
+  pager?: Partial<ChunkPagerActions>;
 };
 
 export const ToolOutput = React.forwardRef<HTMLElement, ToolOutputProps>(function ToolOutput(
-  { output, label, regionLabel, onLoadMore, onOpenFull, loadingMore, onCopyText, copyable = true, className, ...rest },
+  { output, label, regionLabel, onLoadMore, onOpenFull, loadingMore, onCopyText, copyable = true, page, pager, className, ...rest },
   ref,
 ) {
   const m = useAgentMessages().tools;
@@ -55,7 +63,9 @@ export const ToolOutput = React.forwardRef<HTMLElement, ToolOutputProps>(functio
   const empty = kind === 'empty' || (!loading && !unavailable && raw === '' && !output.error);
 
   let body: React.ReactNode;
-  if (loading) {
+  if (page) {
+    body = <ChunkPager {...pager} page={page} label={name} canGoBack={pager?.canGoBack ?? false} />;
+  } else if (loading) {
     body = (
       <div className="rl-agent-output__loading" aria-busy="true">
         <Skeleton shape="text" lines={3} />
@@ -90,7 +100,8 @@ export const ToolOutput = React.forwardRef<HTMLElement, ToolOutputProps>(functio
     );
   }
 
-  const showCopy = copyable && !loading && !unavailable && !empty && text !== '';
+  const showCopy = copyable && !loading && !unavailable && !empty && text !== '' && !page;
+  const pageText = page?.status === 'ready' ? (page.content ?? '') : '';
 
   return (
     <div
@@ -111,10 +122,11 @@ export const ToolOutput = React.forwardRef<HTMLElement, ToolOutputProps>(functio
         )}
         {output.status === 'partial' && !output.truncated && <span className="rl-agent-output__total">{m.outputStreaming}</span>}
         {showCopy && <CopyButton text={text} onCopyText={onCopyText} className="rl-agent-output__copy" />}
+        {copyable && page && pageText !== '' && <CopyButton text={pageText} onCopyText={onCopyText} className="rl-agent-output__copy" />}
       </header>
       {kind !== 'error' && output.error && !unavailable && <Notice tone="danger">{output.error}</Notice>}
       {body}
-      {output.truncated === 'display' && (
+      {!page && output.truncated === 'display' && (
         <Notice
           tone="info"
           id={noticeId}

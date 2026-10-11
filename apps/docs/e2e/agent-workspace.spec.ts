@@ -60,7 +60,7 @@ test.describe('Terminals', () => {
 test.describe('ContextUsage', () => {
   test('unknown max: no meter and no percentage', async ({ page }) => {
     await open(page);
-    const region = page.getByRole('region', { name: 'ContextUsage' });
+    const region = page.getByRole('region', { name: 'ContextUsage', exact: true });
     const unknown = region.locator('.sc-card-list[data-case="上限未知"]');
     await expect(unknown).toContainText('上限未知，不显示百分比');
     await expect(unknown.getByRole('meter')).toHaveCount(0);
@@ -73,7 +73,7 @@ test.describe('ContextUsage', () => {
 
   test('ring popover opens with the keyboard and closes with Escape', async ({ page }) => {
     await open(page);
-    const trigger = page.getByRole('button', { name: '上下文用量 12.4K / 32K · 估计值' });
+    const trigger = page.getByRole('region', { name: 'ContextUsage', exact: true }).getByRole('button', { name: '上下文用量 12.4K / 32K · 估计值' });
     await trigger.focus();
     await page.keyboard.press('Enter');
     const dialog = page.getByRole('dialog', { name: '上下文用量' });
@@ -117,7 +117,7 @@ test.describe('Ledger, artifacts, file preview', () => {
 
   test('file preview tabs switch with arrow keys', async ({ page }) => {
     await open(page);
-    const region = page.getByRole('region', { name: 'FilePreview' });
+    const region = page.getByRole('region', { name: 'FilePreview', exact: true });
     const preview = region.getByRole('tab', { name: '预览' });
     await preview.focus();
     await page.keyboard.press('ArrowRight');
@@ -127,6 +127,94 @@ test.describe('Ledger, artifacts, file preview', () => {
     await page.keyboard.press('Enter');
     await expect(region.getByRole('tab', { name: '元数据' })).toHaveAttribute('aria-selected', 'true');
     await expect(region.getByRole('tabpanel')).toContainText('text/x-python');
+  });
+});
+
+test.describe('File tabs, open-with menu, terminal extras', () => {
+  test('tabs: arrow keys activate, Delete closes and focus moves to the neighbour', async ({ page }) => {
+    await open(page);
+    const region = page.getByTestId('file-tabs');
+    const list = region.getByRole('tablist', { name: '已打开的文件' });
+    const first = list.getByRole('tab', { name: 'classify.py' });
+    await first.focus();
+    await page.keyboard.press('ArrowRight');
+    const md = list.getByRole('tab', { name: 'notes-with-a-rather-long-file-name.md' });
+    await expect(md).toHaveAttribute('aria-selected', 'true');
+    await expect(md).toBeFocused();
+    await expect(region.getByRole('tabpanel', { name: 'notes-with-a-rather-long-file-name.md' })).toContainText('notes-with-a-rather-long-file-name.md');
+    await page.keyboard.press('End');
+    await expect(list.getByRole('tab', { name: 'secret.env' })).toBeFocused();
+    await expect(region.getByRole('tabpanel', { name: 'secret.env' })).toContainText('外部');
+    await page.keyboard.press('Delete');
+    await expect(list.getByRole('tab')).toHaveCount(2);
+    await expect(md).toBeFocused();
+    await expect(md).toHaveAttribute('aria-selected', 'true');
+    await region.getByRole('button', { name: '关闭 classify.py' }).click();
+    await expect(list.getByRole('tab')).toHaveCount(1);
+    await md.click({ button: 'middle' });
+    await expect(region.getByRole('tablist')).toHaveCount(0);
+    await expect(region.getByRole('button', { name: '重新打开示例文件' })).toBeFocused();
+  });
+
+  test('Escape in the strip closes all files', async ({ page }) => {
+    await open(page);
+    const region = page.getByTestId('file-tabs');
+    await region.getByRole('tab', { name: 'classify.py' }).focus();
+    await page.keyboard.press('Escape');
+    await expect(region.getByRole('tablist')).toHaveCount(0);
+    await expect(region.getByRole('button', { name: '重新打开示例文件' })).toBeFocused();
+  });
+
+  test('split button: primary opens with the default; the menu opens from the keyboard', async ({ page }) => {
+    await open(page);
+    const region = page.getByTestId('file-tabs');
+    await region.getByRole('button', { name: '用 代码编辑器（示例） 打开' }).click();
+    await expect(region).toContainText('用 editor 打开 classify.py');
+    const trigger = region.getByRole('button', { name: 'classify.py 的更多打开方式' });
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    const menu = page.getByRole('menu');
+    await expect(menu).toBeVisible();
+    await expect(menu.getByRole('menuitem')).toHaveText(['代码编辑器（示例）', '系统默认应用（示例）', '文件管理器（示例）', '复制路径', '在对话中引用']);
+    await menu.getByRole('menuitem', { name: '复制路径' }).click();
+    await expect(region).toContainText('复制路径 /workspace/reef/src/classify.py');
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('menu')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('menu')).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+  });
+
+  test('breadcrumb is workspace-relative', async ({ page }) => {
+    await open(page);
+    const nav = page.getByTestId('file-tabs').getByRole('navigation', { name: 'classify.py 的路径' });
+    await expect(nav.getByRole('listitem')).toHaveText(['reef', 'src', 'classify.py']);
+  });
+
+  test('terminal: read latest, history list and stored-output pager', async ({ page }) => {
+    await open(page);
+    const region = page.getByTestId('terminal-extras');
+    await region.getByRole('button', { name: '有新输出，读取最新' }).click();
+    await expect(region.getByRole('button', { name: '有新输出，读取最新' })).toHaveCount(0);
+    const history = region.getByRole('region', { name: '调用记录' });
+    await expect(history.getByRole('listitem')).toHaveCount(3);
+    await expect(history.getByRole('listitem').nth(1)).toContainText('失败');
+    const pager = region.getByRole('group', { name: '终端 G 输出', exact: true });
+    await expect(pager).toContainText('第 1–20 行 / 60');
+    await pager.getByRole('button', { name: '下一页' }).click();
+    await expect(pager).toContainText('第 21–40 行 / 60');
+    await pager.getByRole('button', { name: '上一页' }).click();
+    await expect(pager).toContainText('第 1–20 行 / 60');
+  });
+
+  test('context stats: missing values show —', async ({ page }) => {
+    await open(page);
+    const stats = page.getByTestId('context-stats').locator('.rl-agent-context[data-variant="full"]').getByRole('group', { name: '用量统计' });
+    await expect(stats.getByRole('region', { name: '缓存（示例）' })).toContainText('62.5%');
+    const missing = stats.locator('dd[data-missing]');
+    await expect(missing).toHaveCount(1);
+    await expect(missing).toContainText('—');
   });
 });
 

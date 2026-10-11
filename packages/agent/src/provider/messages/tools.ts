@@ -11,6 +11,7 @@ type ManageOp = ManageDetail['operations'][number]['type'];
 type ManageStatus = NonNullable<ManageDetail['operations'][number]['status']>;
 type ReceiptStatus = 'idle' | 'submitting' | 'accepted' | 'rejected' | 'unknown';
 type ReadUnit = 'lines' | 'bytes';
+type PageUnit = 'bytes' | 'lines' | 'items';
 
 /**
  * Copy for the tools family (ADR-0011 §5, §10): ToolRecord, ToolActivity, CodeModeToolTree,
@@ -68,6 +69,28 @@ export interface AgentToolsMessages {
   loadMore: string;
   openFull: string;
   outputTotal: (total: string, unit: NonNullable<ToolOutputView['totalUnit']>) => string;
+
+  // ---------- ChunkPager ----------
+  /** Range of the shown page; `start` / `end` are already formatted, `total` when known. */
+  pagerRange: (start: string, end: string, total: string | undefined, unit: PageUnit) => string;
+  pagerComplete: string;
+  pagerFragment: string;
+  pagerRegion: (label: string) => string;
+  pagerNavigation: (label: string) => string;
+  pagerFirst: string;
+  pagerPrevious: string;
+  pagerNext: string;
+  pagerAtStart: string;
+  pagerAtEnd: string;
+  pagerNoNextOffset: string;
+  pagerBusy: string;
+  pagerFailed: string;
+  pagerLoading: string;
+  pagerError: string;
+  pagerRetry: string;
+  pagerEmpty: string;
+  pagerNewer: string;
+  pagerReadLatest: string;
 
   // ---------- ToolHistory ----------
   historyTitle: string;
@@ -261,6 +284,29 @@ export const zhTools: AgentToolsMessages = {
   loadMore: '加载更多',
   openFull: '查看完整输出',
   outputTotal: (total, unit) => `共 ${total} ${zhUnit[unit]}`,
+
+  pagerRange: (start, end, total, unit) => {
+    const range = unit === 'bytes' ? `字节 ${start}–${end}` : unit === 'lines' ? `第 ${start}–${end} 行` : `第 ${start}–${end} 项`;
+    return total !== undefined ? `${range} / ${total}` : range;
+  },
+  pagerComplete: '已读至末尾',
+  pagerFragment: '片段',
+  pagerRegion: (label) => `${label} 当前页`,
+  pagerNavigation: (label) => `${label} 翻页`,
+  pagerFirst: '返回开头',
+  pagerPrevious: '上一页',
+  pagerNext: '下一页',
+  pagerAtStart: '已在开头',
+  pagerAtEnd: '已读至末尾，没有下一页',
+  pagerNoNextOffset: '运行时没有提供下一页位置',
+  pagerBusy: '正在读取，请稍候',
+  pagerFailed: '这一页读取失败，先重试',
+  pagerLoading: '正在读取这一页…',
+  pagerError: '这一页读取失败',
+  pagerRetry: '重试',
+  pagerEmpty: '这一页没有内容',
+  pagerNewer: '已有更新的内容，当前显示的是旧快照',
+  pagerReadLatest: '读取最新',
 
   historyTitle: '完整工具记录',
   historyLoaded: (n) => `已加载 ${n} 个操作`,
@@ -495,6 +541,29 @@ export const enTools: AgentToolsMessages = {
   loadMore: 'Load more',
   openFull: 'Open full output',
   outputTotal: (total, unit) => `${total} ${enUnit[unit]} in total`,
+
+  pagerRange: (start, end, total, unit) => {
+    const range = unit === 'bytes' ? `Bytes ${start}–${end}` : unit === 'lines' ? `Lines ${start}–${end}` : `Items ${start}–${end}`;
+    return total !== undefined ? `${range} / ${total}` : range;
+  },
+  pagerComplete: 'Read to the end',
+  pagerFragment: 'Fragment',
+  pagerRegion: (label) => `${label} current page`,
+  pagerNavigation: (label) => `${label} pages`,
+  pagerFirst: 'Back to start',
+  pagerPrevious: 'Previous page',
+  pagerNext: 'Next page',
+  pagerAtStart: 'Already at the start',
+  pagerAtEnd: 'Read to the end; no next page',
+  pagerNoNextOffset: 'The runtime gave no next page position',
+  pagerBusy: 'Loading, please wait',
+  pagerFailed: 'This page failed to load; retry first',
+  pagerLoading: 'Loading this page…',
+  pagerError: 'Could not load this page',
+  pagerRetry: 'Retry',
+  pagerEmpty: 'This page is empty',
+  pagerNewer: 'Newer content exists; this is an older snapshot',
+  pagerReadLatest: 'Read latest',
 
   historyTitle: 'Full tool history',
   historyLoaded: (n) => `${plural(n, 'operation', 'operations')} loaded`,

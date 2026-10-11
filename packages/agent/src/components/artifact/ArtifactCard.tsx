@@ -149,21 +149,54 @@ export const ArtifactCard = React.forwardRef<HTMLElement, ArtifactCardProps>(fun
 export type ArtifactListProps = Omit<React.HTMLAttributes<HTMLUListElement>, 'children'> &
   Pick<ArtifactCardProps, 'onOpen' | 'onDownload' | 'onReveal' | 'onRetry' | 'renderPreview' | 'headingLevel' | 'messages'> & {
     artifacts: ArtifactView[];
+    /** The host listed only part of the artifacts: adds 「部分产物未列出」. */
+    truncated?: boolean;
+    /** Opens the full artifact list; drawn next to the truncated note. */
+    onShowAll?: () => void;
   };
 
 /**
  * Artifacts as a list (`<ul>`). Duplicate ids are dropped; items present on first render are
  * static, items added later enter once (AgentEntrance `row`, reduced → no movement).
+ * `truncated` adds a plain note after the list (「部分产物未列出」, never a count it does not know)
+ * with an optional 「查看全部产物」 button.
  */
-export function ArtifactList({ artifacts, onOpen, onDownload, onReveal, onRetry, renderPreview, headingLevel, messages: override, className, ...rest }: ArtifactListProps) {
+export function ArtifactList({
+  artifacts,
+  onOpen,
+  onDownload,
+  onReveal,
+  onRetry,
+  renderPreview,
+  headingLevel,
+  truncated,
+  onShowAll,
+  messages: override,
+  className,
+  ...rest
+}: ArtifactListProps) {
   const m = useWorkspaceMessages(override);
   const unique = React.useMemo(() => {
     const seen = new Set<string>();
     return artifacts.filter((a) => (seen.has(a.id) ? false : (seen.add(a.id), true)));
   }, [artifacts]);
   const isNew = useIsNewId(unique.map((a) => a.id));
-  if (unique.length === 0) return <p className="rl-agent-artifact-list__empty">{m.artifactEmpty}</p>;
-  return (
+  const note = truncated ? (
+    <p className="rl-agent-artifact-list__truncated">
+      <AgentIcon name="info" />
+      <span>{m.artifactTruncated}</span>
+      {onShowAll && (
+        <Button size="sm" variant="ghost" onClick={onShowAll}>
+          {m.artifactShowAll}
+        </Button>
+      )}
+    </p>
+  ) : null;
+  if (unique.length === 0) {
+    // Nothing listed but more exists: 「暂无产物」 would be false, so only the note is shown.
+    return note ?? <p className="rl-agent-artifact-list__empty">{m.artifactEmpty}</p>;
+  }
+  const list = (
     <ul {...rest} className={cx('rl-agent-artifact-list', className)} aria-label={rest['aria-label'] ?? m.artifactList}>
       {unique.map((artifact) => (
         <AgentEntrance as="li" key={artifact.id} kind="row" animate={isNew(artifact.id)} className="rl-agent-artifact-list__item">
@@ -180,5 +213,12 @@ export function ArtifactList({ artifacts, onOpen, onDownload, onReveal, onRetry,
         </AgentEntrance>
       ))}
     </ul>
+  );
+  if (!note) return list;
+  return (
+    <div className="rl-agent-artifact-list__wrap">
+      {list}
+      {note}
+    </div>
   );
 }
