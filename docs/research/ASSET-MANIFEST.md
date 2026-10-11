@@ -18,8 +18,9 @@
 研究报告：`docs/research/Rhine_Lab_React_Motion_Research_2026-10-09.pdf`，A4 22 页。
 
 ## GitHub 二进制验收门槛
-- [ ] GitHub API tree 中存在以上 8 张 PNG + 8 张 WebP + 1 份 PDF
-- [ ] 下载后与本次交付 ZIP 里 SHA256SUMS.txt 校验一致
-- [ ] 明确概念图为 AI 辅助原创设计参考，不能代替规范和源代码
+- [x] GitHub API tree 中存在以上 8 张 PNG + 8 张 WebP + 1 份 PDF（2026-10-11 以 `git ls-tree origin/main` 核对，17 个文件都在；仓库匿名访问 GitHub API 返回 404，本机 `gh` 登录已失效，因此没有直接调用 API）
+- [x] 下载后与本次交付 ZIP 里 SHA256SUMS.txt 校验一致（2026-10-11 对工作区文件（与已提交版本相同，`git status` 无改动）逐一计算 SHA-256，17 / 17 一致；ZIP 取自维护者本机下载目录）
+- [x] 明确概念图为 AI 辅助原创设计参考，不能代替规范和源代码（[concepts/README.md](../concepts/README.md) 开头与 [DESIGN.md](../../DESIGN.md) §8）
 
 **本记录不虚报已提交的二进制文件**；它们需经仓库所支持的 Git push / 资源导入流程归档。ZIP 已含完整目录和校验表。
+- 归档记录：2026-10-09 由 `scripts/import-visual-assets.ps1` 导入并提交（5ddee17，17 个文件），已在 `main`。

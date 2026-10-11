@@ -12,8 +12,10 @@
 | [development/ARCHITECTURE.md](development/ARCHITECTURE.md) | workspace、包结构、依赖边界与发布约束 |
 | [development/CONTRIBUTING.md](development/CONTRIBUTING.md) | 开发约束、commit、分支、评审与测试 |
 | [development/QUALITY-GATES.md](development/QUALITY-GATES.md) | 可执行质量门槛 |
-| [ROADMAP.md](ROADMAP.md) | M0–M9 里程碑摘要、验收与依赖 |
-| [planning/README.md](planning/README.md) | M8–M18 顺序路线、组件、动效、质量和执行计划 |
+| [ROADMAP.md](ROADMAP.md) | M0–M10 与 M9.5 里程碑摘要、状态与验收链接 |
+| [planning/README.md](planning/README.md) | 长期规划中心：M8–M18 路线、组件、动效、质量和执行计划（文件列表见下） |
+| [planning/roadmap.md](planning/roadmap.md) | 长期路线图：每个阶段的目标、产物、依赖、门禁与状态 |
+| [planning/execution-backlog.md](planning/execution-backlog.md) | 可勾选的执行清单（当前：M9.5） |
 | [concepts/README.md](concepts/README.md) | 概念图索引、用途与局限 |
 | [research/REFERENCES.md](research/REFERENCES.md) | 官方 / 社区 / 技术参考资料及授权提醒 |
 
@@ -22,7 +24,7 @@
 
 ## 额外资料与导入
 - [研究摘要](research/RESEARCH-SUMMARY.md)
-- [长期规划中心](planning/README.md)
+- [长期规划中心](planning/README.md)：[长期路线图](planning/roadmap.md) · [执行清单](planning/execution-backlog.md) · [组件平台规划](planning/component-platform-plan.md) · [动效与渲染规划](planning/motion-and-rendering-plan.md) · [质量、发布与生态规划](planning/quality-release-and-ecosystem-plan.md) · [真实需求插入流程](planning/demand-insertion-workflow.md)（[需求模板](planning/templates/component-demand.md)） · Agent UI：[平台规划](planning/agent-ui-platform-plan.md) · [契约](planning/agent-ui-contracts.md) · [接入](planning/agent-ui-adoption.md)
 - [研究参考链接](research/REFERENCES.md)
 - [视觉原件清单](research/ASSET-MANIFEST.md)
 - [ADR-0001 交互底座 · Base UI（Accepted）](development/adr/0001-headless-primitives.md)
@@ -40,6 +42,7 @@
 - [M4 验收记录](development/acceptance/2026-10-09-m4.md)
 - [M5 验收记录](development/acceptance/2026-10-09-m5.md)
 - [M6 验收记录](development/acceptance/2026-10-10-m6.md) · [示例应用](../examples/README.md)
+- [Base UI 1.8.0 → 1.9.0 升级验收记录](development/acceptance/2026-10-10-base-ui-1.9.0.md)
 - [M7 验收记录](development/acceptance/2026-10-10-m7.md)
 - [M8 验收记录](development/acceptance/2026-10-10-m8.md)
 - [M9 验收记录](development/acceptance/2026-10-10-m9.md)

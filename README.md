@@ -6,8 +6,11 @@
 
 ## 当前阶段
 
-- **M7 — Forms（内容补齐阶段）**：在 M6 Release Candidate 的基础上补齐表单层：Textarea、Checkbox、CheckboxGroup、RadioGroup、Switch、Fieldset、Form，以及 Separator、VisuallyHidden（见 [M7 验收记录](docs/development/acceptance/2026-10-10-m7.md)）。后续 M8–M9 规划见 [ROADMAP](docs/ROADMAP.md)。
-- **M8 — Data & Navigation**：Pagination、Breadcrumb、Progress、Meter、Stat，DataTable 加载 / 错误 / 空状态与分页（见 [M8 验收记录](docs/development/acceptance/2026-10-10-m8.md)）。下一步 M9 覆盖层与反馈。
+- **M7 — Forms（内容补齐阶段）**：在 M6 Release Candidate 的基础上补齐表单层：Textarea、Checkbox、CheckboxGroup、RadioGroup、Switch、Fieldset、Form，以及 Separator、VisuallyHidden（见 [M7 验收记录](docs/development/acceptance/2026-10-10-m7.md)）。后续规划见 [ROADMAP](docs/ROADMAP.md)。
+- **M8 — Data & Navigation**：Pagination、Breadcrumb、Progress、Meter、Stat，DataTable 加载 / 错误 / 空状态与分页（见 [M8 验收记录](docs/development/acceptance/2026-10-10-m8.md)）。
+- **M9 — Overlays & Feedback**：AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner，Toast 操作 / 撤销 / 更新与 Dialog 关闭保护（见 [M9 验收记录](docs/development/acceptance/2026-10-10-m9.md)）。
+- **M10 — Motion Core 2.0**：MotionPresence、RhineMotionGroup、按属性类型的减动、可见性暂停与生命周期、[动效模式目录](docs/design/MOTION-PATTERNS.md)（见 [M10 验收记录](docs/development/acceptance/2026-10-10-m10.md)）。
+- **下一步 M9.5 — Ecosystem hardening**：React 18 / 19 支持策略与 locale ADR、`'use client'` 与 App Router 示例、SSR hydration 回归、包体积预算、文档搜索、安装与升级文档（见 [ROADMAP](docs/ROADMAP.md)）。之后是 M11 Rendering Lab。
 - **暂不发布到 npm**（维护者决定，先补齐内容）；发布前仍需选定许可证、创建 npm scope 并确认版本号（见 [M6 验收记录](docs/development/acceptance/2026-10-10-m6.md)）。React 18 暂不正式支持。
 - 规范入口：[docs/README.md](docs/README.md)、[DESIGN.md](DESIGN.md)、[docs/ROADMAP.md](docs/ROADMAP.md)。
 - 原型画板：[docs/concepts/README.md](docs/concepts/README.md)。
@@ -66,4 +69,4 @@ import { Button, RhineProvider } from '@wzrhine/react';
 - [研究摘要](docs/research/RESEARCH-SUMMARY.md) 与 [参考链接](docs/research/REFERENCES.md)。
 
 ## 设计与工程状态
-M0–M8 每个里程碑都有验收记录（[docs/README.md](docs/README.md) 中列出），只记录真实执行过的命令。根目录尚未选择源代码许可证；未配置自动 GitHub Actions（避免配额消耗）。Chromium、Firefox、WebKit 的自动化验收已通过；屏幕阅读器、200% 缩放与真机仍需人工验收。
+M0–M10 每个里程碑都有验收记录（[docs/README.md](docs/README.md) 中列出），只记录真实执行过的命令。根目录尚未选择源代码许可证；未配置自动 GitHub Actions（避免配额消耗）。Chromium、Firefox、WebKit 的自动化验收已通过；屏幕阅读器、200% 缩放与真机仍需人工验收。

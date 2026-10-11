@@ -1,6 +1,6 @@
 # ADR-0002 · 源码直出导出与样式入口边界
 
-- 状态：**Accepted（开发阶段）**；M5 发布前需复审。
+- 状态：**Accepted（开发阶段）**；M5 发布前需复审（已在 M5 落实，见文末「复审 · M5」）。
 - 日期：2026-10-09 · 关联里程碑：M0 验收 / M1-A
 
 ## 背景
@@ -31,3 +31,9 @@
 
 ## 验证
 `pnpm -r typecheck`、`pnpm test`（含 package-boundary 测试）、`pnpm build` 在 2026-10-09 本地通过，见 `docs/development/acceptance/2026-10-09-sprint-01.md`。
+
+## 复审 · M5（2026-10-09）
+决策 1–5 不变。「发布前（M5）需完成」三项的落实情况，证据见 [M5 验收记录](../acceptance/2026-10-09-m5.md)：
+- 构建：三个包用 `tsc -p tsconfig.build.json` 构建到 `dist/`；workspace 内 `exports` 仍指向 `src/`（本 ADR 决策 2），打包 / 发布时由 `publishConfig.exports` 覆盖为 `dist/*.js` + `.d.ts` + `./styles.css`，`sideEffects` 只声明 CSS。
+- 验证：`pnpm verify:packages` 在工作区之外安装 tarball，做严格类型检查、Node ESM SSR 与 Vite 打包检查。只提供 ESM，不提供 CJS；产物不含 `"use client"`，RSC 使用方需在边界自行标注（M9.5 再评估）。
+- 包名与许可证：仍待维护者决定，因此没有实际发布（RELEASING.md「发布前置条件」）。

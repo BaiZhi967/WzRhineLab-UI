@@ -30,7 +30,7 @@
 2. 在临时目录新建一个使用方项目，安装三个 tarball 以及 npm 上的 react、react-dom、motion。
 3. 用 `skipLibCheck: false` 的严格模式类型检查使用方代码；并用 `@ts-expect-error` 确认错误用法（未知 variant、缺少名称的 IconButton）会被发布出去的类型拒绝。
 4. 在纯 Node ESM 下用 `react-dom/server` 渲染组件。
-5. 用 Vite 打包：tokens 和每个 CSS 分片（components / overlays / feedback / archive）都必须出现；没有引入 effects 的应用中不能出现 effects 代码。
+5. 用 Vite 打包：tokens、`components.css` 以及它 `@import` 的全部八个分片（reset / overlays / feedback / archive / forms / data / drawer / status）都必须出现，每个分片用一个只属于它的选择器检查；没有引入 effects 的应用中不能出现 effects 代码。
 
 两项反向测试已经实际跑过：删掉一个 `@import` 后 verify 失败；把 `ButtonVariant` 放宽为 `string` 后类型检查失败。这说明上述检查确实能拦住对应的回归。
 

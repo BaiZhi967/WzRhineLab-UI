@@ -1,4 +1,6 @@
-# STYLE · 视觉样式与主题规范（Draft 0.1）
+# STYLE · 视觉样式与主题规范（v0.2）
+
+> 状态：v0.2（2026-10-11）。色值经 [ADR-0003](../development/adr/0003-token-tuning-and-button-variants.md) 校准（Sprint 01），公开 token 契约在 M6 冻结（`@wzrhine/tokens` 的 `publicTokens`，114 个）；此后删除或重命名 token 属于破坏性变更。
 
 ## 1. 基础色 / Semantic Tokens
 以下均为**本项目原创值**，不是游戏官方调色板。实现需通过 CSS 自定义属性使用，不得在组件中重复硬编码。**权威值以 `packages/tokens/src/tokens.css` 为准**（完整角色与暗色值见该文件与 Showcase Foundations 页）；Sprint 01 的对比度校准见 [ADR-0003](../development/adr/0003-token-tuning-and-button-variants.md)。
@@ -55,7 +57,7 @@
 组件需要分别处理：default / hover / pressed / focus-visible / selected / loading / disabled / read-only / invalid / success（适用时）。disabled 必须防止动作，而不是只变灰。空状态与长文本不应撑破网格。交互反馈优先 border/fg/surface，避免大面积发光。
 
 ## 5. 深色与密度
-主题用 `data-rl-theme="light|dark"` 作用于作用域容器；支持系统主题的映射，但不能污染宿主 `:root`。深色建议底色 `#11181B`、表面 `#1D272B`、文字 `#E6E9E2`，其余值在 M2 前通过对比检查定稿。密度用 `data-rl-density="comfortable|compact"`；紧凑模式仍要符合触控场景目标尺寸或给出桌面鼠标密集模式开关。
+主题用 `data-rl-theme="light|dark"` 作用于作用域容器；支持系统主题的映射，但不能污染宿主 `:root`。深色底色 `#11181B`、表面 `#1D272B`、文字 `#E6E9E2`。其余暗色值已在 Sprint 01 定稿：ADR-0003 为暗色主题独立定义全部角色，`packages/tokens/test` 在明 / 暗 / 系统三种主题下自动验证所有组件实际使用的对比组合；M6 起随 token 契约冻结，权威值见 `tokens.css`。密度用 `data-rl-density="comfortable|compact"`；紧凑模式仍要符合触控场景目标尺寸或给出桌面鼠标密集模式开关。
 
 ## 6. 禁止事项
 禁止：所有按钮统一橙底白字；全站 8px 以下小字；把背景网格当必要信息边界；假指标；hover 是唯一反馈；动画停止后数据才可读；默认无限扫描循环；复制原作标识/官方 UI 素材。

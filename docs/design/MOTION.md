@@ -1,4 +1,6 @@
-# MOTION · React 动效规范（Draft 0.1）
+# MOTION · React 动效规范（v0.2）
+
+> 状态：v0.2（2026-10-11）。Draft 0.1 的原则与时间 tokens 未变；M10 起预设、按属性类型的减动和生命周期由 ADR-0007 固定并有实现，交互矩阵按 M9 / M10 合入后的源码核对。
 
 > 模式目录（每个已实现模式的完整字段）见 [MOTION-PATTERNS.md](MOTION-PATTERNS.md)；属性所有权、预设与 token 映射、按属性类型的减动解析、生命周期契约见 [ADR-0007](../development/adr/0007-motion-ownership.md)。
 
@@ -18,6 +20,8 @@
 
 曲线起点：out=[0.16,1,0.3,1]；inOut=[0.65,0,0.35,1]；linear 用于真实进度反馈。Spring 仅用于可拖拽/可打断目标，禁止无语义弹跳。每类动画最终需通过可视评估（短时闪动、连击、CPU 降速）验证，**数值为待校准起点**。
 
+> 修订（M10）：上表即 `@wzrhine/tokens` 的 `motionDurations`，每个时长都有同名 `transition.*` 预设；另有 `loop` 900ms（linear，重复），只用于有语义的循环（ADR-0007 §2）。CPU 降速目前只在 Chromium 下抽查过 Dialog 中断，低帧率与真机验收留给 M11。
+
 ## 模式与接口
 - `MotionConfig reducedMotion="user"` 配置在演示 app 或使用者入口层；同时检查 `useReducedMotion`，对于非 Motion 的 CSS/Canvas/WebGL 动画手动降级。
 - `AnimatePresence` 处理必要的退出阶段；需保证 Dialog 等基础组件的焦点隔离、Escape、Portal、卸载和焦点归还正确。
@@ -29,12 +33,17 @@
 | 组件 | 入场/变化 | 退出/还原 | reduced-motion |
 | --- | --- | --- | --- |
 | Button | hover 120ms；press 80ms（≤0.99 scale） | 保留即时点击反馈 | 颜色/边框直接变化 |
-| Tabs | 180–220ms 指示器位移 | 快切接续当前位置 | 指示器直接定位 |
-| Tooltip | 100–120ms opacity | 80–100ms | 直接显示或短淡入 |
-| Dialog | backdrop 160ms；内容 220–280ms + 8px | 从当前状态淡出 | 不移动，只显隐 |
-| Toast | 180–240ms 轻移入 | 150ms | 直接定位 |
-| ArchiveCard | 260–420ms 身份连续 | 从当前进度反向 | 直接更新详情 |
-| Progress | 实际百分比与消息同步 | 完成后停止 | 确定性数值变化 |
+| Tabs | base 200ms 指示器位移（CSS） | 快切接续当前位置 | 指示器直接定位 |
+| Tooltip | fast 120ms opacity + scale 0.96（CSS） | 同时长反向 | 不缩放 |
+| Dialog / AlertDialog | backdrop fast 120ms；面板 panel 280ms + 8px 上移（motion/react） | 从当前状态淡出 | 不移动，只显隐 |
+| Drawer | panel 280ms 从所在边缘滑入（CSS transform）；拖动时跟手 | 从当前位置滑出；快速甩出缩短退出 | 不位移，只显隐 |
+| Toast | panel 280ms 从下方移入（CSS transform） | 同时长；滑动方向退出 | 不位移，只显隐 |
+| ArchiveCard | `motion="identity"` 时 scene 420ms 身份连续（默认关闭） | 从当前进度反向 | 直接切换 |
+| Progress | 实际百分比与消息同步；不确定态为循环 | 完成后停止 | 确定性数值变化；不确定态为静态条纹 |
+| Skeleton | loop 900ms 明暗呼吸（CSS `@keyframes`） | 加载结束即移除 | 静态色块 |
+| Spinner | loop 900ms 线性旋转（motion/react） | 加载结束即移除 | 停止旋转，静态的较长弧线 |
+
+时长名对应上表 tokens；Dialog、AlertDialog 的减动为即时显隐，比 ADR-0007 允许的「保留 ≤120ms 淡入」更保守（M10 验收记录的后续项）。CSS 驱动的进出场在减动时时长 token 归零，同样是即时显隐。各模式的完整字段见 [MOTION-PATTERNS.md](MOTION-PATTERNS.md)，M9 组件的动效约定见 [ADR-0006 §9](../development/adr/0006-overlays-feedback-contracts.md)。
 
 ## 中断和生命周期
 1. 用户连续点击、快速切换或退出时必须从**当前视觉状态**接续，不排队播放过时动画。

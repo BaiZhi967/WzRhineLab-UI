@@ -17,26 +17,30 @@
 
 ## 路线总览
 
-| 顺序 | 核心目标 | 关键结果 |
-| --- | --- | --- |
-| M8 | Data & Navigation | Pagination、Breadcrumb、Progress / Meter、Stat、DataTable loading / pagination |
-| M9 | Overlays & Feedback | AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner，Toast / Dialog 补强 |
-| M9.5 | Ecosystem hardening | App Router / use client 产物策略、locale ADR、体积预算、文档搜索 |
-| M10 | Motion Core 2.0 | 统一 motion contract、生命周期、模式目录、减动和中断测试 |
-| M11 | Rendering Lab | Canvas/SVG 性能实验、渲染适配器契约、是否引入 Canvas 的证据 |
-| M12 | Advanced interaction | Combobox、Drawer、Slider、Accordion、CommandPalette、FilterBar |
-| M13 | Rhine domain patterns and Agent UI | InstrumentPanel、EvidencePanel、AgentRunCard、Message、Tool、Approval、Questionnaire、Artifact patterns；拟议 @wzrhine/agent |
-| M14 | Accessibility & internationalization | 屏幕阅读器、200% 缩放、真机、RTL、locale、日期时间策略 |
-| M15 | Public release | 许可证、npm scope、版本、changelog、公开文档和安装验证 |
-| M16 | Source distribution | registry、源码模板、CLI 评估、示例生成 |
-| M17 | Optional visual adapters | Canvas / WebGL / Rive / Lottie / GSAP 的独立入口 |
-| M18 | Governance and sustainability | 稳定版本策略、贡献者指南、兼容性矩阵、迁移工具、性能预算治理 |
+| 顺序 | 核心目标 | 关键结果 | 状态 |
+| --- | --- | --- | --- |
+| M8 | Data & Navigation | Pagination、Breadcrumb、Progress / Meter、Stat、DataTable loading / pagination | ✅ Accepted（[验收](../development/acceptance/2026-10-10-m8.md)） |
+| M9 | Overlays & Feedback | AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner，Toast / Dialog 补强 | ✅ Accepted（[验收](../development/acceptance/2026-10-10-m9.md)） |
+| M10 | Motion Core 2.0 | 统一 motion contract、生命周期、模式目录、减动和中断测试 | ✅ Accepted（[验收](../development/acceptance/2026-10-10-m10.md)；与 M9 并行完成） |
+| M9.5 | Ecosystem hardening | React 18 / 19 与 locale ADR、use client 与 App Router 示例、hydration 回归、体积预算、文档搜索、安装 / 升级文档、npm scope 决定 | ⏭ Planned（下一里程碑） |
+| M11 | Rendering Lab | Canvas/SVG 性能实验、渲染适配器契约、是否引入 Canvas 的证据 | Planned |
+| M12 | Advanced interaction | Combobox、Slider、NumberField、Accordion、CommandPalette、FilterBar（Drawer 已在 M9 交付） | Planned |
+| M13 | Rhine domain patterns and Agent UI | InstrumentPanel、EvidencePanel、AgentRunCard、Message、Tool、Approval、Questionnaire、Artifact patterns；拟议 @wzrhine/agent | Planned |
+| M14 | Accessibility & internationalization | 屏幕阅读器、200% 缩放、真机、RTL、locale、日期时间策略 | Planned |
+| M15 | Public release | 许可证、npm scope、版本、changelog、公开文档和安装验证 | Planned |
+| M16 | Source distribution | registry、源码模板、CLI 评估、示例生成 | Planned |
+| M17 | Optional visual adapters | Canvas / WebGL / Rive / Lottie / GSAP 的独立入口 | Planned |
+| M18 | Governance and sustainability | 稳定版本策略、贡献者指南、兼容性矩阵、迁移工具、性能预算治理 | Planned |
 
 顺序只用于表达前置关系，不代表发布日期或时间承诺。任何阶段只有完成对应门禁后才能关闭。
 
 > **顺序调整（维护者决定，M8 开始时）**：M8 之后先做「覆盖层与反馈组件」（新 M9），原 M9 Ecosystem hardening 改为 M9.5。M10 及之后的编号保持不变，避免所有规划文件与验收记录里的交叉引用失效。Drawer 从 M12 提前到 M9。
+>
+> **实际完成顺序**：M8 → M9 与 M10 并行 → M9.5（下一里程碑）→ M11。下文章节按实际完成顺序排列，因此 M10 排在 M9.5 之前。
 
 ## M8：Data & Navigation
+
+状态：✅ 已完成（Accepted）。证据：[M8 验收记录](../development/acceptance/2026-10-10-m8.md)、[ADR-0005](../development/adr/0005-data-navigation-contracts.md)。
 
 ### 目标
 
@@ -77,6 +81,8 @@
 
 ## M9：Overlays & Feedback
 
+状态：✅ 已完成（Accepted）。证据：[M9 验收记录](../development/acceptance/2026-10-10-m9.md)、[ADR-0006](../development/adr/0006-overlays-feedback-contracts.md)。
+
 ### 目标
 
 补齐数据页面与表单流程中缺失的覆盖层与反馈组件，让「确认、警告、等待、空结果、侧边详情」都有统一、可访问的实现，而不是每个页面各写一套。
@@ -105,29 +111,9 @@
 - 所有进出场动效可中断，减动时无位移；
 - 320–1920 截图审查、axe、视觉基线、验收记录。
 
-## M9.5：Ecosystem hardening
-
-### 目标
-
-让组件可以被不同 React 应用稳定消费，并为后续公开发布消除工程障碍。
-
-### 主要产物
-
-- App Router 与 use client 边界说明；
-- SSR、hydration 和浏览器入口验证；
-- 默认文案与 locale 策略 ADR；
-- 包体积基线和预算；
-- docs 页面搜索；
-- 每个包的安装、导出、CSS 导入和升级示例；
-- 体积超预算时使 release:check 失败；
-- React 19 正式支持说明；
-- React 18 是继续验证、暂不支持还是移除声明的决策。
-
-### 注意
-
-M9.5 不负责建立第二个 headless 组件底座，也不负责加入 Canvas 或 WebGL。它只解决“包被安装和使用时是否稳定”。
-
 ## M10：Motion Core 2.0
+
+状态：✅ 已完成（Accepted）。证据：[M10 验收记录](../development/acceptance/2026-10-10-m10.md)、[ADR-0007](../development/adr/0007-motion-ownership.md)、[动效模式目录](../design/MOTION-PATTERNS.md)。与 M9 并行开发，合入 main 后统一复验；因此 M10 在 M9.5 之前完成，本节排在 M9.5 之前。
 
 ### 目标
 
@@ -135,7 +121,7 @@ M9.5 不负责建立第二个 headless 组件底座，也不负责加入 Canvas 
 
 ### 主要产物
 
-- RhineMotionProvider 或等价的 motion contract；
+- RhineMotionProvider 或等价的 motion contract（实际采用等价方案：`RhineProvider motion` + `MotionConfig` + `useRhineMotion().resolve`；公开的 RhineMotionProvider **未做，有意延后**，ADR-0007「留给 M11」：现有 Provider 已覆盖减动来源，单独 Provider 没有真实需求）；
 - 语义化 preset：press、fast、panel、scene、showcase；
 - MotionPresence；
 - RhineMotionGroup；
@@ -155,7 +141,44 @@ M9.5 不负责建立第二个 headless 组件底座，也不负责加入 Canvas 
 - 动效不会延迟业务状态和屏幕阅读器状态；
 - Motion API 和 tokens 之间有明确映射。
 
+## M9.5：Ecosystem hardening
+
+状态：⏭ 下一里程碑（Planned）。任务清单见 [执行清单 · M9.5](execution-backlog.md#m95生态工程化)。
+
+### 目标
+
+让组件可以被不同 React 应用稳定消费，并为后续公开发布消除工程障碍。
+
+### 主要产物
+
+- React 18 / 19 支持策略 ADR；
+- locale 与默认文案 ADR；
+- `'use client'` 产物指令与 App Router 示例；
+- SSR hydration 回归；
+- 包体积基线与预算，超标时 `release:check` 失败；
+- 文档搜索索引；
+- packages 安装 / 导出 / CSS 导入文档；
+- 升级指南与 CHANGELOG；
+- 决定 npm scope（暂不发布）；
+- 第三方许可证来源。
+
+React 18 / 19 ADR 要写明 React 19 的正式支持范围，以及 React 18 是继续验证、暂不支持还是移除 peer 声明（选项见 [质量、发布与生态规划 §4](quality-release-and-ecosystem-plan.md#4-兼容性策略)）。
+
+### 退出门禁
+
+- 两份 ADR 已定案；
+- App Router 示例可构建，三内核 E2E 通过；
+- SSR hydration 回归通过，且有反向验证；
+- 体积超预算时 `release:check` 失败（反向验证）；
+- 完成 M9.5 验收记录。
+
+### 注意
+
+M9.5 不负责建立第二个 headless 组件底座，也不负责加入 Canvas 或 WebGL。它只解决“包被安装和使用时是否稳定”。
+
 ## M11：Rendering Lab
+
+状态：Planned（M9.5 之后）。M10 留下的待办见 [ADR-0007「留给 M11」](../development/adr/0007-motion-ownership.md#留给-m11rendering-lab)。
 
 ### 目标
 
@@ -191,15 +214,15 @@ M9.5 不负责建立第二个 headless 组件底座，也不负责加入 Canvas 
 
 ### 推荐顺序
 
-1. Combobox / Autocomplete（Drawer 已提前到 M9）；
+1. Combobox / Autocomplete（Drawer 已提前到 M9 并交付）；
 2. Slider；
 3. NumberField；
-5. Accordion / Collapsible；
-6. CommandPalette；
-7. FilterBar；
-8. FileUpload；
-9. Pagination 的高级变体；
-10. DatePicker。
+4. Accordion / Collapsible；
+5. CommandPalette；
+6. FilterBar；
+7. FileUpload；
+8. Pagination 的高级变体；
+9. DatePicker。
 
 DatePicker 必须等 locale、时区、日期库、RTL 和提交格式策略确定后再做。
 
@@ -208,7 +231,7 @@ DatePicker 必须等 locale、时区、日期库、RTL 和提交格式策略确�
 Agent UI 会优先消费真实场景中需要的高级交互能力：
 
 - Combobox / Autocomplete：模型、技能、文件引用和 mention；
-- Drawer：窄窗口 Agent 详情和文件预览；
+- Drawer（M9 已交付）：窄窗口 Agent 详情和文件预览；
 - Slider / NumberField：模型执行参数；
 - Accordion / Collapsible：工具详情、上下文和审批材料；
 - CommandPalette：快捷命令和全局 Agent 操作；

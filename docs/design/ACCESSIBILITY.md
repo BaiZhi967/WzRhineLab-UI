@@ -11,7 +11,8 @@
 - 支持 200% 页面缩放、窄屏、长中文、输入法组合、浏览器默认字体放大与高对比设置。
 - 有实时数据时提供文字状态与合理频率的 live-region 更新；不要高频朗读所有曲线采样。
 - 测试矩阵：键盘仅操作、屏幕阅读器抽检、axe、Playwright focus 路径、prefers-reduced-motion、chrome/firefox/webkit、320/390/768/1280/1920 宽度。
-- 自动化现状（2026-10-09）：`pnpm test:e2e:all` 在 Playwright 自带的 Chromium、Firefox、WebKit 上各运行 215 项（键盘、焦点、axe、减动、5 种宽度），全部通过。屏幕阅读器抽检、200% 缩放、`forced-colors` 仍需人工完成。WebKit 默认 Tab 不经过链接，对应测试改用程序聚焦，Tab 顺序在另外两个内核中断言。
+- 自动化现状（2026-10-11，M9 与 M10 合入 main 后）：Showcase E2E 在 Playwright 自带的 Chromium、Firefox、WebKit 上各运行 385 项（键盘、焦点进入 / 循环 / 归还、axe 明暗、减动、全路由减动扫描、5 种宽度），全部通过（[M10 验收记录](../development/acceptance/2026-10-10-m10.md)「合入 M9 后的复验」）。`forced-colors` 有 4 张模拟截图基线（`field-forced-colors`、M7 `choice-states-forced-colors`、M8 `data-pagination-forced-colors`、M9 `feedback-alert-tones-forced-colors`，Chromium on Windows），只证明样式在模拟模式下不回归，**不等于**在真实 Windows 高对比度模式下的人工检查。屏幕阅读器抽检、200% 缩放、`forced-colors` 人工操作、人工键盘验收仍未完成。WebKit 默认 Tab 不经过链接，对应测试改用程序聚焦，Tab 顺序在另外两个内核中断言。
+  - 历史：2026-10-09（M3）为各 215 项。
 - 任何不满足门槛的组件不得标记为 stable；已知问题以 Issue 记录并给出替代使用方式。
 
 参考：https://www.w3.org/TR/WCAG22/ 以及 https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html

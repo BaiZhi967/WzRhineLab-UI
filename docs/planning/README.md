@@ -1,7 +1,7 @@
 # WzRhineLab-UI 长期规划中心
 
 > 状态：Working plan  
-> 基线：Base UI 1.9.0 与 M7 Forms 已合入 main  
+> 基线：M0–M10 已合入 main（Base UI 1.9.0）；下一里程碑 M9.5 Ecosystem hardening  
 > 维护方式：规划文档描述目标和门禁，验收记录描述已经真实执行的结果。
 
 本目录是 WzRhineLab-UI 后续规划的统一入口。现有的 design、development 和 acceptance 文档继续作为规范、实现约束和事实记录；本目录负责回答三个问题：
@@ -23,8 +23,11 @@
 - Agent UI 公共包尚未实现；其目标边界和契约见 Agent UI 平台规划；
 - M7 表单层：Textarea、Checkbox、CheckboxGroup、RadioGroup、Radio、Switch、Fieldset、Form、Separator、VisuallyHidden；
 - M8 数据与导航：Pagination、Breadcrumb、Progress、Meter、Stat，DataTable 加载 / 错误 / 空状态与分页（[验收记录](../development/acceptance/2026-10-10-m8.md)）；
+- M9 覆盖层与反馈：AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner，Toast 操作 / 撤销 / 更新与 Dialog 关闭保护（[验收记录](../development/acceptance/2026-10-10-m9.md)）；
+- M10 Motion Core 2.0：MotionPresence、RhineMotionGroup、按属性类型的减动、可见性暂停与生命周期、[动效模式目录](../design/MOTION-PATTERNS.md)（[验收记录](../development/acceptance/2026-10-10-m10.md)）；
+- 共四十二个组件和 RhineProvider（以 `packages/react/src/index.ts` 与 [API 报告](../api/react.md) 为准）；
 - 3 个示例应用：archive-desk、host-embed、ssr-hydrate；
-- 三内核自动化验收、axe 检查、视觉回归基线、package verification；
+- 三内核自动化验收（Showcase E2E 每个内核 385 项）、axe 检查、74 张视觉回归基线（Windows Chromium）、package verification；
 - effects 包与 react 核心包之间的依赖边界；
 - 语义 token、主题作用域、Motion 时长与减动规范。
 
@@ -36,15 +39,16 @@
 - React 18 的正式验证和支持承诺；
 - 根目录许可证、npm scope、公开版本号；
 - 公开发布前的变更日志和安装体验；
-- M9 覆盖层与反馈组件；
 - M9.5 Ecosystem 工程化；
-- 长期的动效模式目录与 Canvas/WebGL 可选渲染实验。
+- 公开的 RhineMotionProvider（M10 有意延后，见 [ADR-0007](../development/adr/0007-motion-ownership.md)）；
+- Canvas/WebGL 可选渲染实验（M11）；
+- 自动 CI（需维护者批准后才配置）。
 
 ## 规划文件
 
 | 文件 | 内容 |
 | --- | --- |
-| [roadmap.md](roadmap.md) | 从 M8 到公共生态的阶段路线和依赖关系 |
+| [roadmap.md](roadmap.md) | 从 M8 到公共生态的阶段路线、依赖关系和每个阶段的状态 |
 | [component-platform-plan.md](component-platform-plan.md) | 组件分层、优先级、API、验收矩阵和领域模式 |
 | [motion-and-rendering-plan.md](motion-and-rendering-plan.md) | CSS、Motion、SVG、Canvas、WebGL 和第三方适配器的长期边界 |
 | [quality-release-and-ecosystem-plan.md](quality-release-and-ecosystem-plan.md) | 质量门禁、兼容性、许可、发布、文档与生态计划 |
@@ -121,14 +125,18 @@ Agent UI 采用独立的 @wzrhine/agent 包。一个真实的 Agent 消费项目
 
 ## 当前推荐起点
 
-下一个开发里程碑是 M8 Data & Navigation：
+M8、M9、M10 已完成（M10 与 M9 并行）。下一个开发里程碑是 M9.5 Ecosystem hardening，范围与 [执行清单](execution-backlog.md#m95生态工程化) 一致：
 
-1. DataTable 分页和加载态；
-2. Pagination；
-3. Breadcrumb；
-4. Progress / Meter；
-5. Stat；
-6. 三浏览器、键盘、axe、视觉和真实数据密度验收；
-7. 再进入 M9 覆盖层与反馈组件（AlertDialog、Drawer、Alert、EmptyState、Skeleton），之后是 M9.5 Ecosystem，而不是立即引入 3D 或第二套组件底座。
+1. React 18 / 19 支持策略 ADR；
+2. locale 与默认文案 ADR；
+3. `'use client'` 产物指令与 App Router 示例；
+4. SSR hydration 回归；
+5. 包体积基线与预算，超标时 `release:check` 失败；
+6. 文档搜索索引；
+7. packages 安装 / 导出 / CSS 导入文档；
+8. 升级指南与 CHANGELOG；
+9. 决定 npm scope（暂不发布）；
+10. 第三方许可证来源；
+11. 完成 M9.5 验收记录，再进入 M11 Rendering Lab，而不是立即引入 3D 或第二套组件底座。
 
-Agent UI 的实现应按 [Agent UI 平台规划](agent-ui-platform-plan.md) 的依赖顺序推进；遇到 WzRhine 尚未支持的 Combobox、Drawer、Slider 或 Accordion 时，按照 [需求插入流程（PR #11）](https://github.com/BaiZhi967/WzRhineLab-UI/pull/11) 提交最小支持闭环。
+Agent UI 的实现应按 [Agent UI 平台规划](agent-ui-platform-plan.md) 的依赖顺序推进；遇到 WzRhine 尚未支持的 Combobox、Slider 或 Accordion 时（Drawer 已在 M9 交付），按照 [需求插入流程（PR #11）](https://github.com/BaiZhi967/WzRhineLab-UI/pull/11) 提交最小支持闭环。

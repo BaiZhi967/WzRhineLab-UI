@@ -21,7 +21,7 @@
 - Field：Label / Description / Error 自动接入 `aria-describedby`；`aria-invalid`；Root `disabled` 传递到控件。
 - Select：`combobox` + `listbox`，方向键/Enter 选择、Esc 取消不改值，关闭后焦点回到触发器。
 
-**Chromium（`apps/docs/e2e/base-ui-spike.spec.ts`，9 项通过）**
+**Chromium（`apps/docs/e2e/base-ui-spike.spec.ts`，9 项通过；该文件已在 405953a 随 ADR Lab 原型移除，覆盖并入 `overlays.spec.ts`；jsdom spike 保留在 `packages/react/test/spike/`）**
 - 8 次 Tab/Shift+Tab 焦点始终在弹窗内；Esc 后焦点回到触发器。
 - 打开时页面滚动锁定，主导航退出可访问树。
 - 连续 3 次开关后只存在 1 个弹窗；退出动画结束后卸载；焦点正确归还。
@@ -44,7 +44,7 @@
 
 ## 后果
 - `@wzrhine/react` 增加 1 个运行时依赖（Base UI 及 floating-ui）；只用 Button/Surface 的宿主因子路径导入与 tree-shake 不受影响（M5 发布前以 bundle 分析复核）。
-- M1-B 的 Input / Field 直接基于 Base UI Field 实现；M2 的 Dialog / Select 从 `apps/docs/src/pages/lab` 原型升级为正式组件。
+- M1-B 的 Input / Field 直接基于 Base UI Field 实现；M2 的 Dialog / Select 从 `apps/docs/src/pages/lab` 原型升级为正式组件（原型目录已在 405953a 移除）。
 
 ## 修订 · 2026-10-10：升级 1.9.0
 - `@base-ui/react` 1.8.0 → **1.9.0**（2026-10-09 发布的 minor 版本，changelog 无破坏性变更）；传递依赖 `@base-ui/utils` 0.4.0 → 0.5.0，floating-ui 系列版本不变。

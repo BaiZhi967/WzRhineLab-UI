@@ -51,7 +51,7 @@
 | `Progress` | `label` *必填*；`value`（`number \| null`，必填）；`min` / `max`；`format`；`valueText`（`false` 隐藏）；`getValueText`；`description`；`size`；`tone`；`hideLabel` |
 | `Meter` | `label` *必填*；`value`（不能为 `null`）；`min` / `max`；`low` / `high` / `optimum`；`stateLabels`；`valueText`；`getValueText`；`description` |
 | `Stat` | `label` *必填*；`value`（`number \| string \| null`）；`format` / `locale`；`unit`；`delta`（`value`、`text`、`label`、`tone`）；`status`；`description`；`loading`；`size`；`emptyLabel` |
-| `DataTable`（新增） | `status`、`loadingRows`、`loadingText`、`errorText`、`onRetry`、`retryLabel`、`emptyAction`、`pagination` |
+| `DataTable`（新增） | `status`、`loadingRows`、`loadingText`、`errorText`、`onRetry`、`retryLabel`、`emptyAction`、`pagination`；M9 另增 `emptyDescription`（空状态的补充说明） |
 
 辅助函数：`paginate(rows, page, pageSize)`（客户端分页切片，页码自动夹到有效范围）、`getPaginationItems(page, pageCount, siblingCount)`、`getMeterState(value, thresholds)`。
 
@@ -88,7 +88,7 @@
 | --- | --- | --- |
 | Progress / Meter | 指示条宽度 `--rl-motion-base` | `transition: none`，直接跳变 |
 | Progress 不确定态 | 片段左右往返 `@keyframes rl-progress-travel`（`--rl-motion-loop`） | 静态斜纹填满轨道 |
-| DataTable / Stat 骨架 | 明暗呼吸 `@keyframes rl-skeleton-pulse` | 静态色块 |
+| DataTable / Stat 骨架 | 明暗呼吸 `@keyframes rl-skeleton-pulse`（M9 起由 [Skeleton](feedback.md) 渲染） | 静态色块 |
 | DataTable 再次加载 | 旧行不透明度 `--rl-motion-fast` | 时长 token 归零 |
 
 两个 `@keyframes` 都受 package-boundary 测试约束（`prefers-reduced-motion` 下必须为 `animation: none`），也对 `data-rl-motion="reduce"` 生效。E2E 断言减动时 `animationName` 为 `none`，非减动时为 `rl-progress-travel`。
@@ -117,3 +117,4 @@
 
 ## 变更记录
 - 0.0.0：首次加入（M8）。`RecordHeader` 的 `trail` 改由 `Breadcrumb` 渲染：外观不变（既有视觉基线零差异），结构与语义不变（`<nav>` + `<ol>`、`aria-current`）；DOM 上 `<nav>` 多了 `rl-breadcrumb` 类，列表与列表项多了 `rl-breadcrumb__*` 类。`RecordTrailItem` 成为 `BreadcrumbItem` 的别名。
+- M9：`DataTable` 新增 `emptyDescription`；首次加载骨架、空状态、Stat 加载骨架改由 Skeleton / EmptyState 渲染，原有类名保留，外观不变，元素额外带 `rl-skeleton` / `rl-empty` 类（ADR-0006）。
