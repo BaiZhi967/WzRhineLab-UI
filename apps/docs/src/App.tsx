@@ -30,6 +30,7 @@ import { AlertDialogPage } from './pages/AlertDialogPage';
 import { DrawerPage } from './pages/DrawerPage';
 import { FeedbackPage } from './pages/FeedbackPage';
 import { LocalePage } from './pages/LocalePage';
+import { DocSearch } from './ui/DocSearch';
 
 // Optional effects package is code-split so the main Showcase chunk never includes it.
 const ShowcaseEffectsPage = React.lazy(() =>
@@ -240,6 +241,7 @@ export default function App() {
               <IconButton icon={<Close />} label="关闭导航" variant="secondary" onClick={closeDrawer} />
             )}
           </div>
+          <DocSearch onNavigate={() => setDrawerOpen(false)} />
           <Navigation current={route.id} onNavigate={() => setDrawerOpen(false)} />
           <p className="sc-sidebar__foot">
             Design system 0.0.0

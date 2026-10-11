@@ -20,6 +20,7 @@ const pages = [
   { name: 'archive', hash: '/#/archive' },
   { name: 'data', hash: '/#/archive/data' },
   { name: 'feedback', hash: '/#/components/feedback' },
+  { name: 'locale', hash: '/#/foundations/locale' },
   { name: 'scenarios', hash: '/#/archive/scenarios' },
 ] as const;
 
@@ -65,6 +66,15 @@ for (const theme of ['light', 'dark'] as const) {
         await page.getByRole('button', { name: '查看详情' }).first().click();
         await expect(page.getByRole('dialog')).toBeVisible();
         await expect(page).toHaveScreenshot(`drawer-open-${theme}-${width}.png`);
+      });
+
+      test('docs search open', async ({ page }) => {
+        await setSettings(page, { theme, motion: 'reduce' });
+        await open(page, '/#/');
+        if (width < 1024) await page.getByRole('button', { name: '打开导航' }).click();
+        await page.getByRole('searchbox', { name: '搜索组件、文档与 API' }).fill('drawer');
+        await expect(page.getByRole('list', { name: '搜索结果' })).toBeVisible();
+        await expect(page).toHaveScreenshot(`search-open-${theme}-${width}.png`);
       });
 
       test('select open', async ({ page }) => {

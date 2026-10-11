@@ -1895,3 +1895,57 @@ body,
   gap: var(--rl-space-5);
   min-width: 0;
 }
+
+/* ---------- Docs search (M9.5) ---------- */
+.sc-search {
+  display: grid;
+  gap: var(--rl-space-2);
+  padding: 0 var(--rl-space-2);
+}
+
+.sc-search__results {
+  display: grid;
+  gap: var(--rl-space-1);
+  margin: 0;
+  padding: var(--rl-space-1);
+  list-style: none;
+  max-height: 50vh;
+  overflow-y: auto;
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-raised);
+}
+
+.sc-search__link {
+  display: grid;
+  gap: var(--rl-space-1);
+  padding: var(--rl-space-2);
+  border-radius: var(--rl-radius-xs);
+  color: var(--rl-fg-primary);
+  text-decoration: none;
+}
+
+.sc-search__link:hover {
+  background: var(--rl-bg-hover);
+}
+
+.sc-search__link:focus-visible {
+  outline: var(--rl-focus-width) solid var(--rl-focus);
+  outline-offset: calc(-1 * var(--rl-focus-width));
+}
+
+.sc-search__title {
+  font: var(--rl-type-label);
+  overflow-wrap: anywhere;
+}
+
+.sc-search__meta,
+.sc-search__empty {
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+  overflow-wrap: anywhere;
+}
+
+.sc-search__empty {
+  padding: var(--rl-space-2);
+}
