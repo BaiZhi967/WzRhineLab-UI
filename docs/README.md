@@ -12,10 +12,10 @@
 | [development/ARCHITECTURE.md](development/ARCHITECTURE.md) | workspace、包结构、依赖边界与发布约束 |
 | [development/CONTRIBUTING.md](development/CONTRIBUTING.md) | 开发约束、commit、分支、评审与测试 |
 | [development/QUALITY-GATES.md](development/QUALITY-GATES.md) | 可执行质量门槛 |
-| [ROADMAP.md](ROADMAP.md) | M0–M10 与 M9.5 里程碑摘要、状态与验收链接 |
+| [ROADMAP.md](ROADMAP.md) | M0–M10、M9.5 与 M12 里程碑摘要、状态与验收链接 |
 | [planning/README.md](planning/README.md) | 长期规划中心：M8–M18 路线、组件、动效、质量和执行计划（文件列表见下） |
 | [planning/roadmap.md](planning/roadmap.md) | 长期路线图：每个阶段的目标、产物、依赖、门禁与状态 |
-| [planning/execution-backlog.md](planning/execution-backlog.md) | 可勾选的执行清单（当前：M9.5） |
+| [planning/execution-backlog.md](planning/execution-backlog.md) | 可勾选的执行清单（当前：M12 已完成，下一步 Wpi 接入 / M11） |
 | [concepts/README.md](concepts/README.md) | 概念图索引、用途与局限 |
 | [research/REFERENCES.md](research/REFERENCES.md) | 官方 / 社区 / 技术参考资料及授权提醒 |
 
@@ -36,6 +36,9 @@
 - [ADR-0007 M10 动效属性所有权与 Motion Core 契约](development/adr/0007-motion-ownership.md)
 - [ADR-0008 M9.5 包的消费边界（React 19、'use client'、体积预算、npm scope）](development/adr/0008-consumption-boundary.md)
 - [ADR-0009 M9.5 默认文案与 locale](development/adr/0009-locale-default-copy.md)
+- [ADR-0010 M12 高级交互与 Agent UI：范围、拆包与顺序](development/adr/0010-m12-agent-ui-plan.md)
+- [ADR-0011 Agent UI 契约](development/adr/0011-agent-contracts.md)
+- [ADR-0012 Agent 动效设计](development/adr/0012-agent-motion.md)
 - [Sprint 01 验收记录](development/acceptance/2026-10-09-sprint-01.md)
 - [M1-B 验收记录](development/acceptance/2026-10-09-m1b.md)
 - [M2-A 验收记录](development/acceptance/2026-10-09-m2a.md)
@@ -50,9 +53,11 @@
 - [M9 验收记录](development/acceptance/2026-10-10-m9.md)
 - [M10 验收记录](development/acceptance/2026-10-10-m10.md)
 - [M9.5 验收记录](development/acceptance/2026-10-11-m9.5.md)
+- [M12 验收记录](development/acceptance/2026-10-11-m12.md)
 - [安装、导出与样式导入 INSTALL](development/INSTALL.md) · [发布流程 RELEASING](development/RELEASING.md) · [升级指南 UPGRADING](development/UPGRADING.md) · [包体积 SIZE](development/SIZE.md) · [第三方许可证](development/THIRD-PARTY-LICENSES.md)
-- API 参考（自动生成）：[tokens](api/tokens.md) · [react](api/react.md) · [effects](api/effects.md)
-- 组件文档：[Field & Input](components/field.md) · [Choice · Textarea · Fieldset · Form](components/forms.md) · [Data & navigation](components/data-navigation.md) · [AlertDialog](components/alert-dialog.md) · [Drawer](components/drawer.md) · [Alert & feedback](components/feedback.md) · [IconButton · Text](components/icon-button-text.md) · [Provider · Tabs · Tooltip · Dialog · Select](components/overlays.md) · [Popover · Menu · Toast](components/popover-menu-toast.md) · [Archive patterns](components/archive.md) · [Showcase effects](components/effects.md) · [Locale & messages](components/locale.md)
+- API 参考（自动生成）：[tokens](api/tokens.md) · [react](api/react.md) · [effects](api/effects.md) · [agent-core](api/agent-core.md) · [agent](api/agent.md)
+- 组件文档：[Field & Input](components/field.md) · [Choice · Textarea · Fieldset · Form](components/forms.md) · [Data & navigation](components/data-navigation.md) · [AlertDialog](components/alert-dialog.md) · [Drawer](components/drawer.md) · [Alert & feedback](components/feedback.md) · [IconButton · Text](components/icon-button-text.md) · [Provider · Tabs · Tooltip · Dialog · Select](components/overlays.md) · [Popover · Menu · Toast](components/popover-menu-toast.md) · [Archive patterns](components/archive.md) · [Showcase effects](components/effects.md) · [Locale & messages](components/locale.md) · [Advanced interaction](components/advanced.md) · [Combobox · CommandPalette · FileDropZone · SplitButton · ScrollArea](components/command.md)
+- Agent 组件文档：[Shell & conversations](components/agent-shell.md) · [Messages & process](components/agent-message.md) · [Tools](components/agent-tools.md) · [Composer](components/agent-composer.md) · [Approval & questions](components/agent-intervention.md) · [Workspace & artifacts](components/agent-workspace.md) · 概念图册 [concepts/agent](concepts/agent/README.md)
 - [Windows 资源导入脚本](../scripts/import-visual-assets.ps1)
 - [Showcase 源码](../apps/docs/src/App.tsx)
 

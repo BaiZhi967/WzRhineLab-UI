@@ -1,6 +1,6 @@
 # Agent UI 接入指南
 
-> 本指南面向 Wpi-Agent 和后续使用 WzRhineLab-UI 的 Agent 应用。@wzrhine/agent 当前处于规划阶段，示例 API 代表目标契约，不代表已有可安装包。
+> 本指南面向 Wpi-Agent 和后续使用 WzRhineLab-UI 的 Agent 应用。M12 起 `@wzrhine/agent-core`（契约与纯函数）与 `@wzrhine/agent`（组件）已在工作区实现并有测试（[ADR-0010](../development/adr/0010-m12-agent-ui-plan.md)、[ADR-0011](../development/adr/0011-agent-contracts.md)），尚未发布到 npm。下文 §4 是真实 API；可运行的完整接入见示例 [`examples/agent-console`](../../examples/agent-console) 与 Showcase `/#/agent`。
 
 ## 1. 接入模型
 
@@ -70,47 +70,76 @@ Consumer adapter
 
 ## 3. Wpi-Agent 的迁移映射
 
-| Wpi 当前能力 | 公共 Agent UI 目标 | Wpi 保留内容 |
+| Wpi 当前能力 | WzRhine 组件（已实现） | Wpi 保留内容 |
 | --- | --- | --- |
-| agent-messages | MessageList、Message、MessagePart | 查询、排序、事件恢复、Markdown 数据 |
-| composer-input | Composer、ComposerInput | IME、业务 token 来源、文件查询和发送请求 adapter |
-| agent-tools | ToolActivity、ToolCall、ToolOutput | 工具 DTO、分页、MCP 事实、权限验证 |
-| agent-permissions | ApprovalPanel、PermissionSummary | grants、canonical record、材料核验、审批命令 |
-| agent-questions | Questionnaire、QuestionCard | questionnaire persistence、revision 对账、提交请求 |
-| file-preview | FilePreview、CodePreview、DiffPreview | 文件读取、Tauri 打开、权限和缓存 |
-| agent-motion | Agent motion presets/patterns | 应用状态编排和运行事件 |
-| workbench | AgentWorkspace、AgentSidePanel | Tauri 窗口、路由、面板持久化和宿主布局 |
+| agent.tsx 布局 / workbench | `AgentShell`、`AgentHeader`、`AgentSidePane`、`ResizeHandle` | Tauri 窗口、路由、面板宽度持久化、icon rail |
+| 会话索引 | `ConversationList`、`ConversationRow` | 会话查询、排序、未读集合、空会话回收、搜索防抖 |
+| agent-messages | `MessageList`、`AgentMessage`、`MessagePart`、`JumpToLatest`、`RunDetails`、`SkillUseList` | 查询、排序、事件恢复；Markdown / 高亮通过 `renderers` 注入 |
+| agent-process / 思考 | `AgentProcess`、`ThinkingBlock`、`RunStatus`、`AgentSpark` | run 事件到 `RunView` 的映射 |
+| agent-tools / tool-preview / edit-preview | `ToolActivity`、`ToolRecord`、`CodeModeToolTree`、`ToolOutput`、`ToolHistory`、`DiffPreview`、`ChunkPager`、11 类工具专项详情 | 工具 DTO、分页、MCP 事实、材料读取 |
+| composer-input / tokens / mention / slash | `Composer`、`ComposerInput`、`MentionMenu`、`SlashCommandMenu`、`AttachmentList`、`SendStopButton` | IME 之外的业务：文件查询、技能来源、草稿持久化、发送请求 |
+| model-picker / permissions | `ModelPicker`、`PermissionPicker`、`GrantList` | 模型配置、权限策略、授权事实 |
+| agent-permissions（审批浮层） | `ApprovalPanel`、`InterventionDock` | canonical record、材料核验（结果写入 `availability`） |
+| agent-questions / use-questionnaire | `QuestionnaireCard` | 问卷持久化、revision 对账、提交请求、flush 时机 |
+| 终端 / 子任务 / 摘要 / 上下文 | `PersistentTerminal`、`TerminalList`、`SubAgentList`、`PinnedSummary`、`ContextUsage`、`CompactionNotice`、`RunSummary`、`ActivityLedger` | 轮询与 watch、终端控制、整理请求 |
+| file-preview / artifacts | `FilePreview`、`FilePreviewTabs`、`ArtifactCard` / `ArtifactList` | 文件读取、Tauri 打开方式探测、权限与缓存 |
+| agent-motion / lib/motion | Agent 动效层（`AgentEntrance`、`useAgentLoop`、ADR-0012） | 应用状态编排 |
+| 标题栏 / 关闭保护 / 设置中心 | 不迁移（应用职责） | 全部保留在 Wpi |
 
-迁移时不复制整个 Wpi 文件。每个组件先提取 view-model、actions、capability 和 renderer，再将视图实现放入 @wzrhine/agent。
+迁移时不复制整个 Wpi 文件。每个组件先提取 view-model、actions、capability 和 renderer，再改用 `@wzrhine/agent` 的视图。
 
-## 4. 目标接入示例
+### 状态名映射（Wpi DTO → ADR-0011）
+公共契约统一使用 kebab-case；adapter 只映射一次：
 
-以下示例只展示边界：
+| Wpi / 运行时 | `RunStatus` | `RunPhase` |
+| --- | --- | --- |
+| `starting` | `queued` | `preparing` |
+| `running` + phase `thinking` / `responding` / `executing_tool` | `running` | `thinking` / `responding` / `executing-tool` |
+| `running` + phase `waiting_user` / `waiting_approval` / `waiting_children` | `waiting` | `waiting-user` / `waiting-approval` / `waiting-children` |
+| phase `queued_resume` / `waiting_resource` / `waiting_model` | `queued` / `running` | `queued` / `waiting-resource` / `waiting-model` |
+| phase `compacting` / `saving` / `cancelling` | `running` / `running` / `cancelling` | 同名 kebab-case |
+| `completed` / `cancelled` / `failed` / `interrupted` | 同名 | — |
+
+工具：`waiting_approval` → `waiting-approval`，`approved` → `running`（审批通过、尚未结束），未当前待决的 `waiting_approval` → `cancelled` 并在 `summary` 写「未执行」。`result_info.status === 'unknown'` → `ToolStatus 'unknown'`，`partial` → `'partial'`。
+
+## 4. 接入示例（真实 API）
 
 ~~~tsx
-<RhineProvider theme="light" density="comfortable">
+import '@wzrhine/tokens/styles.css';
+import '@wzrhine/react/styles.css';
+import '@wzrhine/agent/styles.css';
+import { RhineProvider } from '@wzrhine/react';
+import { AgentShell, AgentHeader, ConversationList, MessageList, AgentMessage, ToolRecord, Composer, ApprovalPanel, InterventionDock } from '@wzrhine/agent';
+
+<RhineProvider theme="light">
   <AgentShell
-    conversation={conversation}
-    messages={messages}
-    run={run}
-    capabilities={capabilities}
-    actions={{
-      onSend: adapter.send,
-      onStop: adapter.stop,
-      onRetry: adapter.retry,
-      onSelectConversation: adapter.selectConversation,
-    }}
-    renderers={{
-      markdown: MarkdownRenderer,
-      code: CodeRenderer,
-      diff: DiffRenderer,
-      artifact: ArtifactRenderer,
-    }}
+    index={<ConversationList sections={sections} selectedId={id} onSelect={adapter.select} />}
+    header={<AgentHeader title={conversation.title} runStatus={run.status} runPhase={run.phase} syncStatus={run.syncStatus} />}
+    conversation={
+      <MessageList
+        messages={messages}
+        isStreaming={run.status === 'running'}
+        renderMessage={(m) => <AgentMessage message={m} renderTool={(t) => <ToolRecord tool={t} />} renderers={{ markdown: renderMarkdown }} />}
+      />
+    }
+    composer={
+      <Composer
+        onSubmit={adapter.send}
+        onStop={adapter.stop}
+        runStatus={run.status}
+        submitStatus={receipt.send}
+        intervention={approval && (
+          <InterventionDock>
+            <ApprovalPanel approval={approval} onApprove={adapter.approve} onReject={adapter.reject} />
+          </InterventionDock>
+        )}
+      />
+    }
   />
 </RhineProvider>
 ~~~
 
-组件不读取 Query cache，也不需要知道 adapter.send 是 HTTP、SSE、Rust command 或本地 mock。
+组件不读取 Query cache，也不需要知道 `adapter.send` 是 HTTP、SSE、Rust command 还是本地 mock。去重与 revision 守卫用 agent-core 的 `mergeById` / `isStaleRevision`，所有消费者规则一致。
 
 ## 5. Web、Tauri 和 SSR 的差异
 
@@ -211,7 +240,7 @@ Consumer adapter
 
 ## 9. 已知限制
 
-第一版规划不承诺：
+第一版（M12）不承诺：
 
 - 内置某个 Agent SDK；
 - 内置统一数据缓存；

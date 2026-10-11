@@ -14,7 +14,7 @@ WzRhineLab-UI 将 Agent UI 作为正式的可复用产品线，规划一个独�
 Wpi-Agent / 其他 Agent 应用
 ~~~
 
-@wzrhine/agent 是拟议包，当前尚未实现。本文件描述它的边界、契约、组件路线和验收门禁，不代表已有组件已经支持。
+> **状态（M12）**：已实现。实际拆为 `@wzrhine/agent-core`（框架无关契约与纯函数）+ `@wzrhine/agent`（React 组件、文案、动效），偏离本文 §3.1「只增加一个包」的理由见 [ADR-0010 §3](../development/adr/0010-m12-agent-ui-plan.md)；契约以 [ADR-0011](../development/adr/0011-agent-contracts.md) 为准，动效以 [ADR-0012](../development/adr/0012-agent-motion.md) 为准，验收见 [M12 验收记录](../development/acceptance/2026-10-11-m12.md)。§10 完成定义中「至少一套真实 Wpi 消费页面」仍未满足。本文其余内容保留为原始规划。
 
 配套的视觉/接口提案见 [Agent 组件概念图册](../concepts/agent/README.md)（46 个组件的概念图、逐项规格初稿与语义线框源页）；图册为设计参考，不构成本文件的规范依据。
 
