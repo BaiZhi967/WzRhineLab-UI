@@ -2,7 +2,7 @@
 
 > 本文件是里程碑摘要，「状态」列以验收记录为准；每一里程碑均以验收结果关闭，不以文档标记代替执行证据。M11–M18 的详细规划见 [planning/roadmap.md](planning/roadmap.md)，可执行任务见 [planning/execution-backlog.md](planning/execution-backlog.md)。
 >
-> **当前状态**：M0–M10 已完成并合入 main；**下一里程碑 M9.5 Ecosystem hardening**，之后是 M11 Rendering Lab。仍未完成：发布审批（许可证、npm scope、版本号）、读屏软件 / 200% 缩放 / 真机的人工验收、自动 CI（需维护者批准）。
+> **当前状态**：M0–M10 与 M9.5 已完成并合入 main；**下一里程碑 M11 Rendering Lab**。仍未完成：发布审批（许可证、npm scope、版本号）、读屏软件 / 200% 缩放 / 真机的人工验收、自动 CI（需维护者批准）。
 >
 > **进度（M0–M6）**：M0–M5 已合并（PR #1–#7）：基础组件、导航与浮层、档案组件、可选包 `@wzrhine/effects`（可选 3D 有意延后）、dist 构建与发布流程。M6 已实现并有测试：三个示例应用（独立 SPA / 宿主嵌入 / SSR 水合）、冻结的主题 token 契约、31 张视觉回归基线（M6 时的数量；M9 之后为 74 张）、升级指南；试用中发现的 3 个库缺陷已修复（[M6 验收记录](development/acceptance/2026-10-10-m6.md)）。三内核自动化验收通过。**仍未完成**：发布审批（维护者需选定许可证、创建 npm scope、确认版本号），以及读屏软件、200% 缩放与真机的人工验收。
 >
@@ -25,7 +25,7 @@
 | **M6 Release Candidate** | 真实业务集成与稳定 | 3 个示例应用、升级指南、稳定主题、视觉回归基线 | 真实试用问题关闭与发布审批 | ✅ [M6](development/acceptance/2026-10-10-m6.md)（发布审批 ⏸ 待维护者） |
 
 ## 内容补齐阶段（M7–M10，M9.5）
-维护者决定：**暂不发布**，先补齐 [COMPONENTS.md](design/COMPONENTS.md) 规划但未实现的组件（通用组件已在 M7–M9 补齐；InstrumentPanel / SectionIndex / ExperimentTimeline 等领域模式归入 M13）；**暂不正式支持 React 18**（peer 声明保持不变，但不做验证，也不承诺；M9.5 用 ADR 定案）。每个里程碑沿用 M1–M6 的门禁：单测、三内核 E2E、axe、视觉基线、组件文档、验收记录。
+维护者决定：**暂不发布**，先补齐 [COMPONENTS.md](design/COMPONENTS.md) 规划但未实现的组件（通用组件已在 M7–M9 补齐；InstrumentPanel / SectionIndex / ExperimentTimeline 等领域模式归入 M13）；**暂不正式支持 React 18**（M9.5 由 [ADR-0008](development/adr/0008-consumption-boundary.md) 定案：只承诺 React 19，peer 收窄为 `^19.0.0`）。每个里程碑沿用 M1–M6 的门禁：单测、三内核 E2E、axe、视觉基线、组件文档、验收记录。
 
 M10 与 M9 并行完成，因此表中 M10 排在 M9.5 之前；编号保持不变，避免交叉引用失效。
 
@@ -35,7 +35,7 @@ M10 与 M9 并行完成，因此表中 M10 排在 M9.5 之前；编号保持不�
 | **M8 Data & Navigation** | 数据与导航补齐 | Pagination（接入 DataTable）、Breadcrumb（与 RecordHeader trail 共用）、Progress / Meter、Stat；DataTable 加载态 | DataTable 千行分页场景实测；键盘与读屏语义；视觉基线 | ✅ [M8](development/acceptance/2026-10-10-m8.md) |
 | **M9 Overlays & Feedback** | 覆盖层与反馈补齐 | AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner；Toast / Dialog 补强 | 焦点进出与归还、live region 语义、可中断动效；三内核 E2E 与视觉基线 | ✅ [M9](development/acceptance/2026-10-10-m9.md) |
 | **M10 Motion Core 2.0** | 统一动效契约 | MotionPresence、RhineMotionGroup、按属性类型的减动、可见性暂停与生命周期、属性所有权 ADR、[动效模式目录](design/MOTION-PATTERNS.md) | Dialog / Popover / Toast / Tabs / ArchiveCard 中断测试；全路由减动扫描；隐藏页暂停 | ✅ [M10](development/acceptance/2026-10-10-m10.md)（公开 `RhineMotionProvider` 延后，见 ADR-0007） |
-| **M9.5 Ecosystem hardening** | 生态与工程化 | React 18 / 19 支持策略 ADR；locale 与默认文案 ADR；`'use client'` 产物指令与 App Router 示例；SSR hydration 回归；包体积基线与预算（超标时 `release:check` 失败）；文档搜索索引；packages 安装 / 导出 / CSS 导入文档；升级指南与 CHANGELOG；决定 npm scope（暂不发布）；第三方许可证来源 | 两份 ADR 已定案；示例构建与三内核 E2E；hydration 回归通过；预算超标时 `release:check` 失败（反向验证）；验收记录 | ⏭ 下一里程碑 |
+| **M9.5 Ecosystem hardening** | 生态与工程化 | React 18 / 19 支持策略 ADR；locale 与默认文案 ADR；`'use client'` 产物指令与 App Router 示例；SSR hydration 回归；包体积基线与预算（超标时 `release:check` 失败）；文档搜索索引；packages 安装 / 导出 / CSS 导入文档；升级指南与 CHANGELOG；决定 npm scope（暂不发布）；第三方许可证来源 | 两份 ADR 已定案；示例构建与三内核 E2E；hydration 回归通过；预算超标时 `release:check` 失败（反向验证）；验收记录 | ✅ [M9.5](development/acceptance/2026-10-11-m9.5.md)（ADR-0008、ADR-0009） |
 
 M11 Rendering Lab 到 M18 治理的目标、依赖与门禁见 [planning/roadmap.md](planning/roadmap.md)。
 

@@ -22,7 +22,7 @@
 | M8 | Data & Navigation | Pagination、Breadcrumb、Progress / Meter、Stat、DataTable loading / pagination | ✅ Accepted（[验收](../development/acceptance/2026-10-10-m8.md)） |
 | M9 | Overlays & Feedback | AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner，Toast / Dialog 补强 | ✅ Accepted（[验收](../development/acceptance/2026-10-10-m9.md)） |
 | M10 | Motion Core 2.0 | 统一 motion contract、生命周期、模式目录、减动和中断测试 | ✅ Accepted（[验收](../development/acceptance/2026-10-10-m10.md)；与 M9 并行完成） |
-| M9.5 | Ecosystem hardening | React 18 / 19 与 locale ADR、use client 与 App Router 示例、hydration 回归、体积预算、文档搜索、安装 / 升级文档、npm scope 决定 | ⏭ Planned（下一里程碑） |
+| M9.5 | Ecosystem hardening | React 18 / 19 与 locale ADR、use client 与 App Router 示例、hydration 回归、体积预算、文档搜索、安装 / 升级文档、npm scope 决定 | ✅ Done（[验收](../development/acceptance/2026-10-11-m9.5.md)） |
 | M11 | Rendering Lab | Canvas/SVG 性能实验、渲染适配器契约、是否引入 Canvas 的证据 | Planned |
 | M12 | Advanced interaction | Combobox、Slider、NumberField、Accordion、CommandPalette、FilterBar（Drawer 已在 M9 交付） | Planned |
 | M13 | Rhine domain patterns and Agent UI | InstrumentPanel、EvidencePanel、AgentRunCard、Message、Tool、Approval、Questionnaire、Artifact patterns；拟议 @wzrhine/agent | Planned |
@@ -36,7 +36,7 @@
 
 > **顺序调整（维护者决定，M8 开始时）**：M8 之后先做「覆盖层与反馈组件」（新 M9），原 M9 Ecosystem hardening 改为 M9.5。M10 及之后的编号保持不变，避免所有规划文件与验收记录里的交叉引用失效。Drawer 从 M12 提前到 M9。
 >
-> **实际完成顺序**：M8 → M9 与 M10 并行 → M9.5（下一里程碑）→ M11。下文章节按实际完成顺序排列，因此 M10 排在 M9.5 之前。
+> **实际完成顺序**：M8 → M9 与 M10 并行 → M9.5 → M11（下一里程碑）。下文章节按实际完成顺序排列，因此 M10 排在 M9.5 之前。
 
 ## M8：Data & Navigation
 
@@ -143,7 +143,7 @@
 
 ## M9.5：Ecosystem hardening
 
-状态：⏭ 下一里程碑（Planned）。任务清单见 [执行清单 · M9.5](execution-backlog.md#m95生态工程化)。
+状态：✅ 已完成。证据：[M9.5 验收记录](../development/acceptance/2026-10-11-m9.5.md)、[ADR-0008](../development/adr/0008-consumption-boundary.md)（React 19、`'use client'`、体积预算、npm scope）、[ADR-0009](../development/adr/0009-locale-default-copy.md)（默认文案与 locale）。任务清单见 [执行清单 · M9.5](execution-backlog.md#m95生态工程化)。
 
 ### 目标
 

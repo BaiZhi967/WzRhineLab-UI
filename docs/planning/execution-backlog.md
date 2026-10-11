@@ -7,7 +7,7 @@
 - 主分支：main；
 - Base UI：1.9.0；
 - 已完成：M0–M10（M9 覆盖层与反馈、M10 Motion Core 2.0 并行完成）；
-- 当前里程碑：[M9.5 生态工程化](#m95生态工程化)，之后是 M11 Rendering Lab；
+- 当前里程碑：M9.5 生态工程化已完成；下一里程碑 [M11 Rendering Lab](#m11rendering-lab)；
 - 发布状态：暂不发布；
 - React 18：未正式验证；
 - 自动 CI：暂不创建；
@@ -149,22 +149,22 @@
 
 ## M9.5：生态工程化
 
-状态：⏭ 当前（下一里程碑，尚未开始）。范围与 [ROADMAP](../ROADMAP.md) 和 [长期路线图 · M9.5](roadmap.md#m95ecosystem-hardening) 一致。
+状态：✅ 已完成。证据：[M9.5 验收记录](../development/acceptance/2026-10-11-m9.5.md)、[ADR-0008](../development/adr/0008-consumption-boundary.md)、[ADR-0009](../development/adr/0009-locale-default-copy.md)。范围与 [ROADMAP](../ROADMAP.md) 和 [长期路线图 · M9.5](roadmap.md#m95ecosystem-hardening) 一致。
 
-- [ ] 写 React 18 / React 19 支持策略 ADR。
-- [ ] 写 locale 和默认文案策略 ADR。
-- [ ] 在 dist 产物中加入 `'use client'` 指令，并增加 App Router 示例。
-- [ ] 增加 SSR hydration 回归。
-- [ ] 统计 tokens、react、effects 包体基线。
-- [ ] 设计 bundle budget 配置。
-- [ ] 让 release:check 在预算超标时失败。
-- [ ] 增加文档搜索索引。
-- [ ] 完成 packages 的安装、export 和 CSS 导入文档。
-- [ ] 更新 upgrade guide。
-- [ ] 更新 package changelog。
-- [ ] 决定 npm scope，但暂不发布。
-- [ ] 补齐第三方许可证来源。
-- [ ] 完成 M9.5 acceptance。
+- [x] 写 React 18 / React 19 支持策略 ADR。
+- [x] 写 locale 和默认文案策略 ADR。
+- [x] 在 dist 产物中加入 `'use client'` 指令，并增加 App Router 示例。
+- [x] 增加 SSR hydration 回归。
+- [x] 统计 tokens、react、effects 包体基线。
+- [x] 设计 bundle budget 配置。
+- [x] 让 release:check 在预算超标时失败。
+- [x] 增加文档搜索索引。
+- [x] 完成 packages 的安装、export 和 CSS 导入文档。
+- [x] 更新 upgrade guide。
+- [x] 更新 package changelog。
+- [x] 决定 npm scope，但暂不发布。
+- [x] 补齐第三方许可证来源。
+- [x] 完成 M9.5 acceptance。
 
 ## M11：Rendering Lab
 

@@ -1,7 +1,7 @@
 # WzRhineLab-UI 长期规划中心
 
 > 状态：Working plan  
-> 基线：M0–M10 已合入 main（Base UI 1.9.0）；下一里程碑 M9.5 Ecosystem hardening  
+> 基线：M0–M10 与 M9.5 已合入 main（Base UI 1.9.0，只支持 React 19）；下一里程碑 M11 Rendering Lab  
 > 维护方式：规划文档描述目标和门禁，验收记录描述已经真实执行的结果。
 
 本目录是 WzRhineLab-UI 后续规划的统一入口。现有的 design、development 和 acceptance 文档继续作为规范、实现约束和事实记录；本目录负责回答三个问题：
@@ -36,10 +36,8 @@
 - 屏幕阅读器人工验收；
 - 200% 缩放人工验收；
 - 真实设备触摸、滚动和焦点验收；
-- React 18 的正式验证和支持承诺；
 - 根目录许可证、npm scope、公开版本号；
-- 公开发布前的变更日志和安装体验；
-- M9.5 Ecosystem 工程化；
+- 公开发布前的版本号确认与 npm scope 创建（M9.5 已决定保留 `@wzrhine`，暂不发布）；
 - 公开的 RhineMotionProvider（M10 有意延后，见 [ADR-0007](../development/adr/0007-motion-ownership.md)）；
 - Canvas/WebGL 可选渲染实验（M11）；
 - 自动 CI（需维护者批准后才配置）。
@@ -125,7 +123,7 @@ Agent UI 采用独立的 @wzrhine/agent 包。一个真实的 Agent 消费项目
 
 ## 当前推荐起点
 
-M8、M9、M10 已完成（M10 与 M9 并行）。下一个开发里程碑是 M9.5 Ecosystem hardening，范围与 [执行清单](execution-backlog.md#m95生态工程化) 一致：
+M8、M9、M10 与 M9.5 已完成（M10 与 M9 并行；M9.5 证据见 [验收记录](../development/acceptance/2026-10-11-m9.5.md)）。下一个开发里程碑是 M11 Rendering Lab（[路线图](roadmap.md#m11rendering-lab)、[执行清单](execution-backlog.md#m11rendering-lab)）。M9.5 已完成的范围：
 
 1. React 18 / 19 支持策略 ADR；
 2. locale 与默认文案 ADR；
@@ -137,6 +135,6 @@ M8、M9、M10 已完成（M10 与 M9 并行）。下一个开发里程碑是 M9.
 8. 升级指南与 CHANGELOG；
 9. 决定 npm scope（暂不发布）；
 10. 第三方许可证来源；
-11. 完成 M9.5 验收记录，再进入 M11 Rendering Lab，而不是立即引入 3D 或第二套组件底座。
+11. 完成 M9.5 验收记录。M11 仍然先用实验决定是否需要 Canvas，而不是立即引入 3D 或第二套组件底座。
 
 Agent UI 的实现应按 [Agent UI 平台规划](agent-ui-platform-plan.md) 的依赖顺序推进；遇到 WzRhine 尚未支持的 Combobox、Slider 或 Accordion 时（Drawer 已在 M9 交付），按照 [需求插入流程（PR #11）](https://github.com/BaiZhi967/WzRhineLab-UI/pull/11) 提交最小支持闭环。

@@ -10,8 +10,9 @@
 - **M8 — Data & Navigation**：Pagination、Breadcrumb、Progress、Meter、Stat，DataTable 加载 / 错误 / 空状态与分页（见 [M8 验收记录](docs/development/acceptance/2026-10-10-m8.md)）。
 - **M9 — Overlays & Feedback**：AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner，Toast 操作 / 撤销 / 更新与 Dialog 关闭保护（见 [M9 验收记录](docs/development/acceptance/2026-10-10-m9.md)）。
 - **M10 — Motion Core 2.0**：MotionPresence、RhineMotionGroup、按属性类型的减动、可见性暂停与生命周期、[动效模式目录](docs/design/MOTION-PATTERNS.md)（见 [M10 验收记录](docs/development/acceptance/2026-10-10-m10.md)）。
-- **下一步 M9.5 — Ecosystem hardening**：React 18 / 19 支持策略与 locale ADR、`'use client'` 与 App Router 示例、SSR hydration 回归、包体积预算、文档搜索、安装与升级文档（见 [ROADMAP](docs/ROADMAP.md)）。之后是 M11 Rendering Lab。
-- **暂不发布到 npm**（维护者决定，先补齐内容）；发布前仍需选定许可证、创建 npm scope 并确认版本号（见 [M6 验收记录](docs/development/acceptance/2026-10-10-m6.md)）。React 18 暂不正式支持。
+- **M9.5 — Ecosystem hardening**：只承诺 React 19、产物带 `'use client'` 与 Next.js App Router 示例、默认文案表与 `enUS`、体积预算门禁、文档搜索、安装与升级文档、许可证来源（见 [M9.5 验收记录](docs/development/acceptance/2026-10-11-m9.5.md)）。
+- **下一步 M11 — Rendering Lab**（见 [ROADMAP](docs/ROADMAP.md)）。
+- **暂不发布到 npm**（维护者决定，先补齐内容）；发布前仍需选定许可证、创建 npm scope 并确认版本号（见 [M6 验收记录](docs/development/acceptance/2026-10-10-m6.md)）。只支持 React 19（ADR-0008）。
 - 规范入口：[docs/README.md](docs/README.md)、[DESIGN.md](DESIGN.md)、[docs/ROADMAP.md](docs/ROADMAP.md)。
 - 原型画板：[docs/concepts/README.md](docs/concepts/README.md)。
 
