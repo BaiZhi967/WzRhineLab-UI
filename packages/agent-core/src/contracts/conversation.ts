@@ -166,6 +166,38 @@ export interface TokenUsageView {
   note?: string;
 }
 
+/** A skill / plugin that was actually loaded for a turn (vs. merely requested). */
+export interface SkillUseView {
+  id: string;
+  name: string;
+  /** Where it came from: "应用内置", "当前工作区"… */
+  source?: string;
+  method: 'selected' | 'model-loaded';
+  /** Content digest (shown shortened) so reviewers can tell versions apart. */
+  digest?: string;
+}
+
+/** What actually ran for one turn (run-details disclosure). Every field optional; missing ≠ zero. */
+export interface RunDetailsView {
+  permission?: string;
+  provider?: string;
+  model?: string;
+  modelId?: string;
+  effort?: string;
+  startedAt?: string;
+  elapsedMs?: number;
+  /** `lower-bound`: the run was cut, the real time is at least `elapsedMs`. */
+  elapsedKind?: 'exact' | 'lower-bound' | 'unknown';
+  lastActivityAt?: string;
+  usage?: TokenUsageView;
+  /** Usage of models called from inside tools. */
+  toolModelUsage?: TokenUsageView & { unreportedCalls?: number };
+  /** Tokens spent on context compaction during the turn. */
+  compactionTokens?: number;
+  errorCode?: string;
+  notes?: string[];
+}
+
 export interface MessageView {
   id: string;
   conversationId?: string;
@@ -184,6 +216,10 @@ export interface MessageView {
   usage?: TokenUsageView;
   /** Inherited from a parent/fork; read-only. */
   inherited?: boolean;
+  /** Skills actually loaded for this turn. */
+  skillUses?: SkillUseView[];
+  /** Run details for the assistant turn. */
+  details?: RunDetailsView;
 }
 
 /** Recoverable error state (ErrorRecoveryNotice). */

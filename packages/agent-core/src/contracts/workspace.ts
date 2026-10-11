@@ -45,6 +45,12 @@ export interface TerminalView {
   partialCapture?: boolean;
   calls?: number;
   receipt?: ActionReceipt;
+  /** Newer output exists than the loaded snapshot. */
+  newerOutput?: boolean;
+  /** Short facts shown as notes ("空闲为推断", "结果待保存"). */
+  notes?: string[];
+  /** Commands run in this terminal, newest last. */
+  history?: { id: string; command: string; status: 'running' | 'returned' | 'failed' | 'unknown'; exitCode?: number; at?: string }[];
 }
 
 export type SubagentStatus =
@@ -72,6 +78,8 @@ export interface SubagentView {
   usage?: { tokens?: number; completeness: Completeness };
   resultAvailable?: boolean;
   pendingInput?: number;
+  /** Record inherited from an earlier run / parent: a read-only snapshot. */
+  inherited?: boolean;
 }
 
 export interface ContextUsageSegment {
@@ -79,6 +87,20 @@ export interface ContextUsageSegment {
   label: string;
   value: number;
   tone?: 'info' | 'accent' | 'success' | 'warning' | 'neutral';
+}
+
+export interface UsageStatRow {
+  label: string;
+  /** Missing values render as "—", never 0. */
+  value?: number;
+  unit: 'tokens' | 'percent' | 'ms' | 'tokens-per-s' | 'count';
+  completeness?: Completeness;
+}
+
+export interface UsageStatSection {
+  id: string;
+  title: string;
+  rows: UsageStatRow[];
 }
 
 export interface ContextUsageView {
@@ -91,6 +113,8 @@ export interface ContextUsageView {
   segments?: ContextUsageSegment[];
   /** "模型配置已变化，等待重新估计" etc. */
   note?: string;
+  /** Extra provider-neutral statistics (cache hit rate, TTFT, TPS…). */
+  stats?: UsageStatSection[];
 }
 
 export interface PinnedSummaryView {

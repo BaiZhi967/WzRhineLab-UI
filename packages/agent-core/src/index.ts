@@ -37,7 +37,9 @@ export type {
   ProcessCallView,
   RecoveryView,
   ReferenceView,
+  RunDetailsView,
   RunView,
+  SkillUseView,
   ThinkingView,
   TokenUsageView,
 } from './contracts/conversation.js';
@@ -45,6 +47,7 @@ export type {
   DiffHunkView,
   DiffLineView,
   FileDiffView,
+  MaterialPageView,
   ReadRangeView,
   ToolAuthorizationView,
   ToolCallView,
@@ -59,6 +62,7 @@ export type {
   ApprovalScope,
   ApprovalStatus,
   ApprovalView,
+  GrantView,
   QuestionAnswer,
   QuestionKind,
   QuestionnaireStatus,
@@ -90,6 +94,8 @@ export type {
   SubagentView,
   TerminalSessionStatus,
   TerminalView,
+  UsageStatRow,
+  UsageStatSection,
 } from './contracts/workspace.js';
 
 export { buildTree, capability, compareRevision, dedupeById, isStaleRevision, mergeById, sequenceGaps } from './helpers/snapshot.js';

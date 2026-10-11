@@ -68,6 +68,27 @@ export interface FileDiffView {
   revision?: string;
 }
 
+/**
+ * One page of stored material (old file content, manifests, patches, terminal output). The next
+ * offset comes from the real result only; the host keeps the history of previous offsets.
+ */
+export interface MaterialPageView {
+  /** Start of this page. */
+  offset: number;
+  /** Start of the next page; absent at the end. */
+  nextOffset?: number;
+  /** Length of this page in `unit`. */
+  length: number;
+  /** Total size when known. */
+  total?: number;
+  unit: 'bytes' | 'lines' | 'items';
+  /** This page reaches the end of the material. */
+  complete: boolean;
+  content?: string;
+  status: 'loading' | 'ready' | 'error';
+  reason?: string;
+}
+
 export interface ReadRangeView {
   /** 1-based lines or byte offsets, see `unit`. */
   start: number;

@@ -50,6 +50,20 @@ export interface ApprovalView {
   receipt?: ActionReceipt;
 }
 
+/** A standing permission the user granted (session trust, extra directory access). */
+export interface GrantView {
+  id: string;
+  /** Command, directory or task the grant covers (shown verbatim). */
+  target: string;
+  detail?: string;
+  /** "本次会话", "额外读写"… */
+  scopeLabel: string;
+  /** Still usable; `false` shows `reason` and offers re-selection by the host. */
+  available: boolean;
+  reason?: string;
+  receipt?: ActionReceipt;
+}
+
 export type QuestionKind = 'single' | 'multiple' | 'text';
 
 export interface QuestionOptionView {
