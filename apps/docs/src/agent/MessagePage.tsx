@@ -1,6 +1,6 @@
 import * as React from 'react';
-import type { ActionStatus, CitationView, MessagePartView, MessageView, RunPhase, RunView, SyncStatus, ThinkingView } from '@wzrhine/agent';
-import { AgentMessage, AgentProcess, CitationChip, CodeBlock, JumpToLatest, MessageList, MessagePart, RunStatus, ThinkingBlock } from '@wzrhine/agent';
+import type { ActionStatus, CitationView, MessagePartView, MessageView, RunDetailsView, RunPhase, RunView, SkillUseView, SyncStatus, ThinkingView } from '@wzrhine/agent';
+import { AgentMessage, AgentProcess, CitationChip, CodeBlock, JumpToLatest, MessageActions, MessageList, MessagePart, RunDetails, RunStatus, SkillUseList, ThinkingBlock } from '@wzrhine/agent';
 import type { MessageListHandle } from '@wzrhine/agent';
 import { Button } from '@wzrhine/react';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
@@ -36,6 +36,7 @@ function ListDemo() {
   const [hasEarlier, setHasEarlier] = React.useState(true);
   const [loadingEarlier, setLoadingEarlier] = React.useState(false);
   const [following, setFollowing] = React.useState(true);
+  const [hold, setHold] = React.useState(false);
   const [lastAction, setLastAction] = React.useState('');
   const timer = React.useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const counter = React.useRef(0);
@@ -126,6 +127,9 @@ function ListDemo() {
         <Button size="sm" variant="ghost" onClick={() => listRef.current?.scrollToLatest()}>
           scrollToLatest()
         </Button>
+        <Button size="sm" variant="ghost" aria-pressed={hold} onClick={() => setHold((v) => !v)}>
+          holdFollow（示例：审批停靠）
+        </Button>
         <span className="sc-small" data-testid="follow-state">
           {following ? '跟随最新' : '阅读历史'}
         </span>
@@ -139,6 +143,7 @@ function ListDemo() {
           onLoadEarlier={loadEarlier}
           loadingEarlier={loadingEarlier}
           onFollowChange={setFollowing}
+          holdFollow={hold}
           messageProps={{
             onRegenerate: (id) => setLastAction(`重新生成 ${id}`),
             onEdit: (id) => setLastAction(`编辑 ${id}`),
@@ -398,6 +403,104 @@ function JumpSpecimen() {
   );
 }
 
+const sampleDetails: RunDetailsView = {
+  permission: '工作区写入（示例）',
+  provider: '示例提供商',
+  model: 'sample-model',
+  modelId: 'sample-model-2026-10-01',
+  effort: '高',
+  startedAt: t(20),
+  elapsedMs: 42_600,
+  elapsedKind: 'exact',
+  lastActivityAt: t(21),
+  usage: { input: 12_400, output: 3_100, total: 15_500, cacheRead: 8_200, cacheWrite: 1_100, completeness: 'exact' },
+  toolModelUsage: { input: 900, output: 240, total: 1_140, completeness: 'partial', unreportedCalls: 2 },
+  compactionTokens: 4_200,
+  notes: ['示例：所有数值均为演示数据，不是真实监测指标。'],
+};
+
+const sampleSkills: SkillUseView[] = [
+  { id: 'sk-reef', name: 'reef-analysis', source: '当前工作区', method: 'selected', digest: '3f9a1c07d2e84b56' },
+  { id: 'sk-table', name: 'table-format', source: '应用内置', method: 'model-loaded', digest: 'a0b1c2d3e4f5a6b7' },
+];
+
+const detailsMessage: MessageView = {
+  id: 'det-1',
+  role: 'assistant',
+  author: 'Research agent',
+  createdAt: t(21),
+  status: 'complete',
+  parts: [{ type: 'text', id: 'det-1-p', text: '已按示例技能整理分类结果（示例回答）。' }],
+  skillUses: sampleSkills,
+  details: sampleDetails,
+};
+
+const cutDetails: RunDetailsView = {
+  model: 'sample-model',
+  startedAt: t(24),
+  elapsedMs: 18_000,
+  elapsedKind: 'lower-bound',
+  usage: { output: 340, completeness: 'partial', note: '示例：服务商未返回完整统计' },
+  errorCode: 'E_STREAM',
+};
+
+function DetailsSpecimen() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div className="sc-card-list" data-testid="details-specimen">
+      <AgentMessage message={detailsMessage} model="sample-model" detailsOpen={open} onDetailsOpenChange={setOpen} />
+      <p className="sc-small" data-testid="details-state">
+        {open ? '运行详情：已展开（受控）' : '运行详情：已折叠（受控）'}
+      </p>
+      <span className="sc-small">单独使用 · 中断的运行：耗时为下限，缺失字段不显示</span>
+      <RunDetails details={cutDetails} aria-label="运行详情（中断示例）" />
+      <span className="sc-small">SkillUseList 单独使用</span>
+      <SkillUseList skills={[{ id: 'sk-only', name: 'reef-analysis', method: 'model-loaded' }]} />
+    </div>
+  );
+}
+
+const restoreFailed: MessageView = {
+  id: 'restore-1',
+  role: 'assistant',
+  author: 'Research agent',
+  createdAt: t(25),
+  status: 'failed',
+  parts: [{ type: 'text', id: 'restore-1-p', text: '回答在生成中途失败（示例）。' }],
+  details: cutDetails,
+};
+
+function CapabilitySpecimen() {
+  const [log, setLog] = React.useState('');
+  return (
+    <div className="sc-card-list" data-testid="capability-specimen">
+      <span className="sc-small">分叉不可用（运行中）：原因在聚焦 / 悬停时显示，并作为按钮描述</span>
+      <div data-testid="fork-disabled-actions">
+        <MessageActions
+          copyText="示例回答"
+          onRegenerate={() => setLog('重新生成')}
+          onFork={() => setLog('分叉')}
+          onFeedback={(value) => setLog(`反馈 ${value ?? '取消'}`)}
+          capabilities={{ fork: { enabled: false, reason: '当前运行未结束，暂不能分叉（示例）' } }}
+        />
+      </div>
+      <span className="sc-small">失败的回答：「重新编辑本轮输入」把本轮输入放回输入框</span>
+      <div data-testid="restore-message">
+        <AgentMessage
+          message={restoreFailed}
+          onRetry={() => setLog('重试')}
+          onRestoreInput={(id) => setLog(`重新编辑本轮输入 ${id}`)}
+          onFork={() => setLog('分叉')}
+          actionCapabilities={() => ({ fork: { enabled: false, reason: '失败的回答不能作为分叉点（示例）' } })}
+        />
+      </div>
+      <p className="sc-small" aria-live="polite" data-testid="capability-log">
+        {log ? `回调（示例）：${log}` : '尚未触发操作。'}
+      </p>
+    </div>
+  );
+}
+
 /**
  * The page-level overflow test only whitelists `.sc-table-wrap` ancestors. Code blocks and the
  * thinking preview scroll inside their own clipped boxes, so this wrapper never scrolls itself.
@@ -461,6 +564,28 @@ export function AgentMessagePage() {
         </Specimen>
         <Specimen id="msg-jump" index="13" title="JumpToLatest" description="出现时不抢焦点；名称含新消息数量；loading 时 aria-busy。" span="half">
           <JumpSpecimen />
+        </Specimen>
+        <Specimen
+          id="msg-details"
+          index="14"
+          title="RunDetails · SkillUseList"
+          description="「运行详情」折叠区列出本轮实际运行的权限、模型、耗时与用量；缺失字段不显示，中断的耗时写作「至少」。实际加载的技能显示来源、方式与摘要前 8 位。"
+          span="half"
+        >
+          <Wide>
+            <DetailsSpecimen />
+          </Wide>
+        </Specimen>
+        <Specimen
+          id="msg-capabilities"
+          index="15"
+          title="MessageActions · 能力"
+          description="能力关闭的操作仍可聚焦（aria-disabled），以提示与描述说明原因，从不调用回调；「重新编辑本轮输入」与「编辑消息」是两个操作。"
+          span="half"
+        >
+          <Wide>
+            <CapabilitySpecimen />
+          </Wide>
         </Specimen>
       </SpecimenGrid>
     </>

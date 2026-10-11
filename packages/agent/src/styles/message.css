@@ -309,6 +309,131 @@
 .rl-agent-actions [data-state='copied'] { color: var(--rl-success); }
 .rl-agent-actions [data-state='failed'] { color: var(--rl-danger); }
 
+/* Off by capability: still focusable (aria-disabled), visibly inert. */
+.rl-agent-actions [aria-disabled='true'] {
+  color: var(--rl-fg-disabled);
+  background: transparent;
+  cursor: not-allowed;
+}
+
+@media (forced-colors: active) {
+  .rl-agent-actions [aria-disabled='true'] { color: GrayText; }
+}
+
+/* ---------- SkillUseList ---------- */
+.rl-agent-skills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--rl-space-1) var(--rl-space-2);
+  min-width: 0;
+  color: var(--rl-fg-subtle);
+  font: var(--rl-type-meta);
+}
+
+.rl-agent-skills__label {
+  color: var(--rl-fg-muted);
+}
+
+.rl-agent-skills__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rl-space-1) var(--rl-space-3);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rl-agent-skills__item {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.rl-agent-skills__name {
+  color: var(--rl-fg-primary);
+}
+
+.rl-agent-skills__digest {
+  font: var(--rl-type-mono);
+}
+
+/* ---------- RunDetails (inside the 运行详情 disclosure) ---------- */
+.rl-agent-message__details {
+  min-width: 0;
+}
+
+.rl-agent-message__details-trigger {
+  width: auto;
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-meta);
+}
+
+.rl-agent-details {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+  gap: var(--rl-space-1) var(--rl-space-4);
+  margin: var(--rl-space-1) 0 0;
+  padding: var(--rl-space-2) var(--rl-space-3);
+  border-inline-start: var(--rl-border-width) solid var(--rl-border-subtle);
+  font: var(--rl-type-meta);
+}
+
+.rl-agent-details__row {
+  display: contents;
+}
+
+.rl-agent-details__label {
+  color: var(--rl-fg-muted);
+}
+
+.rl-agent-details__data {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--rl-space-1) var(--rl-space-2);
+  min-width: 0;
+  margin: 0;
+  color: var(--rl-fg-primary);
+  overflow-wrap: anywhere;
+}
+
+.rl-agent-details__data[data-mono] {
+  font: var(--rl-type-mono);
+}
+
+.rl-agent-details__value,
+.rl-agent-details__time {
+  font-variant-numeric: tabular-nums;
+}
+
+.rl-agent-details__tag {
+  padding: 0 var(--rl-space-1);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-xs);
+  color: var(--rl-fg-muted);
+}
+
+.rl-agent-details__tag:not([data-completeness='exact']) {
+  border-color: var(--rl-warning);
+  color: var(--rl-warning);
+}
+
+.rl-agent-details__unreported,
+.rl-agent-details__note {
+  color: var(--rl-fg-muted);
+}
+
+.rl-agent-details__notes {
+  margin: 0;
+  padding-inline-start: var(--rl-space-4);
+}
+
+@media (forced-colors: active) {
+  .rl-agent-details { border-inline-start-color: CanvasText; }
+  .rl-agent-details__tag { border-color: CanvasText; }
+}
+
 /* ---------- plain text / markdown fallback ---------- */
 .rl-agent-md {
   display: flex;

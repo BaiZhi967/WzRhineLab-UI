@@ -1,16 +1,18 @@
 'use client';
 
 import * as React from 'react';
-import { Button } from '@wzrhine/react';
+import { Button, Collapsible } from '@wzrhine/react';
 import { effectivePhase } from '@wzrhine/agent-core';
-import type { CitationView, MessagePartView, MessageStatus, MessageView, StatusGlyphName, AgentTone, TokenUsageView } from '@wzrhine/agent-core';
+import type { CitationView, MessagePartView, MessageStatus, MessageView, RunDetailsView, StatusGlyphName, AgentTone, TokenUsageView } from '@wzrhine/agent-core';
 import { AgentIcon } from '../../primitives/icons.js';
 import { StatusGlyph } from '../../primitives/StatusGlyph.js';
 import { useAgentFormat, useAgentMessages } from '../../provider/AgentMessages.js';
 import { cx } from '../../utils/cx.js';
 import { MessageActions } from './MessageActions.js';
-import type { MessageFeedback } from './MessageActions.js';
+import type { MessageActionCapabilities, MessageFeedback } from './MessageActions.js';
 import { INLINE_PART_TYPES, MessagePart } from './MessagePart.js';
+import { RunDetails, hasRunDetails } from './RunDetails.js';
+import { SkillUseList } from './SkillUseList.js';
 import type { ArtifactRenderer, MessagePartRenderers, ToolRenderer } from './renderers.js';
 import type { CopyHandler } from './use-copy.js';
 import { useThrottledText } from './use-copy.js';
@@ -26,8 +28,15 @@ import { useThrottledText } from './use-copy.js';
  *   carries its completeness label ("估计" / "部分统计"), never a bare figure.
  * - Status: failed / interrupted / cancelled / partial render as glyph + text (static, no live
  *   region); `onRetry` adds a retry button for failed and interrupted messages.
+ * - Skills: `message.skillUses` renders a SkillUseList meta row ("已加载技能：…") automatically.
+ * - Run details: `details` (or `message.details`) renders RunDetails inside a "运行详情"
+ *   Collapsible after the meta row; closed by default, controlled with `detailsOpen` /
+ *   `onDetailsOpenChange`. Nothing renders when every field is missing.
  * - Actions (MessageActions) render only for callbacks that are given and are hidden while the
- *   message is pending / streaming (copy stays available once text exists).
+ *   message is pending / streaming (copy stays available once text exists). `actionCapabilities`
+ *   can switch single actions off with a reason (aria-disabled, never called). `onRestoreInput`
+ *   ("重新编辑本轮输入") is offered on user and assistant messages that are not inherited, including
+ *   failed ones — it is the recovery path for a turn whose answer did not arrive.
  * - Streaming: a visually hidden `role="status"` announces the current phase once per change
  *   (throttled) and "回答已完成" when it settles — never the tokens themselves.
  *
@@ -55,8 +64,18 @@ export type AgentMessageProps = Omit<React.HTMLAttributes<HTMLElement>, 'childre
     onRegenerate?: (messageId: string) => void;
     onEdit?: (messageId: string) => void;
     onFork?: (messageId: string) => void;
+    /** Put this turn's input back into the composer (distinct from `onEdit`). */
+    onRestoreInput?: (messageId: string) => void;
+    /** Per-message availability of the actions (e.g. fork off while a run is active). */
+    actionCapabilities?: (message: MessageView) => MessageActionCapabilities | undefined;
     feedback?: MessageFeedback | null;
     onFeedback?: (messageId: string, value: MessageFeedback | null) => void;
+    /** Run details shown in the "运行详情" disclosure; defaults to `message.details`. */
+    details?: RunDetailsView;
+    /** Controlled open state of the run-details disclosure. */
+    detailsOpen?: boolean;
+    defaultDetailsOpen?: boolean;
+    onDetailsOpenChange?: (open: boolean) => void;
     /** Extra content after the body (e.g. a RunSummary from another family). */
     footer?: React.ReactNode;
     /** Minimum gap between streaming announcements (ms). */
@@ -133,8 +152,14 @@ export const AgentMessage = React.forwardRef<HTMLElement, AgentMessageProps>(fun
     onRegenerate,
     onEdit,
     onFork,
+    onRestoreInput,
+    actionCapabilities,
     feedback,
     onFeedback,
+    details: detailsProp,
+    detailsOpen,
+    defaultDetailsOpen,
+    onDetailsOpenChange,
     footer,
     announceInterval = 1500,
     className,
@@ -186,6 +211,10 @@ export const AgentMessage = React.forwardRef<HTMLElement, AgentMessageProps>(fun
 
   const author = message.author ?? t.author[role];
   const showActions = !busy && role !== 'system';
+  const details = detailsProp ?? message.details;
+  const showDetails = hasRunDetails(details);
+  const skills = message.skillUses ?? [];
+  const capabilities = showActions ? actionCapabilities?.(message) : undefined;
 
   return (
     <article
@@ -239,6 +268,20 @@ export const AgentMessage = React.forwardRef<HTMLElement, AgentMessageProps>(fun
           {message.usage && <Usage usage={message.usage} />}
         </div>
       )}
+      {skills.length > 0 && <SkillUseList className="rl-agent-message__skills" skills={skills} />}
+      {showDetails && (
+        <Collapsible
+          className="rl-agent-message__details"
+          panelClassName="rl-agent-message__details-panel"
+          triggerProps={{ className: 'rl-agent-message__details-trigger' }}
+          open={detailsOpen}
+          defaultOpen={defaultDetailsOpen}
+          onOpenChange={onDetailsOpenChange}
+          trigger={<span>{t.runDetails}</span>}
+        >
+          <RunDetails details={details} aria-label={t.runDetails} />
+        </Collapsible>
+      )}
       {footer}
       {showActions && (
         <MessageActions
@@ -248,6 +291,8 @@ export const AgentMessage = React.forwardRef<HTMLElement, AgentMessageProps>(fun
           onRegenerate={onRegenerate && role === 'assistant' ? () => onRegenerate(id) : undefined}
           onEdit={onEdit && role === 'user' && !message.inherited ? () => onEdit(id) : undefined}
           onFork={onFork ? () => onFork(id) : undefined}
+          onRestoreInput={onRestoreInput && (role === 'user' || role === 'assistant') && !message.inherited ? () => onRestoreInput(id) : undefined}
+          capabilities={capabilities}
           feedback={feedback}
           onFeedback={onFeedback && role === 'assistant' ? (value) => onFeedback(id, value) : undefined}
         />

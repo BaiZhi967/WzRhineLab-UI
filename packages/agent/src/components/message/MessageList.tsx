@@ -43,6 +43,12 @@ export interface MessageListHandle {
  * - Loading earlier messages keeps the reading anchor: the first visible `[data-message-id]` and
  *   its offset are recorded before `onLoadEarlier` and restored after the prepend.
  * - `overflow-anchor: none`, so browser scroll anchoring never fights these rules.
+ * - `holdFollow`: while true (e.g. an approval is docked above the composer and the reader must
+ *   not lose it), appended messages and content growth do not move the viewport. The follow
+ *   intent is kept; JumpToLatest shows once held content has arrived (counting messages since the
+ *   hold began) and an explicit jump or a just-sent user message still scrolls. When the hold
+ *   ends and the reader has not scrolled away, the list returns to the bottom and follows again.
+ *   Mount and a conversation switch still start at the latest content.
  *
  * Motion: only messages that appear after mount (appended, not prepended history) play the
  * AgentEntrance `message` entrance, once. No layout animation on the list. The jump uses a smooth
@@ -71,6 +77,8 @@ export type MessageListProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'child
   label?: string;
   /** Turn off entrance motion for appended messages. */
   animateEntrance?: boolean;
+  /** Pause auto-follow while true (content still renders); resumes on release if still at the latest. */
+  holdFollow?: boolean;
 };
 
 type Anchor = { id: string; offset: number };
@@ -110,6 +118,7 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
     onFollowChange,
     label,
     animateEntrance = true,
+    holdFollow = false,
     className,
     ...rest
   },
@@ -127,6 +136,13 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
   const anchor = React.useRef<Anchor | null>(null);
   const messagesRef = React.useRef(messages);
   messagesRef.current = messages;
+  const holdRef = React.useRef(holdFollow);
+  holdRef.current = holdFollow;
+  /** Held content is waiting below the viewport; `holdBase` is the last id when the hold began. */
+  const [held, setHeld] = React.useState(false);
+  const holdBase = React.useRef<string | null>(holdFollow ? (messages[messages.length - 1]?.id ?? null) : null);
+  const prevHold = React.useRef(holdFollow);
+  const mounted = React.useRef(false);
 
   const setFollowing = React.useCallback((next: boolean) => {
     if (followingRef.current === next) return;
@@ -148,6 +164,17 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
     if (el) setTop(el.scrollHeight);
   }, [setTop]);
 
+  /** Follow-driven move to the bottom; suppressed (and remembered) while `holdFollow` is on. */
+  const followBottom = React.useCallback(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+    if (holdRef.current && mounted.current) {
+      if (distanceFromBottom(el) > FOLLOW_THRESHOLD_PX) setHeld(true);
+      return;
+    }
+    toBottom();
+  }, [toBottom]);
+
   const restoreAnchor = React.useCallback((): boolean => {
     const el = viewportRef.current;
     const saved = anchor.current;
@@ -166,6 +193,7 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
       const el = viewportRef.current;
       anchor.current = null;
       setFollowing(true);
+      setHeld(false);
       if (!el) return;
       const smooth = (options?.smooth ?? true) && !reduced;
       if (smooth && typeof el.scrollTo === 'function') el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
@@ -205,12 +233,18 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
   replacedRef.current = replaced;
 
   const prevLast = React.useRef(messages[messages.length - 1]?.id);
+  // Hold start: the base is the last message that was on screen before this render.
+  if (holdFollow && !prevHold.current) holdBase.current = prevLast.current ?? null;
+  prevHold.current = holdFollow;
+
   React.useLayoutEffect(() => {
     const ids = known.current!;
+    const reposition = !mounted.current || replacedRef.current;
     if (replacedRef.current) {
       // A different conversation: start at its latest content, following.
       anchor.current = null;
       setFollowing(true);
+      setHeld(false);
     }
     for (const m of messages) ids.add(m.id);
     prevFirst.current = messages[0]?.id;
@@ -224,8 +258,18 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
       return;
     }
     if (sent) scrollToLatest({ smooth: false });
-    else if (followingRef.current) toBottom();
-  }, [messages, loadingEarlier, restoreAnchor, scrollToLatest, setFollowing, toBottom]);
+    else if (reposition) toBottom();
+    else if (followingRef.current) followBottom();
+    mounted.current = true;
+  }, [messages, loadingEarlier, restoreAnchor, scrollToLatest, setFollowing, toBottom, followBottom]);
+
+  // Hold off: back to the bottom if the reader did not scroll away meanwhile.
+  React.useLayoutEffect(() => {
+    if (holdFollow) return;
+    holdBase.current = null;
+    setHeld(false);
+    if (mounted.current && followingRef.current && !anchor.current) toBottom();
+  }, [holdFollow, toBottom]);
 
   // Content growth (streaming text, disclosures, images): keep the bottom or the anchor.
   React.useEffect(() => {
@@ -233,11 +277,11 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
     if (!content || typeof ResizeObserver === 'undefined') return undefined;
     const observer = new ResizeObserver(() => {
       if (restoreAnchor()) return;
-      if (followingRef.current) toBottom();
+      if (followingRef.current) followBottom();
     });
     observer.observe(content);
     return () => observer.disconnect();
-  }, [restoreAnchor, toBottom]);
+  }, [restoreAnchor, followBottom]);
 
   const reportedFollow = React.useRef(following);
   React.useEffect(() => {
@@ -258,6 +302,7 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
       releaseFollow();
     } else if (distance <= FOLLOW_THRESHOLD_PX && !anchor.current) {
       setFollowing(true);
+      setHeld(false);
     }
     lastTop.current = top;
   };
@@ -274,9 +319,11 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
     if (earlierError) anchor.current = null;
   }, [earlierError]);
 
+  const atLatest = following && !held;
   const unread = (() => {
-    if (following || leaveLastId === null) return 0;
-    const index = messages.findIndex((m) => m.id === leaveLastId);
+    const base = !following ? leaveLastId : held ? holdBase.current : null;
+    if (atLatest || base === null) return 0;
+    const index = messages.findIndex((m) => m.id === base);
     return index === -1 ? 0 : messages.length - 1 - index;
   })();
 
@@ -284,7 +331,13 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
   const showEmpty = messages.length === 0 && !loading;
 
   return (
-    <div {...rest} className={cx('rl-agent-list', className)} data-following={following || undefined} data-streaming={isStreaming || undefined}>
+    <div
+      {...rest}
+      className={cx('rl-agent-list', className)}
+      data-following={following || undefined}
+      data-hold={holdFollow || undefined}
+      data-streaming={isStreaming || undefined}
+    >
       <section
         ref={viewportRef}
         className="rl-agent-list__viewport"
@@ -369,7 +422,7 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
         </div>
       </section>
       <div className="rl-agent-list__jump">
-        <JumpToLatest atLatest={following} unreadCount={unread} onJump={() => scrollToLatest()} />
+        <JumpToLatest atLatest={atLatest} unreadCount={unread} onJump={() => scrollToLatest()} />
       </div>
     </div>
   );

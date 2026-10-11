@@ -144,6 +144,72 @@ test('custom part without renderer and unknown part types show a fallback', asyn
   await expect(page.getByTestId('part-sp-unknown')).toContainText('内容类型：hologram');
 });
 
+test('run details disclosure toggles with the keyboard and shows the rows', async ({ page }) => {
+  await page.goto(url);
+  const region = page.getByTestId('details-specimen');
+  const trigger = region.getByRole('button', { name: '运行详情' });
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(region.getByText('sample-model-2026-10-01')).toHaveCount(0);
+  await trigger.focus();
+  await page.keyboard.press('Enter');
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByTestId('details-state')).toHaveText('运行详情：已展开（受控）');
+  await expect(region.getByText('sample-model-2026-10-01')).toBeVisible();
+  await expect(region.getByText('2 次调用未返回用量')).toBeVisible();
+  await page.keyboard.press('Space');
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.getByTestId('details-state')).toHaveText('运行详情：已折叠（受控）');
+  // Standalone lower-bound wording and the skill row.
+  await expect(region.getByText('至少 18s')).toBeVisible();
+  await expect(region.getByRole('list', { name: '已加载技能' }).first()).toContainText('reef-analysis');
+});
+
+test('disabled fork stays focusable, shows its reason and does nothing', async ({ page }) => {
+  await page.goto(url);
+  const region = page.getByTestId('fork-disabled-actions');
+  const fork = region.getByRole('button', { name: '从此处分叉' });
+  await expect(fork).toHaveAttribute('aria-disabled', 'true');
+  await expect(fork).toHaveAccessibleDescription('当前运行未结束，暂不能分叉（示例）');
+  // Keyboard: Tab into the toolbar, arrow to fork; it takes focus and the tooltip names the reason.
+  await region.getByRole('button', { name: '复制消息' }).focus();
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowRight');
+  await expect(fork).toBeFocused();
+  await expect(page.locator('.rl-tooltip').filter({ hasText: '从此处分叉 · 当前运行未结束，暂不能分叉（示例）' })).toBeVisible();
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('Space');
+  // Playwright treats aria-disabled as not actionable; force the pointer path anyway.
+  await fork.click({ force: true });
+  await expect(page.getByTestId('capability-log')).toHaveText('尚未触发操作。');
+});
+
+test('restore-input action on a failed message calls back with the message id', async ({ page }) => {
+  await page.goto(url);
+  const region = page.getByTestId('restore-message');
+  await expect(region.getByText('生成失败')).toBeVisible();
+  await region.getByRole('button', { name: '重新编辑本轮输入' }).click();
+  await expect(page.getByTestId('capability-log')).toHaveText('回调（示例）：重新编辑本轮输入 restore-1');
+});
+
+test('holdFollow: new content does not scroll while held; release returns to the latest', async ({ page }) => {
+  await page.goto(url);
+  const demo = page.getByRole('region', { name: 'MessageList' });
+  const viewport = listRegion(page);
+  const distance = () => viewport.evaluate((el) => Math.round(el.scrollHeight - el.scrollTop - el.clientHeight));
+  for (let i = 0; i < 4; i += 1) await demo.getByRole('button', { name: '追加助手消息' }).click();
+  await expect.poll(distance).toBeLessThanOrEqual(4);
+  const hold = demo.getByRole('button', { name: /holdFollow/ });
+  await hold.click();
+  await expect(hold).toHaveAttribute('aria-pressed', 'true');
+  const top = await viewport.evaluate((el) => el.scrollTop);
+  await demo.getByRole('button', { name: '追加助手消息' }).click();
+  await expect(demo.getByRole('button', { name: /返回最新消息，1 条新消息/ })).toBeVisible();
+  expect(Math.abs((await viewport.evaluate((el) => el.scrollTop)) - top)).toBeLessThanOrEqual(1);
+  await hold.click();
+  await expect.poll(distance).toBeLessThanOrEqual(4);
+  await expect(demo.getByRole('button', { name: /返回最新消息/ })).toHaveCount(0);
+});
+
 test('axe: no WCAG 2.2 A/AA violations (light and dark)', async ({ page }) => {
   await page.goto(url);
   await expect(page.locator('h1')).toBeVisible();

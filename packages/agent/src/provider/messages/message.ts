@@ -8,6 +8,7 @@ import type {
   ProcessCallView,
   RecoveryView,
   ReferenceView,
+  SkillUseView,
   ThinkingView,
 } from '@wzrhine/agent-core';
 
@@ -66,6 +67,45 @@ export interface AgentMessageMessages {
   fork: string;
   feedbackUp: string;
   feedbackDown: string;
+  /** Restores this turn's input into the composer (distinct from `edit`). */
+  restoreInput: string;
+  /** Tooltip of a disabled action: its name plus the reason. */
+  actionUnavailable: (label: string, reason: string) => string;
+
+  // ---------- RunDetails ----------
+  /** Disclosure trigger and the list's accessible name. */
+  runDetails: string;
+  detailsPermission: string;
+  detailsProvider: string;
+  detailsModel: string;
+  detailsModelId: string;
+  detailsEffort: string;
+  detailsStartedAt: string;
+  detailsElapsed: string;
+  /** Elapsed time of a cut run: the real value is at least `duration`. */
+  detailsElapsedAtLeast: (duration: string) => string;
+  /** Elapsed time explicitly not recorded (`elapsedKind: 'unknown'`). */
+  detailsNotRecorded: string;
+  detailsLastActivity: string;
+  detailsChatUsage: string;
+  detailsCache: string;
+  detailsCacheRead: string;
+  detailsCacheWrite: string;
+  detailsToolModelUsage: string;
+  /** Tool-model calls whose provider returned no usage. */
+  detailsUnreportedCalls: (count: number) => string;
+  detailsCompaction: string;
+  detailsTokens: (value: string) => string;
+  detailsErrorCode: string;
+  detailsNotes: string;
+  /** Completeness tag in the details list (shown for every value, including `exact`). */
+  detailsCompleteness: Record<Completeness, string>;
+
+  // ---------- SkillUseList ----------
+  skillsLabel: string;
+  skillMethod: Record<SkillUseView['method'], string>;
+  /** Screen-reader prefix of the shortened digest. */
+  skillDigest: string;
 
   // ---------- parts ----------
   copyCode: string;
@@ -155,6 +195,35 @@ export const zhMessage: AgentMessageMessages = {
   fork: '从此处分叉',
   feedbackUp: '有帮助',
   feedbackDown: '没有帮助',
+  restoreInput: '重新编辑本轮输入',
+  actionUnavailable: (label, reason) => `${label} · ${reason}`,
+
+  runDetails: '运行详情',
+  detailsPermission: '权限',
+  detailsProvider: '提供商',
+  detailsModel: '模型',
+  detailsModelId: '模型 ID',
+  detailsEffort: '推理强度',
+  detailsStartedAt: '开始时间',
+  detailsElapsed: '耗时',
+  detailsElapsedAtLeast: (d) => `至少 ${d}`,
+  detailsNotRecorded: '未记录',
+  detailsLastActivity: '最近活动',
+  detailsChatUsage: '聊天用量',
+  detailsCache: '缓存',
+  detailsCacheRead: '读取',
+  detailsCacheWrite: '写入',
+  detailsToolModelUsage: '工具内模型用量',
+  detailsUnreportedCalls: (n) => `${n} 次调用未返回用量`,
+  detailsCompaction: '上下文压缩',
+  detailsTokens: (v) => `${v} tokens`,
+  detailsErrorCode: '错误码',
+  detailsNotes: '备注',
+  detailsCompleteness: { exact: '完整统计', estimated: '估计', partial: '部分统计', unknown: '统计未知' },
+
+  skillsLabel: '已加载技能',
+  skillMethod: { selected: '手动选择', 'model-loaded': '模型加载' },
+  skillDigest: '摘要',
 
   copyCode: '复制代码',
   codeLabel: '代码',
@@ -250,6 +319,35 @@ export const enMessage: AgentMessageMessages = {
   fork: 'Fork from here',
   feedbackUp: 'Helpful',
   feedbackDown: 'Not helpful',
+  restoreInput: "Re-edit this turn's input",
+  actionUnavailable: (label, reason) => `${label} · ${reason}`,
+
+  runDetails: 'Run details',
+  detailsPermission: 'Permission',
+  detailsProvider: 'Provider',
+  detailsModel: 'Model',
+  detailsModelId: 'Model ID',
+  detailsEffort: 'Effort',
+  detailsStartedAt: 'Started',
+  detailsElapsed: 'Elapsed',
+  detailsElapsedAtLeast: (d) => `At least ${d}`,
+  detailsNotRecorded: 'Not recorded',
+  detailsLastActivity: 'Last activity',
+  detailsChatUsage: 'Chat usage',
+  detailsCache: 'Cache',
+  detailsCacheRead: 'Read',
+  detailsCacheWrite: 'Write',
+  detailsToolModelUsage: 'Tool model usage',
+  detailsUnreportedCalls: (n) => `${plural(n, 'call', 'calls')} returned no usage`,
+  detailsCompaction: 'Context compaction',
+  detailsTokens: (v) => `${v} tokens`,
+  detailsErrorCode: 'Error code',
+  detailsNotes: 'Notes',
+  detailsCompleteness: { exact: 'Complete', estimated: 'Estimated', partial: 'Partial', unknown: 'Unknown' },
+
+  skillsLabel: 'Skills loaded',
+  skillMethod: { selected: 'Selected', 'model-loaded': 'Loaded by model' },
+  skillDigest: 'Digest',
 
   copyCode: 'Copy code',
   codeLabel: 'Code',

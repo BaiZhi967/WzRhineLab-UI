@@ -10,6 +10,7 @@ const paths = {
   'thumb-up': <path d="M5.5 7 8 2.5c1 0 1.7.8 1.5 1.8L9 6.5h3.3a1.2 1.2 0 0 1 1.2 1.4l-.8 4.3a1.5 1.5 0 0 1-1.5 1.3H5.5ZM5.5 7h-2v6.5h2" />,
   'thumb-down': <path d="M10.5 9 8 13.5c-1 0-1.7-.8-1.5-1.8L7 9.5H3.7a1.2 1.2 0 0 1-1.2-1.4l.8-4.3A1.5 1.5 0 0 1 4.8 2.5h5.7ZM10.5 9h2V2.5h-2" />,
   message: <path d="M3 3.5h10v7H7.5L4.5 13v-2.5H3Z" />,
+  'restore-input': <path d="M6 3 3 6l3 3M3 6h6.5a3.5 3.5 0 0 1 0 7H6" />,
 } as const;
 
 export type MessageIconName = keyof typeof paths;
