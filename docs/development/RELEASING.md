@@ -21,7 +21,8 @@
 | `pnpm api:check` | API 报告与构建结果不一致时失败，用来在评审中暴露公开 API 的变化 |
 | `pnpm license:audit` | 审计运行时依赖树的许可证（白名单），生成 `THIRD-PARTY-LICENSES.md` |
 | `pnpm verify:packages` | 打包后在**工作区之外**的临时项目中安装 tarball 并逐项验证，见下文 |
-| `pnpm release:check` | 依次执行 `check`、`api:check`、`license:audit`、`verify:packages` |
+| `pnpm size:check` | 构建后用 esbuild 压缩打包各入口并统计 gzip 体积，超出 `size-budget.json` 预算即失败（ADR-0008 §3，见 [SIZE.md](SIZE.md)） |
+| `pnpm release:check` | 依次执行 `check`、`api:check`、`license:audit`、`verify:packages`、`size:check` |
 | `pnpm release:dry` | 跑完全部门禁并执行 `pnpm publish --dry-run`，同时列出尚未满足的发布前置条件 |
 | `node scripts/release.mjs <ver> --publish` | 真正发布；任一前置条件不满足就拒绝，没有跳过开关 |
 
@@ -33,6 +34,9 @@
 5. 用 Vite 打包：tokens、`components.css` 以及它 `@import` 的全部八个分片（reset / overlays / feedback / archive / forms / data / drawer / status）都必须出现，每个分片用一个只属于它的选择器检查；没有引入 effects 的应用中不能出现 effects 代码。
 
 两项反向测试已经实际跑过：删掉一个 `@import` 后 verify 失败；把 `ButtonVariant` 放宽为 `string` 后类型检查失败。这说明上述检查确实能拦住对应的回归。
+
+### `size:check` 体积门禁
+`release:check` 的最后一步。度量对象是 `dist/` 产物，`react` / `react-dom` / `motion` 视为外部依赖，`@base-ui/react` 与 `@wzrhine/tokens` 计入体积。任一条目的 gzip 体积超过预算、预算与度量条目不一致、或只导入 `Button` 的体积达到全量入口的 25%（tree-shaking 失效）时退出码为 1。度量方式、当前数值和修改预算的流程见 [SIZE.md](SIZE.md)。
 
 ## 发布前置条件（`release.mjs --publish` 强制）
 - [ ] **维护者选定许可证**：在仓库根目录加入 `LICENSE`，三个包都填写相同的 `license` 字段。**目前未选定**，README 中已注明。
