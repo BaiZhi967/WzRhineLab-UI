@@ -90,6 +90,9 @@ export interface AgentComposerMessages {
   permissionConfirmTitle: (label: string) => string;
   permissionConfirmDescription: string;
   permissionConfirm: (label: string) => string;
+  // ---------- composer notice (replacement) ----------
+  /** Spoken prefix that names the notice tone (the icon is decorative). */
+  noticeTone: Record<'neutral' | 'info' | 'warning' | 'danger', string>;
 }
 
 export const zhComposer: AgentComposerMessages = {
@@ -167,6 +170,7 @@ export const zhComposer: AgentComposerMessages = {
   permissionConfirmTitle: (label) => `启用「${label}」？`,
   permissionConfirmDescription: '此模式下文件写入与终端命令将自动执行，可能访问工作区外的文件、网络和系统资源。',
   permissionConfirm: (label) => `启用${label}`,
+  noticeTone: { neutral: '说明：', info: '提示：', warning: '注意：', danger: '错误：' },
 };
 
 export const enComposer: AgentComposerMessages = {
@@ -244,4 +248,5 @@ export const enComposer: AgentComposerMessages = {
   permissionConfirmTitle: (label) => `Turn on “${label}”?`,
   permissionConfirmDescription: 'File writes and terminal commands will run automatically and may reach files, network and system resources outside the workspace.',
   permissionConfirm: (label) => `Turn on ${label}`,
+  noticeTone: { neutral: 'Note:', info: 'Info:', warning: 'Warning:', danger: 'Error:' },
 };

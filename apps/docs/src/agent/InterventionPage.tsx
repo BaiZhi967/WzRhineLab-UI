@@ -1,6 +1,6 @@
 import * as React from 'react';
-import type { AgentActionContext, ApprovalScope, ApprovalView, QuestionAnswer, QuestionnaireView, RecoveryView } from '@wzrhine/agent';
-import { ApprovalPanel, ErrorRecoveryNotice, InterventionDock, QuestionnaireCard } from '@wzrhine/agent';
+import type { AgentActionContext, ApprovalScope, ApprovalView, GrantView, QuestionAnswer, QuestionnaireView, RecoveryView } from '@wzrhine/agent';
+import { ApprovalPanel, ErrorRecoveryNotice, GrantList, InterventionDock, QuestionnaireCard } from '@wzrhine/agent';
 import { Button } from '@wzrhine/react';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
 import { sampleApproval, sampleQuestionnaire } from '../../../../packages/agent/src/fixtures/session';
@@ -237,6 +237,119 @@ const questionnaireStates: Array<{ id: string; title: string; view: Questionnair
   { id: 'q-interrupted', title: 'interrupted', view: { ...sampleQuestionnaire, id: 'q-7', status: 'interrupted' } },
 ];
 
+/** Ended questionnaire whose draft never reached the host: offers 「放弃未保存填写」. */
+function EndedDraftDemo() {
+  const [view, setView] = React.useState<QuestionnaireView>({ ...sampleQuestionnaire, id: 'q-8', status: 'expired', draftStatus: 'error', answers: [{ questionId: 'q-1-a', optionIds: ['table'] }] });
+  const [log, setLog] = React.useState('');
+  return (
+    <div className="sc-card-list">
+      <QuestionnaireCard
+        questionnaire={view}
+        onDiscardDraft={() => {
+          setView((v) => ({ ...v, draftStatus: 'clean', answers: [] }));
+          setLog('已放弃未保存填写（示例宿主清空了本地草稿）');
+        }}
+      />
+      <div className="sc-row">
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => {
+            setView((v) => ({ ...v, draftStatus: 'error', answers: [{ questionId: 'q-1-a', optionIds: ['table'] }] }));
+            setLog('');
+          }}
+        >
+          重置演示
+        </Button>
+        <span className="sc-small" data-testid="discard-log">
+          {log || '问卷已过期、草稿保存失败（示例）'}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+const sampleGrants: GrantView[] = [
+  { id: 'g-1', target: 'npm test', detail: '工作区 /workspace/reef（示例）', scopeLabel: '本次会话', available: true },
+  { id: 'g-2', target: 'python scripts/classify.py --batch', detail: '工作区 /workspace/reef（示例）', scopeLabel: '本次会话', available: true },
+  { id: 'g-3', target: 'D:/datasets/reef-2026', detail: '额外读写目录（示例）', scopeLabel: '额外读写', available: false, reason: '目录已被移除或改名（示例）' },
+];
+
+/** Simulated adapter: the first revoke of `npm test` loses its receipt (unknown → retry, same id). */
+function GrantDemo() {
+  const [grants, setGrants] = React.useState<GrantView[]>(sampleGrants);
+  const [log, setLog] = React.useState<string[]>([]);
+  const attempts = React.useRef(0);
+  const timers = React.useRef<number[]>([]);
+  React.useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), []);
+  const patch = (id: string, next: Partial<GrantView> | null) =>
+    setGrants((list) => (next === null ? list.filter((g) => g.id !== id) : list.map((g) => (g.id === id ? { ...g, ...next } : g))));
+
+  const revoke = (grant: GrantView, ctx: AgentActionContext) => {
+    attempts.current += 1;
+    const lose = grant.id === 'g-1' && attempts.current === 1;
+    setLog((prev) => [...prev.slice(-2), `撤销 ${grant.target} · actionId ${ctx.actionId}`]);
+    patch(grant.id, { receipt: { status: 'submitting', actionId: ctx.actionId } });
+    timers.current.push(
+      window.setTimeout(() => {
+        if (lose) patch(grant.id, { receipt: { status: 'unknown', actionId: ctx.actionId, retryable: true } });
+        else patch(grant.id, null);
+      }, 600),
+    );
+  };
+
+  return (
+    <div className="sc-card-list">
+      <GrantList
+        grants={grants}
+        onRevoke={revoke}
+        onReselect={(g) => setLog((prev) => [...prev.slice(-2), `重新选择 ${g.target}（示例：宿主打开目录选择器）`])}
+        footerNote="撤销只影响之后的运行；已经开始的操作不会被中断（示例说明）。"
+        addSlot={
+          <Button size="sm" variant="secondary" onClick={() => setLog((prev) => [...prev.slice(-2), '添加目录（示例：宿主提供选择器）'])}>
+            添加目录
+          </Button>
+        }
+      />
+      <div className="sc-row">
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => {
+            attempts.current = 0;
+            setGrants(sampleGrants);
+            setLog([]);
+          }}
+        >
+          重置演示
+        </Button>
+        <span className="sc-small" data-testid="grant-log">
+          {log.length ? log.join(' → ') : '示例适配器：第一次撤销 npm test 会得到未知回执'}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+const grantStates: Array<{ id: string; title: string; props: React.ComponentProps<typeof GrantList> }> = [
+  { id: 'grants-loading', title: 'loading', props: { grants: [], loading: true } },
+  { id: 'grants-error', title: 'error', props: { grants: [], error: '读取授权时连接中断（示例）。', onRetry: () => {} } },
+  { id: 'grants-empty', title: 'empty', props: { grants: [] } },
+  {
+    id: 'grants-receipts',
+    title: 'receipts',
+    props: {
+      grants: [
+        { ...sampleGrants[0]!, id: 'g-r1', receipt: { status: 'submitting' } },
+        { ...sampleGrants[1]!, id: 'g-r2', receipt: { status: 'unknown', actionId: 'act-g2-1', retryable: true } },
+        { ...sampleGrants[0]!, id: 'g-r3', target: 'cargo test', receipt: { status: 'rejected', reason: '运行中不能撤销（示例）' } },
+        { ...sampleGrants[0]!, id: 'g-r4', target: 'make lint', receipt: { status: 'accepted' } },
+      ],
+      onRevoke: () => {},
+    },
+  },
+];
+
 const recoveries: RecoveryView[] = [
   {
     id: 'r1',
@@ -395,6 +508,25 @@ export function AgentInterventionPage() {
           <Specimen key={s.id} id={s.id} index={`21.${String(i + 2).padStart(2, '0')}`} title={`QuestionnaireCard · ${s.title}`} span="half">
             <Wide>
               <QuestionnaireCard questionnaire={s.view} onAnswerChange={noop} onSubmit={noop} onRetrySave={noop} onCopyAnswers={noop} />
+            </Wide>
+          </Specimen>
+        ))}
+
+        <Specimen id="questionnaire-ended-draft" index="21.08" title="QuestionnaireCard · ended with unsaved draft" span="half" description="已结束但草稿未保存（dirty / error）：「放弃未保存填写」经 AlertDialog 确认。">
+          <Wide>
+            <EndedDraftDemo />
+          </Wide>
+        </Specimen>
+
+        <Specimen id="grants-interactive" index="22.01" title="GrantList · interactive" description="会话信任与额外目录；撤销只发出意图（actionId 每次挂载唯一），未知回执可用同一编号重试。不可用目录显示原因与「重新选择」。" note="无动效；撤销按钮名称包含目标">
+          <Wide>
+            <GrantDemo />
+          </Wide>
+        </Specimen>
+        {grantStates.map((s, i) => (
+          <Specimen key={s.id} id={s.id} index={`22.${String(i + 2).padStart(2, '0')}`} title={`GrantList · ${s.title}`} span="half">
+            <Wide>
+              <GrantList {...s.props} />
             </Wide>
           </Specimen>
         ))}

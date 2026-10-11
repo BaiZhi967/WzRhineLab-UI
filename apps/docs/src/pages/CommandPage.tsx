@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Combobox, CommandPalette, FileDropZone } from '@wzrhine/react';
+import { Button, Combobox, CommandPalette, FileDropZone, MenuItem, MenuSeparator, ScrollArea, SplitButton } from '@wzrhine/react';
 import type { CommandItem, ComboboxOption, FileRejection } from '@wzrhine/react';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
 
@@ -118,6 +118,135 @@ function PaletteDemo() {
   );
 }
 
+/** Sample "server" index searched with a simulated delay; no network request is made. */
+const remoteCommands: CommandItem[] = Array.from({ length: 10 }, (_, i) => ({
+  id: `open-${1020 + i}`,
+  label: `打开 ARC-${1020 + i}`,
+  description: `示例记录 ${i + 1}`,
+  group: '远程结果（示例）',
+  meta: `${i + 2} 天前`,
+  icon: <DocIcon />,
+}));
+
+function DocIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      <path d="M4 2.5h5.5L12 5v8.5H4zM9.5 2.5V5H12M6 8h4M6 10.5h4" />
+    </svg>
+  );
+}
+
+function AsyncPaletteDemo() {
+  const [query, setQuery] = React.useState('');
+  const [results, setResults] = React.useState<CommandItem[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const [last, setLast] = React.useState('');
+  const timer = React.useRef<number | undefined>(undefined);
+  React.useEffect(() => () => window.clearTimeout(timer.current), []);
+  const search = (next: string) => {
+    setQuery(next);
+    window.clearTimeout(timer.current);
+    const trimmed = next.trim();
+    if (trimmed === '') {
+      setLoading(false);
+      setResults([]);
+      return;
+    }
+    setLoading(true);
+    // Simulated latency; the latest query wins because earlier timers are cleared.
+    timer.current = window.setTimeout(() => {
+      setResults(remoteCommands.filter((c) => c.label.includes(trimmed)));
+      setLoading(false);
+    }, 600);
+  };
+  return (
+    <div className="sc-card-list">
+      <CommandPalette
+        title="远程命令搜索"
+        placeholder="例如：1024"
+        commands={results}
+        filter={null}
+        query={query}
+        onQueryChange={search}
+        loading={loading}
+        emptyText={query.trim() === '' ? '输入编号开始搜索（示例）' : undefined}
+        onSelect={(command) => setLast(command.label)}
+        trigger={<Button variant="secondary">远程搜索记录</Button>}
+      />
+      <p className="sc-small" aria-live="polite" data-testid="async-query">
+        查询：{query === '' ? '（空）' : query} · 上次执行：{last || '无'}
+      </p>
+    </div>
+  );
+}
+
+function SplitDemo() {
+  const [last, setLast] = React.useState('');
+  const [busy, setBusy] = React.useState(false);
+  const timer = React.useRef<number | undefined>(undefined);
+  React.useEffect(() => () => window.clearTimeout(timer.current), []);
+  const run = (what: string) => {
+    setBusy(true);
+    setLast(`正在${what}…`);
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => {
+      setBusy(false);
+      setLast(`已${what}（示例，未生成文件）`);
+    }, 600);
+  };
+  return (
+    <div className="sc-card-list">
+      <div className="sc-row">
+        <SplitButton label="导出 CSV" menuLabel="更多导出格式" loading={busy} onClick={() => run('导出 CSV')}>
+          <MenuItem onSelect={() => run('导出 JSON')}>导出 JSON</MenuItem>
+          <MenuItem onSelect={() => run('导出 PDF 报告')}>导出 PDF 报告</MenuItem>
+          <MenuSeparator />
+          <MenuItem disabled>导出到归档库（需要权限）</MenuItem>
+        </SplitButton>
+        <SplitButton label="提交复核" menuLabel="更多提交方式" variant="accent" onClick={() => setLast('提交复核（示例）')}>
+          <MenuItem onSelect={() => setLast('提交并通知负责人（示例）')}>提交并通知负责人</MenuItem>
+        </SplitButton>
+      </div>
+      <div className="sc-row">
+        <SplitButton label="保存" menuLabel="更多保存方式" variant="secondary" size="sm" onClick={() => setLast('保存（示例）')}>
+          <MenuItem onSelect={() => setLast('另存为副本（示例）')}>另存为副本</MenuItem>
+        </SplitButton>
+        <SplitButton label="复制编号" menuLabel="更多复制方式" variant="ghost" size="sm" onClick={() => setLast('复制编号（示例）')}>
+          <MenuItem onSelect={() => setLast('复制链接（示例）')}>复制链接</MenuItem>
+        </SplitButton>
+        <SplitButton label="已禁用" menuLabel="更多操作" disabled>
+          <MenuItem>不可用</MenuItem>
+        </SplitButton>
+      </div>
+      <p className="sc-small" aria-live="polite" data-testid="split-last">
+        {last || '尚未执行'}
+      </p>
+    </div>
+  );
+}
+
+const logLines = Array.from({ length: 40 }, (_, i) => `[示例] 10:${String(i).padStart(2, '0')}:00  批次 B-${200 + i} 已归档，共 ${(i * 7) % 23 + 3} 条记录`);
+
+function ScrollDemo() {
+  const [ups, setUps] = React.useState(0);
+  return (
+    <div className="sc-card-list">
+      <div style={{ border: 'var(--rl-border-width) solid var(--rl-border-default)', borderRadius: 'var(--rl-radius-sm)', background: 'var(--rl-bg-surface)' }}>
+        <ScrollArea label="运行日志（示例）" maxHeight="12rem" onScrollIntentUp={() => setUps((n) => n + 1)}>
+          <ol style={{ margin: 0, padding: 'var(--rl-space-2) var(--rl-space-3)', listStyle: 'none', font: 'var(--rl-type-mono)' }}>
+            {logLines.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ol>
+        </ScrollArea>
+      </div>
+      <p className="sc-small" data-testid="scroll-intent">
+        向上滚动意图：{ups} 次（Tab 聚焦日志后用 ↑ ↓ / PageUp / PageDown 滚动）
+      </p>
+    </div>
+  );
+}
+
 function formatBytes(bytes: number) {
   if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -177,10 +306,10 @@ function DropDemo() {
 export function CommandPage() {
   return (
     <div className="sc-page">
-      <PageHeader index="26" section="Advanced interaction" title="Combobox · CommandPalette · FileDropZone">
+      <PageHeader index="26" section="Advanced interaction" title="Combobox · CommandPalette · FileDropZone · SplitButton · ScrollArea">
         <p>
           可搜索选择、全局命令与附件拖放（ADR-0010 §2）。<code>Combobox</code> 与 <code>CommandPalette</code> 基于 Base UI Combobox / Autocomplete 与
-          Dialog；<code>FileDropZone</code> 是原生 <code>{'<input type="file">'}</code> 加拖放目标，不包含上传逻辑。本页类别、命令与记录均为示例。
+          Dialog；<code>FileDropZone</code> 是原生 <code>{'<input type="file">'}</code> 加拖放目标，不包含上传逻辑；<code>SplitButton</code> 组合 Button 与 Menu；<code>ScrollArea</code> 基于 Base UI scroll-area。本页类别、命令与记录均为示例。
         </p>
       </PageHeader>
       <SpecimenGrid>
@@ -216,6 +345,36 @@ export function CommandPage() {
           note="Dialog + 内联 Autocomplete：焦点留在输入框，↑ ↓ 移动，Enter 执行，Esc 关闭并把焦点还给打开前的元素。禁用命令显示原因、不可执行。动效同 Dialog。"
         >
           <PaletteDemo />
+        </Specimen>
+        <Specimen
+          id="command-palette-async"
+          index="04.1"
+          title="CommandPalette · async"
+          span="half"
+          align="start"
+          note="受控 query + onQueryChange，filter={null} 交给调用方；loading 时状态行礼貌宣告「正在搜索命令…」，列表 aria-busy。命令可带 icon（装饰）与 meta。延迟 600ms 为模拟。"
+        >
+          <AsyncPaletteDemo />
+        </Specimen>
+        <Specimen
+          id="command-split"
+          index="06"
+          title="SplitButton"
+          span="half"
+          align="start"
+          note="role=group（名称 = label）内两个真实按钮共用一个边框：主操作是 Button，右侧 IconButton 打开 Menu（Enter / Space / ↓）。loading 时菜单按钮一并禁用。"
+        >
+          <SplitDemo />
+        </Specimen>
+        <Specimen
+          id="command-scroll"
+          index="07"
+          title="ScrollArea"
+          span="half"
+          align="start"
+          note="原生滚动容器 + 叠加滚动条（Base UI）。视口是带名称的 region，溢出时可 Tab 聚焦并用键盘滚动；forced-colors 下隐藏叠加层、恢复系统滚动条。"
+        >
+          <ScrollDemo />
         </Specimen>
         <Specimen
           id="command-drop"

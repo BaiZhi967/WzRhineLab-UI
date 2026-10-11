@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { motion } from 'motion/react';
-import { Alert, Button, Callout, Checkbox, CheckboxGroup, IconButton, Radio, RadioGroup, Textarea, useRhineMotion } from '@wzrhine/react';
+import { Alert, AlertDialog, Button, Callout, Checkbox, CheckboxGroup, IconButton, Radio, RadioGroup, Textarea, useRhineMotion } from '@wzrhine/react';
 import { codePointLength, isStaleRevision } from '@wzrhine/agent-core';
 import type { AgentActionContext, AgentActionHandler, QuestionAnswer, QuestionnaireView, QuestionView } from '@wzrhine/agent-core';
 import { AgentStatus } from '../../primitives/AgentStatus.js';
@@ -29,7 +29,10 @@ import type { QuestionAnswerState } from './questionnaire-answers.js';
  * questions ask for an inline confirmation (`role="alert"`); unanswered required ones block.
  * `unknown` keeps the same answers and revision: 「重试提交相同答案」 re-sends the stored answers
  * with the same `actionId` (after a remount it uses `receipt.actionId`).
- * `completed` / `expired` / `interrupted` render a read-only summary.
+ * `completed` / `expired` / `interrupted` render a read-only summary. If such an ended questionnaire
+ * still has a draft the host never saved (`draftStatus` `dirty` / `error`) and `onDiscardDraft` is
+ * given, the summary adds 「放弃未保存填写」 behind an AlertDialog confirmation (focus returns to the
+ * button on cancel; a rejected promise keeps the dialog open with an error).
  *
  * Keyboard (form level; ignored while an IME composes):
  * - `1`…`n` choose option n, `n+1` toggles 「其他」 (not while typing in a textarea);
@@ -57,6 +60,12 @@ export interface QuestionnaireCardProps extends Omit<React.FormHTMLAttributes<HT
   onFlush?: (answers: QuestionAnswer[]) => void | Promise<void>;
   /** Read-only summary: copy the answers as plain text (host writes the clipboard). */
   onCopyAnswers?: (text: string) => void;
+  /**
+   * Ended questionnaire (completed / expired / interrupted) with an unsaved draft (`draftStatus`
+   * `dirty` or `error`): drop the local draft. Confirmed through an AlertDialog. Return a Promise to
+   * keep the dialog open until the host settles.
+   */
+  onDiscardDraft?: () => void | Promise<unknown>;
   /** Header title override (default: `questionnaire.title` or 「需要你的回答」). */
   title?: React.ReactNode;
   /** Start on this page instead of the first unanswered question. */
@@ -92,6 +101,7 @@ function Summary({
   answers,
   title,
   onCopyAnswers,
+  onDiscardDraft,
   className,
   rest,
 }: {
@@ -99,6 +109,7 @@ function Summary({
   answers: Map<string, QuestionAnswer>;
   title: React.ReactNode;
   onCopyAnswers?: (text: string) => void;
+  onDiscardDraft?: () => void | Promise<unknown>;
   className?: string;
   rest: React.HTMLAttributes<HTMLElement>;
 }) {
@@ -107,6 +118,7 @@ function Summary({
   const status = questionnaire.status as 'completed' | 'expired' | 'interrupted';
   const interrupted = status === 'interrupted';
   const tone = status === 'completed' ? 'success' : interrupted ? 'warning' : 'neutral';
+  const unsaved = questionnaire.draftStatus === 'dirty' || questionnaire.draftStatus === 'error';
   return (
     <section {...rest} className={cx('rl-agent-question', className)} aria-labelledby={`${id}-title`} data-status={status} data-readonly="">
       <header className="rl-agent-question__header">
@@ -134,6 +146,26 @@ function Summary({
           );
         })}
       </dl>
+      {unsaved && onDiscardDraft && (
+        <div className="rl-agent-question__ended-draft">
+          <p className="rl-agent-question__ended-draft-text">
+            <AgentIcon name="warning" />
+            <span>{m.questionEndedDraft}</span>
+          </p>
+          <AlertDialog
+            trigger={
+              <Button size="sm" variant="secondary" iconStart={<AgentIcon name="trash" />}>
+                {m.questionDiscardDraft}
+              </Button>
+            }
+            title={m.questionDiscardTitle}
+            description={m.questionDiscardDescription}
+            confirmLabel={m.questionDiscardConfirm}
+            errorText={m.questionDiscardError}
+            onConfirm={onDiscardDraft}
+          />
+        </div>
+      )}
       {onCopyAnswers && (
         <div className="rl-agent-question__footer">
           <Button size="sm" variant="secondary" iconStart={<AgentIcon name="copy" />} onClick={() => onCopyAnswers(summaryText(questionnaire.questions, answers, m, interrupted))}>
@@ -155,7 +187,7 @@ function firstControl(root: HTMLElement | null): HTMLElement | null {
 }
 
 export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, QuestionnaireCardProps>(function QuestionnaireCard(
-  { questionnaire, onAnswerChange, onSubmit, onRetrySave, onFlush, onCopyAnswers, title, initialPage, className, ...rest },
+  { questionnaire, onAnswerChange, onSubmit, onRetrySave, onFlush, onCopyAnswers, onDiscardDraft, title, initialPage, className, ...rest },
   ref,
 ) {
   const m = useAgentMessages().intervention;
@@ -211,7 +243,17 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
   const heading = title ?? questionnaire.title ?? m.questionTitle;
 
   if (READ_ONLY.has(status)) {
-    return <Summary questionnaire={questionnaire} answers={answers} title={heading} onCopyAnswers={onCopyAnswers} className={className} rest={rest} />;
+    return (
+      <Summary
+        questionnaire={questionnaire}
+        answers={answers}
+        title={heading}
+        onCopyAnswers={onCopyAnswers}
+        onDiscardDraft={onDiscardDraft}
+        className={className}
+        rest={rest}
+      />
+    );
   }
 
   const busy = status === 'submit-pending' || questionnaire.submitStatus === 'submitting' || lock.locked;

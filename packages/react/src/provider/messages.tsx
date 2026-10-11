@@ -59,6 +59,8 @@ export interface RhineMessages {
     hint: string;
     /** Visually hidden close button for touch screen readers. */
     close: string;
+    /** Status row while `loading` (async search). */
+    loading: string;
   };
   dataTable: {
     empty: string;
@@ -169,6 +171,7 @@ export const zhCN: RhineMessages = {
     empty: '没有匹配的命令',
     hint: '↑ ↓ 选择，Enter 执行，Esc 关闭',
     close: '关闭命令面板',
+    loading: '正在搜索命令…',
   },
   dataTable: {
     empty: '没有符合条件的记录',
@@ -222,6 +225,7 @@ export const enUS: RhineMessages = {
     empty: 'No matching commands',
     hint: '↑ ↓ to choose, Enter to run, Esc to close',
     close: 'Close command palette',
+    loading: 'Searching commands…',
   },
   dataTable: {
     empty: 'No matching records',

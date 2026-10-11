@@ -2,7 +2,7 @@ import type { ApprovalRisk, ApprovalStatus, DraftStatus, FileDiffView, Questionn
 
 /**
  * Copy for the intervention family (ADR-0011 §6, §10): ApprovalPanel, QuestionnaireCard,
- * ErrorRecoveryNotice, InterventionDock. Keys are flat (prefix = component) so a partial
+ * ErrorRecoveryNotice, InterventionDock, GrantList. Keys are flat (prefix = component) so a partial
  * override through `AgentMessagesProvider` replaces single strings, not whole groups.
  */
 export interface AgentInterventionMessages {
@@ -97,6 +97,38 @@ export interface AgentInterventionMessages {
   /** Separator between chosen option labels in the summary. */
   questionJoin: string;
   questionNeverGrants: string;
+  /** Ended questionnaire with a draft that never reached the host. */
+  questionEndedDraft: string;
+  questionDiscardDraft: string;
+  questionDiscardTitle: string;
+  questionDiscardDescription: string;
+  questionDiscardConfirm: string;
+  questionDiscardError: string;
+
+  // ---------- GrantList ----------
+  grantTitle: string;
+  grantCount: (count: number) => string;
+  /** Spoken prefix before the scope label. */
+  grantScope: string;
+  grantUnavailable: string;
+  grantUnavailableReason: string;
+  grantReselect: string;
+  grantReselectLabel: (target: string) => string;
+  grantRevoke: string;
+  grantRevokeLabel: (target: string) => string;
+  grantRetryRevoke: string;
+  grantRetryRevokeLabel: (target: string) => string;
+  grantUnknownTitle: string;
+  grantUnknownBody: string;
+  grantUnknownNotRetryable: string;
+  grantRejected: string;
+  grantRevoked: string;
+  grantRevokingSr: (target: string) => string;
+  grantUnknownSr: (target: string) => string;
+  grantLoading: string;
+  grantError: string;
+  grantRetry: string;
+  grantEmpty: string;
 
   // ---------- ErrorRecoveryNotice ----------
   recoveryKind: Record<RecoveryView['kind'], string>;
@@ -219,6 +251,35 @@ export const zhIntervention: AgentInterventionMessages = {
   questionCopy: '复制回答',
   questionJoin: '、',
   questionNeverGrants: '问卷只收集信息，不授予任何工具权限。',
+  questionEndedDraft: '问卷已结束，仍有未保存的填写。',
+  questionDiscardDraft: '放弃未保存填写',
+  questionDiscardTitle: '放弃未保存的填写？',
+  questionDiscardDescription: '问卷已结束，这些填写不会再提交。放弃后无法恢复。',
+  questionDiscardConfirm: '放弃填写',
+  questionDiscardError: '未能放弃填写，请重试。',
+
+  grantTitle: '会话授权',
+  grantCount: (n) => `${n} 项`,
+  grantScope: '范围：',
+  grantUnavailable: '不可用：',
+  grantUnavailableReason: '目标已不可访问',
+  grantReselect: '重新选择',
+  grantReselectLabel: (t) => `重新选择 ${t}`,
+  grantRevoke: '撤销',
+  grantRevokeLabel: (t) => `撤销 ${t}`,
+  grantRetryRevoke: '重试撤销',
+  grantRetryRevokeLabel: (t) => `重试撤销 ${t}`,
+  grantUnknownTitle: '结果待确认',
+  grantUnknownBody: '撤销可能已生效，也可能没有。重试会使用同一动作编号。',
+  grantUnknownNotRetryable: '撤销可能已生效。重试不安全，请等待状态同步。',
+  grantRejected: '撤销未被接受',
+  grantRevoked: '已撤销',
+  grantRevokingSr: (t) => `正在撤销 ${t}…`,
+  grantUnknownSr: (t) => `撤销 ${t} 的结果待确认`,
+  grantLoading: '正在读取授权…',
+  grantError: '授权列表读取失败',
+  grantRetry: '重新读取',
+  grantEmpty: '尚无授权。批准任务时可以选择在本次会话中信任。',
 
   recoveryKind: {
     retryable: '可重试',
@@ -356,6 +417,35 @@ export const enIntervention: AgentInterventionMessages = {
   questionCopy: 'Copy answers',
   questionJoin: ', ',
   questionNeverGrants: 'Questionnaires collect information only; they never grant tool permissions.',
+  questionEndedDraft: 'This questionnaire has ended, but some answers were never saved.',
+  questionDiscardDraft: 'Discard unsaved answers',
+  questionDiscardTitle: 'Discard unsaved answers?',
+  questionDiscardDescription: 'The questionnaire has ended, so these answers will not be submitted. This cannot be undone.',
+  questionDiscardConfirm: 'Discard answers',
+  questionDiscardError: 'Could not discard the answers. Please try again.',
+
+  grantTitle: 'Session grants',
+  grantCount: (n) => `${n} item${n === 1 ? '' : 's'}`,
+  grantScope: 'Scope:',
+  grantUnavailable: 'Unavailable:',
+  grantUnavailableReason: 'The target can no longer be reached',
+  grantReselect: 'Choose again',
+  grantReselectLabel: (t) => `Choose ${t} again`,
+  grantRevoke: 'Revoke',
+  grantRevokeLabel: (t) => `Revoke ${t}`,
+  grantRetryRevoke: 'Retry revoke',
+  grantRetryRevokeLabel: (t) => `Retry revoking ${t}`,
+  grantUnknownTitle: 'Result unconfirmed',
+  grantUnknownBody: 'The revoke may or may not have taken effect. Retrying reuses the same action id.',
+  grantUnknownNotRetryable: 'The revoke may have taken effect. Retrying is not safe; wait for the state to sync.',
+  grantRejected: 'Revoke not accepted',
+  grantRevoked: 'Revoked',
+  grantRevokingSr: (t) => `Revoking ${t}…`,
+  grantUnknownSr: (t) => `Revoking ${t} is unconfirmed`,
+  grantLoading: 'Loading grants…',
+  grantError: 'Could not load grants',
+  grantRetry: 'Reload',
+  grantEmpty: 'No grants yet. When approving a task you can trust it for this session.',
 
   recoveryKind: {
     retryable: 'Retryable',

@@ -140,6 +140,49 @@ test('axe clean (light + dark)', async ({ page }) => {
   expect(await axe(page)).toEqual([]);
 });
 
+test.describe('GrantList', () => {
+  test('revoke: first attempt is unconfirmed, retry reuses the action id, then the row is gone', async ({ page }) => {
+    const region = specimen(page, 'GrantList · interactive');
+    const list = region.getByRole('region', { name: '会话授权' });
+    await expect(list.getByRole('listitem')).toHaveCount(3);
+    await list.getByRole('button', { name: '撤销 npm test' }).click();
+    await expect(list.getByText('结果待确认', { exact: true })).toBeVisible();
+    const log = region.getByTestId('grant-log');
+    const ids = async () => [...((await log.textContent()) ?? '').matchAll(/actionId (\S+)/g)].map((m) => m[1]);
+    const [first] = await ids();
+    await list.getByRole('button', { name: '重试撤销 npm test' }).click();
+    await expect(list.getByRole('listitem')).toHaveCount(2);
+    expect(await ids()).toEqual([first, first]);
+    // Another grant revokes directly with a fresh id.
+    await list.getByRole('button', { name: '撤销 python scripts/classify.py --batch' }).click();
+    await expect(list.getByRole('listitem')).toHaveCount(1);
+    await expect(list.getByRole('listitem')).toContainText('目录已被移除或改名（示例）');
+  });
+
+  test('unavailable grant: 重新选择 by keyboard', async ({ page }) => {
+    const region = specimen(page, 'GrantList · interactive');
+    await region.getByRole('button', { name: '重新选择 D:/datasets/reef-2026' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(region.getByTestId('grant-log')).toContainText('重新选择 D:/datasets/reef-2026');
+  });
+});
+
+test('ended questionnaire: 放弃未保存填写 asks first, Escape cancels, confirm discards', async ({ page }) => {
+  const region = specimen(page, 'QuestionnaireCard · ended with unsaved draft');
+  const trigger = region.getByRole('button', { name: '放弃未保存填写' });
+  await trigger.click();
+  const dialog = page.getByRole('alertdialog', { name: '放弃未保存的填写？' });
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+  await trigger.click();
+  await dialog.getByRole('button', { name: '放弃填写' }).click();
+  await expect(dialog).toBeHidden();
+  await expect(region.getByRole('button', { name: '放弃未保存填写' })).toHaveCount(0);
+  await expect(region.getByTestId('discard-log')).toContainText('已放弃未保存填写');
+});
+
 test('no horizontal overflow at 320', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   await page.reload();

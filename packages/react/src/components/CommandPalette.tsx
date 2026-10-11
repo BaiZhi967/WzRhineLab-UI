@@ -8,6 +8,7 @@ import { useRhineMotion } from '../motion/useRhineMotion.js';
 import { useRhineMessages } from '../provider/messages.js';
 import { usePortalContainer } from '../provider/portal.js';
 import { cx } from '../utils/cx.js';
+import { Spinner } from './Spinner.js';
 
 /**
  * Modal command search (ADR-0010 §2): Base UI Dialog (focus trap, Escape, scroll lock, focus
@@ -17,6 +18,12 @@ import { cx } from '../utils/cx.js';
  * highlighted. Disabled commands stay visible with their reason and cannot run.
  * Enter/exit motion follows Dialog (motion/react: backdrop fast, panel 280ms + 8px rise;
  * opacity only under reduced motion).
+ *
+ * Async / server-side search: control the query with `query` + `onQueryChange`, pass
+ * `filter={null}` so the palette shows `commands` exactly as given, and set `loading` while a
+ * request is in flight (a polite status row with a Spinner; the list is `aria-busy`; the empty
+ * text waits until loading ends). The palette resets an uncontrolled query on open; a controlled
+ * one is reset through `onQueryChange('')`, so a host that mirrors the value behaves the same.
  *
  *   <CommandPalette hotkey="mod+k" commands={commands} onSelect={(c) => run(c.id)} />
  */
@@ -34,7 +41,14 @@ export interface CommandItem {
   disabled?: boolean;
   /** Shown under a disabled command, e.g. 「需要编辑权限」. */
   disabledReason?: string;
+  /** Decorative leading icon (hidden from assistive tech). */
+  icon?: React.ReactNode;
+  /** Secondary trailing text such as a path or 「3 分钟前」; part of the option's name. */
+  meta?: React.ReactNode;
 }
+
+/** Local match predicate of CommandPalette. */
+export type CommandFilter = (command: CommandItem, query: string) => boolean;
 
 export type CommandPaletteProps = {
   commands: readonly CommandItem[];
@@ -56,8 +70,19 @@ export type CommandPaletteProps = {
   emptyText?: React.ReactNode;
   /** Footer keyboard hint (default from messages); `null` hides it. */
   hint?: React.ReactNode | null;
-  /** Custom match. Default: every whitespace-separated term appears in label, keywords, group or description. */
-  filter?: (command: CommandItem, query: string) => boolean;
+  /**
+   * Custom match. Default: every whitespace-separated term appears in label, keywords, group or
+   * description. `null` turns local filtering off (results already filtered by the host / server).
+   */
+  filter?: CommandFilter | null;
+  /** Controlled search text. */
+  query?: string;
+  /** Every change of the search text (typing, clearing, reset on open). */
+  onQueryChange?: (query: string) => void;
+  /** A search is in flight: shows the status row and marks the list busy. */
+  loading?: boolean;
+  /** Status text while `loading` (default from messages). */
+  loadingText?: React.ReactNode;
   className?: string;
 };
 
@@ -148,6 +173,10 @@ export function CommandPalette({
   emptyText,
   hint,
   filter = defaultFilter,
+  query: queryProp,
+  onQueryChange,
+  loading = false,
+  loadingText,
   className,
 }: CommandPaletteProps) {
   const messages = useRhineMessages().commandPalette;
@@ -157,22 +186,29 @@ export function CommandPalette({
   const [uncontrolled, setUncontrolled] = React.useState(defaultOpen);
   const controlled = openProp !== undefined;
   const open = controlled ? openProp : uncontrolled;
-  const [query, setQuery] = React.useState('');
+  const [innerQuery, setInnerQuery] = React.useState('');
+  const query = queryProp ?? innerQuery;
+  const latestQuery = React.useRef(onQueryChange);
+  latestQuery.current = onQueryChange;
+  const setQuery = React.useCallback((next: string) => {
+    setInnerQuery(next);
+    latestQuery.current?.(next);
+  }, []);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const hintId = React.useId();
 
   const setOpen = React.useCallback(
     (next: boolean) => {
-      if (next) setQuery('');
+      if (next && latest.current.query !== '') setQuery('');
       if (!controlled) setUncontrolled(next);
       onOpenChange?.(next);
     },
-    [controlled, onOpenChange],
+    [controlled, onOpenChange, setQuery],
   );
 
   // Latest values for the document listener without re-subscribing on every render.
-  const latest = React.useRef({ open, setOpen });
-  latest.current = { open, setOpen };
+  const latest = React.useRef<{ open: boolean; query: string; setOpen: (next: boolean) => void }>({ open, query, setOpen: () => undefined });
+  latest.current = { open, query, setOpen };
 
   React.useEffect(() => {
     if (!hotkey) return undefined;
@@ -190,7 +226,7 @@ export function CommandPalette({
     const trimmed = query.trim();
     const map = new Map<string, CommandGroup>();
     for (const command of commands) {
-      if (trimmed !== '' && !filter(command, trimmed)) continue;
+      if (filter !== null && trimmed !== '' && !filter(command, trimmed)) continue;
       const key = command.group ?? '';
       let group = map.get(key);
       if (!group) {
@@ -263,8 +299,17 @@ export function CommandPalette({
                 </div>
                 <BaseDialog.Close className="rl-visually-hidden">{messages.close}</BaseDialog.Close>
                 <div className="rl-command__body">
-                  <Autocomplete.Empty className="rl-command__empty">{emptyText ?? messages.empty}</Autocomplete.Empty>
-                  <Autocomplete.List className="rl-command__list">
+                  {/* Live regions stay mounted; only their content changes (Base UI requirement). */}
+                  <Autocomplete.Status className="rl-command__status">
+                    {loading ? (
+                      <>
+                        <Spinner size="sm" />
+                        <span>{loadingText ?? messages.loading}</span>
+                      </>
+                    ) : null}
+                  </Autocomplete.Status>
+                  <Autocomplete.Empty className="rl-command__empty">{loading ? null : (emptyText ?? messages.empty)}</Autocomplete.Empty>
+                  <Autocomplete.List className="rl-command__list" aria-busy={loading || undefined}>
                     {(group: CommandGroup) => (
                       <Autocomplete.Group key={`g-${group.value}`} items={group.items} className="rl-command__group">
                         {group.value !== '' && <Autocomplete.GroupLabel className="rl-command__group-label">{group.value}</Autocomplete.GroupLabel>}
@@ -276,8 +321,14 @@ export function CommandPalette({
                               disabled={command.disabled}
                               className="rl-command__item"
                               data-command-id={command.id}
+                              data-icon={command.icon != null || undefined}
                               onClick={() => run(command)}
                             >
+                              {command.icon != null && (
+                                <span className="rl-command__icon" aria-hidden="true">
+                                  {command.icon}
+                                </span>
+                              )}
                               <span className="rl-command__text">
                                 <span className="rl-command__label">{highlight(command.label, query)}</span>
                                 {command.description != null && <span className="rl-command__description">{command.description}</span>}
@@ -285,6 +336,7 @@ export function CommandPalette({
                                   <span className="rl-command__reason">{command.disabledReason}</span>
                                 )}
                               </span>
+                              {command.meta != null && <span className="rl-command__meta">{command.meta}</span>}
                               {command.shortcut != null && (
                                 <kbd className="rl-command__shortcut" aria-hidden="true">
                                   {command.shortcut}

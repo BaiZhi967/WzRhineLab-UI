@@ -264,6 +264,90 @@
   color: var(--rl-danger);
 }
 
+/* ---------- Replacement (ComposerNotice in place of the frame) ---------- */
+.rl-agent-composer__replacement {
+  min-width: 0;
+}
+
+.rl-agent-composer-notice {
+  --rl-agent-notice-tone: var(--rl-info);
+  --rl-agent-notice-bg: var(--rl-info-subtle);
+
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rl-space-2) var(--rl-space-3);
+  min-width: 0;
+  min-height: var(--rl-control-height-lg);
+  padding: var(--rl-space-2) var(--rl-space-3);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-inline-start: var(--rl-border-width-strong) solid var(--rl-agent-notice-tone);
+  border-radius: var(--rl-radius-md);
+  background: var(--rl-agent-notice-bg);
+  color: var(--rl-fg-primary);
+  font: var(--rl-type-body-sm);
+}
+
+.rl-agent-composer-notice *,
+.rl-agent-composer-notice *::before,
+.rl-agent-composer-notice *::after {
+  box-sizing: border-box;
+}
+
+.rl-agent-composer-notice[data-tone='neutral'] {
+  --rl-agent-notice-tone: var(--rl-border-strong);
+  --rl-agent-notice-bg: var(--rl-bg-subtle);
+}
+
+.rl-agent-composer-notice[data-tone='warning'] {
+  --rl-agent-notice-tone: var(--rl-warning);
+  --rl-agent-notice-bg: var(--rl-warning-subtle);
+}
+
+.rl-agent-composer-notice[data-tone='danger'] {
+  --rl-agent-notice-tone: var(--rl-danger);
+  --rl-agent-notice-bg: var(--rl-danger-subtle);
+}
+
+.rl-agent-composer-notice__message {
+  display: flex;
+  flex: 1 1 14rem;
+  align-items: flex-start;
+  gap: var(--rl-space-2);
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.rl-agent-composer-notice__icon {
+  flex: none;
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+  margin-top: calc((1lh - var(--rl-icon-size-md)) / 2);
+  color: var(--rl-agent-notice-tone);
+}
+
+.rl-agent-composer-notice[data-tone='neutral'] .rl-agent-composer-notice__icon {
+  color: var(--rl-fg-muted);
+}
+
+.rl-agent-composer-notice__text {
+  min-width: 0;
+}
+
+.rl-agent-composer-notice__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rl-space-2);
+}
+
+.rl-agent-composer-notice__action[data-tone='danger'] {
+  border-color: var(--rl-danger);
+  color: var(--rl-danger);
+}
+
 /* ---------- Picker triggers (model / permission) ---------- */
 .rl-agent-picker-trigger {
   min-width: 0;
@@ -892,6 +976,7 @@
     outline: var(--rl-border-width) solid CanvasText;
   }
   .rl-agent-composer__frame,
+  .rl-agent-composer-notice,
   .rl-agent-menu,
   .rl-agent-attachment,
   .rl-agent-send {

@@ -106,6 +106,89 @@ test.describe('CommandPalette', () => {
   });
 });
 
+test.describe('CommandPalette async', () => {
+  test('typing calls onQueryChange, the loading row shows, then server results', async ({ page }) => {
+    await page.getByRole('button', { name: '远程搜索记录' }).click();
+    const dialog = page.getByRole('dialog', { name: '远程命令搜索' });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText('输入编号开始搜索（示例）')).toBeVisible();
+    await dialog.getByRole('combobox', { name: '搜索命令' }).pressSequentially('1024');
+    await expect(page.getByTestId('async-query')).toContainText('查询：1024');
+    const status = dialog.locator('.rl-command__status');
+    await expect(status).toHaveText('正在搜索命令…');
+    await expect(dialog.getByRole('listbox')).toHaveAttribute('aria-busy', 'true');
+    const option = dialog.getByRole('option', { name: /打开 ARC-1024/ });
+    await expect(option).toBeVisible();
+    await expect(option.locator('.rl-command__meta')).toHaveText('6 天前');
+    await expect(status).toHaveText('');
+    expect(await axe(page)).toEqual([]);
+    await page.keyboard.press('Enter');
+    await expect(dialog).toBeHidden();
+    await expect(page.getByTestId('async-query')).toContainText('上次执行：打开 ARC-1024');
+  });
+});
+
+test.describe('SplitButton', () => {
+  test('keyboard: Tab to the toggle, Enter opens the menu, ArrowDown + Enter runs, focus returns', async ({ page }) => {
+    const group = page.getByRole('group', { name: '导出 CSV' });
+    const toggle = group.getByRole('button', { name: '更多导出格式' });
+    await group.getByRole('button', { name: '导出 CSV' }).focus();
+    await page.keyboard.press('Tab');
+    await expect(toggle).toBeFocused();
+    await page.keyboard.press('Enter');
+    const menu = page.getByRole('menu');
+    await expect(menu).toBeVisible();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(menu.getByRole('menuitem').first()).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await expect(menu.getByRole('menuitem', { name: '导出 PDF 报告' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(menu).toBeHidden();
+    await expect(page.getByTestId('split-last')).toContainText('导出 PDF 报告');
+    await expect(toggle).toBeFocused();
+  });
+
+  test('both halves share one frame: same height, adjoining edges', async ({ page }) => {
+    const group = page.getByRole('group', { name: '导出 CSV' });
+    const a = await group.getByRole('button', { name: '导出 CSV' }).boundingBox();
+    const b = await group.getByRole('button', { name: '更多导出格式' }).boundingBox();
+    expect(a && b).toBeTruthy();
+    expect(Math.abs(a!.height - b!.height)).toBeLessThan(1);
+    // The toggle overlaps the main button by one border width.
+    expect(Math.abs(b!.x - (a!.x + a!.width))).toBeLessThanOrEqual(1.5);
+  });
+});
+
+test.describe('ScrollArea', () => {
+  test('the region is focusable and scrolls with the keyboard; up keys report intent', async ({ page }) => {
+    const region = page.getByRole('region', { name: '运行日志（示例）' });
+    await expect(region).toHaveAttribute('tabindex', '0');
+    await region.focus();
+    await expect(region).toBeFocused();
+    const top = () => region.evaluate((el) => el.scrollTop);
+    expect(await top()).toBe(0);
+    await page.keyboard.press('PageDown');
+    await expect.poll(top).toBeGreaterThan(0);
+    await page.keyboard.press('End');
+    await expect.poll(() => region.evaluate((el) => Math.abs(el.scrollHeight - el.clientHeight - el.scrollTop))).toBeLessThan(2);
+    await page.keyboard.press('ArrowUp');
+    await expect(page.getByTestId('scroll-intent')).toContainText('向上滚动意图：1 次');
+    await page.keyboard.press('Home');
+    await expect.poll(top).toBe(0);
+    // The overlay scrollbar is visible while the viewport has focus.
+    await expect(page.locator('section[aria-labelledby="command-scroll-title"] .rl-scroll-area__scrollbar')).toHaveCSS('opacity', '1');
+  });
+
+  test('wheel scrolling is native and wheel up reports intent', async ({ page }) => {
+    const region = page.getByRole('region', { name: '运行日志（示例）' });
+    await region.hover();
+    await page.mouse.wheel(0, 200);
+    await expect.poll(() => region.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+    await page.mouse.wheel(0, -100);
+    await expect(page.getByTestId('scroll-intent')).toContainText(/向上滚动意图：[1-9]/);
+  });
+});
+
 test.describe('FileDropZone', () => {
   const png = (bytes: number) => ({ name: 'sample.png', mimeType: 'image/png', buffer: Buffer.alloc(bytes, 1) });
 

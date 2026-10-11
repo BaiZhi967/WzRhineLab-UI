@@ -181,6 +181,33 @@ test.describe('Agent composer', () => {
     expect(await axe(page)).toEqual([]);
   });
 
+  test('replacement swaps the input for a notice; the intervention dock stays; the draft comes back', async ({ page }) => {
+    await open(page);
+    const region = page.locator('section[aria-labelledby="composer-replacement-title"]');
+    await region.scrollIntoViewIfNeeded();
+    const composer = region.locator('.rl-agent-composer');
+    await expect(composer).toHaveAttribute('data-replaced');
+    await expect(region.getByRole('textbox', { name: '消息内容（替换演示）' })).toHaveCount(0);
+    await expect(region.getByRole('note')).toContainText('这是子代理「样本分类」的对话');
+    // The approval is still docked above the notice and still actionable.
+    const approval = composer.locator('.rl-agent-composer__intervention .rl-agent-approval');
+    await expect(approval).toBeVisible();
+    await approval.getByRole('button', { name: '拒绝' }).click();
+    await expect(region.getByTestId('replacement-log')).toHaveText('审批：拒绝（示例）');
+
+    await region.getByRole('button', { name: '回到主对话' }).click();
+    const box = region.getByRole('textbox', { name: '消息内容（替换演示）' });
+    await expect(box).toBeVisible();
+    await box.fill('示例草稿');
+    await region.getByRole('button', { name: '已归档' }).click();
+    await expect(region.getByRole('note')).toContainText('此对话已归档');
+    await expect(approval).toBeVisible();
+    await region.getByRole('button', { name: '恢复归档' }).click();
+    await expect(box).toHaveValue('示例草稿');
+    await box.press('Enter');
+    await expect(region.getByTestId('replacement-log')).toHaveText('已发送：示例草稿');
+  });
+
   test('no horizontal overflow at 320', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 800 });
     await open(page);

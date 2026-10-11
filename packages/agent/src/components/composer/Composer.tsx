@@ -121,6 +121,12 @@ export type ComposerProps = {
   blocked?: boolean | string;
   /** Approval / questionnaire cards docked above the frame (height animates via grid rows). */
   intervention?: React.ReactNode;
+  /**
+   * Rendered instead of the input frame, menus and feedback line, e.g. a `ComposerNotice` for a
+   * sub-agent, archived or inherited thread. The `intervention` slot stays above it, so approvals
+   * and questions still dock. The draft value is kept and comes back when `replacement` is removed.
+   */
+  replacement?: React.ReactNode;
   /** Toolbar start (e.g. a "+" Menu: 添加图片 / 引用文件 / 使用技能). */
   toolbarStart?: React.ReactNode;
   /** Toolbar end before the send button (ModelPicker, PermissionPicker, context ring). */
@@ -162,7 +168,8 @@ const sameDismissed = (d: DismissedMenu, m: TriggerMatch, value: string) => d.tr
  *   same trigger + query stays closed until the query changes.
  *
  * States: empty, focused (frame ring via :focus-within), multiline, mentions, sending, running,
- * failed (draft kept + retry), blocked, disabled, drag-over.
+ * failed (draft kept + retry), blocked, disabled, drag-over, replaced (`replacement` stands in for
+ * the frame, e.g. ComposerNotice; the intervention slot stays).
  * Motion: menus fade (MotionPresence `fade`), send / stop icons cross-fade, the intervention slot
  * expands with CSS grid rows (`--rl-motion-base`); reduced motion → instant.
  */
@@ -213,6 +220,7 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
     readOnly = false,
     blocked = false,
     intervention,
+    replacement,
     toolbarStart,
     toolbarEnd,
     feedback,
@@ -260,7 +268,8 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
   const sendBusy = submit === 'submitting' || submit === 'unknown';
   const running = runStatus !== undefined && (canStopRun(runStatus) || runStatus === 'cancelling');
   const blockedReason = typeof blocked === 'string' ? blocked : blocked ? messages.blockedPlaceholder : undefined;
-  const inert = disabled || readOnly || blockedReason !== undefined;
+  const replaced = replacement != null && replacement !== false;
+  const inert = disabled || readOnly || blockedReason !== undefined || replaced;
   const sendReason =
     disabled
       ? disabledReason
@@ -500,6 +509,7 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
       data-disabled={disabled || undefined}
       data-blocked={blockedReason !== undefined || undefined}
       data-running={running || undefined}
+      data-replaced={replaced || undefined}
     >
       <div
         className="rl-agent-composer__intervention"
@@ -512,114 +522,120 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
           {interventionOpen ? intervention : shownIntervention}
         </div>
       </div>
-      <div className="rl-agent-composer__anchor">
-        {mentionOptions !== undefined && (
-          <MentionMenu
-            id={`${baseId}-mention`}
-            open={menuKind === '@'}
-            query={query}
-            options={shownMentions}
-            activeIndex={active}
-            onActiveIndexChange={setActiveIndex}
-            onSelect={(option) => chooseMention(option, 'click')}
-            onDrill={(option) => chooseMention(option, 'click')}
-            loading={mentionLoading}
-            error={mentionError}
-            onRetry={onMentionRetry}
-            side={menuSide}
-          />
-        )}
-        {commandOptions !== undefined && (
-          <SlashCommandMenu
-            id={`${baseId}-command`}
-            open={menuKind === '/'}
-            query={query}
-            options={shownCommands}
-            activeIndex={active}
-            onActiveIndexChange={setActiveIndex}
-            onSelect={chooseCommand}
-            onDisabledSelect={chooseCommand}
-            loading={commandLoading}
-            side={menuSide}
-          />
-        )}
-        <div className="rl-agent-composer__frame" data-dragging={dragging || undefined} {...dropHandlers}>
-          <AttachmentList
-            className="rl-agent-composer__attachments"
-            references={references}
-            attachments={attachments}
-            disabled={disabled || sendBusy}
-            onRemove={
-              onRemoveAttachment || onRemoveReference
-                ? (item) => (item.type === 'attachment' ? onRemoveAttachment?.(item.attachment) : onRemoveReference?.(item.reference))
-                : undefined
-            }
-            onRetry={onRetryAttachment}
-          />
-          <ComposerInput
-            ref={inputRef}
-            {...comboProps}
-            value={value}
-            onValueChange={handleValueChange}
-            onSubmit={onSubmit ? doSubmit : undefined}
-            submitOn={submitOn}
-            onMenuKey={handleMenuKey}
-            onTriggerChange={handleTrigger}
-            onTokenRemoved={onTokenRemoved}
-            tokenKind={
-              tokenKind ??
-              ((token) =>
-                token.trigger === '@' ? 'file' : commandOptions?.some((o) => o.name === token.name && o.kind === 'skill') ? 'skill' : 'command')
-            }
-            disabled={disabled}
-            readOnly={readOnly || blockedReason !== undefined}
-            aria-disabled={blockedReason !== undefined || undefined}
-            aria-label={ariaLabel}
-            aria-describedby={statusText ? feedbackId : undefined}
-            placeholder={blockedReason ?? placeholder}
-            onPaste={handlePaste}
-            className="rl-agent-composer__input"
-          />
-          {dragging && (
-            <div className="rl-agent-composer__drop" aria-hidden="true">
-              {messages.dropFiles}
-            </div>
-          )}
-          <div className="rl-agent-composer__toolbar">
-            <div className="rl-agent-composer__tools">{toolbarStart}</div>
-            <div className="rl-agent-composer__tools" data-end="">
-              {toolbarEnd}
-              <SendStopButton
-                className="rl-agent-composer__send"
-                canSend={canSend}
-                runStatus={runStatus}
-                sendReceipt={submitStatus}
-                stopReceipt={stopStatus}
-                onSend={onSubmit ? doSubmit : undefined}
-                onStop={onStop}
-                onRetry={onRetryAction}
-                disabledReason={sendReason}
+      {replaced ? (
+        <div className="rl-agent-composer__replacement">{replacement}</div>
+      ) : (
+        <>
+          <div className="rl-agent-composer__anchor">
+            {mentionOptions !== undefined && (
+              <MentionMenu
+                id={`${baseId}-mention`}
+                open={menuKind === '@'}
+                query={query}
+                options={shownMentions}
+                activeIndex={active}
+                onActiveIndexChange={setActiveIndex}
+                onSelect={(option) => chooseMention(option, 'click')}
+                onDrill={(option) => chooseMention(option, 'click')}
+                loading={mentionLoading}
+                error={mentionError}
+                onRetry={onMentionRetry}
+                side={menuSide}
               />
+            )}
+            {commandOptions !== undefined && (
+              <SlashCommandMenu
+                id={`${baseId}-command`}
+                open={menuKind === '/'}
+                query={query}
+                options={shownCommands}
+                activeIndex={active}
+                onActiveIndexChange={setActiveIndex}
+                onSelect={chooseCommand}
+                onDisabledSelect={chooseCommand}
+                loading={commandLoading}
+                side={menuSide}
+              />
+            )}
+            <div className="rl-agent-composer__frame" data-dragging={dragging || undefined} {...dropHandlers}>
+              <AttachmentList
+                className="rl-agent-composer__attachments"
+                references={references}
+                attachments={attachments}
+                disabled={disabled || sendBusy}
+                onRemove={
+                  onRemoveAttachment || onRemoveReference
+                    ? (item) => (item.type === 'attachment' ? onRemoveAttachment?.(item.attachment) : onRemoveReference?.(item.reference))
+                    : undefined
+                }
+                onRetry={onRetryAttachment}
+              />
+              <ComposerInput
+                ref={inputRef}
+                {...comboProps}
+                value={value}
+                onValueChange={handleValueChange}
+                onSubmit={onSubmit ? doSubmit : undefined}
+                submitOn={submitOn}
+                onMenuKey={handleMenuKey}
+                onTriggerChange={handleTrigger}
+                onTokenRemoved={onTokenRemoved}
+                tokenKind={
+                  tokenKind ??
+                  ((token) =>
+                    token.trigger === '@' ? 'file' : commandOptions?.some((o) => o.name === token.name && o.kind === 'skill') ? 'skill' : 'command')
+                }
+                disabled={disabled}
+                readOnly={readOnly || blockedReason !== undefined}
+                aria-disabled={blockedReason !== undefined || undefined}
+                aria-label={ariaLabel}
+                aria-describedby={statusText ? feedbackId : undefined}
+                placeholder={blockedReason ?? placeholder}
+                onPaste={handlePaste}
+                className="rl-agent-composer__input"
+              />
+              {dragging && (
+                <div className="rl-agent-composer__drop" aria-hidden="true">
+                  {messages.dropFiles}
+                </div>
+              )}
+              <div className="rl-agent-composer__toolbar">
+                <div className="rl-agent-composer__tools">{toolbarStart}</div>
+                <div className="rl-agent-composer__tools" data-end="">
+                  {toolbarEnd}
+                  <SendStopButton
+                    className="rl-agent-composer__send"
+                    canSend={canSend}
+                    runStatus={runStatus}
+                    sendReceipt={submitStatus}
+                    stopReceipt={stopStatus}
+                    onSend={onSubmit ? doSubmit : undefined}
+                    onStop={onStop}
+                    onRetry={onRetryAction}
+                    disabledReason={sendReason}
+                  />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div className="rl-agent-composer__feedback" data-tone={statusTone}>
-        <p id={feedbackId} className="rl-agent-composer__status" role="status">
-          {statusText}
-        </p>
-        {retry && (
-          <Button size="sm" variant="ghost" onClick={retry.onClick}>
-            {retry.label}
-          </Button>
-        )}
-        {feedback}
-        {counter && (
-          <span className="rl-agent-composer__count" data-over={overLimit || undefined}>
-            {counter}
-          </span>
-        )}
-      </div>
+          <div className="rl-agent-composer__feedback" data-tone={statusTone}>
+            <p id={feedbackId} className="rl-agent-composer__status" role="status">
+              {statusText}
+            </p>
+            {retry && (
+              <Button size="sm" variant="ghost" onClick={retry.onClick}>
+                {retry.label}
+              </Button>
+            )}
+            {feedback}
+            {counter && (
+              <span className="rl-agent-composer__count" data-over={overLimit || undefined}>
+                {counter}
+              </span>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 });

@@ -3,8 +3,10 @@ import { MotionConfig } from 'motion/react';
 import { Button, IconButton, Menu, MenuItem } from '@wzrhine/react';
 import {
   AgentIcon,
+  ApprovalPanel,
   AttachmentList,
   Composer,
+  ComposerNotice,
   MentionMenu,
   ModelPicker,
   PermissionPicker,
@@ -33,6 +35,7 @@ import type {
   SendInput,
 } from '@wzrhine/agent';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
+import { sampleApproval } from '../../../../packages/agent/src/fixtures/session';
 
 /*
  * Composer family showcase (atlas 14–19). Every file, model, provider and number on this page is
@@ -374,6 +377,73 @@ function SendStopMatrix() {
   );
 }
 
+type ThreadMode = 'main' | 'sub-agent' | 'archived';
+
+/**
+ * `replacement` stands in for the input frame (sub-agent / archived thread); the intervention slot
+ * above it still docks an approval. Sample thread and approval only.
+ */
+function ReplacementDemo() {
+  const [mode, setMode] = React.useState<ThreadMode>('sub-agent');
+  const [docked, setDocked] = React.useState(true);
+  const [value, setValue] = React.useState('');
+  const [log, setLog] = React.useState('');
+  const notice =
+    mode === 'sub-agent' ? (
+      <ComposerNotice
+        tone="info"
+        message="这是子代理「样本分类」的对话（示例），由主对话驱动；回到主对话发送消息。"
+        actions={[{ id: 'open-parent', label: '回到主对话', tone: 'primary' }]}
+        onAction={(id) => {
+          setLog(`动作：${id}`);
+          setMode('main');
+        }}
+      />
+    ) : mode === 'archived' ? (
+      <ComposerNotice
+        tone="neutral"
+        message="此对话已归档（示例），恢复后才能继续发送。"
+        actions={[{ id: 'restore', label: '恢复归档' }]}
+        onAction={(id) => {
+          setLog(`动作：${id}`);
+          setMode('main');
+        }}
+      />
+    ) : null;
+  return (
+    <div className="sc-card-list">
+      <div className="sc-row" role="group" aria-label="对话类型（示例）">
+        {(['sub-agent', 'archived', 'main'] as const).map((m) => (
+          <Button key={m} size="sm" variant={mode === m ? 'primary' : 'secondary'} aria-pressed={mode === m} onClick={() => setMode(m)}>
+            {m === 'sub-agent' ? '子代理对话' : m === 'archived' ? '已归档' : '主对话'}
+          </Button>
+        ))}
+        <Button size="sm" variant="secondary" aria-pressed={docked} onClick={() => setDocked((d) => !d)}>
+          {docked ? '移除审批' : '停靠审批'}
+        </Button>
+      </div>
+      <Composer
+        aria-label="消息内容（替换演示）"
+        value={value}
+        onValueChange={setValue}
+        onSubmit={(input) => {
+          setLog(`已发送：${input.text}`);
+          setValue('');
+        }}
+        replacement={notice}
+        intervention={
+          docked ? (
+            <ApprovalPanel density="compact" approval={{ ...sampleApproval, operationId: 'op-51' }} onApprove={() => setLog('审批：允许（示例）')} onReject={() => setLog('审批：拒绝（示例）')} />
+          ) : null
+        }
+      />
+      <p className="sc-small" data-testid="replacement-log">
+        {log || '子代理 / 归档对话中输入框被说明替换，审批仍停靠在上方（示例）'}
+      </p>
+    </div>
+  );
+}
+
 function PickerSpecimens() {
   const [model, setModel] = React.useState('vision-1');
   const [effort, setEffort] = React.useState<ModelEffort>('high');
@@ -443,6 +513,16 @@ export function AgentComposerPage() {
 
         <Specimen id="composer-send" index="18" title="发送 / 停止" description="同一个按钮元素：发送 ↔ 停止生成，焦点不丢失；停止待确认与回执未知不可重复触发。" span="half" align="start">
           <SendStopMatrix />
+        </Specimen>
+
+        <Specimen
+          id="composer-replacement"
+          index="14.2"
+          title="替换输入框 · ComposerNotice"
+          description="replacement 替代输入框（子代理、归档或继承的对话）；intervention 插槽仍在上方，审批与问卷照常停靠。草稿在切回后保留。"
+          note="无动效；语气用图标 + 读屏前缀，不只靠颜色。"
+        >
+          <ReplacementDemo />
         </Specimen>
 
         <Specimen

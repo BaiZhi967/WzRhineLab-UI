@@ -55,7 +55,11 @@ export type { ThinkingBlockProps } from './components/message/ThinkingBlock.js';
 export { CitationChip } from './components/message/CitationChip.js';
 export type { CitationChipProps } from './components/message/CitationChip.js';
 export { MessageActions } from './components/message/MessageActions.js';
-export type { MessageActionsProps, MessageFeedback } from './components/message/MessageActions.js';
+export type { MessageActionCapabilities, MessageActionKey, MessageActionsProps, MessageFeedback } from './components/message/MessageActions.js';
+export { RunDetails, hasRunDetails } from './components/message/RunDetails.js';
+export type { RunDetailsProps } from './components/message/RunDetails.js';
+export { DIGEST_LENGTH, SkillUseList } from './components/message/SkillUseList.js';
+export type { SkillUseListProps } from './components/message/SkillUseList.js';
 export { COPY_FEEDBACK_MS } from './components/message/use-copy.js';
 export type { CopyHandler, CopyState } from './components/message/use-copy.js';
 export { AgentProcess } from './components/process/AgentProcess.js';
@@ -72,6 +76,8 @@ export { CodeModeToolTree, ScriptDisclosure, childOutcome } from './components/t
 export type { CodeModeToolTreeProps } from './components/tools/CodeModeToolTree.js';
 export { ToolOutput } from './components/tools/ToolOutput.js';
 export type { ToolOutputProps } from './components/tools/ToolOutput.js';
+export { ChunkPager } from './components/tools/ChunkPager.js';
+export type { ChunkPagerActions, ChunkPagerProps } from './components/tools/ChunkPager.js';
 export { ToolHistory, useStableOrder } from './components/tools/ToolHistory.js';
 export type { ToolHistoryProps } from './components/tools/ToolHistory.js';
 export { DiffPreview, DiffStats, DiffStatusPill, MultiFileDiff, resolveDiff } from './components/tools/DiffPreview.js';
@@ -97,6 +103,8 @@ export { ModelPicker } from './components/composer/ModelPicker.js';
 export type { ModelPickerProps } from './components/composer/ModelPicker.js';
 export { PermissionPicker } from './components/composer/PermissionPicker.js';
 export type { PermissionPickerProps } from './components/composer/PermissionPicker.js';
+export { ComposerNotice } from './components/composer/ComposerNotice.js';
+export type { ComposerNoticeAction, ComposerNoticeProps, ComposerNoticeTone } from './components/composer/ComposerNotice.js';
 export {
   defaultMentionTokenName,
   drillQuery,
@@ -122,6 +130,8 @@ export { ErrorRecoveryNotice } from './components/intervention/ErrorRecoveryNoti
 export type { ErrorRecoveryNoticeProps } from './components/intervention/ErrorRecoveryNotice.js';
 export { InterventionDock } from './components/intervention/InterventionDock.js';
 export type { InterventionDockProps } from './components/intervention/InterventionDock.js';
+export { GrantList } from './components/intervention/GrantList.js';
+export type { GrantListProps } from './components/intervention/GrantList.js';
 export type { AgentInterventionMessages } from './provider/messages/intervention.js';
 
 // ---------- terminals, sub-agents, context & artifacts ----------
@@ -140,9 +150,11 @@ export type { ActivityLedgerProps } from './components/workspace/ActivityLedger.
 export { RunSummary } from './components/workspace/RunSummary.js';
 export type { RunSummaryProps } from './components/workspace/RunSummary.js';
 export { CompactionNotice } from './components/workspace/CompactionNotice.js';
-export type { CompactionNoticeProps, CompactionStatus } from './components/workspace/CompactionNotice.js';
+export type { CompactionNoticeProps, CompactionPhase, CompactionStatus } from './components/workspace/CompactionNotice.js';
 export { ArtifactCard, ArtifactList, artifactKindIcon } from './components/artifact/ArtifactCard.js';
 export type { ArtifactCardProps, ArtifactListProps } from './components/artifact/ArtifactCard.js';
-export { FilePreview } from './components/artifact/FilePreview.js';
-export type { FilePreviewProps, FilePreviewZoom } from './components/artifact/FilePreview.js';
+export { FilePreview, pathCrumbs } from './components/artifact/FilePreview.js';
+export type { FileOpenTarget, FilePreviewProps, FilePreviewZoom } from './components/artifact/FilePreview.js';
+export { FilePreviewTabs } from './components/artifact/FilePreviewTabs.js';
+export type { FilePreviewTab, FilePreviewTabsProps } from './components/artifact/FilePreviewTabs.js';
 export type { AgentWorkspaceMessages, LedgerFilterKey, TerminalGroupKey } from './provider/messages/workspace.js';
