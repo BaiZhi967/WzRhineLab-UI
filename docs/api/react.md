@@ -1,6 +1,6 @@
 # @wzrhine/react · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 219 个导出（61 components，12 functions & hooks，5 constants，22 interfaces，119 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 227 个导出（62 components，13 functions & hooks，7 constants，24 interfaces，121 types）。
 
 ## Components
 
@@ -648,6 +648,18 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `RhineMessagesProvider`
+
+*component* — Copy (and number locale) for a region without its own RhineProvider. Nested providers merge with the outer one per namespace.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `locale` | `string` | Number locale for this subtree; defaults to the outer provider's (or `zh-CN`). |
+| `messages` | `RhineMessagesOverrides` | Partial table merged over the outer provider's (or `zhCN`). |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `RhineMotionGroup`
 
 *component* — Staggered entrance for a short group (≤ ~8 items). Item n waits n × 24ms, capped at the `fast` token (120ms) so long lists never trickle in; reduced motion removes the stagger and the offset. Exit is one group fade, never a reverse cascade.
@@ -682,6 +694,9 @@
 | --- | --- | --- |
 | `children` * | `React.ReactNode` |  |
 | `density` | `RhineDensity` |  |
+| `lang` | `string` | Written as `lang` on the `.rl-theme` root (popups mount inside it) when set; otherwise inherited. |
+| `locale` | `string` | Number locale for Stat, Pagination, Progress / Meter; defaults to the outer provider's, else `zh-CN`. |
+| `messages` | `RhineMessagesOverrides` | Built-in copy for this subtree (ADR-0009), merged per namespace over the outer provider's table (or `zhCN`). Component props still win. |
 | `motion` | `RhineMotionPreference` |  |
 | `theme` | `RhineTheme` |  |
 | `toastLimit` | `number` | Maximum toasts shown at once; older ones are hidden (inert) until space frees up. |
@@ -1049,6 +1064,14 @@ function usePageVisible: () => boolean
 function usePortalContainer: () => HTMLElement | null | undefined
 ```
 
+### `useRhineMessages`
+
+*function* — The merged message table of the nearest provider (`zhCN` without one).
+
+```ts
+function useRhineMessages: () => RhineMessages
+```
+
 ### `useRhineMotion`
 
 *function* — Single entry point for component motion. Honours `<MotionConfig reducedMotion="user" | "always" | "never">` so apps (and the showcase) can force either mode.
@@ -1083,6 +1106,14 @@ const duration: Record<"base" | "instant" | "press" | "fast" | "panel" | "scene"
 const ease: { readonly out: [number, number, number, number]; readonly inOut: [number, number, number, number]; readonly linear: "linear"; }
 ```
 
+### `enUS`
+
+*const* — Reference English translation (参考译文): wording may change before 1.0.
+
+```ts
+const enUS: RhineMessages
+```
+
 ### `fadePresence`
 
 *const* — Short presence fade used by inline feedback (spinner, status swap).
@@ -1105,6 +1136,14 @@ const pressScale: 0.985
 
 ```ts
 const transition: { readonly press: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly release: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly fast: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly base: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly panel: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly scene: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly showcase: { readonly duration: number; readonly ease: [number, number, number, number]; }; readonly loop: { readonly duration: number; readonly ease: "linear"; readonly repeat: number; }; readonly instant: { readonly duration: 0; }; }
+```
+
+### `zhCN`
+
+*const* — Built-in default (zh-CN). Output is identical to the pre-M9.5 hard-coded defaults.
+
+```ts
+const zhCN: RhineMessages
 ```
 
 ## Interfaces
@@ -1245,6 +1284,38 @@ const transition: { readonly press: { readonly duration: number; readonly ease: 
 | --- | --- | --- |
 | `label` * | `React.ReactNode` | Visible text; colour never carries the status alone. |
 | `tone` * | `StatusKind` |  |
+
+### `RhineMessages`
+
+*interface* — Parameterised entries are functions. Functions with numeric arguments receive the provider's number formatter as their last argument; using it is up to the table (`zhCN` keeps the pre-M9.5 output, which prints raw digits).
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `alertDialog` * | `{ cancel: string; error: string; }` |  |
+| `alert` * | `{ dismiss: string; }` |  |
+| `breadcrumb` * | `{ nav: string; expand: (count: number, format: RhineNumberFormat) => string; }` |  |
+| `dataTable` * | `{ empty: string; loading: string; error: string; retry: string; selectAll: string; deselectAll: string; selectRow: (label: string) => string; selection: (count: number, offPage: number, format: RhineNumberFormat) => string; }` |  |
+| `drawer` * | `{ close: string; }` |  |
+| `field` * | `{ optional: string; }` |  |
+| `metadataList` * | `{ missing: string; }` |  |
+| `pagination` * | `{ nav: string; previous: string; next: string; page: (page: number, format: RhineNumberFormat) => string; compact: (page: number, pageCount: number, format: RhineNumberFormat) => string; status: (from: number, to: number, total: number, format: RhineNumberFormat) => string; }` |  |
+| `progress` * | `{ indeterminate: string; meterValue: (value: string, state: string) => string; }` |  |
+| `recordHeader` * | `{ trail: string; }` |  |
+| `select` * | `{ placeholder: string; }` |  |
+| `stat` * | `{ loading: string; empty: string; up: string; down: string; flat: string; }` |  |
+| `textarea` * | `{ count: (current: number, max: number, format: RhineNumberFormat) => string; }` |  |
+| `timeline` * | `{ empty: string; }` |  |
+| `toast` * | `{ close: string; region: string; }` |  |
+
+### `RhineMessagesProviderProps`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `locale` | `string` | Number locale for this subtree; defaults to the outer provider's (or `zh-CN`). |
+| `messages` | `RhineMessagesOverrides` | Partial table merged over the outer provider's (or `zhCN`). |
 
 ### `RhineMotion`
 
@@ -1692,7 +1763,7 @@ type MetadataValue = React.ReactNode
 
 ### `MeterState`
 
-*type*
+*type* — Which native <meter> region a value falls in, relative to `optimum`.
 
 ```ts
 type MeterState = 'optimum' | 'suboptimum' | 'critical'
@@ -1736,7 +1807,7 @@ type MotionPropertyKind = 'color' | 'opacity' | 'transform' | 'layout' | 'loop'
 
 ### `PaginationItem`
 
-*type* — Page navigation (ADR-0005 §3): a `<nav>` of plain buttons in normal Tab order. The current page keeps `aria-current="page"` and stays focusable so it can be announced. Narrow containers switch to "上一页 · 第 n / m 页 · 下一页" through a container query.
+*type* — One slot in the page list: a page number or an ellipsis before / after the current window.
 
 ```ts
 type PaginationItem = number | 'ellipsis-start' | 'ellipsis-end'
@@ -1830,6 +1901,14 @@ type RecordTrailItem = BreadcrumbItem
 type RhineDensity = 'comfortable' | 'compact'
 ```
 
+### `RhineMessagesOverrides`
+
+*type* — Override shape accepted by providers: any namespace, any subset of its keys.
+
+```ts
+type RhineMessagesOverrides = { [K in keyof RhineMessages]?: Partial<RhineMessages[K]>; }
+```
+
 ### `RhineMotionGroupProps`
 
 *type*
@@ -1848,6 +1927,14 @@ type RhineMotionItemProps = ElementProps & { as?: 'div' | 'li' | 'span'; childre
 
 ```ts
 type RhineMotionPreference = 'user' | 'reduce'
+```
+
+### `RhineNumberFormat`
+
+*type* — Formats a number with the provider's `locale` (Intl.NumberFormat).
+
+```ts
+type RhineNumberFormat = (value: number) => string
 ```
 
 ### `RhineProviderProps`

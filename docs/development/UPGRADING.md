@@ -51,7 +51,7 @@ Dialog、AlertDialog、Drawer、Select、Tooltip、Popover、Menu、Toast 会挂
 `require('@wzrhine/react')` 不受支持。Node 中请使用 `import`；Jest 等仍使用 CJS 的工具需要开启 ESM 支持或改用 Vitest。
 
 ### 5. React Server Components
-产物中没有 `"use client"` 指令。在 Next.js App Router 等 RSC 环境中，需要在使用组件的边界文件顶部自行标注 `'use client'`。普通 SSR（`renderToString` / `renderToPipeableStream` + `hydrateRoot`）无需额外处理，见 [examples/ssr-hydrate](../../examples/ssr-hydrate)。
+（M9.5 起已改变，见下文「0.1.0 基线之后」第 10 条。）0.1.0 基线的产物中没有 `"use client"` 指令，在 Next.js App Router 等 RSC 环境中需要在使用组件的边界文件顶部自行标注 `'use client'`。普通 SSR（`renderToString` / `renderToPipeableStream` + `hydrateRoot`）无需额外处理，见 [examples/ssr-hydrate](../../examples/ssr-hydrate)。
 
 ### 6. 主题 token 已冻结为契约（M6）
 `@wzrhine/tokens` 导出 `publicTokens` / `allPublicTokens`，列出全部 114 个公开 `--rl-*` 变量，测试保证 `tokens.css` 与之完全一致。
@@ -121,7 +121,23 @@ Button 的加载指示、DataTable 的首次加载骨架与空状态、Stat 的�
 - `ScanSurface` 在页面隐藏时立即结束本次扫描并触发 `onScanEnd`，隐藏期间请求的扫描不运行。
 - `MotionPlayer` 的 Default / Slow / Interrupt 通道改为继承外层减动偏好（行为修复）：外层 `RhineProvider motion="reduce"` 或系统减动时，这些通道也不再有位移。
 
-### 9. 不用改、但值得知道
+### 9. React 18 不再在 peer 声明中（破坏性，声明层面，M9.5，ADR-0008）
+`@wzrhine/react` 与 `@wzrhine/effects` 的 peer 收窄为 `react` / `react-dom` `^19.0.0`。React 18 项目安装时会收到 peer 冲突提示。
+- 迁移：升级到 React 19。项目此前从未正式支持 React 18，组件行为没有变化。
+- 搜索关键字：`"react": "^18`。
+
+### 10. 产物带 `'use client'`，服务端组件可以直接导入（M9.5，ADR-0008）
+使用 React 的模块在产物首行带 `'use client'`。在 Next.js App Router 中：
+- 可以删除只为了加 `'use client'` 而写的包装文件，直接从 `@wzrhine/react` 导入；
+- 只接收可序列化 props 的组件可以直接在服务端组件中渲染，`RhineProvider` 可以放在根布局里；
+- 需要函数 props 的组件（DataTable 的 `getRowId` / `cell`、各种 `onClick` / `onValueChange`）仍然要放在你自己的 `'use client'` 文件中，这是 RSC 的规则；
+- `paginate`、`getPaginationItems`、`getMeterState` 可以在服务端调用。
+完整示例见 [examples/next-app-router](../../examples/next-app-router)。
+
+### 11. 默认文案可以整体替换（M9.5，ADR-0009，无需改动）
+默认仍是中文，输出逐字不变。需要其他语言时给 `RhineProvider` 传 `messages`（例如内置的 `enUS`）、`locale` 与 `lang`，见 [locale.md](../components/locale.md)。已有的组件文案属性（`labels`、`cancelLabel`、`loadingText`…）优先级更高，继续生效。
+
+### 12. 不用改、但值得知道
 - 交互底座 Base UI 1.8.0 → 1.9.0（ADR-0001 修订），公开 API 无变化。
 - `Dialog` 新增 `onCloseRequest(reason)`：返回 `false` 取消用户发起的关闭，用于「放弃未保存的更改？」。
 - `DataTable` 新增 `status` / `onRetry` / `emptyAction` / `emptyDescription` / `pagination`（M8–M9）；不传时渲染结果与之前相同。

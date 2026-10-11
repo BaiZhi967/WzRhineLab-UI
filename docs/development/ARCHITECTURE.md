@@ -11,8 +11,8 @@ WzRhineLab-UI/
 │  ├─ design/          # STYLE / MOTION / MOTION-PATTERNS / COMPONENTS / ICONS / ACCESSIBILITY
 │  ├─ components/      # 组件使用说明（按组件族分文件）
 │  ├─ api/             # tokens / react / effects 的 API 参考，由 `pnpm api:report` 从 .d.ts 生成
-│  ├─ development/     # ARCHITECTURE / CONTRIBUTING / QUALITY-GATES / RELEASING / UPGRADING / THIRD-PARTY-LICENSES
-│  │  ├─ adr/          # ADR-0001 … 0007
+│  ├─ development/     # ARCHITECTURE / CONTRIBUTING / QUALITY-GATES / RELEASING / UPGRADING / INSTALL / SIZE / THIRD-PARTY-LICENSES
+│  │  ├─ adr/          # ADR-0001 … 0009
 │  │  └─ acceptance/   # 每个里程碑的验收记录
 │  ├─ planning/        # 长期路线图、执行清单、各领域规划、需求插入流程与模板
 │  ├─ concepts/        # 原创概念图与索引（images/ 下 8 PNG + 8 WebP）
@@ -23,8 +23,9 @@ WzRhineLab-UI/
 │  └─ effects/         # @wzrhine/effects：可选展示动效与动效播放器（ADR-0004），react 包不依赖它
 ├─ apps/
 │  └─ docs/            # @wzrhine/showcase：Vite 文档 / Showcase；e2e/ 为三内核 E2E，e2e/visual 为视觉回归基线（74 张，win32 Chromium）
-├─ examples/           # M6 示例应用：archive-desk / host-embed / ssr-hydrate，只用公开入口
-└─ scripts/            # build-package、api-report、license-audit、verify-packages、release、import-visual-assets.ps1
+├─ examples/           # 示例应用，只用公开入口：archive-desk / host-embed / ssr-hydrate（M6），next-app-router（M9.5，端口 4177）
+├─ size-budget.json    # size:check 的 gzip 预算（ADR-0008 §3）
+└─ scripts/            # build-package、api-report、docs-index、license-audit、verify-packages、size-check、release、import-visual-assets.ps1
 ```
 
 拟议（未创建）：`packages/agent/`（`@wzrhine/agent`，可选 Agent UI 领域组件，无运行时 / 传输依赖），规划见 [Agent UI 平台规划](../planning/agent-ui-platform-plan.md) 与 M13。下文关于 agent 包的规则是对它的约束，不代表包已存在。
@@ -33,8 +34,8 @@ WzRhineLab-UI/
 ```text
 packages/react/src/
 ├─ index.ts            # 唯一入口，只导出 JS（无 CSS 副作用，ADR-0002）
-├─ components/         # 每个组件一个 .tsx；fieldParts.tsx 为 Field 与选择控件共用的标签 / 错误部件
-├─ provider/           # RhineProvider.tsx（.rl-theme 作用域、MotionConfig、Tooltip 延迟、通知队列）、portal.ts（弹层挂载点 usePortalContainer）
+├─ components/         # 每个组件一个 .tsx（首行 'use client'）；fieldParts.tsx 为 Field 与选择控件共用的标签 / 错误部件；pagination-utils.ts、meter-utils.ts 为不带指令的纯函数
+├─ provider/           # RhineProvider.tsx（.rl-theme 作用域、MotionConfig、Tooltip 延迟、通知队列、messages / locale / lang）、portal.ts（弹层挂载点 usePortalContainer）、messages.tsx（默认文案表 zhCN / enUS，组件中唯一允许出现中文的源码文件，ADR-0009）
 ├─ motion/             # Motion Core（ADR-0007）
 │  ├─ presets.ts       # duration / ease / transition / pressScale / fadePresence，数值来自 @wzrhine/tokens
 │  ├─ resolve.tsx      # resolveMotion（按属性类型减动）、MotionSpeed / useMotionSpeed
@@ -56,7 +57,8 @@ packages/react/src/
 分片都只用 `rl-` 类与 `--rl-*` tokens（package-boundary 测试禁止字面颜色与 px）；使用方只导入 `@wzrhine/react/styles.css`，新增分片由 `components.css` 自动引入。
 
 ## 依赖规则
-- React >=18.2；Motion npm 包通过 `motion/react` 导入，避免混用历史 `framer-motion` 包名。
+- React 19（peer `^19.0.0`，ADR-0008）；Motion npm 包通过 `motion/react` 导入，避免混用历史 `framer-motion` 包名。
+- 运行时使用 React 的模块首行写 `'use client'`，纯函数 / 常量模块不写（ADR-0008 §2，`verify:packages` 检查）。
 - TypeScript strict；pnpm workspace；CSS Variables 为样式权威；视觉主题 scope 到 `.rl-theme` 容器。
 - docs 应用**可以**依赖 React 包与 Tokens；React 包只依赖 React/必要 headless 基础，独立可用；Tokens 不依赖 React。
 - agent 包可以依赖 react、tokens 和 motion/react；agent 包不得依赖 Agent SDK、请求库、Tauri、MCP client 或具体后端协议；react 包不依赖 agent 包。

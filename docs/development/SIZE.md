@@ -32,17 +32,19 @@ esbuild 通过 Vite（`apps/docs` 的依赖）解析，没有新增依赖；当�
 - `pnpm build:packages` 失败：什么都不量，直接失败。
 
 ## 当前数值
-2026-10-11 M9.5 初版测得，由协调者在合并时用 `pnpm size:check --update` 重新生成；以 `size-budget.json` 和命令输出为准。
+2026-10-11，M9.5 集成后（含默认文案表）用 `pnpm size:check --update` 生成；以 `size-budget.json` 和命令输出为准。
 
 | 条目 | minified | gzip | 预算（gzip） | 余量 |
 | --- | ---: | ---: | ---: | ---: |
-| `react-full` | 416.61 KB | 137.14 KB | 152 KB | 9.8% |
+| `react-full` | 420.26 KB | 138.26 KB | 153 KB | 9.6% |
 | `react-button` | 6.60 KB | 2.53 KB | 4 KB | 36.8% |
-| `react-datatable` | 16.24 KB | 5.93 KB | 7 KB | 15.3% |
+| `react-datatable` | 17.95 KB | 6.59 KB | 8 KB | 17.6% |
 | `react-css` | 80.01 KB | 12.07 KB | 15 KB | 19.5% |
 | `tokens-css` | 6.18 KB | 1.64 KB | 3 KB | 45.3% |
 | `effects-full` | 8.27 KB | 3.32 KB | 5 KB | 33.5% |
 | `effects-css` | 5.82 KB | 1.58 KB | 3 KB | 47.2% |
+
+初版（文案表接入前）`react-datatable` 为 5.93 KB、`react-full` 为 137.14 KB；DataTable 现在引入默认文案表（约 0.66 KB gzip），预算随之由 7 KB 调为 8 KB，`react-full` 由 152 KB 调为 153 KB。`react-button` 未变：Button 没有内置文案，不引入文案表。
 
 `react-button` / `react-full` = 1.8%。`react-full` 中约 3/4 来自 `@base-ui/react` 及其依赖（全部组件同时导入时），本包自身代码约 59 KB（minified）。小体积条目的余量比例偏高，是因为「取整到 1 KB」在几 KB 的量级上占比大。
 
