@@ -300,7 +300,10 @@ describe('CommandPalette', () => {
     const user = userEvent.setup();
     render(<Controlled />);
     await user.click(screen.getByRole('button', { name: '打开' }));
-    await screen.findByRole('dialog');
+    const dialog = await screen.findByRole('dialog');
+    // Enter only runs once focus has moved into the palette input (Base UI moves it after open).
+    const input = within(dialog).getByRole('combobox');
+    await waitFor(() => expect(input).toHaveFocus());
     await user.keyboard('{Enter}');
     await waitFor(() => expect(screen.getByText('false', { selector: 'output' })).toBeInTheDocument());
   });
