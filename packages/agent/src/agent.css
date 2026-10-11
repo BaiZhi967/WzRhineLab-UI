@@ -1,0 +1,15 @@
+/*
+ * @wzrhine/agent · style entry (`@wzrhine/agent/styles.css`). Load after `@wzrhine/tokens/styles.css`
+ * and `@wzrhine/react/styles.css`; requires a `.rl-theme` ancestor (RhineProvider).
+ * Only `rl-agent-` classes and `--rl-*` tokens; host elements and :root stay untouched.
+ */
+@import './styles/base.css';
+@import './styles/shell.css';
+@import './styles/conversation.css';
+@import './styles/message.css';
+@import './styles/process.css';
+@import './styles/tools.css';
+@import './styles/composer.css';
+@import './styles/intervention.css';
+@import './styles/workspace.css';
+@import './styles/artifact.css';

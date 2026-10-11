@@ -1,0 +1,220 @@
+/*
+ * @wzrhine/agent · shared base (ADR-0012). Tokens only, `rl-agent-` classes only, requires a
+ * `.rl-theme` ancestor. Agent-internal variables are `--rl-agent-*` and derive from public tokens.
+ * Every @keyframes here runs only under `[data-loop='running']` and is switched off for reduced motion.
+ */
+
+.rl-theme {
+  /* Reading column of the conversation (atlas 01 / 07): long text stays readable on wide screens. */
+  --rl-agent-reading-width: 46rem;
+  --rl-agent-index-width: 17rem;
+  --rl-agent-pane-width: 22rem;
+  --rl-agent-pane-min: 18rem;
+  --rl-agent-pane-max: 40rem;
+  --rl-agent-row-height: var(--rl-control-height-lg);
+  --rl-agent-glyph-size: var(--rl-icon-size-md);
+  --rl-agent-spark-cell: calc(var(--rl-space-1) - var(--rl-border-width));
+  --rl-agent-spark-gap: var(--rl-border-width);
+  --rl-agent-code-bg: var(--rl-bg-inverse);
+  --rl-agent-code-fg: var(--rl-fg-inverse);
+  --rl-agent-mono: var(--rl-type-mono);
+  --rl-agent-output-max-height: 18rem;
+  --rl-agent-composer-min: 2.75rem;
+  --rl-agent-composer-max: 12rem;
+}
+
+.rl-agent-icon {
+  flex: none;
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rl-agent-sr {
+  position: absolute;
+  width: var(--rl-border-width);
+  height: var(--rl-border-width);
+  margin: calc(var(--rl-border-width) * -1);
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- StatusGlyph ---------- */
+.rl-agent-glyph {
+  --rl-agent-tone: var(--rl-fg-muted);
+
+  flex: none;
+  width: var(--rl-agent-glyph-size);
+  height: var(--rl-agent-glyph-size);
+  fill: none;
+  stroke: var(--rl-agent-tone);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+
+.rl-agent-glyph__fill {
+  fill: var(--rl-agent-tone);
+  stroke: none;
+}
+
+.rl-agent-glyph[data-tone='info'] { --rl-agent-tone: var(--rl-info); }
+.rl-agent-glyph[data-tone='success'] { --rl-agent-tone: var(--rl-success); }
+.rl-agent-glyph[data-tone='warning'] { --rl-agent-tone: var(--rl-warning); }
+.rl-agent-glyph[data-tone='danger'] { --rl-agent-tone: var(--rl-danger); }
+.rl-agent-glyph[data-tone='accent'] { --rl-agent-tone: var(--rl-accent-text); }
+
+/* ---------- AgentStatus ---------- */
+.rl-agent-status {
+  --rl-agent-status-fg: var(--rl-fg-muted);
+  --rl-agent-status-bg: var(--rl-bg-subtle);
+
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rl-space-1);
+  min-width: 0;
+  max-width: 100%;
+  min-height: var(--rl-badge-height-sm);
+  padding: 0 var(--rl-space-2);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-agent-status-bg);
+  color: var(--rl-agent-status-fg);
+  font: var(--rl-type-meta);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.rl-agent-status[data-size='md'] {
+  min-height: var(--rl-badge-height-md);
+  font: var(--rl-type-label-sm);
+}
+
+.rl-agent-status[data-appearance='inline'] {
+  padding: 0;
+  background: transparent;
+}
+
+.rl-agent-status[data-tone='info'] { --rl-agent-status-fg: var(--rl-info); --rl-agent-status-bg: var(--rl-info-subtle); }
+.rl-agent-status[data-tone='success'] { --rl-agent-status-fg: var(--rl-success); --rl-agent-status-bg: var(--rl-success-subtle); }
+.rl-agent-status[data-tone='warning'] { --rl-agent-status-fg: var(--rl-warning); --rl-agent-status-bg: var(--rl-warning-subtle); }
+.rl-agent-status[data-tone='danger'] { --rl-agent-status-fg: var(--rl-danger); --rl-agent-status-bg: var(--rl-danger-subtle); }
+.rl-agent-status[data-tone='accent'] { --rl-agent-status-fg: var(--rl-accent-text); --rl-agent-status-bg: var(--rl-accent-subtle); }
+
+.rl-agent-status__glyph {
+  --rl-agent-glyph-size: var(--rl-icon-size-sm);
+}
+
+.rl-agent-status__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rl-agent-status__meta {
+  color: var(--rl-fg-subtle);
+  font: var(--rl-type-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- AgentSpark (3 × 3 dot matrix) ---------- */
+.rl-agent-spark {
+  --rl-agent-spark-color: var(--rl-fg-primary);
+  --rl-agent-spark-period: calc(var(--rl-motion-loop) * 1.5);
+  --rl-agent-spark-step: calc(var(--rl-motion-loop) / 10);
+
+  display: inline-grid;
+  flex: none;
+  grid-template-columns: repeat(3, var(--rl-agent-spark-cell));
+  grid-auto-rows: var(--rl-agent-spark-cell);
+  gap: var(--rl-agent-spark-gap);
+  vertical-align: middle;
+}
+
+.rl-agent-spark[data-size='md'] {
+  --rl-agent-spark-cell: var(--rl-space-1);
+  --rl-agent-spark-gap: calc(var(--rl-border-width) * 2);
+}
+
+.rl-agent-spark__dot {
+  display: block;
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-agent-spark-color);
+  opacity: 0.25;
+}
+
+/* Static frames: every phase is recognisable without motion. */
+.rl-agent-spark[data-phase='thinking'] { --rl-agent-spark-color: var(--rl-accent-text); --rl-agent-spark-period: calc(var(--rl-motion-loop) * 1.6); }
+.rl-agent-spark[data-phase='executing'] { --rl-agent-spark-color: var(--rl-accent-text); --rl-agent-spark-period: var(--rl-motion-loop); }
+.rl-agent-spark[data-phase='waiting'] { --rl-agent-spark-color: var(--rl-warning); --rl-agent-spark-period: calc(var(--rl-motion-loop) * 2); }
+.rl-agent-spark[data-phase='done'] { --rl-agent-spark-color: var(--rl-success); }
+.rl-agent-spark[data-phase='error'] { --rl-agent-spark-color: var(--rl-danger); }
+
+.rl-agent-spark[data-phase='thinking'] .rl-agent-spark__dot[data-row='1'][data-col='1'],
+.rl-agent-spark[data-phase='responding'] .rl-agent-spark__dot[data-row='2'],
+.rl-agent-spark[data-phase='executing'] .rl-agent-spark__dot[data-col='1'],
+.rl-agent-spark[data-phase='waiting'] .rl-agent-spark__dot[data-row='1'],
+.rl-agent-spark[data-phase='done'] .rl-agent-spark__dot,
+.rl-agent-spark[data-phase='error'] .rl-agent-spark__dot[data-row='1'][data-col='1'],
+.rl-agent-spark[data-phase='error'] .rl-agent-spark__dot[data-row='0'][data-col='0'],
+.rl-agent-spark[data-phase='error'] .rl-agent-spark__dot[data-row='2'][data-col='2'],
+.rl-agent-spark[data-phase='error'] .rl-agent-spark__dot[data-row='0'][data-col='2'],
+.rl-agent-spark[data-phase='error'] .rl-agent-spark__dot[data-row='2'][data-col='0'] {
+  opacity: 0.9;
+}
+
+.rl-agent-spark[data-loop='running'] .rl-agent-spark__dot {
+  animation: rl-agent-spark-pulse var(--rl-agent-spark-period) var(--rl-ease-in-out) infinite;
+}
+
+/* Rhythm per phase: thinking ripples out from the centre, responding sweeps rows, executing sweeps columns, waiting breathes in unison. */
+.rl-agent-spark[data-loop='running'][data-phase='thinking'] .rl-agent-spark__dot:not([data-row='1'][data-col='1']) { animation-delay: var(--rl-agent-spark-step); }
+.rl-agent-spark[data-loop='running'][data-phase='thinking'] .rl-agent-spark__dot:is([data-row='0'], [data-row='2']):is([data-col='0'], [data-col='2']) { animation-delay: calc(var(--rl-agent-spark-step) * 2); }
+.rl-agent-spark[data-loop='running'][data-phase='responding'] .rl-agent-spark__dot[data-row='1'] { animation-delay: var(--rl-agent-spark-step); }
+.rl-agent-spark[data-loop='running'][data-phase='responding'] .rl-agent-spark__dot[data-row='2'] { animation-delay: calc(var(--rl-agent-spark-step) * 2); }
+.rl-agent-spark[data-loop='running'][data-phase='executing'] .rl-agent-spark__dot[data-col='1'] { animation-delay: var(--rl-agent-spark-step); }
+.rl-agent-spark[data-loop='running'][data-phase='executing'] .rl-agent-spark__dot[data-col='2'] { animation-delay: calc(var(--rl-agent-spark-step) * 2); }
+
+@keyframes rl-agent-spark-pulse {
+  0%,
+  100% { opacity: 0.2; }
+  30%,
+  45% { opacity: 1; }
+}
+
+/* ---------- Breathing halo for active status dots ---------- */
+.rl-agent-glyph[data-active][data-loop='running'] {
+  animation: rl-agent-breathe calc(var(--rl-motion-loop) * 2) var(--rl-ease-in-out) infinite;
+}
+
+@keyframes rl-agent-breathe {
+  0%,
+  100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* ---------- Reduced motion ---------- */
+.rl-theme[data-rl-motion='reduce'] .rl-agent-spark[data-loop='running'] .rl-agent-spark__dot,
+.rl-theme[data-rl-motion='reduce'] .rl-agent-glyph[data-active][data-loop='running'] {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rl-agent-spark[data-loop='running'] .rl-agent-spark__dot,
+  .rl-agent-glyph[data-active][data-loop='running'] {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .rl-agent-status { border: var(--rl-border-width) solid CanvasText; }
+  .rl-agent-spark__dot { background: CanvasText; }
+}

@@ -1,0 +1,93 @@
+/*
+ * WzRhineLab UI · disclosure (ADR-0010 §2): Collapsible. Imported by components.css; tokens only.
+ * Height is the only animated layout property in the library: Base UI measures the panel and
+ * writes `--collapsible-panel-height`; the transition reads it, so a toggle mid-flight reverses
+ * from the current height. Reduced motion zeroes `--rl-motion-base`, which makes it instant.
+ */
+
+.rl-collapsible {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.rl-collapsible__trigger {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--rl-space-2);
+  width: 100%;
+  min-height: var(--rl-control-height-sm);
+  margin: 0;
+  padding: var(--rl-space-1) var(--rl-space-2);
+  border: 0;
+  border-radius: var(--rl-radius-sm);
+  background: transparent;
+  color: var(--rl-fg-primary);
+  font: var(--rl-type-label-sm);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-collapsible__trigger:hover {
+  background: var(--rl-bg-hover);
+}
+
+.rl-collapsible__trigger:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.rl-collapsible__trigger[data-disabled] {
+  color: var(--rl-fg-disabled);
+  cursor: not-allowed;
+}
+
+.rl-collapsible__label {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--rl-space-2);
+  min-width: 0;
+}
+
+.rl-collapsible__chevron {
+  flex: none;
+  width: var(--rl-icon-size-sm);
+  height: var(--rl-icon-size-sm);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--rl-fg-muted);
+  transition: rotate var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-collapsible__trigger[data-panel-open] .rl-collapsible__chevron {
+  rotate: 180deg;
+}
+
+.rl-collapsible__panel {
+  box-sizing: border-box;
+  height: var(--collapsible-panel-height);
+  overflow: hidden;
+  transition:
+    height var(--rl-motion-base) var(--rl-ease-out),
+    opacity var(--rl-motion-base) var(--rl-ease-out);
+}
+
+.rl-collapsible__panel[data-starting-style],
+.rl-collapsible__panel[data-ending-style] {
+  height: 0;
+  opacity: 0;
+}
+
+.rl-collapsible__content {
+  min-width: 0;
+  padding: var(--rl-space-2) var(--rl-space-2) var(--rl-space-1);
+}
+
+@media (forced-colors: active) {
+  .rl-collapsible__trigger:focus-visible { outline-color: Highlight; }
+}

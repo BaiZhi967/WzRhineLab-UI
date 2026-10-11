@@ -239,7 +239,7 @@ export function useRhineMessages(): RhineMessages {
   return React.useContext(RhineLocaleContext).messages;
 }
 
-/** Internal: messages, locale and a cached number formatter. */
+/** Messages, number locale and a cached formatter of the nearest provider (also used by @wzrhine/agent). */
 export function useRhineLocale(): RhineLocaleValue & { formatNumber: RhineNumberFormat } {
   const value = React.useContext(RhineLocaleContext);
   const formatNumber = React.useMemo(() => {

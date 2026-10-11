@@ -86,6 +86,10 @@ export { Skeleton } from './components/Skeleton.js';
 export type { SkeletonProps, SkeletonShape } from './components/Skeleton.js';
 export { Spinner } from './components/Spinner.js';
 export type { SpinnerProps, SpinnerSize } from './components/Spinner.js';
+export { Collapsible } from './components/Collapsible.js';
+export type { CollapsibleProps } from './components/Collapsible.js';
+// @m12-f1-exports (M12 group 1: Accordion, Slider, NumberField, ContextMenu)
+// @m12-f2-exports (M12 group 2: Combobox, CommandPalette, FileDropZone)
 export { DataTable } from './components/DataTable.js';
 export type {
   DataTableColumn,
@@ -105,8 +109,8 @@ export { RecordHeader } from './components/RecordHeader.js';
 export type { RecordHeaderProps, RecordStatus, RecordTrailItem } from './components/RecordHeader.js';
 export { RhineProvider, usePortalContainer } from './provider/RhineProvider.js';
 export type { RhineDensity, RhineMotionPreference, RhineProviderProps, RhineTheme } from './provider/RhineProvider.js';
-export { RhineMessagesProvider, enUS, useRhineMessages, zhCN } from './provider/messages.js';
-export type { RhineMessages, RhineMessagesOverrides, RhineMessagesProviderProps, RhineNumberFormat } from './provider/messages.js';
+export { RhineMessagesProvider, enUS, useRhineLocale, useRhineMessages, zhCN } from './provider/messages.js';
+export type { RhineLocaleValue, RhineMessages, RhineMessagesOverrides, RhineMessagesProviderProps, RhineNumberFormat } from './provider/messages.js';
 export { duration, ease, fadePresence, pressScale, transition } from './motion/presets.js';
 export { useRhineMotion } from './motion/useRhineMotion.js';
 export type { RhineMotion, RhineTransitionName } from './motion/useRhineMotion.js';
