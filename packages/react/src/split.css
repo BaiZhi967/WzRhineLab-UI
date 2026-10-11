@@ -1,0 +1,159 @@
+/*
+ * WzRhineLab UI · M12 gap components: SplitButton, ScrollArea.
+ * Imported by components.css; tokens only (package-boundary test).
+ */
+
+/* ---------- SplitButton ---------- */
+/* One frame, two real buttons: the inner corners are squared and the seam is a single rule. */
+.rl-split-button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: stretch;
+  min-width: 0;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.rl-split-button > .rl-split-button__main {
+  min-width: 0;
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.rl-split-button > .rl-split-button__toggle {
+  height: auto;
+  min-height: var(--rl-icon-button-size);
+  margin-inline-start: calc(var(--rl-border-width) * -1);
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+/* The focused half sits above its neighbour so its ring is never clipped by the seam. */
+.rl-split-button > :focus-visible {
+  position: relative;
+  z-index: 1;
+}
+
+.rl-split-button[data-variant='primary'] > .rl-split-button__toggle:not(:disabled) {
+  border-inline-start-color: color-mix(in srgb, var(--rl-fg-inverse) 35%, var(--rl-bg-inverse));
+}
+
+.rl-split-button[data-variant='accent'] > .rl-split-button__toggle {
+  --rl-icon-button-bg: var(--rl-accent);
+  --rl-icon-button-fg: var(--rl-fg-on-accent);
+  --rl-icon-button-border: var(--rl-accent);
+  --rl-icon-button-bg-hover: var(--rl-accent-hover);
+}
+
+.rl-split-button[data-variant='accent'] > .rl-split-button__toggle:not(:disabled) {
+  border-inline-start-color: color-mix(in srgb, var(--rl-fg-on-accent) 35%, var(--rl-accent));
+}
+
+.rl-split-button[data-variant='accent'] > .rl-split-button__toggle:not(:disabled):active {
+  background: var(--rl-accent-hover);
+}
+
+.rl-split-button[data-variant='ghost'] > .rl-split-button__toggle {
+  border-inline-start-color: var(--rl-border-default);
+}
+
+.rl-split-button > .rl-split-button__toggle[aria-disabled='true'] {
+  cursor: progress;
+}
+
+.rl-split-button__toggle[data-popup-open] .rl-icon-button__icon > svg {
+  rotate: 180deg;
+}
+
+.rl-split-button__toggle .rl-icon-button__icon > svg {
+  transition: rotate var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+/* ---------- ScrollArea ---------- */
+.rl-scroll-area {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  max-height: var(--rl-scroll-area-max-height, 100%);
+}
+
+.rl-scroll-area *,
+.rl-scroll-area *::before,
+.rl-scroll-area *::after {
+  box-sizing: border-box;
+}
+
+.rl-scroll-area > .rl-scroll-area__viewport {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  max-height: var(--rl-scroll-area-max-height, none);
+  overscroll-behavior: contain;
+  outline: none;
+}
+
+.rl-scroll-area > .rl-scroll-area__viewport:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: calc(var(--rl-focus-width) * -1);
+}
+
+.rl-scroll-area__scrollbar {
+  display: flex;
+  padding: var(--rl-border-width);
+  opacity: 0;
+  transition: opacity var(--rl-motion-fast) var(--rl-ease-out);
+  user-select: none;
+  touch-action: none;
+}
+
+.rl-scroll-area__scrollbar[data-orientation='vertical'] {
+  width: var(--rl-space-2);
+}
+
+.rl-scroll-area__scrollbar[data-orientation='horizontal'] {
+  height: var(--rl-space-2);
+}
+
+/* Visible while the pointer is over the area, while it scrolls, and while the viewport has focus. */
+.rl-scroll-area__scrollbar:is([data-hovering], [data-scrolling]),
+.rl-scroll-area:focus-within > .rl-scroll-area__scrollbar {
+  opacity: 1;
+}
+
+.rl-scroll-area__thumb {
+  flex: none;
+  border-radius: var(--rl-radius-round);
+  background: var(--rl-border-strong);
+  transition: background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-scroll-area__scrollbar[data-orientation='vertical'] > .rl-scroll-area__thumb {
+  width: 100%;
+}
+
+.rl-scroll-area__scrollbar[data-orientation='horizontal'] > .rl-scroll-area__thumb {
+  height: 100%;
+}
+
+@media (hover: hover) {
+  .rl-scroll-area__thumb:hover {
+    background: var(--rl-fg-muted);
+  }
+}
+
+.rl-scroll-area__thumb:active {
+  background: var(--rl-fg-primary);
+}
+
+/* ---------- Forced colours ---------- */
+@media (forced-colors: active) {
+  .rl-split-button > .rl-split-button__toggle:not(:disabled) { border-color: ButtonText; }
+  /* The overlay cannot be themed by the system: hide it and bring the native scrollbar back. */
+  .rl-scroll-area__scrollbar,
+  .rl-scroll-area__corner { display: none; }
+  .rl-scroll-area > .rl-scroll-area__viewport { scrollbar-width: thin; }
+  .rl-scroll-area > .rl-scroll-area__viewport:focus-visible { outline-color: Highlight; }
+}

@@ -1,0 +1,190 @@
+/* Agent console example: page layout only. Component styling comes from the packages; values are tokens. */
+body {
+  margin: 0;
+}
+
+.app-root {
+  min-height: 100vh;
+  background: var(--rl-bg-canvas);
+  color: var(--rl-fg-primary);
+}
+
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+.app__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--rl-space-4);
+  padding: var(--rl-space-4) var(--rl-space-6);
+  border-bottom: var(--rl-border-width) solid var(--rl-border-default);
+  background: var(--rl-bg-surface);
+}
+
+.app__heading {
+  display: grid;
+  gap: var(--rl-space-2);
+  min-width: 0;
+  max-width: 72ch;
+}
+
+.app__heading h1 {
+  margin: 0;
+  font: var(--rl-type-heading-1);
+}
+
+.app__intro,
+.app__hint {
+  margin: 0;
+  font: var(--rl-type-body-sm);
+  color: var(--rl-fg-muted);
+}
+
+.app__settings {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rl-space-4);
+}
+
+.app__main {
+  display: grid;
+  gap: var(--rl-space-8);
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: var(--rl-space-6);
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.app__section {
+  display: grid;
+  gap: var(--rl-space-3);
+  min-width: 0;
+}
+
+.app__section h2 {
+  margin: 0;
+  font: var(--rl-type-heading-2);
+}
+
+/* Console: the shell fills a fixed-height frame so its columns scroll on their own, like an app window. */
+.console {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+  gap: var(--rl-space-4);
+  align-items: stretch;
+  min-width: 0;
+}
+
+.console__frame {
+  height: min(48rem, 85vh);
+  min-height: 30rem;
+  min-width: 0;
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-md);
+  overflow: hidden;
+}
+
+.console__frame[data-size='small'] {
+  height: min(36rem, 80vh);
+}
+
+.console-log {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: var(--rl-space-2);
+  min-width: 0;
+  max-height: min(48rem, 85vh);
+  padding: var(--rl-space-3);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-md);
+  background: var(--rl-bg-surface);
+  box-sizing: border-box;
+}
+
+.console-log__title {
+  margin: 0;
+  font: var(--rl-type-heading-3);
+}
+
+.console-log__hint {
+  margin: 0;
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+}
+
+.console-log__scroll {
+  min-height: 8rem;
+  overflow: auto;
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-subtle);
+}
+
+.console-log__scroll:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.console-log__list {
+  display: grid;
+  gap: var(--rl-space-1);
+  margin: 0;
+  padding: var(--rl-space-2);
+  list-style: none;
+}
+
+.console-log__entry {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: var(--rl-space-2);
+  font: var(--rl-type-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.console-log__kind {
+  color: var(--rl-fg-muted);
+  text-transform: uppercase;
+}
+
+.console-log__entry[data-kind='duplicate'] .console-log__kind,
+.console-log__entry[data-kind='stale'] .console-log__kind,
+.console-log__entry[data-kind='gap'] .console-log__kind {
+  color: var(--rl-fg-primary);
+  font-weight: 600;
+}
+
+@media (max-width: 64rem) {
+  .console {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .console-log {
+    max-height: 22rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .app__bar,
+  .app__main {
+    padding: var(--rl-space-3);
+  }
+
+  .console__frame {
+    height: 40rem;
+    min-height: 0;
+  }
+
+  .console-log__entry {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}

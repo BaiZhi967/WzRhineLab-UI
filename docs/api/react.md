@@ -1,8 +1,43 @@
 # @wzrhine/react · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 227 个导出（62 components，13 functions & hooks，7 constants，24 interfaces，121 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.0.0，共 265 个导出（73 components，17 functions & hooks，7 constants，30 interfaces，138 types）。
 
 ## Components
+
+### `Accordion`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` | Composition form: `AccordionItem` elements. |
+| `defaultValue` | `string[]` |  |
+| `disabled` | `boolean` |  |
+| `headingLevel` | `AccordionHeadingLevel` | Heading element wrapping each trigger; pick the level that fits the page outline. |
+| `hiddenUntilFound` | `boolean` | Closed panels use `hidden="until-found"` so browser find-in-page can open them. |
+| `items` | `readonly AccordionItemData[]` | Convenience data form. Ignored when `children` is given. |
+| `keepMounted` | `boolean` | Keep closed panels in the DOM (hidden). |
+| `multiple` | `boolean` | Allow more than one item open at a time (default: opening one closes the others). |
+| `onValueChange` | `((value: string[]) => void)` |  |
+| `value` | `string[]` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `AccordionItem`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` |  |
+| `disabled` | `boolean` |  |
+| `headingLevel` | `AccordionHeadingLevel` | Overrides the parent Accordion's `headingLevel`. |
+| `meta` | `React.ReactNode` |  |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `title` * | `React.ReactNode` |  |
+| `value` * | `string` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
 ### `Alert`
 
@@ -166,6 +201,105 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `Collapsible`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `chevron` | `boolean` | Show the rotating chevron at the end of the trigger. |
+| `children` | `React.ReactNode` |  |
+| `defaultOpen` | `boolean` |  |
+| `disabled` | `boolean` |  |
+| `keepMounted` | `boolean` | Keep the panel in the DOM (hidden) while closed, e.g. to preserve scroll position inside it. |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `open` | `boolean` |  |
+| `panelClassName` | `string` | Class name for the panel element. |
+| `triggerProps` | `Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children" \| "type">` | Extra props for the trigger button (accessible name override, data attributes). |
+| `trigger` * | `React.ReactNode` | Content of the trigger button (label, status, meta). The chevron is added unless `chevron={false}`. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Combobox`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` |  |
+| `clearLabel` | `string` | Accessible name of the clear button (default from messages). |
+| `clearable` | `boolean` | Show the clear button while a value is selected (default `true`). |
+| `defaultInputValue` | `string` |  |
+| `defaultValue` | `string \| null` |  |
+| `description` | `React.ReactNode` |  |
+| `disabled` | `boolean` |  |
+| `emptyText` | `React.ReactNode` | Shown when nothing matches (default from messages). |
+| `error` | `React.ReactNode` | Error text; shown on native validity failure, or always together with `invalid`. |
+| `filter` | `ComboboxFilter \| null` | Matching logic. Default: locale-aware "contains" on `label`. `null` turns filtering off, for results that are already filtered on the server. |
+| `id` | `string` |  |
+| `inputValue` | `string` | Text in the input (controlled). Use with `onInputValueChange` for async search. |
+| `invalid` | `boolean` |  |
+| `items` * | `readonly ComboboxOption[]` |  |
+| `label` * | `React.ReactNode` | Visible label and accessible name of the input. |
+| `loadingText` | `React.ReactNode` | Status text while `loading` (default from messages). |
+| `loading` | `boolean` | Shows a status row with a spinner and marks the list busy. |
+| `name` | `string` | Form field name; the selected `value` is submitted. |
+| `onInputValueChange` | `((inputValue: string) => void)` |  |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `onValueChange` | `((value: string \| null) => void)` |  |
+| `openLabel` | `string` | Accessible name of the open-list button (default from messages). |
+| `open` | `boolean` |  |
+| `placeholder` | `string` |  |
+| `readOnly` | `boolean` |  |
+| `required` | `boolean` |  |
+| `size` | `InputSize` |  |
+| `style` | `React.CSSProperties` |  |
+| `value` | `string \| null` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `CommandPalette`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` |  |
+| `commands` * | `readonly CommandItem[]` |  |
+| `defaultOpen` | `boolean` |  |
+| `emptyText` | `React.ReactNode` |  |
+| `filter` | `CommandFilter \| null` | Custom match. Default: every whitespace-separated term appears in label, keywords, group or description. `null` turns local filtering off (results already filtered by the host / server). |
+| `hint` | `React.ReactNode` | Footer keyboard hint (default from messages); `null` hides it. |
+| `hotkey` | `string` | Global shortcut that toggles the palette, e.g. `mod+k` (`mod` = ⌘ on Apple platforms, Ctrl elsewhere). Combine with `ctrl`, `meta`, `alt`, `shift`. Ignored during IME composition. |
+| `loadingText` | `React.ReactNode` | Status text while `loading` (default from messages). |
+| `loading` | `boolean` | A search is in flight: shows the status row and marks the list busy. |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `onQueryChange` | `((query: string) => void)` | Every change of the search text (typing, clearing, reset on open). |
+| `onSelect` * | `(command: CommandItem) => boolean \| void` | Runs a command. Return `false` to keep the palette open. |
+| `open` | `boolean` |  |
+| `placeholder` | `string` |  |
+| `query` | `string` | Controlled search text. |
+| `title` | `string` | Accessible name of the dialog (visually hidden; default from messages). |
+| `trigger` | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>>` | Element that opens the palette (usually a Button). |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `ContextMenu`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` | Menu items (`MenuItem` and friends from Menu). |
+| `className` | `string` | Class name for the popup. |
+| `defaultOpen` | `boolean` |  |
+| `disabled` | `boolean` | Leave the browser's native context menu in place. |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `open` | `boolean` |  |
+| `trigger` * | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>>` | The area that opens the menu: one element (usually a row or card) that can hold focus. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `DataTable`
 
 *component*
@@ -320,6 +454,33 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `FileDropZone`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `accept` | `string` | Same syntax as the native attribute: `.png,.jpg`, `image/*`, `application/pdf`. |
+| `browseLabel` | `React.ReactNode` | Text of the browse button (default from messages). |
+| `children` | `React.ReactNode` | Custom prompt inside the drop area (replaces the default text, not the button). |
+| `className` | `string` |  |
+| `description` | `React.ReactNode` |  |
+| `disabled` | `boolean` |  |
+| `error` | `React.ReactNode` | Error text shown under the area while `invalid`. |
+| `formatSize` | `((bytes: number) => string)` | Formats `maxSize` for rejection messages (default: B / KB / MB in the provider locale). |
+| `id` | `string` |  |
+| `invalid` | `boolean` | Visual and semantic invalid state, e.g. a required attachment is missing. |
+| `label` * | `React.ReactNode` | Visible label above the drop area. |
+| `maxFiles` | `number` | Maximum number of files accepted from one pick or drop (default: 1 unless `multiple`). |
+| `maxSize` | `number` | Maximum size of one file, in bytes. |
+| `multiple` | `boolean` |  |
+| `name` | `string` | Form field name of the native input. The input is cleared after each pick, so submit files yourself. |
+| `onFiles` | `((files: File[]) => void)` | Accepted files of one pick or drop (not called when every file was rejected). |
+| `onReject` | `((rejections: FileRejection[]) => void)` | Rejected files of one pick or drop, with the first reason found (type, then size, then count). |
+| `style` | `React.CSSProperties` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `Form`
 
 *component* — `<form>` on Base UI Form. On submit it validates every Field / CheckboxGroup / RadioGroup inside, shows their errors, moves focus to the first invalid control and only then calls `onSubmit`. `errors` maps field `name`s to server-side messages after a failed submission. A plain `<form>` still works, but then errors only appear per field on change / blur.
@@ -458,7 +619,7 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `columns` | `1 \| 2 \| 3` | Number of item columns on wide containers; collapses to one on narrow ones. |
+| `columns` | `2 \| 3 \| 1` | Number of item columns on wide containers; collapses to one on narrow ones. |
 | `empty` | `MetadataEmpty` | How to treat items whose value is null / undefined / ''. `hide` (default) omits the row; `placeholder` keeps the row with a dash announced as「未记录」. |
 | `items` * | `readonly MetadataItem[]` |  |
 | `layout` | `MetadataListLayout` | `inline`: label column + value; `stacked`: label above value (narrow panels). |
@@ -512,6 +673,41 @@
 | --- | --- | --- |
 | `children` * | `React.ReactNode` |  |
 | `speed` * | `number` | 0.25 = four times slower. Values ≤ 0 are ignored. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `NumberField`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `defaultValue` | `number` |  |
+| `description` | `React.ReactNode` |  |
+| `disabled` | `boolean` |  |
+| `error` | `React.ReactNode` | Error text: shows on native validity failure, or always together with `invalid`. |
+| `format` | `Intl.NumberFormatOptions` | Intl options for display and parsing (e.g. `{ style: 'percent' }`); locale comes from RhineProvider. |
+| `hideLabel` | `boolean` |  |
+| `inputRef` | `React.Ref<HTMLInputElement>` | Ref to the visible text input. |
+| `invalid` | `boolean` |  |
+| `label` * | `React.ReactNode` |  |
+| `largeStep` | `number` |  |
+| `max` | `number` |  |
+| `min` | `number` |  |
+| `name` | `string` |  |
+| `onValueChange` | `((value: number \| null) => void)` |  |
+| `onValueCommitted` | `((value: number \| null) => void)` | Fires on blur after typing and on pointer release after stepping. |
+| `optional` | `boolean` |  |
+| `placeholder` | `string` |  |
+| `readOnly` | `boolean` |  |
+| `ref` | `React.Ref<HTMLDivElement>` |  |
+| `required` | `boolean` |  |
+| `size` | `InputSize` |  |
+| `smallStep` | `number` |  |
+| `snapOnStep` | `boolean` | Snap stepped values to multiples of `step`. |
+| `step` | `number` |  |
+| `unit` | `React.ReactNode` | Trailing unit text (e.g. "个"), read as part of the description. |
+| `value` | `number \| null` | `null` means empty. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -637,7 +833,7 @@
 | --- | --- | --- |
 | `actions` | `React.ReactNode` |  |
 | `classification` | `readonly React.ReactNode[]` | Classification terms, e.g. ["样本", "海洋来源"]. Joined with a hairline separator. |
-| `headingLevel` | `1 \| 2 \| 3` | Heading level of the title; keep the document outline correct. |
+| `headingLevel` | `2 \| 3 \| 1` | Heading level of the title; keep the document outline correct. |
 | `meta` | `readonly MetadataItem[]` | Key facts beside the title (created / updated / owner). Empty values are hidden. |
 | `recordId` | `string` | Record identifier, e.g. "ARC-1024". Rendered in mono above the title. |
 | `status` | `RecordStatus` |  |
@@ -706,6 +902,23 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `ScrollArea`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `label` * | `string` | Accessible name of the scrollable region, e.g. 「运行日志」. |
+| `maxHeight` | `string` | CSS length that caps the viewport height, e.g. `"20rem"`. Without it the area fills its parent. |
+| `onScrollIntentUp` | `(() => void)` | The user tried to scroll up (see component docs). |
+| `onScroll` | `React.UIEventHandler<HTMLDivElement>` | Native scroll events of the viewport. |
+| `orientation` | `ScrollAreaOrientation` | `vertical` (default) wraps content to the width; `both` also scrolls horizontally. |
+| `viewportClassName` | `string` | Class on the viewport, for padding or content layout. |
+| `viewportRef` | `React.Ref<HTMLDivElement>` | Ref to the native scroller (for `scrollTo`, measuring, observers). |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `Select`
 
 *component*
@@ -757,6 +970,40 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `Slider`
+
+*component*
+
+泛型组件：`Slider<V>`。
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `aria-label` | `undefined` | The name comes from `label` (use `thumbLabels` for range thumbs). |
+| `aria-labelledby` | `undefined` |  |
+| `defaultValue` | `V` |  |
+| `description` | `React.ReactNode` |  |
+| `disabled` | `boolean` |  |
+| `formatValue` | `((value: number) => string)` | Custom text for one value (display and default `aria-valuetext`). Wins over `format`. |
+| `format` | `Intl.NumberFormatOptions` | Intl options for the displayed and spoken value; locale comes from RhineProvider. |
+| `getAriaValueText` | `((formattedValue: string, value: number, index: number) => string)` | Spoken value per thumb; wins over mark labels and `formatValue`. |
+| `hideLabel` | `boolean` | Keep the label for assistive tech only. |
+| `label` * | `React.ReactNode` | Visible label; names every thumb (required, ADR-0001 naming rule). |
+| `largeStep` | `number` | Step for PageUp / PageDown and Shift + arrow (default 10). |
+| `marks` | `readonly SliderMark[]` |  |
+| `max` | `number` |  |
+| `minStepsBetweenValues` | `number` | Minimum distance, in steps, between range thumbs. |
+| `min` | `number` |  |
+| `name` | `string` |  |
+| `onValueChange` | `((value: SliderChangeValue<V>) => void)` |  |
+| `onValueCommitted` | `((value: SliderChangeValue<V>) => void)` | Fires once per interaction (pointer release, key press). |
+| `ref` | `React.Ref<HTMLDivElement>` |  |
+| `showValue` | `boolean` | Show the current value next to the label (`<output>`). |
+| `step` | `number` |  |
+| `thumbLabels` | `readonly string[]` | Distinct accessible names for range thumbs (e.g. ['下限', '上限']). |
+| `value` | `V` | Single number, or an array for a range slider (one thumb per entry). |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `Spinner`
 
 *component*
@@ -765,6 +1012,28 @@
 | --- | --- | --- |
 | `label` | `string` | Spoken status text, e.g. 「正在加载」. Omit for a decorative spinner. |
 | `size` | `SpinnerSize` | Maps to the icon-size tokens. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `SplitButton`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` | Menu content: MenuItem, MenuGroup, MenuSeparator… |
+| `disabled` | `boolean` |  |
+| `iconStart` | `React.ReactNode` | Decorative leading icon of the main action. |
+| `label` * | `string` | Text of the main action; also names the group. |
+| `loading` | `boolean` | Busy main action; the toggle stays focusable but will not open until it settles. |
+| `menuAlign` | `MenuAlign` |  |
+| `menuLabel` * | `string` | Accessible name of the menu toggle, e.g. 「更多导出方式」. |
+| `menuOpen` | `boolean` |  |
+| `menuSide` | `MenuSide` |  |
+| `onClick` | `((event: React.MouseEvent<HTMLButtonElement>) => void)` |  |
+| `onMenuOpenChange` | `((open: boolean) => void)` |  |
+| `size` | `ButtonSize` |  |
+| `variant` | `ButtonVariant` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -1000,6 +1269,22 @@ function getMeterState: (value: number, { min, max, low, high, optimum }: { min?
 function getPaginationItems: (page: number, pageCount: number, siblingCount?: number) => PaginationItem[]
 ```
 
+### `matchesAccept`
+
+*function* — Whether `file` matches a native-style `accept` list (extensions, exact MIME types, `type/*`).
+
+```ts
+function matchesAccept: (file: Pick<File, "name" | "type">, accept: string | undefined) => boolean
+```
+
+### `matchHotkey`
+
+*function* — Parses `mod+k` style hotkeys into a predicate over keyboard events.
+
+```ts
+function matchHotkey: (hotkey: string, event: KeyboardEvent, apple?: boolean) => boolean
+```
+
 ### `paginate`
 
 *function* — Rows of one page for client-side pagination. `page` starts at 1.
@@ -1064,6 +1349,14 @@ function usePageVisible: () => boolean
 function usePortalContainer: () => HTMLElement | null | undefined
 ```
 
+### `useRhineLocale`
+
+*function* — Messages, number locale and a cached formatter of the nearest provider (also used by
+
+```ts
+function useRhineLocale: () => RhineLocaleValue & { formatNumber: RhineNumberFormat; }
+```
+
 ### `useRhineMessages`
 
 *function* — The merged message table of the nearest provider (`zhCN` without one).
@@ -1086,6 +1379,14 @@ function useRhineMotion: () => RhineMotion
 
 ```ts
 function useToast: () => ToastApi
+```
+
+### `validateFiles`
+
+*function* — Splits files into accepted and rejected ones; first failing rule wins (type → size → count).
+
+```ts
+function validateFiles: (files: readonly File[], { accept, maxSize, maxFiles }: { accept?: string; maxSize?: number; maxFiles?: number; }) => { accepted: File[]; rejected: FileRejection[]; }
 ```
 
 ## Constants
@@ -1148,6 +1449,18 @@ const zhCN: RhineMessages
 
 ## Interfaces
 
+### `AccordionItemData`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `content` * | `React.ReactNode` |  |
+| `disabled` | `boolean` |  |
+| `meta` | `React.ReactNode` | Secondary text at the end of the trigger (count, status). Part of the button's name. |
+| `title` * | `React.ReactNode` |  |
+| `value` * | `string` | Stable identifier used by `value` / `defaultValue`. |
+
 ### `ArchiveCardStatus`
 
 *interface* — Compact archive record for lists and grids (COMPONENTS.md "标准档案卡"). Only `id` and `title` are required; every other field is hidden when missing, so the card never shows invented times, readings or permissions. When `href` or `onOpen` is set the whole card is one link/button whose name is the title; secondary metadata is attached as its description.
@@ -1177,6 +1490,35 @@ const zhCN: RhineMessages
 | `href` * | `string` |  |
 | `title` | `string` |  |
 
+### `ComboboxOption`
+
+*interface* — Searchable single-value select on Base UI Combobox (ADR-0001, ADR-0010 §2): a text input that filters a listbox. Base UI provides the combobox / listbox semantics, `aria-activedescendant` navigation (↓ opens, ↑ / ↓ move, Enter selects, Esc closes, then clears), Home / End in the input, and IME handling (filtering waits for `compositionend`; Enter during composition does not select). The label, description and error come from the built-in Field.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `description` | `React.ReactNode` | Secondary line under the label. |
+| `disabled` | `boolean` |  |
+| `group` | `string` | Group heading; options sharing it are listed together in first-seen order. |
+| `label` * | `string` | Visible text; also what the input shows once selected and what the default filter matches. |
+| `value` * | `string` | Submitted value and the key of the option. |
+
+### `CommandItem`
+
+*interface* — Modal command search (ADR-0010 §2): Base UI Dialog (focus trap, Escape, scroll lock, focus return to whatever was focused before opening) around an inline, always-open Base UI Autocomplete list. Focus stays in the input; ↑ / ↓ move the active option through `aria-activedescendant`, Enter runs it, Esc closes the dialog. The first match is always highlighted. Disabled commands stay visible with their reason and cannot run. Enter/exit motion follows Dialog (motion/react: backdrop fast, panel 280ms + 8px rise; opacity only under reduced motion).
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `description` | `string` |  |
+| `disabledReason` | `string` | Shown under a disabled command, e.g. 「需要编辑权限」. |
+| `disabled` | `boolean` |  |
+| `group` | `string` | Group heading; commands sharing it are listed together in first-seen order. |
+| `icon` | `React.ReactNode` | Decorative leading icon (hidden from assistive tech). |
+| `id` * | `string` |  |
+| `keywords` | `readonly string[]` | Extra search terms (synonyms, English names). |
+| `label` * | `string` |  |
+| `meta` | `React.ReactNode` | Secondary trailing text such as a path or 「3 分钟前」; part of the option's name. |
+| `shortcut` | `string` | Visual shortcut hint such as "Ctrl E" (hidden from assistive tech, like MenuItem). Wire it yourself. |
+
 ### `DataTableColumn`
 
 *interface*
@@ -1205,6 +1547,15 @@ const zhCN: RhineMessages
 | `page` * | `number` |  |
 | `siblingCount` | `number` |  |
 | `totalItems` * | `number` | Total rows across all pages; drives the page count and the range summary. |
+
+### `FileRejection`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `file` * | `File` |  |
+| `reason` * | `FileRejectionReason` |  |
 
 ### `LatestGuard`
 
@@ -1285,6 +1636,15 @@ const zhCN: RhineMessages
 | `label` * | `React.ReactNode` | Visible text; colour never carries the status alone. |
 | `tone` * | `StatusKind` |  |
 
+### `RhineLocaleValue`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `locale` * | `string` |  |
+| `messages` * | `RhineMessages` |  |
+
 ### `RhineMessages`
 
 *interface* — Parameterised entries are functions. Functions with numeric arguments receive the provider's number formatter as their last argument; using it is up to the table (`zhCN` keeps the pre-M9.5 output, which prints raw digits).
@@ -1294,10 +1654,14 @@ const zhCN: RhineMessages
 | `alertDialog` * | `{ cancel: string; error: string; }` |  |
 | `alert` * | `{ dismiss: string; }` |  |
 | `breadcrumb` * | `{ nav: string; expand: (count: number, format: RhineNumberFormat) => string; }` |  |
+| `combobox` * | `{ empty: string; loading: string; clear: string; openList: string; }` |  |
+| `commandPalette` * | `{ title: string; inputLabel: string; placeholder: string; empty: string; hint: string; close: string; loading: string; }` |  |
 | `dataTable` * | `{ empty: string; loading: string; error: string; retry: string; selectAll: string; deselectAll: string; selectRow: (label: string) => string; selection: (count: number, offPage: number, format: RhineNumberFormat) => string; }` |  |
 | `drawer` * | `{ close: string; }` |  |
 | `field` * | `{ optional: string; }` |  |
+| `fileDropZone` * | `{ prompt: string; browse: string; rejectedType: (fileName: string) => string; rejectedSize: (fileName: string, limit: string) => string; rejectedCount: (fileName: string, max: number, format: RhineNumberFormat) => string; accepted: (count: number, format: RhineNumberFormat) => string; }` |  |
 | `metadataList` * | `{ missing: string; }` |  |
+| `numberField` * | `{ decrement: string; increment: string; roleDescription: string; }` |  |
 | `pagination` * | `{ nav: string; previous: string; next: string; page: (page: number, format: RhineNumberFormat) => string; compact: (page: number, pageCount: number, format: RhineNumberFormat) => string; status: (from: number, to: number, total: number, format: RhineNumberFormat) => string; }` |  |
 | `progress` * | `{ indeterminate: string; meterValue: (value: string, state: string) => string; }` |  |
 | `recordHeader` * | `{ trail: string; }` |  |
@@ -1346,6 +1710,16 @@ const zhCN: RhineMessages
 | `disabled` | `boolean` |  |
 | `label` * | `React.ReactNode` |  |
 | `value` * | `string` |  |
+
+### `SliderMark`
+
+*interface* — Value on a continuous or stepped scale, on Base UI Slider (ADR-0010 §2). Each thumb is a native `<input type="range">` (visually hidden inside the thumb), named by the visible `label` through `aria-labelledby`, so the value submits with the form under `name`.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `label` | `React.ReactNode` | Visible tick label; also the spoken value when the thumb is on this mark. |
+| `valueText` | `string` | Spoken text when `label` is not a string. |
+| `value` * | `number` |  |
 
 ### `SortState`
 
@@ -1428,6 +1802,22 @@ const zhCN: RhineMessages
 | `success` * | `ToastPromiseStage<Value>` | Status defaults to `success`. |
 
 ## Types
+
+### `AccordionHeadingLevel`
+
+*type* — Stacked disclosure sections on Base UI Accordion (ADR-0010 §2). Each header is a real heading (`headingLevel`, default 3) wrapping a `<button>` with `aria-expanded` / `aria-controls`; the panel is a labelled region. Height animates through Base UI's `--accordion-panel-height` (CSS transition, interruptible); reduced motion zeroes the duration token, so it snaps.
+
+```ts
+type AccordionHeadingLevel = 2 | 3 | 4 | 5 | 6
+```
+
+### `AccordionItemProps`
+
+*type*
+
+### `AccordionProps`
+
+*type*
 
 ### `AlertDialogProps`
 
@@ -1520,6 +1910,38 @@ type CalloutProps = BaseProps
 ```ts
 type ChoiceOrientation = 'vertical' | 'horizontal'
 ```
+
+### `CollapsibleProps`
+
+*type* — Show / hide one region on Base UI Collapsible (ADR-0010 §2). The trigger is a real `<button>` with `aria-expanded` / `aria-controls`; the panel animates its height through Base UI's `--collapsible-panel-height` variable (CSS transition, interruptible: toggling mid-flight reverses from the current height). Reduced motion zeroes the duration token, so it snaps.
+
+### `ComboboxFilter`
+
+*type* — Return `true` when `option` matches the typed `query` (already trimmed).
+
+```ts
+type ComboboxFilter = (option: ComboboxOption, query: string) => boolean
+```
+
+### `ComboboxProps`
+
+*type*
+
+### `CommandFilter`
+
+*type* — Local match predicate of CommandPalette.
+
+```ts
+type CommandFilter = (command: CommandItem, query: string) => boolean
+```
+
+### `CommandPaletteProps`
+
+*type*
+
+### `ContextMenuProps`
+
+*type* — Context menu on Base UI ContextMenu (ADR-0010 §2). Opens at the pointer on right click, on long press (touch, 500 ms) and, from the keyboard, on Shift+F10 / the ContextMenu key while the target has focus (the browser fires `contextmenu` on the focused element). It reuses the Menu parts and styling: put `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuGroup` and `MenuSeparator` inside. Escape and outside click close it; focus returns to the target.
 
 ### `DataTableProps`
 
@@ -1639,6 +2061,18 @@ type EmptyStateSize = 'sm' | 'md'
 
 ```ts
 type FieldValidationMode = 'onSubmit' | 'onBlur' | 'onChange'
+```
+
+### `FileDropZoneProps`
+
+*type*
+
+### `FileRejectionReason`
+
+*type* — File picker and drop target (ADR-0010 §2). The control is a real `<input type="file">`: it is visually hidden but stays focusable, and its visible `<label>` looks like a button, so Tab, Enter / Space and screen readers use the native picker. Dropping files on the area runs the same validation (`accept` like the native attribute, `maxSize`, `maxFiles`). Rejections are announced in a polite live region. No upload logic: `onFiles` receives the accepted files.
+
+```ts
+type FileRejectionReason = 'type' | 'size' | 'count'
 ```
 
 ### `FormProps`
@@ -1805,6 +2239,10 @@ type MotionPresencePreset = 'fade' | 'panel' | 'rise'
 type MotionPropertyKind = 'color' | 'opacity' | 'transform' | 'layout' | 'loop'
 ```
 
+### `NumberFieldProps`
+
+*type* — Numeric input with stepper buttons on Base UI NumberField + Field (ADR-0010 §2). Label, description and error are wired like `Field` (aria-labelledby / aria-describedby / aria-invalid). The visible text input parses and formats with the provider locale; a hidden native input carries the raw number for form submission under `name`.
+
 ### `PaginationItem`
 
 *type* — One slot in the page list: a page number or an ellipsis before / after the current window.
@@ -1957,6 +2395,18 @@ type RhineTheme = 'light' | 'dark' | 'system'
 type RhineTransitionName = keyof typeof transition
 ```
 
+### `ScrollAreaOrientation`
+
+*type* — Scroll container with an overlay scrollbar (Base UI scroll-area, ADR-0001). The viewport is the native scroller, so wheel, touch, trackpad, keyboard (↑ ↓ PageUp PageDown Home End Space once focused), find-in-page and `scrollTo` all keep working; the custom thumb only mirrors it and can be dragged. The viewport is a named `role="region"`; Base UI puts it in the tab order only while it actually overflows (axe `scrollable-region-focusable`), so a short list adds no tab stop. Under `forced-colors: active` the overlay is hidden and the native scrollbar comes back. Motion: the overlay fades in on hover / scroll / focus (CSS opacity, --rl-motion-fast; tokens are 0 under reduced motion).
+
+```ts
+type ScrollAreaOrientation = 'vertical' | 'both'
+```
+
+### `ScrollAreaProps`
+
+*type*
+
 ### `SelectProps`
 
 *type*
@@ -1993,6 +2443,18 @@ type SeparatorTone = 'subtle' | 'default' | 'strong'
 type SkeletonShape = 'text' | 'block' | 'circle'
 ```
 
+### `SliderChangeValue`
+
+*type* — The value shape `onValueChange` reports: a number for single sliders, an array for ranges.
+
+```ts
+type SliderChangeValue = V extends number ? number : number[]
+```
+
+### `SliderProps`
+
+*type*
+
 ### `SortDirection`
 
 *type*
@@ -2016,6 +2478,10 @@ type SpinnerProps = Omit<React.HTMLAttributes<HTMLSpanElement>, 'children' | 'ro
 ```ts
 type SpinnerSize = 'sm' | 'md' | 'lg'
 ```
+
+### `SplitButtonProps`
+
+*type* — A primary action with an attached menu of related actions ("导出 CSV ▾ → 导出 JSON / 导出 PDF"). Both halves are real `<button>`s inside a `role="group"` named by `label`, drawn in one frame. The main part is the public Button (loading keeps focus and announces busy); the toggle is an IconButton (name from `menuLabel`) that opens the public Menu (Base UI: menu / menuitem semantics, arrow keys, typeahead, Escape returns focus to the toggle). Enter / Space / ↓ on the toggle open the menu. While `loading` the toggle is `aria-disabled` and refuses to open (it keeps focus, so choosing a menu item that starts the busy state never drops focus to the page), and an open menu closes. `disabled` disables both halves natively. Motion: Button press + Menu CSS transition only.
 
 ### `StatProps`
 

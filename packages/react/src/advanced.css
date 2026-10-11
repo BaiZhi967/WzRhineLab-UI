@@ -1,0 +1,398 @@
+/*
+ * WzRhineLab UI · advanced interaction (ADR-0010 §2): Accordion, Slider, NumberField, ContextMenu.
+ * Imported by components.css; tokens only. Accordion height follows the Collapsible recipe:
+ * Base UI writes `--accordion-panel-height`, a CSS transition reads it, so a toggle mid-flight
+ * reverses from the current height. Reduced motion zeroes the duration tokens (instant).
+ * The slider has no position transition: Base UI writes thumb / indicator positions while dragging.
+ * ContextMenu reuses the Menu classes (feedback.css) for identical styling.
+ */
+
+:is(.rl-accordion, .rl-slider, .rl-number-field) {
+  box-sizing: border-box;
+}
+
+:where(.rl-accordion, .rl-slider, .rl-number-field) *,
+:where(.rl-accordion, .rl-slider, .rl-number-field) *::before,
+:where(.rl-accordion, .rl-slider, .rl-number-field) *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- Accordion ---------- */
+.rl-accordion {
+  display: grid;
+  min-width: 0;
+  border-top: var(--rl-border-width) solid var(--rl-border-default);
+}
+
+.rl-accordion__item {
+  min-width: 0;
+  border-bottom: var(--rl-border-width) solid var(--rl-border-default);
+}
+
+.rl-accordion__header {
+  margin: 0;
+  font: inherit;
+}
+
+.rl-accordion__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--rl-space-3);
+  width: 100%;
+  min-height: var(--rl-control-height-md);
+  margin: 0;
+  padding: var(--rl-space-2) var(--rl-space-2);
+  border: 0;
+  border-radius: var(--rl-radius-xs);
+  background: transparent;
+  color: var(--rl-fg-primary);
+  font: var(--rl-type-label);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+@media (hover: hover) {
+  .rl-accordion__trigger:not([data-disabled]):hover {
+    background: var(--rl-bg-hover);
+  }
+}
+
+.rl-accordion__trigger:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: calc(var(--rl-focus-width) * -1);
+}
+
+.rl-accordion__trigger[data-disabled] {
+  color: var(--rl-fg-disabled);
+  cursor: not-allowed;
+}
+
+.rl-accordion__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.rl-accordion__meta {
+  flex: none;
+  max-width: 40%;
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-mono);
+  color: var(--rl-fg-muted);
+  overflow-wrap: anywhere;
+}
+
+.rl-accordion__trigger[data-disabled] .rl-accordion__meta {
+  color: var(--rl-fg-disabled);
+}
+
+.rl-accordion__chevron {
+  flex: none;
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--rl-fg-muted);
+  transition: rotate var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-accordion__trigger[data-panel-open] .rl-accordion__chevron {
+  rotate: 180deg;
+}
+
+.rl-accordion__panel {
+  height: var(--accordion-panel-height);
+  overflow: hidden;
+  transition:
+    height var(--rl-motion-base) var(--rl-ease-out),
+    opacity var(--rl-motion-base) var(--rl-ease-out);
+}
+
+.rl-accordion__panel[data-starting-style],
+.rl-accordion__panel[data-ending-style] {
+  height: 0;
+  opacity: 0;
+}
+
+.rl-accordion__content {
+  min-width: 0;
+  padding: 0 var(--rl-space-2) var(--rl-space-4);
+  font: var(--rl-type-body-sm);
+  color: var(--rl-fg-primary);
+  overflow-wrap: break-word;
+}
+
+/* ---------- Slider ---------- */
+.rl-slider {
+  --rl-slider-track-height: var(--rl-space-1);
+  --rl-slider-thumb-size: var(--rl-icon-size-lg);
+
+  display: grid;
+  gap: var(--rl-space-2);
+  width: 100%;
+  min-width: 0;
+}
+
+.rl-slider__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--rl-space-1) var(--rl-space-3);
+  min-width: 0;
+}
+
+.rl-slider__label {
+  min-width: 0;
+  font: var(--rl-type-label);
+  color: var(--rl-fg-primary);
+  overflow-wrap: anywhere;
+  cursor: default;
+}
+
+.rl-slider__value {
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-mono);
+  color: var(--rl-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rl-slider__control {
+  position: relative;
+  display: grid;
+  /* Row 1: a control-height hit area around the thin track; row 2 (implicit): marks. */
+  grid-template-rows: var(--rl-control-height-sm);
+  align-items: center;
+  /* Half a thumb of inset keeps thumbs at min / max inside the component box. */
+  margin: 0 calc(var(--rl-slider-thumb-size) / 2);
+  touch-action: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+.rl-slider__track {
+  position: relative;
+  height: var(--rl-slider-track-height);
+  border-radius: var(--rl-radius-round);
+  background: var(--rl-bg-subtle);
+  box-shadow: inset 0 0 0 var(--rl-border-width) var(--rl-border-strong);
+}
+
+.rl-slider__indicator {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--rl-bg-inverse);
+}
+
+.rl-slider__thumb {
+  width: var(--rl-slider-thumb-size);
+  height: var(--rl-slider-thumb-size);
+  border: var(--rl-border-width-strong) solid var(--rl-bg-inverse);
+  border-radius: var(--rl-radius-round);
+  background: var(--rl-bg-surface);
+  box-shadow: var(--rl-shadow-raised);
+  transition:
+    border-color var(--rl-motion-fast) var(--rl-ease-out),
+    background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-slider__thumb:has(:focus-visible) {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.rl-slider__thumb[data-dragging] {
+  background: var(--rl-bg-pressed);
+}
+
+.rl-slider__marks {
+  position: relative;
+  height: var(--rl-space-2);
+  pointer-events: none;
+}
+
+.rl-slider[data-has-marks] .rl-slider__marks {
+  /* Room for one line of tick labels below the ticks. */
+  height: calc(var(--rl-space-2) + var(--rl-space-6));
+}
+
+.rl-slider__mark {
+  position: absolute;
+  top: 0;
+  inset-inline-start: var(--rl-slider-mark-position);
+  display: grid;
+  justify-items: center;
+  gap: var(--rl-space-1);
+  translate: -50% 0;
+}
+
+.rl-slider__tick {
+  width: var(--rl-border-width);
+  height: var(--rl-space-2);
+  background: var(--rl-border-strong);
+}
+
+.rl-slider__mark-label {
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+  white-space: nowrap;
+}
+
+/* Edge labels align inward so they never overflow a narrow container. */
+.rl-slider__mark[data-edge='start'] .rl-slider__mark-label {
+  translate: calc(50% - var(--rl-slider-thumb-size) / 2) 0;
+}
+
+.rl-slider__mark[data-edge='end'] .rl-slider__mark-label {
+  translate: calc(-50% + var(--rl-slider-thumb-size) / 2) 0;
+}
+
+.rl-slider__description {
+  margin: 0;
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+}
+
+.rl-slider[data-disabled] .rl-slider__control {
+  cursor: not-allowed;
+}
+
+.rl-slider[data-disabled] .rl-slider__label,
+.rl-slider[data-disabled] .rl-slider__mark-label {
+  color: var(--rl-fg-muted);
+}
+
+.rl-slider[data-disabled] .rl-slider__track {
+  background: var(--rl-bg-disabled);
+  box-shadow: inset 0 0 0 var(--rl-border-width) var(--rl-border-default);
+}
+
+.rl-slider[data-disabled] .rl-slider__indicator {
+  background: var(--rl-fg-disabled);
+}
+
+.rl-slider[data-disabled] .rl-slider__thumb {
+  border-color: var(--rl-fg-disabled);
+  background: var(--rl-bg-disabled);
+  box-shadow: none;
+}
+
+/* ---------- NumberField ---------- */
+.rl-number-field__root {
+  min-width: 0;
+}
+
+.rl-number-field__group {
+  /* Steppers sit flush inside the input frame. */
+  gap: 0;
+  padding: 0;
+}
+
+.rl-number-field__input {
+  padding: 0 var(--rl-input-padding-x);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.rl-number-field__unit {
+  padding-inline-end: var(--rl-input-padding-x);
+}
+
+.rl-number-field__stepper {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: calc(var(--rl-input-height) - var(--rl-border-width) * 2);
+  height: calc(var(--rl-input-height) - var(--rl-border-width) * 2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--rl-fg-primary);
+  cursor: pointer;
+  transition: background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-number-field__stepper[data-position='start'] {
+  border-inline-end: var(--rl-border-width) solid var(--rl-border-default);
+  border-start-start-radius: calc(var(--rl-radius-md) - var(--rl-border-width));
+  border-end-start-radius: calc(var(--rl-radius-md) - var(--rl-border-width));
+}
+
+.rl-number-field__stepper[data-position='end'] {
+  border-inline-start: var(--rl-border-width) solid var(--rl-border-default);
+  border-start-end-radius: calc(var(--rl-radius-md) - var(--rl-border-width));
+  border-end-end-radius: calc(var(--rl-radius-md) - var(--rl-border-width));
+}
+
+.rl-number-field__stepper > svg {
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+}
+
+@media (hover: hover) {
+  .rl-number-field__stepper:not(:disabled, [aria-disabled='true']):hover {
+    background: var(--rl-bg-hover);
+  }
+}
+
+.rl-number-field__stepper:not(:disabled, [aria-disabled='true']):active {
+  background: var(--rl-bg-pressed);
+}
+
+.rl-number-field__stepper:is(:disabled, [aria-disabled='true']) {
+  color: var(--rl-fg-disabled);
+  cursor: not-allowed;
+}
+
+/* ---------- ContextMenu ---------- */
+.rl-context-menu__trigger {
+  -webkit-touch-callout: none;
+}
+
+.rl-context-menu__trigger:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.rl-context-menu__trigger[data-popup-open] {
+  background-color: var(--rl-bg-hover);
+}
+
+/* ---------- Reduced motion ---------- */
+.rl-theme[data-rl-motion='reduce'] :is(.rl-accordion__panel, .rl-accordion__chevron) {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.rl-accordion__panel, .rl-accordion__chevron) {
+    transition: none;
+  }
+}
+
+/* ---------- Forced colours (Windows High Contrast) ---------- */
+@media (forced-colors: active) {
+  .rl-accordion,
+  .rl-accordion__item { border-color: CanvasText; }
+  .rl-accordion__trigger:focus-visible,
+  .rl-slider__thumb:has(:focus-visible),
+  .rl-context-menu__trigger:focus-visible { outline-color: Highlight; }
+  .rl-accordion__trigger[data-disabled] { color: GrayText; }
+  .rl-slider__track { background: Canvas; box-shadow: inset 0 0 0 var(--rl-border-width) CanvasText; }
+  .rl-slider__indicator { background: Highlight; }
+  .rl-slider__thumb { border-color: ButtonText; background: ButtonFace; }
+  .rl-slider__tick { background: CanvasText; }
+  .rl-slider[data-disabled] .rl-slider__indicator { background: GrayText; }
+  .rl-slider[data-disabled] .rl-slider__thumb { border-color: GrayText; }
+  .rl-number-field__stepper { color: ButtonText; }
+  .rl-number-field__stepper:is(:disabled, [aria-disabled='true']) { color: GrayText; }
+  .rl-number-field__stepper[data-position] { border-color: FieldText; }
+}

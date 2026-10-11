@@ -32,12 +32,18 @@ import { FeedbackPage } from './pages/FeedbackPage';
 import { LocalePage } from './pages/LocalePage';
 import { DocSearch } from './ui/DocSearch';
 
+import { AdvancedPage } from './pages/AdvancedPage';
+import { CommandPage } from './pages/CommandPage';
+
+// Agent UI pages are code-split: the base showcase chunk never includes @wzrhine/agent.
+const AgentPages = React.lazy(() => import('./agent/AgentPages').then((m) => ({ default: m.AgentPages })));
+
 // Optional effects package is code-split so the main Showcase chunk never includes it.
 const ShowcaseEffectsPage = React.lazy(() =>
   import('./pages/ShowcaseEffectsPage').then((m) => ({ default: m.ShowcaseEffectsPage })),
 );
 
-const groups: RouteGroup[] = ['start', 'foundations', 'components', 'navigation', 'archive', 'motion'];
+const groups: RouteGroup[] = ['start', 'foundations', 'components', 'navigation', 'advanced', 'agent', 'archive', 'motion'];
 
 function Navigation({ current, onNavigate }: { current: RouteId; onNavigate?: () => void }) {
   return (
@@ -195,6 +201,23 @@ export default function App() {
         return <DataNavPage />;
       case 'scenarios':
         return <ScenariosPage />;
+      case 'advanced':
+        return <AdvancedPage />;
+      case 'command':
+        return <CommandPage />;
+      case 'agent-overview':
+      case 'agent-shell':
+      case 'agent-message':
+      case 'agent-tools':
+      case 'agent-composer':
+      case 'agent-intervention':
+      case 'agent-workspace':
+      case 'agent-motion':
+        return (
+          <React.Suspense fallback={<p className="sc-small" role="status">正在加载 Agent 组件…</p>}>
+            <AgentPages id={route.id} />
+          </React.Suspense>
+        );
       case 'effects':
         return (
           <React.Suspense fallback={<p className="sc-small" role="status">正在加载展示效果…</p>}>

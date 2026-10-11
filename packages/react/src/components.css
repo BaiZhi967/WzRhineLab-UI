@@ -13,6 +13,10 @@
 @import './data.css';
 @import './drawer.css';
 @import './status.css';
+@import './disclosure.css';
+@import './advanced.css';
+@import './command.css';
+@import './split.css';
 
 /* Component roots use class specificity so a host `* { box-sizing }` loaded later cannot win. */
 :is(.rl-button, .rl-icon-button, .rl-surface, .rl-badge, .rl-text, .rl-field, .rl-input, .rl-tabs, .rl-tooltip, .rl-dialog, .rl-select, .rl-select__popup, .rl-popover, .rl-menu, .rl-toast, .rl-record, .rl-meta, .rl-status, .rl-archive-card, .rl-timeline, .rl-table-scroll, .rl-table) {

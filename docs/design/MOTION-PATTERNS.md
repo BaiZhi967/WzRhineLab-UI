@@ -20,6 +20,10 @@
 | [scan](#scan) | 已实现 | CSS `@keyframes` | ScanSurface |
 | [orbit](#orbit) | 已实现 | motion/react motion value（SVG） | OrbitalDiagram |
 | [status-pulse / progress-flow / skeleton / spinner](#status-pulse--progress-flow--skeleton--spinner) | 已实现 | CSS `@keyframes`；Spinner 为 motion/react | StatusIndicator、Progress、Skeleton（DataTable / Stat 骨架）、Spinner（Button、Toast promise） |
+| [disclosure-height](#disclosure-height) | 已实现（M12） | CSS `height`（Base UI `--collapsible-panel-height` / `--accordion-panel-height`） | Collapsible、Accordion；Agent 工具详情、思考块、审批详情 |
+| [agent-entrance](#agent-entrance) | 已实现（M12） | motion/react `opacity` / `y` / `scale` | AgentEntrance（消息、工具行、干预卡） |
+| [agent-spark / agent-breathe](#agent-spark--agent-breathe) | 已实现（M12） | CSS `@keyframes`（`[data-loop='running']`） | AgentSpark、运行中状态字形 |
+| [icon-swap](#icon-swap) | 已实现（M12） | motion/react `opacity` | SendStopButton |
 | beam | **未实现（M11）** | — | — |
 | particle-field | **未实现（M11）** | Canvas 2D | — |
 | shader-surface | **未实现（M11）** | WebGL | — |
@@ -160,3 +164,34 @@
 
 ## shader-surface
 未实现（M11）。WebGL，同上；不进入 `@wzrhine/react`。
+
+
+---
+
+## disclosure-height
+- 语义：空间关系。告诉用户内容从哪里展开、收回到哪里。
+- 触发：用户点击 / 键盘切换 Collapsible、Accordion 的触发按钮。
+- 时长：`base`（高度 + 不透明度），chevron 旋转 `fast`。
+- 所有者：CSS transition，读 Base UI 测得的面板高度变量；稳定后回到 `auto`，流式内容可继续增长。
+- 中断：过渡中再次切换，从当前高度反向。
+- 减动：时长 token 归零，即时展开 / 收起；内容不丢失。
+- 隐藏页：无循环，无需处理。
+
+## agent-entrance
+- 语义：新内容来自哪里。只在**首次挂载**时播放（ADR-0012 §2）：流式更新、状态变化、历史与恢复的快照都不重放。
+- 预设：`message`（6px + `base`）、`row`（4px + `fast`，同批错峰 24ms、封顶 120ms）、`card`（8px + scale .985 + `panel`）。
+- 所有者：motion/react；元素的 `opacity` / `transform` 不再被其他动画占用。
+- 中断：卸载即取消；不留残影。
+- 减动：无位移与缩放，保留 ≤`fast` 的淡入（`resolve('opacity', …)`）。
+
+## agent-spark / agent-breathe
+- 语义：任务过程（Agent 正在思考 / 回答 / 执行 / 等待）。永远是文字状态的**辅助**，`aria-hidden`。
+- 节奏：周期为 `--rl-motion-loop` 的 1–2 倍，按阶段区分（思考自中心扩散、回答逐行、执行逐列、等待整体呼吸）；呼吸点 `loop × 2`。
+- 生命周期：`useAgentLoop` → `useMotionLifecycle`，只有「被请求 + 页面可见 + 在视口内 + 非减动」时 `data-loop="running"`，CSS 只在该属性上挂 animation。
+- 减动 / 暂停：静态帧，每个阶段的静态图形不同，仍可区分。
+- 预算：同屏 12 个也只有可见的在动；不使用 JS 帧循环。
+
+## icon-swap
+- 语义：反馈（同一按钮从「发送」变为「停止生成」）。
+- 时长：进入 `base`，退出 `fast`，两枚图标叠放交叉淡入；按钮元素不变，焦点不丢失。
+- 减动：直接替换图标。

@@ -1,6 +1,6 @@
 # Agent UI 公共契约
 
-> 状态：Proposed。以下类型和名称是 @wzrhine/agent 的设计草案，尚未成为稳定导出。
+> 状态：**Superseded by [ADR-0011](../development/adr/0011-agent-contracts.md)**（M12）。实际类型在 `packages/agent-core/src/contracts/`；与本草案的主要差异：状态名统一为 kebab-case，`RunStatus` 拆为生命周期 `RunStatus` + 描述性 `RunPhase`，MessagePart 增加 code / image / thinking / reference / error，工具 detail 改为 11 种判别联合。本文保留为背景。
 
 ## 1. 契约原则
 

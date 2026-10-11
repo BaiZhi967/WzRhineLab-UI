@@ -4,7 +4,7 @@
 
 ## [Unreleased]
 
-尚未发布到 npm。以下内容为截至 M9.5 的全部变更，首次发布时会归入 `0.1.0`。
+尚未发布到 npm。以下内容为截至 M12 的全部变更，首次发布时会归入 `0.1.0`。
 
 ### Added
 - **M1-A**：`Button`（primary / accent / secondary / ghost，sm / md / lg，loading 保持焦点并阻止重复提交）、`Surface`、`StatusBadge`；`motion/presets` 与 `useRhineMotion()`。
@@ -19,6 +19,14 @@
 - **M10（ADR-0007）**：Motion Core。`MotionPresence`（`fade` / `panel` / `rise` 预设，中途反向、隐藏后卸载）、`RhineMotionGroup` / `RhineMotionItem`（每项 24ms 错峰，总延迟上限 120ms，减动时无错峰无位移）；`resolveMotion` 与 `useRhineMotion().resolve(kind, name)`：按属性类型减动（颜色 / 透明度保留不超过 120ms 的淡入，位移 / 布局直接到位，循环停止）；`MotionSpeed` / `useMotionSpeed`（仅用于审查慢放）；`useMotionLifecycle`（start / pause / resume / stop，页面隐藏、离开视口、减动时暂停并给出原因）；`usePageVisible` / `useInViewport`（全库唯一的可见性来源）；`useLatestGuard`（过期异步结果守卫）；`transition.showcase` 预设（700ms，每个时长 token 现在都有同名预设）。`ArchiveCard` 新增可选 `motion="identity"` 与 `ArchiveIdentity`：记录编号从卡片连续移动到详情（`scene`，减动时直接切换），默认关闭。
 
 - **M9.5（ADR-0008、ADR-0009）**：默认文案表 `RhineMessages` 与 `zhCN`（内置默认，逐字不变）/ `enUS`（参考译文）、`useRhineMessages()`、`RhineMessagesProvider`；`RhineProvider` 新增 `messages`、`locale`（数字格式，默认 `zh-CN`）与 `lang`（写到 `.rl-theme` 根元素）。此前无法覆盖的内置文字现在都可覆盖：DataTable 全选 / 行选择 / 已选摘要、Toast 关闭按钮与通知视口名称、Field「（可选）」、MetadataList「未记录」、Textarea 计数、Stat 的加载与方向文字、Meter 读屏值。`Progress` / `Meter` 新增 `locale` 属性。优先级：组件属性 > 最近 Provider 的 `messages` > `zhCN`。见 [locale.md](../../docs/components/locale.md)。
+
+- **M12（ADR-0010）**：Collapsible（Base UI，高度过渡可中断）、Accordion / AccordionItem（`headingLevel`、单 / 多开）、Slider（刻度标签作为读屏值、范围滑块 `thumbLabels`）、NumberField（Field 语义、本地化格式、`aria-roledescription` 可覆盖）、ContextMenu（复用 Menu 部件；右键、长按、Shift+F10 / ContextMenu 键）、Combobox（分组、异步搜索、`filter={null}`、表单值）、CommandPalette（分组、`<mark>` 高亮、快捷键 `hotkey`、禁用原因；异步模式 `query` / `onQueryChange` / `loading`，命令 `meta` / `icon`）、FileDropZone（`accept` / `maxSize` / `maxFiles` 校验、拒绝原因 polite 播报）、SplitButton、ScrollArea（Base UI scroll-area，可聚焦 region，forced-colors 下保留原生滚动条）。`useRhineLocale` 改为公开导出。见 [advanced.md](../../docs/components/advanced.md)、[command.md](../../docs/components/command.md)。
+
+### Changed（M12，非破坏性）
+- `RhineMessages` 新增命名空间（见 UPGRADING 第 13 条）；`size-budget.json` 中 react-full / react-css 预算上调（[SIZE.md](../../docs/development/SIZE.md)）。
+
+### Fixed（M12）
+- ContextMenu：Firefox 不会为聚焦元素派发 `contextmenu`，现在显式处理 Shift+F10 / ContextMenu 键。
 
 ### Changed（M9.5）
 - **破坏性（声明层面，ADR-0008）**：peer `react` / `react-dom` 由 `^18.2.0 || ^19.0.0` 收窄为 `^19.0.0`。React 18 项目安装时会收到 peer 冲突提示；此前也未正式支持 React 18。

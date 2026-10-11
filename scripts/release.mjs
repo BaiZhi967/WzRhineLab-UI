@@ -22,7 +22,7 @@ import { join, resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const [version, ...flags] = process.argv.slice(2);
 const publish = flags.includes('--publish');
-const packages = ['tokens', 'react', 'effects'];
+const packages = ['tokens', 'react', 'effects', 'agent-core', 'agent'];
 const problems = [];
 const isWin = process.platform === 'win32';
 const sh = (cmd, args, opts = {}) =>

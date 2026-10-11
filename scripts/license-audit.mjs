@@ -61,7 +61,7 @@ function walk(pkgDir, via) {
   }
 }
 
-for (const p of ['tokens', 'react', 'effects']) {
+for (const p of ['tokens', 'react', 'effects', 'agent-core', 'agent']) {
   const dir = join(root, 'packages', p);
   const pj = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
   for (const dep of [...Object.keys(pj.dependencies ?? {}), ...Object.keys(pj.peerDependencies ?? {})]) {
@@ -80,7 +80,7 @@ const disallowed = rows.filter((r) => !r.license.split(/\s+OR\s+|[()]/).some((l)
 const counts = rows.reduce((acc, r) => ({ ...acc, [r.license]: (acc[r.license] ?? 0) + 1 }), {});
 
 let md = '# Third-party licenses（运行时依赖）\n\n';
-md += '> 由 `scripts/license-audit.mjs` 根据实际安装的依赖树生成。范围：三个可发布包的 dependencies 与 peerDependencies 及其传递依赖。开发工具不随包发布，不在范围内。\n\n';
+md += '> 由 `scripts/license-audit.mjs` 根据实际安装的依赖树生成。范围：可发布包的 dependencies 与 peerDependencies 及其传递依赖。开发工具不随包发布，不在范围内。\n\n';
 md += `共 ${rows.length} 个包：${Object.entries(counts).map(([k, v]) => `${k} × ${v}`).join('，')}。允许的许可证：${[...allow].join('、')}。\n\n`;
 md += '| 包 | 版本 | 许可证 | 许可文件 · 版权声明 | 来源 | 引入方 |\n| --- | --- | --- | --- | --- | --- |\n';
 for (const r of rows) {

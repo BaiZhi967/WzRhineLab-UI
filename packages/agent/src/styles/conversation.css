@@ -1,0 +1,275 @@
+/* @wzrhine/agent · conversation family (ConversationList, ConversationRow). Tokens only;
+ * rl-agent- classes only. The selection ghost is moved by motion/react (layoutId); CSS only
+ * paints it. The running glyph's breathing comes from base.css (lifecycle-gated). */
+
+/* ---------- ConversationList ---------- */
+.rl-agent-list {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  color: var(--rl-fg-primary);
+}
+
+.rl-agent-list *,
+.rl-agent-list *::before,
+.rl-agent-list *::after {
+  box-sizing: border-box;
+}
+
+.rl-agent-list__search {
+  flex: none;
+  padding: var(--rl-space-3) var(--rl-space-3) var(--rl-space-2);
+}
+
+.rl-agent-list__search .rl-input {
+  width: 100%;
+}
+
+.rl-agent-list__viewport {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--rl-space-1) var(--rl-space-2) var(--rl-space-4);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.rl-agent-list__viewport:focus { outline: none; }
+
+.rl-agent-list__section + .rl-agent-list__section {
+  margin-top: var(--rl-space-3);
+}
+
+.rl-agent-list__heading {
+  margin: 0;
+  padding: var(--rl-space-2) var(--rl-space-2) var(--rl-space-1);
+  font: var(--rl-type-meta);
+  font-family: var(--rl-font-body);
+  color: var(--rl-fg-subtle);
+  letter-spacing: var(--rl-tracking-caps);
+  text-transform: uppercase;
+}
+
+.rl-agent-list__rows {
+  display: grid;
+  gap: var(--rl-border-width);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rl-agent-list__error {
+  margin: var(--rl-space-2) 0;
+}
+
+.rl-agent-list__empty {
+  padding-block: var(--rl-space-4);
+}
+
+.rl-agent-list__skeleton {
+  display: grid;
+  gap: var(--rl-space-2);
+  padding: var(--rl-space-2);
+}
+
+.rl-agent-list__skeleton-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--rl-space-2);
+  min-height: var(--rl-control-height-md);
+}
+
+.rl-agent-list[data-loading] .rl-agent-list__rows {
+  opacity: 0.6;
+}
+
+/* ---------- ConversationRow ---------- */
+.rl-agent-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  min-width: 0;
+  border-radius: var(--rl-radius-sm);
+}
+
+.rl-agent-row__ghost {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-subtle);
+  pointer-events: none;
+}
+
+.rl-agent-row__ghost::before {
+  content: '';
+  position: absolute;
+  inset-block: var(--rl-space-2);
+  inset-inline-start: 0;
+  width: var(--rl-border-width-strong);
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-accent);
+}
+
+.rl-agent-row__main {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: var(--rl-agent-glyph-size) minmax(0, 1fr) auto;
+  grid-template-areas:
+    'status title meta'
+    '. preview preview';
+  align-items: center;
+  column-gap: var(--rl-space-2);
+  width: 100%;
+  min-width: 0;
+  min-height: var(--rl-control-height-md);
+  margin: 0;
+  padding: var(--rl-space-2);
+  border: 0;
+  border-radius: var(--rl-radius-sm);
+  background: transparent;
+  color: inherit;
+  font: var(--rl-type-body-sm);
+  font-family: var(--rl-font-body);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-agent-row:not([data-selected]) .rl-agent-row__main:hover:not(:disabled) {
+  background: var(--rl-bg-hover);
+}
+
+.rl-agent-row__main:focus { outline: none; }
+.rl-agent-row__main:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: calc(var(--rl-focus-width) * -1);
+}
+
+.rl-agent-row__main:disabled {
+  color: var(--rl-fg-disabled);
+  cursor: not-allowed;
+}
+
+.rl-agent-row__status {
+  grid-area: status;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--rl-agent-glyph-size);
+  height: var(--rl-agent-glyph-size);
+}
+
+.rl-agent-row__glyph {
+  display: inline-flex;
+}
+
+.rl-agent-row__title {
+  grid-area: title;
+  display: flex;
+  align-items: center;
+  gap: var(--rl-space-1);
+  min-width: 0;
+}
+
+.rl-agent-row[data-selected] .rl-agent-row__title {
+  font-weight: 600;
+}
+
+.rl-agent-row__pin {
+  width: var(--rl-icon-size-sm);
+  height: var(--rl-icon-size-sm);
+  color: var(--rl-fg-subtle);
+}
+
+.rl-agent-row__title-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rl-agent-row__meta {
+  grid-area: meta;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rl-space-1);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.rl-agent-row__time {
+  color: var(--rl-fg-subtle);
+  font: var(--rl-type-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Unread: fixed height inside the meta line, so it never changes the row height. */
+.rl-agent-row__unread {
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--rl-badge-height-sm);
+  height: var(--rl-badge-height-sm);
+  padding: 0 var(--rl-space-1);
+  border-radius: var(--rl-radius-round);
+  background: var(--rl-accent-subtle);
+  color: var(--rl-accent-text);
+  font: var(--rl-type-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.rl-agent-row__preview {
+  grid-area: preview;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-meta);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rl-agent-row__main:disabled .rl-agent-row__preview,
+.rl-agent-row__main:disabled .rl-agent-row__time {
+  color: var(--rl-fg-disabled);
+}
+
+/* "More" keeps its space; it shows on hover, focus-within, while its menu is open, and on touch. */
+.rl-agent-row__actions {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rl-space-1);
+  padding-inline-end: var(--rl-space-1);
+}
+
+.rl-agent-row__more {
+  opacity: 0;
+  transition: opacity var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-agent-row:hover .rl-agent-row__more,
+.rl-agent-row:focus-within .rl-agent-row__more,
+.rl-agent-row[data-menu-open] .rl-agent-row__more {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .rl-agent-row__more { opacity: 1; }
+}
+
+@media (forced-colors: active) {
+  .rl-agent-row__ghost {
+    border: var(--rl-border-width-strong) solid Highlight;
+    background: Canvas;
+  }
+  .rl-agent-row__ghost::before { background: Highlight; }
+  .rl-agent-row__unread { border: var(--rl-border-width) solid CanvasText; }
+  .rl-agent-row__main:disabled { color: GrayText; }
+}

@@ -12,7 +12,7 @@
  *   node scripts/size-check.mjs --update   rewrite size-budget.json from the measurement
  *
  * Exits 1 when any gzip size exceeds its budget, when budget and measured entries differ,
- * or when tree-shaking is visibly broken (react-button must stay under 25% of react-full).
+ * or when tree-shaking is visibly broken (react-button / agent-status must stay under 25% of their full entry).
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -54,6 +54,11 @@ const entries = [
   // @wzrhine/react is a peer of effects: the consumer already pays for it, so it is external here.
   { name: 'effects-full', kind: 'js', code: "export * from '@wzrhine/effects';", external: ['@wzrhine/react'] },
   { name: 'effects-css', kind: 'css', spec: '@wzrhine/effects/styles.css' },
+  // @wzrhine/react is a peer of agent (external); agent-core and Base UI are real dependencies.
+  { name: 'agent-core', kind: 'js', code: "export * from '@wzrhine/agent-core';" },
+  { name: 'agent-full', kind: 'js', code: "export * from '@wzrhine/agent';", external: ['@wzrhine/react'] },
+  { name: 'agent-status', kind: 'js', code: "export { AgentStatus } from '@wzrhine/agent';", external: ['@wzrhine/react'] },
+  { name: 'agent-css', kind: 'css', spec: '@wzrhine/agent/styles.css' },
 ];
 const peers = ['react', 'react-dom', 'react/*', 'react-dom/*', 'motion', 'motion/*'];
 
@@ -79,7 +84,7 @@ if (!noBuild) {
 // ---------- 2. map @wzrhine/* specifiers to dist via publishConfig.exports ----------
 // Workspace `exports` point at src/ (ADR-0002); consumers get publishConfig.exports (dist/).
 const distMap = new Map();
-for (const pkg of ['tokens', 'react', 'effects']) {
+for (const pkg of ['tokens', 'react', 'effects', 'agent-core', 'agent']) {
   const dir = join(root, 'packages', pkg);
   const manifest = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
   for (const [subpath, target] of Object.entries(manifest.publishConfig.exports)) {
@@ -204,14 +209,20 @@ for (const { name } of entries) {
 for (const name of Object.keys(budgets)) {
   if (!(name in measured)) fail(`${name}: has a budget in size-budget.json but is not measured by size-check`);
 }
-const ratio = measured['react-button'].gzip / measured['react-full'].gzip;
-if (ratio >= TREE_SHAKE_RATIO) {
-  fail(
-    `tree-shaking: react-button is ${(ratio * 100).toFixed(1)}% of react-full (limit ${TREE_SHAKE_RATIO * 100}%); ` +
-      'importing one component pulls in most of the package (check sideEffects and top-level side effects)',
-  );
-} else {
-  log(`tree-shaking: react-button = ${(ratio * 100).toFixed(1)}% of react-full (limit ${TREE_SHAKE_RATIO * 100}%)`);
+const shakePairs = [
+  ['react-button', 'react-full'],
+  ['agent-status', 'agent-full'],
+];
+for (const [part, whole] of shakePairs) {
+  const ratio = measured[part].gzip / measured[whole].gzip;
+  if (ratio >= TREE_SHAKE_RATIO) {
+    fail(
+      `tree-shaking: ${part} is ${(ratio * 100).toFixed(1)}% of ${whole} (limit ${TREE_SHAKE_RATIO * 100}%); ` +
+        'importing one component pulls in most of the package (check sideEffects and top-level side effects)',
+    );
+  } else {
+    log(`tree-shaking: ${part} = ${(ratio * 100).toFixed(1)}% of ${whole} (limit ${TREE_SHAKE_RATIO * 100}%)`);
+  }
 }
 if (process.exitCode) console.error('\u001b[31m[size] size check failed\u001b[0m');
 else log('all entries within budget');

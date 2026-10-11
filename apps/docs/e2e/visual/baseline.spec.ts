@@ -22,6 +22,16 @@ const pages = [
   { name: 'feedback', hash: '/#/components/feedback' },
   { name: 'locale', hash: '/#/foundations/locale' },
   { name: 'scenarios', hash: '/#/archive/scenarios' },
+  // M12: advanced interaction and the Agent UI pages (lazy chunk).
+  { name: 'advanced', hash: '/#/components/advanced' },
+  { name: 'command', hash: '/#/components/command' },
+  { name: 'agent-overview', hash: '/#/agent' },
+  { name: 'agent-shell', hash: '/#/agent/shell' },
+  { name: 'agent-message', hash: '/#/agent/messages' },
+  { name: 'agent-tools', hash: '/#/agent/tools' },
+  { name: 'agent-composer', hash: '/#/agent/composer' },
+  { name: 'agent-intervention', hash: '/#/agent/intervention' },
+  { name: 'agent-workspace', hash: '/#/agent/workspace' },
 ] as const;
 
 async function open(page: Page, hash: string) {

@@ -1,7 +1,7 @@
 # WzRhineLab-UI 长期规划中心
 
 > 状态：Working plan  
-> 基线：M0–M10 与 M9.5 已合入 main（Base UI 1.9.0，只支持 React 19）；下一里程碑 M11 Rendering Lab  
+> 基线：M0–M10、M9.5 与 M12 已完成（Base UI 1.9.0，只支持 React 19；M11 按维护者决定跳过，M12 交付高级交互与 `@wzrhine/agent-core` / `@wzrhine/agent`）；下一步：Wpi-Agent 真实接入（M13 门禁）或 M11 Rendering Lab  
 > 维护方式：规划文档描述目标和门禁，验收记录描述已经真实执行的结果。
 
 本目录是 WzRhineLab-UI 后续规划的统一入口。现有的 design、development 和 acceptance 文档继续作为规范、实现约束和事实记录；本目录负责回答三个问题：
@@ -123,18 +123,11 @@ Agent UI 采用独立的 @wzrhine/agent 包。一个真实的 Agent 消费项目
 
 ## 当前推荐起点
 
-M8、M9、M10 与 M9.5 已完成（M10 与 M9 并行；M9.5 证据见 [验收记录](../development/acceptance/2026-10-11-m9.5.md)）。下一个开发里程碑是 M11 Rendering Lab（[路线图](roadmap.md#m11rendering-lab)、[执行清单](execution-backlog.md#m11rendering-lab)）。M9.5 已完成的范围：
+M8、M9、M10、M9.5 与 M12 已完成。M12 按维护者决定跳过 M11，交付了高级交互组件与 Agent UI 两个新包（[M12 验收记录](../development/acceptance/2026-10-11-m12.md)、[ADR-0010](../development/adr/0010-m12-agent-ui-plan.md)）。
 
-1. React 18 / 19 支持策略 ADR；
-2. locale 与默认文案 ADR；
-3. `'use client'` 产物指令与 App Router 示例；
-4. SSR hydration 回归；
-5. 包体积基线与预算，超标时 `release:check` 失败；
-6. 文档搜索索引；
-7. packages 安装 / 导出 / CSS 导入文档；
-8. 升级指南与 CHANGELOG；
-9. 决定 npm scope（暂不发布）；
-10. 第三方许可证来源；
-11. 完成 M9.5 验收记录。M11 仍然先用实验决定是否需要 Canvas，而不是立即引入 3D 或第二套组件底座。
+下一步有两条，由维护者决定先后：
 
-Agent UI 的实现应按 [Agent UI 平台规划](agent-ui-platform-plan.md) 的依赖顺序推进；遇到 WzRhine 尚未支持的 Combobox、Slider 或 Accordion 时（Drawer 已在 M9 交付），按照 [需求插入流程（PR #11）](https://github.com/BaiZhi967/WzRhineLab-UI/pull/11) 提交最小支持闭环。
+1. **Wpi-Agent 真实接入**：按 [接入指南](agent-ui-adoption.md) 用 `@wzrhine/agent` 替换 Wpi 的视图层，完成双层验收（组件库 + 消费项目）；这是 Agent UI 平台「完成定义」中尚未满足的一项，也是 M13 的门禁；
+2. **M11 Rendering Lab**（[路线图](roadmap.md#m11rendering-lab)、[执行清单](execution-backlog.md#m11rendering-lab)）：用实验决定是否需要 Canvas，而不是立即引入 3D 或第二套组件底座。
+
+M9.5 已完成的范围见 [M9.5 验收记录](../development/acceptance/2026-10-11-m9.5.md)。Agent UI 后续新增组件按 [需求插入流程](demand-insertion-workflow.md) 进入。

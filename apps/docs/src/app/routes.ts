@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export type RouteGroup = 'start' | 'foundations' | 'components' | 'navigation' | 'archive' | 'motion';
+export type RouteGroup = 'start' | 'foundations' | 'components' | 'navigation' | 'advanced' | 'agent' | 'archive' | 'motion';
 
 export interface RouteDef {
   id: string;
@@ -31,6 +31,16 @@ export const routes = [
   { id: 'alert-dialog', path: '/components/alert-dialog', label: 'AlertDialog', group: 'navigation', index: '21' },
   { id: 'drawer', path: '/components/drawer', label: 'Drawer', group: 'navigation', index: '22' },
   { id: 'feedback', path: '/components/feedback', label: 'Alert & feedback', group: 'components', index: '23' },
+  { id: 'advanced', path: '/components/advanced', label: 'Advanced interaction', group: 'advanced', index: '25' },
+  { id: 'command', path: '/components/command', label: 'Combobox & command', group: 'advanced', index: '26' },
+  { id: 'agent-overview', path: '/agent', label: 'Agent workbench', group: 'agent', index: '30' },
+  { id: 'agent-shell', path: '/agent/shell', label: 'Shell & conversations', group: 'agent', index: '31' },
+  { id: 'agent-message', path: '/agent/messages', label: 'Messages & process', group: 'agent', index: '32' },
+  { id: 'agent-tools', path: '/agent/tools', label: 'Tools & execution', group: 'agent', index: '33' },
+  { id: 'agent-composer', path: '/agent/composer', label: 'Composer', group: 'agent', index: '34' },
+  { id: 'agent-intervention', path: '/agent/intervention', label: 'Approval & questions', group: 'agent', index: '35' },
+  { id: 'agent-workspace', path: '/agent/workspace', label: 'Workspace & artifacts', group: 'agent', index: '36' },
+  { id: 'agent-motion', path: '/agent/motion', label: 'Agent motion', group: 'agent', index: '37' },
   { id: 'archive', path: '/archive', label: 'Archive patterns', group: 'archive', index: '16' },
   { id: 'data', path: '/archive/data', label: 'Data & navigation', group: 'archive', index: '20' },
   { id: 'scenarios', path: '/archive/scenarios', label: 'Acceptance scenarios', group: 'archive', index: '17' },
@@ -45,6 +55,8 @@ export const groupLabels: Record<RouteGroup, string> = {
   foundations: 'Foundations',
   components: 'Components',
   navigation: 'Navigation & Overlay',
+  advanced: 'Advanced interaction',
+  agent: 'Agent UI',
   archive: 'Data & Archive',
   motion: 'Motion',
 };

@@ -6,8 +6,9 @@
 
 - 主分支：main；
 - Base UI：1.9.0；
-- 已完成：M0–M10（M9 覆盖层与反馈、M10 Motion Core 2.0 并行完成）；
-- 当前里程碑：M9.5 生态工程化已完成；下一里程碑 [M11 Rendering Lab](#m11rendering-lab)；
+- 已完成：M0–M10（M9 覆盖层与反馈、M10 Motion Core 2.0 并行完成）、M9.5、M12（高级交互 + Agent UI，[验收](../development/acceptance/2026-10-11-m12.md)）；
+- M11 Rendering Lab：维护者决定跳过，仍为 Planned；
+- 下一步：Wpi-Agent 真实接入（下方「第六组」）或 [M11 Rendering Lab](#m11rendering-lab)；
 - 发布状态：暂不发布；
 - React 18：未正式验证；
 - 自动 CI：暂不创建；
@@ -182,31 +183,33 @@
 
 ## M12：高级交互
 
+状态：✅ M12 已交付（[验收记录](../development/acceptance/2026-10-11-m12.md)）。另交付 SplitButton、ScrollArea（Wpi 缺口）。FilterBar、DatePicker 仍待真实需求。
+
 按真实需求择一排期：
 
 - [x] ~~Drawer~~（提前到 M9 并已交付，见 [M9 验收记录](../development/acceptance/2026-10-10-m9.md)；不再占用 M12 排期）。
-- [ ] Combobox / Autocomplete。
-- [ ] Slider。
-- [ ] NumberField。
-- [ ] Accordion / Collapsible。
-- [ ] CommandPalette。
+- [x] Combobox / Autocomplete。
+- [x] Slider。
+- [x] NumberField。
+- [x] Accordion / Collapsible。
+- [x] CommandPalette。
 - [ ] FilterBar。
-- [ ] FileUpload。
-- [ ] ContextMenu。
+- [x] FileUpload（以 FileDropZone 交付）。
+- [x] ContextMenu。
 - [ ] DatePicker 专项需求和 locale ADR。
 
 每个组件都要附：
 
-- [ ] 真实页面；
-- [ ] API 契约；
-- [ ] 状态矩阵；
-- [ ] 键盘；
-- [ ] 读屏；
-- [ ] reduced motion；
-- [ ] SSR；
-- [ ] 三内核；
-- [ ] 视觉基线；
-- [ ] 验收记录。
+- [x] 真实页面；
+- [x] API 契约；
+- [x] 状态矩阵；
+- [x] 键盘；
+- [ ] 读屏（人工，未做）；
+- [x] reduced motion；
+- [ ] SSR（`verify:packages` 只覆盖 agent 的 SSR 渲染，新 react 组件未单独做 SSR 回归）；
+- [x] 三内核；
+- [x] 视觉基线；
+- [x] 验收记录。
 
 ## M13：领域模式
 
@@ -223,68 +226,70 @@
 
 每个领域模式必须经过至少一个真实页面验证，并确保不绑定后端模型。
 
-## Agent UI 平台：拟议 @wzrhine/agent
+## Agent UI 平台：@wzrhine/agent（M12 已实现）
+
+第一至第五组与契约在 M12 交付（拆为 `@wzrhine/agent-core` + `@wzrhine/agent`，组件名以实现为准，例如 ToolCall → ToolRecord、Questionnaire → QuestionnaireCard、TerminalOutput → PersistentTerminal / ToolOutput），证据见 [M12 验收记录](../development/acceptance/2026-10-11-m12.md)。仍未完成：第六组（Wpi 真实接入），以及人工 IME / 读屏验收。
 
 ### 设计与契约
 
-- [ ] 确认 @wzrhine/agent 的 package 边界和依赖方向。
-- [ ] 定义 Conversation、Message、MessagePart、Run、Tool、Approval、Questionnaire、Artifact 和 Sync view-model。
-- [ ] 定义 runStatus、syncStatus、actionStatus 三个状态轴。
-- [ ] 定义 actionId、targetId、baseRevision 和 unknown 回执。
-- [ ] 定义 capability、禁用原因和 action callback。
-- [ ] 定义 renderer、slots、children 和 render props 的使用边界。
-- [ ] 定义 Markdown、Code、Diff、Artifact 和 Terminal renderer 接口。
-- [ ] 定义多实例、portal、DOM id、draft 和 scroll 隔离。
-- [ ] 建立静态 Agent fixture，不依赖 Wpi DTO。
-- [ ] 为公开类型建立 API report 和变更规则。
+- [x] 确认 @wzrhine/agent 的 package 边界和依赖方向。
+- [x] 定义 Conversation、Message、MessagePart、Run、Tool、Approval、Questionnaire、Artifact 和 Sync view-model。
+- [x] 定义 runStatus、syncStatus、actionStatus 三个状态轴。
+- [x] 定义 actionId、targetId、baseRevision 和 unknown 回执。
+- [x] 定义 capability、禁用原因和 action callback。
+- [x] 定义 renderer、slots、children 和 render props 的使用边界。
+- [x] 定义 Markdown、Code、Diff、Artifact 和 Terminal renderer 接口。
+- [x] 定义多实例、portal、DOM id、draft 和 scroll 隔离。
+- [x] 建立静态 Agent fixture，不依赖 Wpi DTO。
+- [x] 为公开类型建立 API report 和变更规则。
 
 ### 第一组：Shell、Conversation、Message
 
-- [ ] 建立 packages/agent workspace 包骨架。
-- [ ] 实现 AgentShell、AgentHeader、AgentSidebar、AgentWorkspace。
-- [ ] 实现 ConversationList、ConversationItem、ConversationSearch。
-- [ ] 实现 MessageList、Message、MessagePart、MessageActions。
-- [ ] 实现 default、loading、empty、error、unknown 状态。
-- [ ] 验证稳定 ID、revision、sequence、去重和未知 part fallback。
-- [ ] 验证键盘、focus、live-region 和 reduced-motion。
+- [x] 建立 packages/agent workspace 包骨架。
+- [x] 实现 AgentShell、AgentHeader、AgentSidebar、AgentWorkspace。
+- [x] 实现 ConversationList、ConversationItem（ConversationRow）；ConversationSearch 未做独立组件，用 `ConversationList.search` 或 CommandPalette 异步模式组合。
+- [x] 实现 MessageList、Message、MessagePart、MessageActions。
+- [x] 实现 default、loading、empty、error、unknown 状态。
+- [x] 验证稳定 ID、revision、sequence、去重和未知 part fallback。
+- [x] 验证键盘、focus、live-region 和 reduced-motion。
 
 ### 第二组：Composer 和消息流
 
-- [ ] 实现 Composer、ComposerInput、ComposerToolbar。
-- [ ] 保留中文 IME、selection、Token Mirror 和光标恢复。
-- [ ] 实现 MentionPicker、CommandPicker、AttachmentList、FileReferenceList。
-- [ ] 实现 SendStopButton 和 actionStatus。
-- [ ] 实现流式内容、JumpToLatest、阅读锚点和历史加载。
-- [ ] 验证重复事件、旧 revision、断线重放和快速切换会话。
-- [ ] 验证 compositionstart、compositionend、Enter、Backspace、Delete、粘贴和撤销。
+- [x] 实现 Composer、ComposerInput、ComposerToolbar。
+- [x] 保留中文 IME、selection、Token Mirror 和光标恢复（IME 仅自动化模拟；真实输入法未人工验证）。
+- [x] 实现 MentionPicker、CommandPicker、AttachmentList、FileReferenceList。
+- [x] 实现 SendStopButton 和 actionStatus。
+- [x] 实现流式内容、JumpToLatest、阅读锚点和历史加载。
+- [x] 验证重复事件、旧 revision、断线重放和快速切换会话（agent-core 单测 + agent-console E2E；真实断线未验证）。
+- [x] 验证 compositionstart、compositionend、Enter、Backspace、Delete、粘贴和撤销（模拟事件与 Chromium E2E；真实输入法未人工验证）。
 
 ### 第三组：工具和运行过程
 
-- [ ] 实现 RunStatus、RunPhase、ToolActivity、ToolGroup、ToolCall。
-- [ ] 实现 ToolInput、ToolOutput、ProcessOutput、ActivityFeed。
-- [ ] 实现 RunSummary、ContextUsage、截断和权限不足状态。
-- [ ] 支持摘要、惰性展开、分页或外部 renderer。
-- [ ] 验证大输出、错误输出、未知工具和输出中断。
-- [ ] 验证工具详情展开时的焦点和屏幕阅读器语义。
+- [x] 实现 RunStatus、RunPhase、ToolActivity、ToolGroup、ToolCall。
+- [x] 实现 ToolInput、ToolOutput、ProcessOutput、ActivityFeed。
+- [x] 实现 RunSummary、ContextUsage、截断和权限不足状态。
+- [x] 支持摘要、惰性展开、分页或外部 renderer。
+- [x] 验证大输出、错误输出、未知工具和输出中断。
+- [x] 验证工具详情展开时的焦点和 ARIA 语义（自动化；人工读屏未做）。
 
 ### 第四组：审批和问卷
 
-- [ ] 实现 ApprovalPanel、ApprovalCard、PermissionSummary。
-- [ ] 实现 ApprovalEvidence 和 approvalAvailability。
-- [ ] 表现 pending、submitting、unknown、approved、rejected、expired。
-- [ ] 保留缺少材料时禁用批准但允许拒绝。
-- [ ] 实现 Questionnaire、QuestionCard、QuestionnaireProgress。
-- [ ] 实现草稿串行保存、关闭前 flush、revision 防回退和 unknown 重试。
-- [ ] 验证 actionId、operationId、canonical record 和材料 revision。
+- [x] 实现 ApprovalPanel、ApprovalCard、PermissionSummary。
+- [x] 实现 ApprovalEvidence 和 approvalAvailability。
+- [x] 表现 pending、submitting、unknown、approved、rejected、expired。
+- [x] 保留缺少材料时禁用批准但允许拒绝。
+- [x] 实现 Questionnaire、QuestionCard、QuestionnaireProgress。
+- [x] 实现 revision 防回退、`flush()` 句柄和 unknown 重试；草稿串行保存属于 adapter（组件只发出 `onAnswerChange`）。
+- [x] 验证 actionId、operationId 与 revision 透传；canonical record 与材料真实性由宿主核验（组件只读 `availability`）。
 
 ### 第五组：Artifact、文件和代码
 
-- [ ] 实现 ArtifactList、ArtifactCard、ArtifactPreview。
-- [ ] 实现 Citation、SourceList、FileReference。
-- [ ] 实现 FilePreview、CodePreview、DiffPreview、TerminalOutput。
-- [ ] 支持 renderer 替换、未知类型 fallback、加载、缺失、禁止和过期状态。
-- [ ] 不把文件读取、下载、Tauri open 或终端连接放入公共包。
-- [ ] 验证大文件和高密度输出的懒加载或摘要策略。
+- [x] 实现 ArtifactList、ArtifactCard、ArtifactPreview。
+- [x] 实现 Citation、SourceList、FileReference。
+- [x] 实现 FilePreview、CodePreview、DiffPreview、TerminalOutput。
+- [x] 支持 renderer 替换、未知类型 fallback、加载、缺失、禁止和过期状态。
+- [x] 不把文件读取、下载、Tauri open 或终端连接放入公共包。
+- [x] 验证大文件和高密度输出的懒加载或摘要策略。
 
 ### 第六组：Wpi-Agent 接入
 
@@ -297,13 +302,13 @@
 
 ### 动效和质量
 
-- [ ] 使用 motion/react 和 Rhine tokens 建立 Agent motion patterns。
-- [ ] 验证消息进入、工具展开、审批出现、Send/Stop、AgentSpark 和侧栏切换。
-- [ ] 验证中断、快速反向、卸载、隐藏页和 reduced-motion。
-- [ ] 验证 320 / 390 / 768 / 1280 / 1920 布局。
-- [ ] 验证 Chromium / Firefox / WebKit、axe、键盘和静态 fixture。
+- [x] 使用 motion/react 和 Rhine tokens 建立 Agent motion patterns。
+- [x] 验证消息进入、工具展开、审批出现、Send/Stop、AgentSpark 和侧栏切换。
+- [x] 验证中断、快速反向、卸载、隐藏页和 reduced-motion。
+- [x] 验证 320 / 390 / 768 / 1280 / 1920 布局。
+- [x] 验证 Chromium / Firefox / WebKit、axe、键盘和静态 fixture。
 - [ ] 完成 Wpi-Agent 消费项目验收。
-- [ ] 更新 Agent UI acceptance 记录和路线回填。
+- [x] 更新 Agent UI acceptance 记录和路线回填。
 
 ## M14：人工无障碍和国际化
 

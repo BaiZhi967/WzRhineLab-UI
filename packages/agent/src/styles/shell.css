@@ -1,0 +1,441 @@
+/* @wzrhine/agent · shell family (AgentShell, ResizeHandle, AgentHeader, AgentSidePane, empty state).
+ * Tokens only; rl-agent- classes only. Pane open / close is a single-axis translate + opacity
+ * transition on --rl-motion-panel; the width snaps (never animated) and those tokens are 0ms
+ * under reduced motion, so everything lands at once. */
+
+/* ---------- AgentShell ---------- */
+.rl-agent-shell {
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--rl-bg-canvas);
+  color: var(--rl-fg-primary);
+}
+
+.rl-agent-shell *,
+.rl-agent-shell *::before,
+.rl-agent-shell *::after {
+  box-sizing: border-box;
+}
+
+.rl-agent-shell__rail {
+  flex: none;
+  min-height: 0;
+  overflow: auto;
+  border-inline-end: var(--rl-border-width) solid var(--rl-border-subtle);
+  background: var(--rl-bg-surface);
+}
+
+.rl-agent-shell__index {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: var(--rl-agent-index-width);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-inline-end: var(--rl-border-width) solid var(--rl-border-subtle);
+  background: var(--rl-bg-surface);
+}
+
+.rl-agent-shell__main {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.rl-agent-shell__main:focus { outline: none; }
+.rl-agent-shell__main:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: calc(var(--rl-focus-width) * -1);
+}
+
+.rl-agent-shell__header {
+  flex: none;
+  min-width: 0;
+  border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
+  background: var(--rl-bg-surface);
+}
+
+.rl-agent-shell__conversation {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.rl-agent-shell__conversation:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: calc(var(--rl-focus-width) * -1);
+}
+
+.rl-agent-shell__reading {
+  width: 100%;
+  max-width: var(--rl-agent-reading-width);
+  min-width: 0;
+  margin-inline: auto;
+  padding: var(--rl-space-4);
+}
+
+.rl-agent-shell__composer {
+  flex: none;
+  min-width: 0;
+  border-top: var(--rl-border-width) solid var(--rl-border-subtle);
+  background: var(--rl-bg-canvas);
+}
+
+.rl-agent-shell__composer > .rl-agent-shell__reading {
+  padding-block: var(--rl-space-3);
+}
+
+.rl-agent-shell[data-layout='narrow'] .rl-agent-shell__reading {
+  padding-inline: var(--rl-space-3);
+}
+
+/* Context pane: the column snaps open at once and collapses only after the exit fade. */
+.rl-agent-shell__context {
+  flex: none;
+  width: 0;
+  min-height: 0;
+  overflow: hidden;
+  transition: width var(--rl-motion-instant) linear var(--rl-motion-panel);
+}
+
+.rl-agent-shell__context[data-open] {
+  width: var(--rl-agent-pane-size);
+  transition-delay: var(--rl-motion-instant);
+}
+
+.rl-agent-shell__context-inner {
+  width: var(--rl-agent-pane-size);
+  height: 100%;
+  min-height: 0;
+  border-inline-start: var(--rl-border-width) solid var(--rl-border-subtle);
+  background: var(--rl-bg-surface);
+  opacity: 0;
+  translate: var(--rl-space-8) 0;
+  transition:
+    translate var(--rl-motion-panel) var(--rl-ease-out),
+    opacity var(--rl-motion-panel) var(--rl-ease-out);
+}
+
+.rl-agent-shell__context-inner:dir(rtl) {
+  translate: calc(var(--rl-space-8) * -1) 0;
+}
+
+.rl-agent-shell__context[data-open] > .rl-agent-shell__context-inner {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* The handle sits on the pane border; dragging changes the width directly. */
+.rl-agent-shell__handle {
+  margin-inline-end: calc(var(--rl-space-2) * -1);
+  z-index: 1;
+}
+
+.rl-agent-shell__sheet .rl-agent-list {
+  height: auto;
+}
+
+/* ---------- ResizeHandle ---------- */
+.rl-agent-resize {
+  position: relative;
+  flex: none;
+  width: var(--rl-space-2);
+  min-height: 0;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+/* Wider invisible hit area than the visible line. */
+.rl-agent-resize::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline: calc(var(--rl-space-1) * -1);
+}
+
+.rl-agent-resize::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(50% - var(--rl-border-width) / 2);
+  width: var(--rl-border-width);
+  background: transparent;
+  transition: background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-agent-resize:hover::before,
+.rl-agent-resize[data-dragging]::before {
+  inset-inline-start: calc(50% - var(--rl-border-width-strong) / 2);
+  width: var(--rl-border-width-strong);
+  background: var(--rl-border-strong);
+}
+
+.rl-agent-resize:focus { outline: none; }
+.rl-agent-resize:focus-visible::before {
+  inset-inline-start: calc(50% - var(--rl-focus-width) / 2);
+  width: var(--rl-focus-width);
+  background: var(--rl-focus);
+}
+
+.rl-agent-resize[data-disabled] {
+  cursor: default;
+}
+
+/* ---------- AgentHeader ---------- */
+.rl-agent-header {
+  display: flex;
+  align-items: center;
+  gap: var(--rl-space-2);
+  min-width: 0;
+  min-height: var(--rl-control-height-lg);
+  padding: var(--rl-space-2) var(--rl-space-4);
+}
+
+.rl-agent-header__lead,
+.rl-agent-header__trail {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--rl-space-1);
+}
+
+.rl-agent-header__lead:empty {
+  display: none;
+}
+
+.rl-agent-header__titles {
+  display: grid;
+  flex: 1 1 auto;
+  gap: var(--rl-space-1);
+  min-width: 0;
+}
+
+.rl-agent-header__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--rl-space-1);
+  min-width: 0;
+}
+
+.rl-agent-header__title {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font: var(--rl-type-heading-3);
+  font-family: var(--rl-font-body);
+  color: var(--rl-fg-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rl-agent-header__rename {
+  flex: none;
+  opacity: 0;
+  transition: opacity var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-agent-header:hover .rl-agent-header__rename,
+.rl-agent-header__title-row:focus-within .rl-agent-header__rename {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .rl-agent-header__rename { opacity: 1; }
+}
+
+.rl-agent-header__badge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--rl-space-1);
+  min-height: var(--rl-badge-height-sm);
+  padding: 0 var(--rl-space-2);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-sm);
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-meta);
+  white-space: nowrap;
+}
+
+.rl-agent-header__badge .rl-agent-icon {
+  width: var(--rl-icon-size-sm);
+  height: var(--rl-icon-size-sm);
+}
+
+.rl-agent-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rl-space-1) var(--rl-space-2);
+  min-width: 0;
+}
+
+.rl-agent-header__identity {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rl-space-1);
+  min-width: 0;
+  max-width: 100%;
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-meta);
+}
+
+.rl-agent-header__monogram {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--rl-badge-height-sm);
+  height: var(--rl-badge-height-sm);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-inverse);
+  color: var(--rl-fg-inverse);
+  font: var(--rl-type-meta);
+  font-family: var(--rl-font-mono);
+}
+
+.rl-agent-header__monogram .rl-agent-icon {
+  width: var(--rl-icon-size-sm);
+  height: var(--rl-icon-size-sm);
+}
+
+.rl-agent-header__identity-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--rl-fg-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rl-agent-header__identity-role {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rl-agent-header__count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rl-space-1);
+  min-height: var(--rl-badge-height-sm);
+  padding: 0 var(--rl-space-2);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-subtle);
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.rl-agent-header__count-icon {
+  display: inline-flex;
+}
+
+.rl-agent-header__count-icon .rl-agent-icon {
+  width: var(--rl-icon-size-sm);
+  height: var(--rl-icon-size-sm);
+}
+
+/* ---------- AgentSidePane ---------- */
+.rl-agent-pane {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: var(--rl-bg-surface);
+  color: var(--rl-fg-primary);
+}
+
+.rl-agent-pane__head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rl-space-2);
+  min-height: var(--rl-control-height-lg);
+  padding: var(--rl-space-2) var(--rl-space-2) var(--rl-space-2) var(--rl-space-4);
+}
+
+.rl-agent-pane__title {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font: var(--rl-type-label);
+  font-family: var(--rl-font-body);
+  color: var(--rl-fg-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rl-agent-pane__tabs {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 0;
+  min-height: 0;
+}
+
+.rl-agent-pane__tablist {
+  flex: none;
+  padding-inline: var(--rl-space-2);
+}
+
+.rl-agent-pane__panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--rl-space-4);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.rl-agent-pane__panel[hidden] {
+  display: none;
+}
+
+.rl-agent-pane__panel:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: calc(var(--rl-focus-width) * -1);
+}
+
+/* In the shell's Drawer sheet the Drawer body scrolls and pads. */
+.rl-agent-pane[data-presentation='sheet'] {
+  height: auto;
+  background: transparent;
+}
+
+.rl-agent-pane[data-presentation='sheet'] .rl-agent-pane__panel {
+  padding: var(--rl-space-4) 0 0;
+  overflow: visible;
+}
+
+/* ---------- Empty states ---------- */
+.rl-agent-empty--workspace {
+  min-height: 100%;
+  justify-content: center;
+}
+
+/* ---------- Forced colours ---------- */
+@media (forced-colors: active) {
+  .rl-agent-shell__index,
+  .rl-agent-shell__rail,
+  .rl-agent-shell__header,
+  .rl-agent-shell__composer,
+  .rl-agent-shell__context-inner { border-color: CanvasText; }
+  .rl-agent-resize::before { background: CanvasText; }
+  .rl-agent-resize:focus-visible::before { background: Highlight; }
+  .rl-agent-header__badge,
+  .rl-agent-header__count,
+  .rl-agent-header__monogram { border: var(--rl-border-width) solid CanvasText; }
+}

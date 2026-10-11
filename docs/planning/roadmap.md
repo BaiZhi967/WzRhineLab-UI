@@ -23,9 +23,9 @@
 | M9 | Overlays & Feedback | AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner，Toast / Dialog 补强 | ✅ Accepted（[验收](../development/acceptance/2026-10-10-m9.md)） |
 | M10 | Motion Core 2.0 | 统一 motion contract、生命周期、模式目录、减动和中断测试 | ✅ Accepted（[验收](../development/acceptance/2026-10-10-m10.md)；与 M9 并行完成） |
 | M9.5 | Ecosystem hardening | React 18 / 19 与 locale ADR、use client 与 App Router 示例、hydration 回归、体积预算、文档搜索、安装 / 升级文档、npm scope 决定 | ✅ Done（[验收](../development/acceptance/2026-10-11-m9.5.md)） |
-| M11 | Rendering Lab | Canvas/SVG 性能实验、渲染适配器契约、是否引入 Canvas 的证据 | Planned |
-| M12 | Advanced interaction | Combobox、Slider、NumberField、Accordion、CommandPalette、FilterBar（Drawer 已在 M9 交付） | Planned |
-| M13 | Rhine domain patterns and Agent UI | InstrumentPanel、EvidencePanel、AgentRunCard、Message、Tool、Approval、Questionnaire、Artifact patterns；拟议 @wzrhine/agent | Planned |
+| M11 | Rendering Lab | Canvas/SVG 性能实验、渲染适配器契约、是否引入 Canvas 的证据 | Planned（维护者决定跳过，排在 M12 之后） |
+| M12 | Advanced interaction + Agent UI | react：Collapsible、Accordion、Slider、NumberField、ContextMenu、Combobox、CommandPalette、FileDropZone、SplitButton、ScrollArea；新包 `@wzrhine/agent-core` + `@wzrhine/agent`（图册 46 组件全覆盖 + Wpi 缺口补充） | ✅ Done（[验收](../development/acceptance/2026-10-11-m12.md)；[ADR-0010](../development/adr/0010-m12-agent-ui-plan.md)） |
+| M13 | Rhine domain patterns | InstrumentPanel、EvidencePanel、MetricPanel、ExperimentTimeline 等非 Agent 领域模式（Agent UI 已在 M12 提前交付）；Wpi-Agent 真实接入验收 | Planned |
 | M14 | Accessibility & internationalization | 屏幕阅读器、200% 缩放、真机、RTL、locale、日期时间策略 | Planned |
 | M15 | Public release | 许可证、npm scope、版本、changelog、公开文档和安装验证 | Planned |
 | M16 | Source distribution | registry、源码模板、CLI 评估、示例生成 | Planned |
@@ -36,7 +36,7 @@
 
 > **顺序调整（维护者决定，M8 开始时）**：M8 之后先做「覆盖层与反馈组件」（新 M9），原 M9 Ecosystem hardening 改为 M9.5。M10 及之后的编号保持不变，避免所有规划文件与验收记录里的交叉引用失效。Drawer 从 M12 提前到 M9。
 >
-> **实际完成顺序**：M8 → M9 与 M10 并行 → M9.5 → M11（下一里程碑）。下文章节按实际完成顺序排列，因此 M10 排在 M9.5 之前。
+> **实际完成顺序**：M8 → M9 与 M10 并行 → M9.5 → M12（维护者决定跳过 M11，并把 Agent UI 从 M13 提前到 M12，ADR-0010）。下文章节按实际完成顺序排列，因此 M10 排在 M9.5 之前。
 
 ## M8：Data & Navigation
 
@@ -210,7 +210,9 @@ M9.5 不负责建立第二个 headless 组件底座，也不负责加入 Canvas 
 - 有 context loss、DPR、visibility、reduced motion 处理；
 - 不能影响 @wzrhine/react 安装和 bundle。
 
-## M12：Advanced interaction
+## M12：Advanced interaction + Agent UI
+
+状态：✅ 已完成。证据：[M12 验收记录](../development/acceptance/2026-10-11-m12.md)、[ADR-0010 范围与拆包](../development/adr/0010-m12-agent-ui-plan.md)、[ADR-0011 Agent 契约](../development/adr/0011-agent-contracts.md)、[ADR-0012 Agent 动效](../development/adr/0012-agent-motion.md)。FilterBar 与 DatePicker 仍为 Planned（无真实需求 / 等 locale 与时区策略）。下文「推荐顺序」保留为原始规划。
 
 ### 推荐顺序
 
@@ -262,6 +264,8 @@ Agent UI 会优先消费真实场景中需要的高级交互能力：
 这些组件必须使用 slots、children、render props 或 column definitions，不应该绑定某个后端 API 或数据库模型。
 
 ### Agent UI 平台
+
+> M12 已交付（见上）。下文保留为原始规划；实际拆为 `@wzrhine/agent-core`（契约与纯函数）+ `@wzrhine/agent`（组件），组件清单以 [Agent workbench 覆盖索引](../../apps/docs/src/agent/OverviewPage.tsx) 与组件文档为准。仍未关闭的门禁：Wpi-Agent 真实消费页面与双层验收。
 
 Agent 领域模式扩展为独立的 @wzrhine/agent 包，纳入以下公共组件族：
 

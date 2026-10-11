@@ -28,7 +28,21 @@ WzRhineLab-UI/
 └─ scripts/            # build-package、api-report、docs-index、license-audit、verify-packages、size-check、release、import-visual-assets.ps1
 ```
 
-拟议（未创建）：`packages/agent/`（`@wzrhine/agent`，可选 Agent UI 领域组件，无运行时 / 传输依赖），规划见 [Agent UI 平台规划](../planning/agent-ui-platform-plan.md) 与 M13。下文关于 agent 包的规则是对它的约束，不代表包已存在。
+M12 新增两个包（[ADR-0010](adr/0010-m12-agent-ui-plan.md)）：
+
+```text
+packages/
+├─ agent-core/         # @wzrhine/agent-core：Agent view-model、状态轴、状态元数据、纯函数（无 React / DOM / 依赖）
+│  └─ src/contracts/ · src/helpers/
+└─ agent/              # @wzrhine/agent：Agent UI 组件（peer @wzrhine/react），重新导出 agent-core
+   └─ src/
+      ├─ components/{shell,conversation,message,process,tools,composer,intervention,workspace,artifact}/
+      ├─ primitives/   # AgentIcon、StatusGlyph、AgentStatus、AgentSpark
+      ├─ motion/       # Agent 动效层（ADR-0012）
+      ├─ provider/     # AgentMessagesProvider、文案表 messages/*.ts（agent 源码中唯一允许 CJK 的位置）
+      ├─ styles/*.css  # 由 agent.css（`./styles.css`）统一引入
+      └─ fixtures/     # 测试与 Showcase 共用的示例会话（不进入构建产物）
+```
 
 ### `packages/react/src` 布局
 ```text
@@ -61,13 +75,13 @@ packages/react/src/
 - 运行时使用 React 的模块首行写 `'use client'`，纯函数 / 常量模块不写（ADR-0008 §2，`verify:packages` 检查）。
 - TypeScript strict；pnpm workspace；CSS Variables 为样式权威；视觉主题 scope 到 `.rl-theme` 容器。
 - docs 应用**可以**依赖 React 包与 Tokens；React 包只依赖 React/必要 headless 基础，独立可用；Tokens 不依赖 React。
-- agent 包可以依赖 react、tokens 和 motion/react；agent 包不得依赖 Agent SDK、请求库、Tauri、MCP client 或具体后端协议；react 包不依赖 agent 包。
+- agent 包 peer 依赖 `@wzrhine/react`、react、motion，依赖 `@wzrhine/agent-core`、`@wzrhine/tokens`、`@base-ui/react`（同一精确版本）；不得依赖 Agent SDK、请求库、Tauri、MCP client、Markdown / 高亮 / 图标库或具体后端协议（`packages/agent/test/package-boundary.test.ts` 强制）；agent-core 没有任何运行时依赖；react 包不依赖 agent 包。
 - WebGL、粒子、音效和复杂图表置于可选包/示例，禁止拉入基础 `Button` 的依赖链。
 - 复杂可访问交互的单一 headless 底座已由 [ADR-0001](adr/0001-headless-primitives.md) 选定 Base UI（`@base-ui/react` 1.9.0，精确锁定），不与 React Aria / Radix 混用。
 - 不把 React package 中的 CSS 注入全局原生元素；所有类名 `rl-` 前缀，主题采用 `data-rl-theme`。
 
 ## 产品 API
-计划发布路径：@wzrhine/tokens、@wzrhine/react、@wzrhine/effects，以及拟议的 @wzrhine/agent；agent 包仍处于规划阶段（未创建），内测包名需先核验 npm 占用情况。现在是源码工作区，**不是已发布 npm 包**。单组件可访问的命名导出，避免不透明 barrel 导出副作用。Style 与 Token 保留明确导入路径。
+计划发布路径：@wzrhine/tokens、@wzrhine/react、@wzrhine/effects、@wzrhine/agent-core、@wzrhine/agent（发布顺序同此，依赖在前）；内测包名需先核验 npm 占用情况。现在是源码工作区，**不是已发布 npm 包**。单组件可访问的命名导出，避免不透明 barrel 导出副作用。Style 与 Token 保留明确导入路径。
 
 @wzrhine/agent 公开的是 view-model、actions、capabilities、renderer 和 slots。运行时事件、缓存、权限事实、文件系统、终端、窗口和路由属于消费项目。
 

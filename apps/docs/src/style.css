@@ -1948,3 +1948,64 @@ body,
 .sc-search__empty {
   padding: var(--rl-space-2);
 }
+
+/* ---------- Agent UI pages (M12) ---------- */
+.sc-agent-workbench {
+  display: grid;
+  gap: var(--rl-space-3);
+  min-width: 0;
+}
+
+/* The shell fills a fixed-height frame so its columns scroll independently, as in an app window. */
+.sc-agent-workbench > .rl-agent-shell {
+  height: min(52rem, 85vh);
+  min-height: 32rem;
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-md);
+  overflow: hidden;
+}
+
+.sc-agent-atlas {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--rl-type-body-sm);
+}
+
+.sc-agent-atlas th,
+.sc-agent-atlas td {
+  padding: var(--rl-space-1) var(--rl-space-2);
+  border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
+  text-align: start;
+  white-space: nowrap;
+}
+
+.sc-agent-atlas a {
+  color: var(--rl-fg-primary);
+  text-underline-offset: 0.2em;
+}
+
+.sc-agent-atlas a:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.sc-agent-motion-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rl-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sc-agent-motion-grid li {
+  display: grid;
+  justify-items: center;
+  gap: var(--rl-space-1);
+  min-width: 5rem;
+}
+
+.sc-agent-jump-slot {
+  position: relative;
+  min-height: 6rem;
+}

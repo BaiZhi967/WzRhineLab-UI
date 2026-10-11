@@ -1,0 +1,207 @@
+/*
+ * @wzrhine/agent · process family (ADR-0012): AgentProcess and RunStatus. Tokens only; activity
+ * comes from AgentSpark / the breathing StatusGlyph in base.css (no keyframes here).
+ */
+
+/* ---------- RunStatus ---------- */
+.rl-agent-run {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rl-space-1) var(--rl-space-2);
+  min-width: 0;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.rl-agent-run[data-appearance='line'] {
+  display: flex;
+  color: var(--rl-fg-muted);
+}
+
+.rl-agent-run[data-appearance='line'] .rl-agent-run__main {
+  --rl-agent-status-fg: var(--rl-fg-muted);
+
+  gap: var(--rl-space-2);
+  font: var(--rl-type-body-sm);
+}
+
+.rl-agent-run__chip {
+  font: var(--rl-type-meta);
+}
+
+.rl-agent-run__hint {
+  min-width: 0;
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-meta);
+}
+
+/* ---------- AgentProcess ---------- */
+.rl-agent-process {
+  min-width: 0;
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-md);
+  background: var(--rl-bg-surface);
+}
+
+.rl-agent-process__trigger {
+  min-height: var(--rl-control-height-md);
+  padding-inline: var(--rl-space-3);
+  color: var(--rl-fg-muted);
+}
+
+.rl-agent-process__glyph {
+  --rl-agent-glyph-size: var(--rl-icon-size-sm);
+}
+
+.rl-agent-process__headline {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--rl-fg-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rl-agent-process__run-status {
+  flex: none;
+  color: var(--rl-fg-subtle);
+  font: var(--rl-type-meta);
+}
+
+.rl-agent-process__elapsed {
+  flex: none;
+  margin-inline-start: auto;
+  color: var(--rl-fg-subtle);
+  font: var(--rl-type-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.rl-agent-process__panel {
+  border-top: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.rl-agent-process__calls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rl-space-4);
+  padding: var(--rl-space-1) var(--rl-space-1) var(--rl-space-2);
+}
+
+.rl-agent-process__call {
+  min-width: 0;
+}
+
+.rl-agent-process__call-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rl-space-1) var(--rl-space-2);
+  margin: 0 0 var(--rl-space-2);
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-label-sm);
+}
+
+.rl-agent-process__blocks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rl-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rl-agent-process__block {
+  min-width: 0;
+  padding-inline-start: var(--rl-space-2);
+  border-inline-start: var(--rl-border-width-strong) solid transparent;
+}
+
+/* Only the current step carries the accent rule. */
+.rl-agent-process__block[data-current] {
+  border-inline-start-color: var(--rl-accent);
+}
+
+.rl-agent-process__stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rl-space-1);
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-body-sm);
+}
+
+.rl-agent-process__cut {
+  align-self: flex-start;
+  padding: 0 var(--rl-space-1);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-xs);
+  color: var(--rl-fg-subtle);
+  font: var(--rl-type-meta);
+}
+
+.rl-agent-process__children {
+  margin: var(--rl-space-1) 0 0 var(--rl-space-3);
+  padding: 0 0 0 var(--rl-space-3);
+  border-inline-start: var(--rl-border-width) solid var(--rl-border-default);
+  list-style: none;
+}
+
+.rl-agent-process__child {
+  position: relative;
+  margin-top: var(--rl-space-1);
+}
+
+/* Tree connector from the vertical rule to each child. */
+.rl-agent-process__child::before {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--rl-space-3) * -1);
+  width: var(--rl-space-2);
+  border-top: var(--rl-border-width) solid var(--rl-border-default);
+  content: '';
+}
+
+.rl-agent-process__pending {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rl-space-1) var(--rl-space-2);
+  min-height: var(--rl-control-height-sm);
+  padding: var(--rl-space-1) var(--rl-space-2);
+  border: var(--rl-border-width) dashed var(--rl-border-default);
+  border-radius: var(--rl-radius-sm);
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-body-sm);
+}
+
+.rl-agent-process__pending-glyph {
+  --rl-agent-glyph-size: var(--rl-icon-size-sm);
+}
+
+.rl-agent-process__pending-note {
+  color: var(--rl-fg-subtle);
+  font: var(--rl-type-meta);
+}
+
+.rl-agent-process__truncated {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rl-space-2);
+  margin: 0;
+  padding: var(--rl-space-2);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-subtle);
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-meta);
+}
+
+@media (forced-colors: active) {
+  .rl-agent-process,
+  .rl-agent-process__pending {
+    border-color: CanvasText;
+  }
+
+  .rl-agent-process__block[data-current] {
+    border-inline-start-color: Highlight;
+  }
+}

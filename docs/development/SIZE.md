@@ -24,29 +24,37 @@ esbuild 通过 Vite（`apps/docs` 的依赖）解析，没有新增依赖；当�
 | `tokens-css` | `@wzrhine/tokens/styles.css` |
 | `effects-full` | `export * from '@wzrhine/effects'` |
 | `effects-css` | `@wzrhine/effects/styles.css` |
+| `agent-core` | `export * from '@wzrhine/agent-core'` |
+| `agent-full` | `export * from '@wzrhine/agent'`（`@wzrhine/react` 是 peer，视为外部依赖） |
+| `agent-status` | `export { AgentStatus } from '@wzrhine/agent'`（tree-shaking 检查） |
+| `agent-css` | `@wzrhine/agent/styles.css`（含十个 `@import` 分片） |
 
 ## 失败条件
 - 任一条目 gzip 体积 > 预算：逐项输出超出的字节数。
 - 有度量但 `size-budget.json` 中没有预算，或有预算但脚本不再度量（改名或删除条目时必须同步预算文件）。
-- tree-shaking 检查：`react-button` 的 gzip 体积必须小于 `react-full` 的 25%。超过说明只导入一个组件就拉进了大半个包（检查 `sideEffects` 和模块顶层副作用）。
+- tree-shaking 检查：`react-button` 的 gzip 体积必须小于 `react-full` 的 25%，`agent-status` 必须小于 `agent-full` 的 25%。超过说明只导入一个组件就拉进了大半个包（检查 `sideEffects` 和模块顶层副作用）。
 - `pnpm build:packages` 失败：什么都不量，直接失败。
 
 ## 当前数值
-2026-10-11，M9.5 集成后（含默认文案表）用 `pnpm size:check --update` 生成；以 `size-budget.json` 和命令输出为准。
+2026-10-11，M12 集成后用 `pnpm size:check --update` 生成；以 `size-budget.json` 和命令输出为准。
 
 | 条目 | minified | gzip | 预算（gzip） | 余量 |
 | --- | ---: | ---: | ---: | ---: |
-| `react-full` | 420.26 KB | 138.26 KB | 153 KB | 9.6% |
+| `react-full` | 549.36 KB | 182.34 KB | 202 KB | 9.7% |
 | `react-button` | 6.60 KB | 2.53 KB | 4 KB | 36.8% |
-| `react-datatable` | 17.95 KB | 6.59 KB | 8 KB | 17.6% |
-| `react-css` | 80.01 KB | 12.07 KB | 15 KB | 19.5% |
+| `react-datatable` | 19.06 KB | 6.99 KB | 8 KB | 12.6% |
+| `react-css` | 106.30 KB | 15.17 KB | 18 KB | 15.7% |
 | `tokens-css` | 6.18 KB | 1.64 KB | 3 KB | 45.3% |
 | `effects-full` | 8.27 KB | 3.32 KB | 5 KB | 33.5% |
 | `effects-css` | 5.82 KB | 1.58 KB | 3 KB | 47.2% |
+| `agent-core` | 10.02 KB | 3.60 KB | 5 KB | 27.9% |
+| `agent-full` | 315.95 KB | 89.45 KB | 100 KB | 10.6% |
+| `agent-status` | 2.65 KB | 1.12 KB | 3 KB | 62.5% |
+| `agent-css` | 131.06 KB | 16.41 KB | 19 KB | 13.6% |
 
-初版（文案表接入前）`react-datatable` 为 5.93 KB、`react-full` 为 137.14 KB；DataTable 现在引入默认文案表（约 0.66 KB gzip），预算随之由 7 KB 调为 8 KB，`react-full` 由 152 KB 调为 153 KB。`react-button` 未变：Button 没有内置文案，不引入文案表。
+**M12 调整**：`react-full` 由 153 KB 调为 202 KB（+44 KB gzip），原因是新增 10 个组件，其中 Combobox、CommandPalette、Slider、NumberField、ScrollArea、Accordion、ContextMenu 各自引入对应的 Base UI 子路径（全部组件同时导入时才计入；按需导入不受影响）；`react-datatable` 增加约 0.4 KB（共享的文案表新增命名空间）；`react-css` 由 15 KB 调为 18 KB（四个新样式分片）。四个 agent 条目为新增。`react-button` / `react-full` = 1.4%，`agent-status` / `agent-full` = 1.3%，tree-shaking 正常。
 
-`react-button` / `react-full` = 1.8%。`react-full` 中约 3/4 来自 `@base-ui/react` 及其依赖（全部组件同时导入时），本包自身代码约 59 KB（minified）。小体积条目的余量比例偏高，是因为「取整到 1 KB」在几 KB 的量级上占比大。
+M9.5 时 `react-full` 为 138.26 KB、`react-css` 为 12.07 KB；初版（文案表接入前）`react-datatable` 为 5.93 KB、`react-full` 为 137.14 KB。
 
 ## 修改预算
 预算规则：`ceil(ceil(gzip / 1024) × 1.1) × 1024`，即先向上取整到 1 KB，再加约 10% 并向上取整到整 KB。

@@ -15,12 +15,12 @@
 - [x] 320/390/768/1280/1920 多尺寸无截断和大面积布局漂移（`responsive.spec.ts` 全路由无横向溢出；每个里程碑的 5 宽度截图审查，最近为 [M9](acceptance/2026-10-10-m9.md)）
 
 ## G2 — Component
-- [ ] API + 示例 + Props 类型 + 状态矩阵（API 参考自动生成、Showcase 示例与公开 Props 类型齐全；**状态矩阵只有** field、forms、data-navigation 三份组件文档有，其余组件文档缺）
+- [ ] API + 示例 + Props 类型 + 状态矩阵（API 参考自动生成、Showcase 示例与公开 Props 类型齐全；**状态矩阵**：field、forms、data-navigation 与 M12 的 advanced、command 及六份 Agent 组件文档有，其余 M1–M9 组件文档仍缺）
 - [x] 禁用时行为一致，loading 无重复提交（Button loading 阻止重复激活并保持焦点、Pagination `busy`、AlertDialog 等待中不可取消，单测与 E2E 覆盖）
 - [x] 键盘路径、focus-visible、错误与提示语义（三内核 E2E 键盘、焦点进入 / 循环 / 归还、Field 错误关联、live region；**人工键盘与读屏抽检未做**，见 [ACCESSIBILITY.md](../design/ACCESSIBILITY.md)）
 - [x] 主要动态效果具备 reduce 等价反馈（`reduced-motion.spec.ts` 全路由减动扫描、ADR-0007 按属性类型减动，[M10 验收](acceptance/2026-10-10-m10.md)）
 - [ ] 中文长文和系统字体放大（Button、Choice 等 Showcase 有长中文 / 长英文示例，随 5 宽度截图审查与无溢出 E2E 覆盖；**系统字体放大与 200% 缩放未验证**，留给 M14）
-- [x] 有自动化测试证明回归范围；未运行不得填「通过」（tokens 235 / react 323 / effects 45 单测，三内核 E2E 各 385 项，74 张视觉基线；验收记录只列真实执行过的命令）
+- [x] 有自动化测试证明回归范围；未运行不得填「通过」（M12：tokens 235 / agent-core 21 / react 456 / effects 45 / agent 477 单测，Showcase E2E Chromium / Firefox 583、WebKit 582 + 1 跳过，118 张视觉基线，6 个示例；验收记录只列真实执行过的命令）
 
 ## G3 — Release
 - [ ] 公开许可证确认（**待维护者选定**），第三方字体/图片/图标权利核对（✅ `pnpm license:audit` → THIRD-PARTY-LICENSES.md）
