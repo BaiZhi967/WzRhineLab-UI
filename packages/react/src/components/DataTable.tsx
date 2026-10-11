@@ -1,4 +1,7 @@
+'use client';
+
 import * as React from 'react';
+import { useRhineLocale } from '../provider/messages.js';
 import { cx } from '../utils/cx.js';
 import { Button } from './Button.js';
 import { EmptyState } from './EmptyState.js';
@@ -117,20 +120,27 @@ export function DataTable<Row>({
   selectedIds,
   onSelectionChange,
   getRowLabel,
-  emptyText = '没有符合条件的记录',
+  emptyText: emptyTextProp,
   emptyDescription,
   emptyAction,
   status = 'ready',
   loadingRows = 5,
-  loadingText = '正在加载…',
-  errorText = '加载失败。',
+  loadingText: loadingTextProp,
+  errorText: errorTextProp,
   onRetry,
-  retryLabel = '重试',
+  retryLabel: retryLabelProp,
   pagination,
   density = 'comfortable',
   scrollLabel,
   className,
 }: DataTableProps<Row>) {
+  const { messages, formatNumber } = useRhineLocale();
+  const m = messages.dataTable;
+  // A prop given as `undefined` falls back to the messages, matching the old default parameters.
+  const emptyText = emptyTextProp === undefined ? m.empty : emptyTextProp;
+  const loadingText = loadingTextProp === undefined ? m.loading : loadingTextProp;
+  const errorText = errorTextProp === undefined ? m.error : errorTextProp;
+  const retryLabel = retryLabelProp === undefined ? m.retry : retryLabelProp;
   const captionId = React.useId();
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const busy = status !== 'ready';
@@ -212,7 +222,7 @@ export function DataTable<Row>({
                   checked={allSelected}
                   onChange={toggleAll}
                   disabled={rows.length === 0 || busy}
-                  aria-label={allSelected ? '取消全选' : '全选'}
+                  aria-label={allSelected ? m.deselectAll : m.selectAll}
                 />
               </th>
             )}
@@ -300,7 +310,7 @@ export function DataTable<Row>({
                         checked={selected}
                         onChange={() => toggleRow(id)}
                         disabled={busy}
-                        aria-label={`选择 ${getRowLabel ? getRowLabel(row) : id}`}
+                        aria-label={m.selectRow(getRowLabel ? getRowLabel(row) : id)}
                       />
                     </td>
                   )}
@@ -343,7 +353,7 @@ export function DataTable<Row>({
       <div className="rl-table__footer">
         {selectable && selectedIds!.size > 0 && (
           <p className="rl-table__selection" role="status">
-            已选 {selectedIds!.size} 条{offPageSelected > 0 ? `（其中 ${offPageSelected} 条在其他页）` : ''}
+            {m.selection(selectedIds!.size, offPageSelected, formatNumber)}
           </p>
         )}
         {pagination && (

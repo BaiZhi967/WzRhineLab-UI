@@ -1,3 +1,5 @@
+'use client';
+
 import { useReducedMotionConfig } from 'motion/react';
 import type { Transition } from 'motion/react';
 import { transition } from './presets.js';

@@ -1,7 +1,12 @@
+'use client';
+
 import * as React from 'react';
 import { Meter as BaseMeter } from '@base-ui/react/meter';
 import { Progress as BaseProgress } from '@base-ui/react/progress';
+import { useRhineLocale } from '../provider/messages.js';
 import { cx } from '../utils/cx.js';
+import { getMeterState } from './meter-utils.js';
+import type { MeterState } from './meter-utils.js';
 
 /**
  * Progress vs Meter (ADR-0005 §2):
@@ -48,6 +53,7 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(function
     tone = 'neutral',
     hideLabel = false,
     format,
+    locale,
     className,
     style,
     ...rest
@@ -55,11 +61,13 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(function
   ref,
 ) {
   const descriptionId = React.useId();
-  const fallbackText = (formatted: string, v: number | null) => (v === null ? '进行中' : formatted);
+  const { messages, locale: contextLocale } = useRhineLocale();
+  const fallbackText = (formatted: string, v: number | null) => (v === null ? messages.progress.indeterminate : formatted);
   return (
     <BaseProgress.Root
       {...rest}
       ref={ref}
+      locale={locale ?? contextLocale}
       value={value}
       // Without `format`, Base UI shows the share of the range as a percentage; with it, the raw value.
       format={format}
@@ -121,22 +129,6 @@ export type MeterProps = Omit<
   style?: React.CSSProperties;
 };
 
-export type MeterState = 'optimum' | 'suboptimum' | 'critical';
-
-/**
- * Native <meter> rules: the range is split by `low` / `high`; the region containing `optimum` is
- * good, the adjacent region is "suboptimum", the far region "critical". Without thresholds every
- * value is optimum.
- */
-export function getMeterState(value: number, { min = 0, max = 100, low, high, optimum }: { min?: number; max?: number; low?: number; high?: number; optimum?: number }): MeterState {
-  const lo = Math.max(min, Math.min(low ?? min, max));
-  const hi = Math.min(max, Math.max(high ?? max, lo));
-  const opt = optimum ?? (min + max) / 2;
-  const region = (v: number) => (v < lo ? 0 : v > hi ? 2 : 1);
-  const distance = Math.abs(region(value) - region(opt));
-  return distance === 0 ? 'optimum' : distance === 1 ? 'suboptimum' : 'critical';
-}
-
 const meterTone: Record<MeterState, ProgressTone> = { optimum: 'success', suboptimum: 'warning', critical: 'danger' };
 
 export const Meter = React.forwardRef<HTMLDivElement, MeterProps>(function Meter(
@@ -154,6 +146,7 @@ export const Meter = React.forwardRef<HTMLDivElement, MeterProps>(function Meter
     description,
     size = 'md',
     hideLabel = false,
+    locale,
     className,
     style,
     ...rest
@@ -161,17 +154,19 @@ export const Meter = React.forwardRef<HTMLDivElement, MeterProps>(function Meter
   ref,
 ) {
   const descriptionId = React.useId();
+  const { messages, locale: contextLocale } = useRhineLocale();
   const hasThresholds = low != null || high != null;
   const state = getMeterState(value, { min, max, low, high, optimum });
   const stateText = hasThresholds ? stateLabels?.[state] : undefined;
   const spoken = (formatted: string, v: number) => {
     const base = getValueText ? getValueText(formatted, v) : formatted;
-    return stateText ? `${base}，${stateText}` : base;
+    return stateText ? messages.progress.meterValue(base, stateText) : base;
   };
   return (
     <BaseMeter.Root
       {...rest}
       ref={ref}
+      locale={locale ?? contextLocale}
       value={value}
       min={min}
       max={max}

@@ -1,5 +1,8 @@
+'use client';
+
 import * as React from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
+import { useRhineMessages } from '../provider/messages.js';
 import { usePortalContainer } from '../provider/portal.js';
 import { cx } from '../utils/cx.js';
 import type { InputSize } from './Input.js';
@@ -78,7 +81,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(function 
     value,
     defaultValue,
     onValueChange,
-    placeholder = '请选择',
+    placeholder: placeholderProp,
     name,
     required,
     disabled,
@@ -94,6 +97,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(function 
   ref,
 ) {
   const container = usePortalContainer();
+  const messages = useRhineMessages();
   const items = React.useMemo(
     () => options.flatMap((o) => (isGroup(o) ? o.options : [o])).map((o) => ({ value: o.value, label: o.label })),
     [options],
@@ -122,7 +126,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(function 
         data-size={size}
         data-invalid={invalid || undefined}
       >
-        <BaseSelect.Value className="rl-select__value" placeholder={placeholder} />
+        <BaseSelect.Value className="rl-select__value" placeholder={placeholderProp === undefined ? messages.select.placeholder : placeholderProp} />
         <BaseSelect.Icon className="rl-select__icon">
           <Chevron />
         </BaseSelect.Icon>

@@ -1,4 +1,7 @@
+'use client';
+
 import * as React from 'react';
+import { useRhineLocale } from '../provider/messages.js';
 import { cx } from '../utils/cx.js';
 import { Skeleton } from './Skeleton.js';
 
@@ -40,8 +43,6 @@ export type StatProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'> & {
   emptyLabel?: string;
 };
 
-const deltaWords = { up: '上升', down: '下降', flat: '持平' } as const;
-
 function DeltaIcon({ direction }: { direction: 'up' | 'down' | 'flat' }) {
   const d = direction === 'up' ? 'M8 12.5V3.5M4 7.5l4-4 4 4' : direction === 'down' ? 'M8 3.5v9M4 8.5l4 4 4-4' : 'M3.5 8h9';
   return (
@@ -63,18 +64,22 @@ export const Stat = React.forwardRef<HTMLElement, StatProps>(function Stat(
     description,
     loading = false,
     size = 'md',
-    emptyLabel = '无数据',
+    emptyLabel: emptyLabelProp,
     className,
     ...rest
   },
   ref,
 ) {
+  const { messages, locale: contextLocale } = useRhineLocale();
+  // ADR-0009 §3: the component's own `locale` wins over the provider's.
+  const numberLocale = locale ?? contextLocale;
+  const emptyLabel = emptyLabelProp ?? messages.stat.empty;
   const empty = value === null || value === undefined || value === '';
-  const display = empty ? null : typeof value === 'number' ? new Intl.NumberFormat(locale, format).format(value) : value;
+  const display = empty ? null : typeof value === 'number' ? new Intl.NumberFormat(numberLocale, format).format(value) : value;
   const direction = delta ? (delta.value > 0 ? 'up' : delta.value < 0 ? 'down' : 'flat') : null;
   const deltaText =
     delta?.text ??
-    (delta ? `${delta.value > 0 ? '+' : delta.value < 0 ? '−' : '±'}${new Intl.NumberFormat(locale).format(Math.abs(delta.value))}` : null);
+    (delta ? `${delta.value > 0 ? '+' : delta.value < 0 ? '−' : '±'}${new Intl.NumberFormat(numberLocale).format(Math.abs(delta.value))}` : null);
 
   return (
     <dl
@@ -101,12 +106,12 @@ export const Stat = React.forwardRef<HTMLElement, StatProps>(function Stat(
             {unit != null && <span className="rl-stat__unit">{unit}</span>}
           </>
         )}
-        {loading && <span className="rl-visually-hidden">正在加载</span>}
+        {loading && <span className="rl-visually-hidden">{messages.stat.loading}</span>}
       </dd>
       {delta && direction && !loading && (
         <dd className="rl-stat__delta" data-tone={delta.tone ?? 'neutral'} data-direction={direction}>
           <DeltaIcon direction={direction} />
-          <span className="rl-visually-hidden">{deltaWords[direction]}</span>
+          <span className="rl-visually-hidden">{messages.stat[direction]}</span>
           <span className="rl-stat__delta-value">{deltaText}</span>
           {delta.label != null && <span className="rl-stat__delta-label">{delta.label}</span>}
         </dd>

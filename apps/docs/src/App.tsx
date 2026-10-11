@@ -29,6 +29,7 @@ import { DataNavPage } from './pages/DataNavPage';
 import { AlertDialogPage } from './pages/AlertDialogPage';
 import { DrawerPage } from './pages/DrawerPage';
 import { FeedbackPage } from './pages/FeedbackPage';
+import { LocalePage } from './pages/LocalePage';
 
 // Optional effects package is code-split so the main Showcase chunk never includes it.
 const ShowcaseEffectsPage = React.lazy(() =>
@@ -185,6 +186,8 @@ export default function App() {
         return <DrawerPage />;
       case 'feedback':
         return <FeedbackPage />;
+      case 'locale':
+        return <LocalePage />;
       case 'archive':
         return <ArchivePage />;
       case 'data':

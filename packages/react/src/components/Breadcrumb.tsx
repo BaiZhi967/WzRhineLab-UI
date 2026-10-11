@@ -1,4 +1,7 @@
+'use client';
+
 import * as React from 'react';
+import { useRhineLocale } from '../provider/messages.js';
 import { cx } from '../utils/cx.js';
 
 /**
@@ -58,15 +61,19 @@ function shrinkFloor(text: string): number {
 export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(function Breadcrumb(
   {
     items,
-    label = '路径',
+    label: labelProp,
     maxItems = 4,
-    expandLabel = (count) => `显示全部 ${count} 级路径`,
+    expandLabel: expandLabelProp,
     renderLink,
     className,
     ...rest
   },
   ref,
 ) {
+  const { messages, formatNumber } = useRhineLocale();
+  const label = labelProp ?? messages.breadcrumb.nav;
+  const expandLabel = (count: number) =>
+    expandLabelProp ? expandLabelProp(count) : messages.breadcrumb.expand(count, formatNumber);
   const [expanded, setExpanded] = React.useState(false);
   const listRef = React.useRef<HTMLOListElement>(null);
   const collapsible = maxItems > 0 && items.length > maxItems && items.length > 3;

@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { fadePresence, pressScale } from '../motion/presets.js';

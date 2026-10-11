@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { usePortalContainer } from '../provider/portal.js';

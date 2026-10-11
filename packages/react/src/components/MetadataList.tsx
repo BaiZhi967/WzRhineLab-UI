@@ -1,4 +1,7 @@
+'use client';
+
 import * as React from 'react';
+import { useRhineMessages } from '../provider/messages.js';
 import { cx } from '../utils/cx.js';
 
 /**
@@ -54,6 +57,7 @@ export const MetadataList = React.forwardRef<HTMLDListElement, MetadataListProps
   { items, layout = 'inline', columns = 1, empty = 'hide', size = 'md', className, ...rest },
   ref,
 ) {
+  const messages = useRhineMessages();
   const visible = empty === 'hide' ? items.filter((item) => !isEmptyValue(item.value)) : items;
   if (visible.length === 0) return null;
   return (
@@ -71,7 +75,7 @@ export const MetadataList = React.forwardRef<HTMLDListElement, MetadataListProps
         const content = missing ? (
           <span className="rl-meta__empty">
             <span aria-hidden="true">—</span>
-            <span className="rl-visually-hidden">未记录</span>
+            <span className="rl-visually-hidden">{messages.metadataList.missing}</span>
           </span>
         ) : item.dateTime ? (
           <time dateTime={item.dateTime}>{item.value}</time>

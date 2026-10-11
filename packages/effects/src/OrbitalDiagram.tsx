@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { animate as animateValue, motion, useMotionValue } from 'motion/react';
 import { useMotionLifecycle } from '@wzrhine/react';

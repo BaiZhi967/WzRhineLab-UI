@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import { usePortalContainer } from '../provider/portal.js';

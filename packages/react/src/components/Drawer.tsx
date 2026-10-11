@@ -1,5 +1,8 @@
+'use client';
+
 import * as React from 'react';
 import { Drawer as BaseDrawer } from '@base-ui/react/drawer';
+import { useRhineMessages } from '../provider/messages.js';
 import { usePortalContainer } from '../provider/portal.js';
 import { cx } from '../utils/cx.js';
 import { IconButton } from './IconButton.js';
@@ -106,12 +109,14 @@ export function Drawer({
   onClosed,
   side = 'end',
   size = 'md',
-  closeLabel = '关闭',
+  closeLabel: closeLabelProp,
   onCloseRequest,
   initialFocus,
   finalFocus,
   className,
 }: DrawerProps) {
+  const messages = useRhineMessages();
+  const closeLabel = closeLabelProp ?? messages.drawer.close;
   const [uncontrolled, setUncontrolled] = React.useState(defaultOpen);
   const controlled = openProp !== undefined;
   const open = controlled ? openProp : uncontrolled;

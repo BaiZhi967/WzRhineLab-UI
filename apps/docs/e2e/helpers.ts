@@ -3,6 +3,7 @@ import type { Page } from '@playwright/test';
 export const routes = [
   { name: 'overview', hash: '/#/' },
   { name: 'foundations', hash: '/#/foundations' },
+  { name: 'locale', hash: '/#/foundations/locale' },
   { name: 'button', hash: '/#/components/button' },
   { name: 'icon-button', hash: '/#/components/icon-button' },
   { name: 'surface', hash: '/#/components/surface' },

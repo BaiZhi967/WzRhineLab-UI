@@ -1882,3 +1882,16 @@ body,
     text-align: left;
   }
 }
+
+/* ---------- Locale & messages (ADR-0009) ---------- */
+/* The English column is its own RhineProvider; keep it visually part of the specimen card. */
+.sc-locale-scope {
+  min-width: 0;
+  background: transparent;
+}
+
+.sc-locale-column {
+  display: grid;
+  gap: var(--rl-space-5);
+  min-width: 0;
+}

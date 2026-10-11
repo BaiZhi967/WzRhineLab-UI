@@ -1,5 +1,9 @@
+'use client';
+
 import * as React from 'react';
+import { useRhineLocale } from '../provider/messages.js';
 import { cx } from '../utils/cx.js';
+import { getPaginationItems } from './pagination-utils.js';
 
 /**
  * Page navigation (ADR-0005 §3): a `<nav>` of plain buttons in normal Tab order. The current page
@@ -9,43 +13,8 @@ import { cx } from '../utils/cx.js';
  *   <Pagination page={page} totalItems={1000} pageSize={25} onPageChange={setPage} />
  */
 
-export type PaginationItem = number | 'ellipsis-start' | 'ellipsis-end';
-
-/**
- * Page list with first, last and `siblingCount` pages on each side of `page`. A gap of one page
- * is shown as that page, not an ellipsis, so the list length stays stable while paging.
- */
-export function getPaginationItems(page: number, pageCount: number, siblingCount = 1): PaginationItem[] {
-  const total = Math.max(1, Math.floor(pageCount));
-  const current = clamp(page, 1, total);
-  // first + last + current + 2 siblings + 2 ellipsis slots
-  const slots = siblingCount * 2 + 5;
-  if (total <= slots) return range(1, total);
-
-  const left = Math.max(current - siblingCount, 1);
-  const right = Math.min(current + siblingCount, total);
-  const showStart = left > 3;
-  const showEnd = right < total - 2;
-
-  if (!showStart) return [...range(1, slots - 2), 'ellipsis-end', total];
-  if (!showEnd) return [1, 'ellipsis-start', ...range(total - (slots - 3), total)];
-  return [1, 'ellipsis-start', ...range(left, right), 'ellipsis-end', total];
-}
-
-function range(from: number, to: number): number[] {
-  return Array.from({ length: to - from + 1 }, (_, i) => from + i);
-}
-
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(Math.round(value), min), max);
-}
-
-/** Rows of one page for client-side pagination. `page` starts at 1. */
-export function paginate<Row>(rows: readonly Row[], page: number, pageSize: number): Row[] {
-  const size = Math.max(1, Math.floor(pageSize));
-  const pageCount = Math.max(1, Math.ceil(rows.length / size));
-  const current = clamp(page, 1, pageCount);
-  return rows.slice((current - 1) * size, current * size);
 }
 
 export interface PaginationLabels {
@@ -58,15 +27,6 @@ export interface PaginationLabels {
   /** Range summary when `totalItems` is known, e.g. "第 51–75 条，共 1000 条". */
   status?: (from: number, to: number, total: number) => string;
 }
-
-const defaultLabels: Required<PaginationLabels> = {
-  nav: '分页',
-  previous: '上一页',
-  next: '下一页',
-  page: (p) => `第 ${p} 页`,
-  compact: (p, n) => `第 ${p} / ${n} 页`,
-  status: (from, to, total) => (total === 0 ? '共 0 条' : `第 ${from}–${to} 条，共 ${total} 条`),
-};
 
 type PageCountSource =
   | { pageCount: number; totalItems?: number; pageSize?: number }
@@ -117,7 +77,17 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(functio
   },
   ref,
 ) {
-  const labels = { ...defaultLabels, ...labelsProp };
+  const { messages, formatNumber } = useRhineLocale();
+  const m = messages.pagination;
+  // `labels` (component prop) > provider messages > zhCN (ADR-0009 §1).
+  const labels: Required<PaginationLabels> = {
+    nav: labelsProp?.nav ?? m.nav,
+    previous: labelsProp?.previous ?? m.previous,
+    next: labelsProp?.next ?? m.next,
+    page: labelsProp?.page ?? ((p) => m.page(p, formatNumber)),
+    compact: labelsProp?.compact ?? ((p, n) => m.compact(p, n, formatNumber)),
+    status: labelsProp?.status ?? ((from, to, total) => m.status(from, to, total, formatNumber)),
+  };
   const pageCount = Math.max(
     1,
     pageCountProp ?? (totalItems != null && pageSize ? Math.ceil(totalItems / pageSize) : 1),

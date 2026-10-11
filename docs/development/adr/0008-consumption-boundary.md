@@ -21,14 +21,20 @@
 - `@types/react` 只在开发依赖中，不进入 peer。
 
 ### 2. 客户端边界：产物逐文件保留 `'use client'`
-- `@wzrhine/react` 与 `@wzrhine/effects` 中**含组件或 hooks 的模块**在源码顶部写 `'use client';`；只导出常量、类型和纯函数的模块（`motion/presets.ts`、`paginate` 等）不写，以便服务端组件也能直接导入。
-- 由于 `tsc` 会保留文件首行的指令字符串，产物 `dist/**/*.js` 天然带上指令；`verify:packages` 增加检查：每个 `dist` 中导出组件的文件首个语句为 `'use client'`，纯模块不带。
+- 规则：`@wzrhine/react` 与 `@wzrhine/effects` 中**运行时使用 React 的模块**（`.tsx` 文件，或对 `react` / `motion/react` / `@base-ui/react*` 有非类型导入的文件）在源码首行写 `'use client';`。只导出常量、类型和纯函数的模块不写，服务端组件可以直接调用：`motion/presets.ts`、`utils/cx.ts`、两个入口 `index.ts`，以及从组件文件中拆出的 `components/pagination-utils.ts`（`paginate`、`getPaginationItems`）与 `components/meter-utils.ts`（`getMeterState`）。
+- `tsc` 保留文件首行的指令字符串，产物 `dist/**/*.js` 天然带上指令。`verify:packages` 以源码为准做数据驱动的检查：源码带指令的文件在打包产物中首个语句也必须是指令，纯模块不得带。
 - 入口 `index.js` 是纯 re-export，不写指令（打包工具按被引用模块的指令划分边界）。
-- 新增 `examples/next-app-router`：Next.js App Router 的服务端组件页面直接 `import { Button, DataTable } from '@wzrhine/react'`，不需要使用者再写包装文件；`RhineProvider` 放在根布局中。E2E 验证首屏 HTML 已渲染、水合无告警、弹层可用。示例依赖只在该示例中，不进入三个包。
+- **服务端组件中的用法**（React Server Components 的硬规则：函数不能作为 props 从服务端传给客户端组件）：
+  - 所有组件都可以在服务端组件中直接 `import`；
+  - 只接收可序列化 props 的组件（`Button` 不带 `onClick`、`RecordHeader`、`Tabs`、`Alert`、`MetadataList` 等）可以直接在服务端组件中渲染；
+  - 需要函数 props 的组件（`DataTable` 的 `getRowId` / `cell`、任何 `onClick` / `onValueChange`）放在使用者自己的 `'use client'` 文件中，服务端只传可序列化的数据（例如用 `paginate` 在服务端切好的行）；
+  - 不为此改动组件 API（例如不给 DataTable 增加可序列化的 `rowIdKey`）；如有真实需求另立 ADR。
+- 新增 `examples/next-app-router`（端口 4177）：Next.js App Router，根布局（服务端组件）直接渲染 `RhineProvider`，页面（服务端组件）直接渲染上面第二类组件并调用 `paginate`，DataTable 与交互岛放在示例自己的 `'use client'` 文件中。E2E 验证首屏 HTML 已渲染、水合无告警、弹层可用。示例依赖只在该示例中，不进入三个包。
+  - 偏差：示例用 `next build --webpack`。工作区内的包导出 TypeScript 源码，源码之间以 `.js` 后缀互相导入，需要 `transpilePackages` 加 `experimental.extensionAlias`，而 Turbopack 不支持 `extensionAlias`。安装发布产物的使用者不需要这两项；「发布产物 + Turbopack」尚未验证。
 - `@wzrhine/tokens` 只有 CSS 与常量，不需要指令。
 
 ### 3. 包体积基线与预算
-- 新增 `scripts/size-check.mjs`，`release:check` 在 `verify:packages` 之后运行。度量方式：对已打包的 `dist` 用 esbuild（Vite 已依赖，不新增依赖）做生产压缩打包，`react` / `react-dom` / `motion` 视为外部依赖，统计 **gzip 后**字节数。
+- 新增 `scripts/size-check.mjs`（`pnpm size:check`），`release:check` 在 `verify:packages` 之后运行。度量方式：对已打包的 `dist` 用 esbuild（经 Vite 解析，不新增依赖）做生产压缩打包，peer 依赖 `react` / `react-dom` / `motion` 及其子路径（`react/jsx-runtime`、`motion/react`）视为外部依赖；`@base-ui/react` 与 `@wzrhine/tokens` 是真实依赖，计入体积；度量 effects 时 `@wzrhine/react` 也是外部依赖（它是 effects 的 peer）。统计 **gzip（level 9）后**字节数，说明见 [SIZE.md](../SIZE.md)。
 - 度量条目（预算存于 `size-budget.json`，提交到仓库）：
   - `@wzrhine/react` 整个入口（全部组件）JS；
   - `@wzrhine/react` 只导入 `Button`（tree-shaking 是否生效）；
@@ -36,7 +42,8 @@
   - `@wzrhine/react/styles.css`（压缩 + gzip）；
   - `@wzrhine/tokens/styles.css`；
   - `@wzrhine/effects` 整个入口 JS 与 `styles.css`。
-- 预算 = 当前实测值向上取整到 1 KB 后再加约 10% 余量。超出任一预算时 `size-check` 以非零码退出，`release:check` 失败；输出逐项的实测值、预算与差值。
+- 预算 = 当前实测值向上取整到 1 KB 后再加约 10% 余量（`--update` 按此规则重写）。超出任一预算时 `size-check` 以非零码退出，`release:check` 失败；输出逐项的实测值、预算与差值。
+- 另外三道检查同样会失败：预算与度量条目不一致；只导入 `Button` 的体积不小于整个入口的 25%（tree-shaking 失效）；打包结果中混入了 `packages/*/src`（量到了源码而不是产物）。
 - 修改预算必须在 PR 中说明原因（新增组件、依赖升级等），并在 CHANGELOG 记录。
 
 ### 4. npm scope：保留 `@wzrhine`，暂不创建、不发布

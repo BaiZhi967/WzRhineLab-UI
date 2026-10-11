@@ -1,10 +1,14 @@
+'use client';
+
 import * as React from 'react';
 import { Field as BaseField } from '@base-ui/react/field';
 import { useFormContext } from '@base-ui/react/internals/form-context';
+import { useRhineMessages } from '../provider/messages.js';
 
 /** Internal parts shared by Field and the choice controls; not exported from the package. */
 
 export function LabelText({ label, required, optional }: { label: React.ReactNode; required?: boolean; optional?: boolean }) {
+  const messages = useRhineMessages();
   return (
     <>
       <span>{label}</span>
@@ -13,7 +17,7 @@ export function LabelText({ label, required, optional }: { label: React.ReactNod
           *
         </span>
       )}
-      {optional && !required && <span className="rl-field__optional">（可选）</span>}
+      {optional && !required && <span className="rl-field__optional">{messages.field.optional}</span>}
     </>
   );
 }

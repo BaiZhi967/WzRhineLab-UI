@@ -5,6 +5,8 @@
  * 1. Builds and packs @wzrhine/tokens, @wzrhine/react, @wzrhine/effects with `pnpm pack`
  *    (prepack builds dist; workspace: ranges are rewritten to real versions).
  * 2. Inspects each tarball: publishConfig exports, no src/ or tests, every export target present.
+ *    Client boundary (ADR-0008 §2): every src module that uses React at runtime starts with
+ *    'use client', pure modules do not, and the packed dist/*.js keeps exactly that set.
  * 3. Creates a throwaway consumer project OUTSIDE the workspace, installs the tarballs plus
  *    real react / react-dom / motion from the registry, then:
  *    - type-checks a TSX file against the shipped .d.ts (strict, moduleResolution bundler)
@@ -95,6 +97,60 @@ for (const [name, tgz] of Object.entries(tarballs)) {
     if (!list.includes(path)) fail(`${name}: export target ${target} missing from tarball`);
   }
   log(`${name}: ${list.length} files, exports ok, no src/tests, versions resolved`);
+}
+
+// ---------- 2b. 'use client' boundary (ADR-0008 §2) ----------
+/** True when the first statement (after comments / whitespace) is the 'use client' directive. */
+function startsWithUseClient(code) {
+  const body = code.replace(/^\uFEFF/, '').replace(/^(?:\s+|\/\/[^\n]*\n|\/\*[\s\S]*?\*\/)*/, '');
+  return /^(['"])use client\1\s*;?/.test(body);
+}
+/** A module needs the directive when it runs React code: any .tsx file, or a value import from React / motion / Base UI. */
+function usesReactAtRuntime(file, code) {
+  if (file.endsWith('.tsx')) return true;
+  return /^import\s+(?!type\b)[^;]*?from\s+['"](?:react|motion\/react|@base-ui\/react(?:\/[^'"]*)?)['"]/m.test(code);
+}
+// Modules that must stay importable from React Server Components (no directive).
+const pureModules = {
+  '@wzrhine/react': ['index', 'utils/cx', 'motion/presets', 'components/pagination-utils', 'components/meter-utils'],
+  '@wzrhine/effects': ['index', 'scramble', 'usePageVisible'],
+};
+const walkSrc = (dir) =>
+  readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walkSrc(join(dir, e.name)) : [join(dir, e.name)]));
+for (const [name, dirName] of [['@wzrhine/react', 'react'], ['@wzrhine/effects', 'effects']]) {
+  const srcDir = join(root, 'packages', dirName, 'src');
+  const entries = readTarball(tarballs[name]);
+  const expected = new Map();
+  for (const file of walkSrc(srcDir)) {
+    if (!/\.tsx?$/.test(file) || /\.test\.tsx?$|\.d\.ts$/.test(file)) continue;
+    const rel = file.slice(srcDir.length + 1).replace(/\\/g, '/').replace(/\.tsx?$/, '');
+    const code = readFileSync(file, 'utf8');
+    const client = startsWithUseClient(code);
+    if (client !== usesReactAtRuntime(file, code)) {
+      fail(`${name}: src/${rel} ${client ? "has 'use client' but no React runtime code" : "uses React at runtime but lacks a leading 'use client'"}`);
+    }
+    expected.set(rel, client);
+  }
+  for (const rel of pureModules[name]) {
+    if (!expected.has(rel)) fail(`${name}: pure module src/${rel} not found`);
+    if (expected.get(rel)) fail(`${name}: src/${rel} must stay a pure (server-importable) module`);
+  }
+  const distJs = [...entries.keys()].filter((f) => f.startsWith('package/dist/') && f.endsWith('.js'));
+  for (const f of distJs) {
+    const rel = f.slice('package/dist/'.length, -'.js'.length);
+    if (!expected.has(rel)) fail(`${name}: ${f} has no matching source module`);
+  }
+  let clients = 0;
+  for (const [rel, client] of expected) {
+    const buf = entries.get(`package/dist/${rel}.js`);
+    if (!buf) fail(`${name}: dist/${rel}.js missing from tarball`);
+    if (startsWithUseClient(buf.toString('utf8')) !== client) {
+      fail(`${name}: dist/${rel}.js ${client ? "lost its leading 'use client'" : "unexpectedly starts with 'use client'"}`);
+    }
+    if (client) clients += 1;
+  }
+  if (clients === 0) fail(`${name}: no 'use client' modules found`);
+  log(`${name}: 'use client' on ${clients} modules, ${expected.size - clients} pure modules without it (src = dist)`);
 }
 
 // ---------- 3. consumer project ----------
@@ -249,6 +305,8 @@ const cssChecks = {
   'archive.css': '.rl-table__sort',
   'forms.css': '.rl-switch__thumb',
   'data.css': '.rl-pagination__page',
+  'drawer.css': '.rl-drawer__viewport',
+  'status.css': '.rl-callout',
 };
 for (const [file, needle] of Object.entries(cssChecks)) {
   if (!css.includes(needle)) fail(`bundled CSS missing ${needle} from ${file} (style entry or @import chain broken)`);

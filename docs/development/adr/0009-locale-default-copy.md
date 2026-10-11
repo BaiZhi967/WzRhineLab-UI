@@ -27,6 +27,14 @@ M7–M9 的每个组件都把中文默认文案写成属性默认值（ADR-0005 
 ### 4. 语言标记
 - `RhineProvider` 新增可选 `lang` 属性，设置时写到 `.rl-theme` 根元素（以及弹层挂载点所在的同一子树），让读屏按正确语言朗读；不设置时不写，继承宿主文档。
 
+## 实现修订（M9.5 实现后）
+- 命名空间共 15 个，完整键表见 [locale.md](../../components/locale.md)。比上文多出两项：`toast.region`（Base UI 在通知视口上写死了 `aria-label="Notifications"`，现在可覆盖；`zhCN` 保留原值 `Notifications`，保证默认输出不变）与 `progress.meterValue`（Meter 带状态时的读屏值，原先内含中文逗号）。
+- 带数字参数的函数多一个格式化参数，例如 `pagination.page(n, format)`，`format` 按 Provider 的 `locale` 格式化数字；`zhCN` 不使用它（输出不变），`enUS` 使用（「of 1,000 items」）。
+- 合并：每个命名空间内逐键覆盖，值为 `undefined` 的键被忽略；组件属性显式传 `undefined` 等同于未传。`Pagination.labels` 同样逐键合并。
+- `lang` 只写在 `RhineProvider` 的 `.rl-theme` 根元素上，弹层挂载在根内因而继承；`RhineMessagesProvider` 不渲染元素。Toast 文案取自**挂载通知视口的 Provider**：嵌套 Provider 默认共用外层视口，因此显示外层文案；需要局部语言的通知时给内层 `RhineProvider` 传 `toasts`。
+- CJK 字面量规则的范围比上文更宽：`components/` 与 `provider/` 下所有 `.ts` / `.tsx`（去掉注释后），包括汉字、假名、韩文与全角标点；`provider/messages.tsx` 是唯一例外。
+- 文案表文件带 `'use client'`（ADR-0008 §2 的规则：它导出 Provider 与 hook）。服务端组件可以把 `messages={enUS}` 作为客户端引用传给 `RhineProvider`，不受「函数不能作为 props」的限制。
+
 ## 后果
 - 新增公开 API：`RhineMessages` 类型、`zhCN`、`enUS`、`useRhineMessages`、`RhineMessagesProvider`，`RhineProviderProps` 增加 `messages`、`locale`、`lang`。全部为可选新增，不改变现有渲染结果（默认文案逐字不变，由既有单测与视觉基线保证）。
 - 每个组件改为从 hook 读取默认文案；不使用 Provider 时回落到 `zhCN`，SSR 与客户端一致。

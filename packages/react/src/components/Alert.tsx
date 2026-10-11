@@ -1,4 +1,7 @@
+'use client';
+
 import * as React from 'react';
+import { useRhineMessages } from '../provider/messages.js';
 import { cx } from '../utils/cx.js';
 import { IconButton } from './IconButton.js';
 
@@ -100,9 +103,10 @@ function Message({
 }
 
 export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  { tone = 'info', title, children, icon, live = 'off', action, onDismiss, dismissLabel = '关闭提示', className, ...rest },
+  { tone = 'info', title, children, icon, live = 'off', action, onDismiss, dismissLabel, className, ...rest },
   ref,
 ) {
+  const messages = useRhineMessages();
   return (
     <div {...rest} ref={ref} className={cx('rl-alert', className)} data-slot="alert" data-tone={tone} data-live={live}>
       <Message tone={tone} icon={icon} title={title} role={liveRole[live]}>
@@ -110,7 +114,7 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert
       </Message>
       {action != null && <div className="rl-alert__action">{action}</div>}
       {onDismiss && (
-        <IconButton className="rl-alert__dismiss" size="sm" variant="ghost" icon={<CloseIcon />} label={dismissLabel} onClick={onDismiss} />
+        <IconButton className="rl-alert__dismiss" size="sm" variant="ghost" icon={<CloseIcon />} label={dismissLabel ?? messages.alert.dismiss} onClick={onDismiss} />
       )}
     </div>
   );

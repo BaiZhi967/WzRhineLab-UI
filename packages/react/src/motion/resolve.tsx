@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import type { Transition } from 'motion/react';
 import { duration, ease, transition } from './presets.js';

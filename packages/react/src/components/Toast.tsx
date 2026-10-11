@@ -1,5 +1,8 @@
+'use client';
+
 import * as React from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
+import { useRhineMessages } from '../provider/messages.js';
 import { usePortalContainer, usePortalPending } from '../provider/portal.js';
 import { Spinner } from './Spinner.js';
 import type { StatusKind } from './StatusBadge.js';
@@ -172,6 +175,8 @@ function StatusIcon({ status }: { status: ToastStatus }) {
 
 function ToastList() {
   const { toasts, close } = BaseToast.useToastManager<ToastData>();
+  // Read where the viewport is mounted (the provider that owns the queue), not where show() ran.
+  const messages = useRhineMessages();
   return toasts.map((toast) => {
     const status = toast.data?.status ?? 'neutral';
     const action = toast.data?.action;
@@ -192,7 +197,7 @@ function ToastList() {
               {action.label}
             </BaseToast.Action>
           )}
-          <BaseToast.Close className="rl-toast__close" aria-label="关闭通知">
+          <BaseToast.Close className="rl-toast__close" aria-label={messages.toast.close}>
             <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
               <path d="M4 4l8 8M12 4l-8 8" />
             </svg>
@@ -206,11 +211,12 @@ function ToastList() {
 /** Viewport that renders queued toasts. Mounted by RhineProvider; render it yourself only without one. */
 export function ToastViewport() {
   const container = usePortalContainer();
+  const messages = useRhineMessages();
   // Wait for the provider's portal node so the viewport never lands outside the themed root.
   if (usePortalPending()) return null;
   return (
     <BaseToast.Portal container={container}>
-      <BaseToast.Viewport className="rl-toast-viewport" data-slot="toast-viewport">
+      <BaseToast.Viewport className="rl-toast-viewport" data-slot="toast-viewport" aria-label={messages.toast.region}>
         <ToastList />
       </BaseToast.Viewport>
     </BaseToast.Portal>
