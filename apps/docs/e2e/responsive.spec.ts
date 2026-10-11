@@ -17,10 +17,10 @@ for (const width of widths) {
         const result = await findHorizontalOverflow(page);
         expect(result.offenders, JSON.stringify(result)).toEqual([]);
         expect(result.scrollWidth).toBeLessThanOrEqual(result.clientWidth);
-        await page.screenshot({
-          path: `test-results/screens/${width}-${route.name}-light.png`,
-          fullPage: true,
-        });
+        // Engines cap screenshots at 32767px; long specimen pages at narrow widths exceed it in
+        // WebKit. The review shot then falls back to the viewport (layout is asserted above).
+        const path = `test-results/screens/${width}-${route.name}-light.png`;
+        await page.screenshot({ path, fullPage: true }).catch(() => page.screenshot({ path }));
       });
     }
 
