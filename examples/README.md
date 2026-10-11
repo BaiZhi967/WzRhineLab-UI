@@ -1,6 +1,6 @@
-# 示例应用（M6 / M9.5）
+# 示例应用（M6 / M9.5 / M12）
 
-四个独立的小应用，用来验证组件库在真实集成方式下是否好用。它们只通过公开入口（`@wzrhine/react`、`@wzrhine/tokens` 及其 `styles.css`）使用组件库，不引用 Showcase 的任何代码。数据都是写死的示例，界面上标注为示例。
+五个独立的小应用，用来验证组件库在真实集成方式下是否好用。它们只通过公开入口（`@wzrhine/react`、`@wzrhine/tokens`，agent-console 另加 `@wzrhine/agent` / `@wzrhine/agent-core`，以及各自的 `styles.css`）使用组件库，不引用 Showcase 的任何代码。数据都是写死的示例，界面上标注为示例。
 
 | 示例 | 集成方式 | 验证重点 | 命令 |
 | --- | --- | --- | --- |
@@ -8,8 +8,9 @@
 | [host-embed](host-embed) | 挂件嵌入非 React 旧页面 | 宿主带有敌意的全局 CSS（`:root` 同名变量、元素选择器、`* { box-sizing }`）；样式双向隔离、多实例独立主题与弹层、卸载后不留节点 | `pnpm --filter @wzrhine/example-host-embed dev` |
 | [ssr-hydrate](ssr-hydrate) | 服务端渲染 + `hydrateRoot` | 首屏 HTML 完整且已带主题、无 JS 可读；水合不产生不匹配或控制台告警；水合后弹层、Tabs、Toast、Tooltip 正常 | `pnpm --filter @wzrhine/example-ssr-hydrate build && pnpm --filter @wzrhine/example-ssr-hydrate preview` |
 | [next-app-router](next-app-router) | Next.js 16 App Router（React Server Components） | 服务器组件页面直接 `import` 组件与纯函数 `paginate`（无包装文件）；`RhineProvider` 在根布局；首屏 HTML 已含组件标记，水合零控制台告警；客户端岛（AlertDialog + Toast）焦点与主题正确；axe 0 违规 | `pnpm --filter @wzrhine/example-next-app-router build && pnpm --filter @wzrhine/example-next-app-router start` |
+| [agent-console](agent-console) | 独立 SPA（Vite）+ 消费者 adapter | 模拟运行时发出重复 / 乱序 / 旧修订重放事件，adapter 用 `mergeById` / `isStaleRevision` / `sequenceGaps` 去重；snake_case → kebab-case 状态映射；审批首次回执 unknown，重试复用同一 actionId（适配器日志可见）；中英文切换、深浅主题、同页两个 AgentShell 互不影响 | `pnpm --filter @wzrhine/example-agent-console dev` |
 
-验收：`pnpm build:examples`（包含在 `pnpm check` 中）与 `pnpm test:examples`（四个 Playwright 套件依次运行，端口 4174 / 4175 / 4176 / 4177）。
+验收：`pnpm build:examples`（包含在 `pnpm check` 中）与 `pnpm test:examples`（五个 Playwright 套件依次运行，端口 4174 / 4175 / 4176 / 4177 / 4178）。
 
 SSR 示例的 `server.mjs` 只监听 `127.0.0.1`，没有任何鉴权，只用于本地演示，不要部署到公网。
 

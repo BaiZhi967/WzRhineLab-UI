@@ -60,6 +60,55 @@ importers:
         specifier: ^6.3.0
         version: 6.4.4(@types/node@24.19.1)
 
+  examples/agent-console:
+    dependencies:
+      '@wzrhine/agent':
+        specifier: workspace:*
+        version: link:../../packages/agent
+      '@wzrhine/agent-core':
+        specifier: workspace:*
+        version: link:../../packages/agent-core
+      '@wzrhine/react':
+        specifier: workspace:*
+        version: link:../../packages/react
+      '@wzrhine/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
+      motion:
+        specifier: 12.43.0
+        version: 12.43.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      react:
+        specifier: 19.3.0
+        version: 19.3.0
+      react-dom:
+        specifier: 19.3.0
+        version: 19.3.0(react@19.3.0)
+    devDependencies:
+      '@axe-core/playwright':
+        specifier: 4.13.0
+        version: 4.13.0(playwright-core@1.63.0)
+      '@playwright/test':
+        specifier: 1.63.0
+        version: 1.63.0
+      '@types/node':
+        specifier: 24.19.1
+        version: 24.19.1
+      '@types/react':
+        specifier: 19.3.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 19.3.0
+        version: 19.3.0(@types/react@19.3.0)
+      '@vitejs/plugin-react':
+        specifier: 4.7.0
+        version: 4.7.0(vite@6.4.4(@types/node@24.19.1))
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vite:
+        specifier: 6.4.4
+        version: 6.4.4(@types/node@24.19.1)
+
   examples/archive-desk:
     dependencies:
       '@wzrhine/react':
