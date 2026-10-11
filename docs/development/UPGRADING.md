@@ -146,6 +146,13 @@ Button 的加载指示、DataTable 的首次加载骨架与空状态、Stat 的�
 - `ArchiveCard` 新增可选 `motion="identity"` 与 `ArchiveIdentity`，默认关闭。
 - 新组件：M7 表单控件、M8 数据与导航、M9 覆盖层与反馈、M10 Motion Core（见 [COMPONENTS.md](../design/COMPONENTS.md)）。AlertDialog、Drawer 与其他弹层一样必须放在 `RhineProvider` 内（第 3 条）。
 
+### 13. M12：新组件与两个新包（新增，无需改动）
+- `@wzrhine/react` 新增 Collapsible、Accordion、Slider、NumberField、ContextMenu、Combobox、CommandPalette、FileDropZone、SplitButton、ScrollArea。新样式分片由 `styles.css` 自动引入，不改导入。
+- 新包 `@wzrhine/agent-core` 与 `@wzrhine/agent`，只在使用 Agent 组件时安装，并额外导入 `@wzrhine/agent/styles.css`（放在 react 样式之后），见 [Agent 接入指南](../planning/agent-ui-adoption.md)。
+- `RhineMessages` 新增命名空间（numberField、combobox、commandPalette、fileDropZone、splitButton、scrollArea 等）。若你维护**完整的**自定义文案表（类型标注为 `RhineMessages`），TypeScript 会提示补齐新字段；只传部分覆盖（`RhineMessagesOverrides`）的不受影响。
+- `useRhineLocale()` 改为公开导出（agent 包使用它读取数字 locale）。
+- 体积：只在同时导入全部组件时，`@wzrhine/react` 整包 gzip 由约 138 KB 增至约 182 KB；按需导入不受影响（[SIZE.md](SIZE.md)）。
+
 ---
 
 ## 以后的版本
