@@ -1,0 +1,628 @@
+/*
+ * WzRhineLab UI · M12 command & input helpers: Combobox, CommandPalette, FileDropZone.
+ * Imported by components.css; tokens only (package-boundary test).
+ */
+
+/* ---------- Combobox ---------- */
+.rl-combobox {
+  --rl-combobox-border: var(--rl-border-strong);
+  --rl-combobox-bg: var(--rl-bg-surface);
+  --rl-combobox-height: var(--rl-control-height-md);
+  --rl-combobox-padding-x: var(--rl-space-3);
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--rl-space-1);
+  width: 100%;
+  min-width: 0;
+  min-height: var(--rl-combobox-height);
+  padding: 0 var(--rl-space-1) 0 var(--rl-combobox-padding-x);
+  border: var(--rl-border-width) solid var(--rl-combobox-border);
+  border-radius: var(--rl-radius-md);
+  background: var(--rl-combobox-bg);
+  color: var(--rl-fg-primary);
+  transition:
+    border-color var(--rl-motion-fast) var(--rl-ease-out),
+    background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-combobox[data-size='sm'] {
+  --rl-combobox-height: var(--rl-control-height-sm);
+  --rl-combobox-padding-x: var(--rl-space-2);
+}
+
+.rl-combobox[data-size='lg'] {
+  --rl-combobox-height: var(--rl-control-height-lg);
+  --rl-combobox-padding-x: var(--rl-space-4);
+}
+
+@media (hover: hover) {
+  .rl-combobox:not([data-disabled], [data-readonly]):hover {
+    --rl-combobox-border: var(--rl-fg-muted);
+  }
+}
+
+.rl-combobox[data-popup-open] {
+  --rl-combobox-border: var(--rl-fg-primary);
+}
+
+.rl-combobox:focus-within {
+  --rl-combobox-border: var(--rl-fg-primary);
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.rl-combobox[data-invalid],
+.rl-field[data-invalid] .rl-combobox {
+  --rl-combobox-border: var(--rl-danger);
+  box-shadow: inset 0 0 0 var(--rl-border-width) var(--rl-danger);
+}
+
+.rl-combobox[data-readonly] {
+  --rl-combobox-bg: var(--rl-bg-readonly);
+  --rl-combobox-border: var(--rl-border-default);
+}
+
+.rl-combobox[data-disabled] {
+  --rl-combobox-bg: var(--rl-bg-disabled);
+  --rl-combobox-border: var(--rl-border-default);
+  color: var(--rl-fg-disabled);
+  cursor: not-allowed;
+}
+
+.rl-combobox__input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: calc(var(--rl-combobox-height) - var(--rl-border-width) * 2);
+  padding: 0;
+  margin: 0;
+  appearance: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: var(--rl-type-body-sm);
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: inherit;
+}
+
+.rl-combobox[data-size='lg'] .rl-combobox__input {
+  font: var(--rl-type-body);
+}
+
+.rl-combobox__input::placeholder {
+  color: var(--rl-fg-subtle);
+  opacity: 1;
+}
+
+.rl-combobox__clear,
+.rl-combobox__trigger {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--rl-combobox-height) - var(--rl-space-2));
+  height: calc(var(--rl-combobox-height) - var(--rl-space-2));
+  padding: 0;
+  margin: 0;
+  appearance: none;
+  border: 0;
+  border-radius: var(--rl-radius-xs);
+  background: transparent;
+  color: var(--rl-fg-muted);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-combobox__clear > svg,
+.rl-combobox__trigger > svg {
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+}
+
+.rl-combobox__trigger > svg {
+  transition: rotate var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-combobox__trigger[data-popup-open] > svg {
+  rotate: 180deg;
+}
+
+@media (hover: hover) {
+  :is(.rl-combobox__clear, .rl-combobox__trigger):not(:disabled):hover {
+    background: var(--rl-bg-hover);
+    color: var(--rl-fg-primary);
+  }
+}
+
+:is(.rl-combobox__clear, .rl-combobox__trigger):disabled {
+  color: var(--rl-fg-disabled);
+  cursor: not-allowed;
+}
+
+.rl-combobox__positioner {
+  z-index: var(--rl-z-popover);
+  outline: none;
+}
+
+.rl-combobox__popup {
+  box-sizing: border-box;
+  width: var(--anchor-width);
+  max-width: var(--available-width);
+  /* The list (tabindex=-1) is the scroller, so the scrollable region is focusable (axe). */
+  display: flex;
+  flex-direction: column;
+  max-height: min(var(--available-height), var(--rl-popup-max-height));
+  padding: var(--rl-space-1);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-raised);
+  color: var(--rl-fg-primary);
+  box-shadow: var(--rl-shadow-floating);
+  transform-origin: var(--transform-origin);
+  outline: none;
+  transition:
+    opacity var(--rl-motion-fast) var(--rl-ease-out),
+    translate var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-combobox__popup[data-starting-style],
+.rl-combobox__popup[data-ending-style] {
+  opacity: 0;
+  translate: 0 calc(var(--rl-space-1) * -1);
+}
+
+/* Status and empty rows stay mounted (live regions) and collapse while they have no content. */
+.rl-combobox__status,
+.rl-combobox__empty,
+.rl-command__empty {
+  display: flex;
+  align-items: center;
+  gap: var(--rl-space-2);
+  padding: var(--rl-space-2) var(--rl-space-3);
+  font: var(--rl-type-body-sm);
+  color: var(--rl-fg-muted);
+}
+
+.rl-combobox__status:empty,
+.rl-combobox__empty:empty,
+.rl-command__empty:empty {
+  display: block;
+  padding: 0;
+}
+
+.rl-combobox__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  outline: none;
+}
+
+.rl-combobox__group + .rl-combobox__group {
+  margin-top: var(--rl-space-1);
+  padding-top: var(--rl-space-1);
+  border-top: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.rl-combobox__group-label,
+.rl-command__group-label {
+  padding: var(--rl-space-2) var(--rl-space-3) var(--rl-space-1);
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-mono);
+  color: var(--rl-fg-subtle);
+}
+
+.rl-combobox__item {
+  display: grid;
+  grid-template-columns: var(--rl-icon-size-md) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--rl-space-2);
+  min-height: var(--rl-control-height-md);
+  padding: var(--rl-space-1) var(--rl-space-3) var(--rl-space-1) var(--rl-space-2);
+  border-radius: var(--rl-radius-xs);
+  font: var(--rl-type-body-sm);
+  cursor: default;
+  outline: none;
+  user-select: none;
+}
+
+.rl-combobox__item[data-highlighted] {
+  background: var(--rl-bg-inverse);
+  color: var(--rl-fg-inverse);
+}
+
+.rl-combobox__item[data-selected]:not([data-highlighted]) {
+  background: var(--rl-accent-subtle);
+}
+
+.rl-combobox__item[data-disabled] {
+  color: var(--rl-fg-disabled);
+}
+
+.rl-combobox__indicator {
+  grid-column: 1;
+  display: inline-flex;
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+}
+
+.rl-combobox__indicator > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.rl-combobox__item-text {
+  grid-column: 2;
+  display: grid;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.rl-combobox__item-description {
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+}
+
+.rl-combobox__item[data-highlighted] .rl-combobox__item-description {
+  color: inherit;
+}
+
+/* ---------- CommandPalette ---------- */
+/* Same surface as Dialog (rl-dialog__backdrop is reused), anchored near the top so results grow downward. */
+.rl-command {
+  box-sizing: border-box;
+  position: fixed;
+  top: var(--rl-space-16);
+  left: 50%;
+  z-index: var(--rl-z-dialog);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(var(--rl-dialog-width-md), calc(100vw - var(--rl-space-8)));
+  max-height: calc(100dvh - var(--rl-space-16) - var(--rl-space-8));
+  translate: -50% 0;
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-top: var(--rl-border-width-strong) solid var(--rl-fg-primary);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-raised);
+  color: var(--rl-fg-primary);
+  box-shadow: var(--rl-shadow-floating);
+  outline: none;
+}
+
+.rl-command *,
+.rl-command *::before,
+.rl-command *::after {
+  box-sizing: border-box;
+}
+
+.rl-command__search {
+  display: flex;
+  align-items: center;
+  gap: var(--rl-space-2);
+  min-height: var(--rl-control-height-lg);
+  padding: 0 var(--rl-space-4);
+  border-bottom: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.rl-command__search:focus-within {
+  box-shadow: inset 0 calc(var(--rl-border-width-strong) * -1) 0 var(--rl-focus);
+}
+
+.rl-command__search-icon {
+  display: inline-flex;
+  flex: none;
+  width: var(--rl-icon-size-md);
+  height: var(--rl-icon-size-md);
+  color: var(--rl-fg-muted);
+}
+
+.rl-command__search-icon > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.rl-command__input {
+  flex: 1;
+  min-width: 0;
+  height: var(--rl-control-height-lg);
+  padding: 0;
+  margin: 0;
+  appearance: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: var(--rl-type-body);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.rl-command__input::placeholder {
+  color: var(--rl-fg-subtle);
+  opacity: 1;
+}
+
+.rl-command__body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: var(--rl-space-1);
+}
+
+/* The list (tabindex=-1) is the scroller, so the scrollable region is focusable (axe). */
+.rl-command__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  outline: none;
+}
+
+.rl-command__group + .rl-command__group {
+  margin-top: var(--rl-space-1);
+  padding-top: var(--rl-space-1);
+  border-top: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.rl-command__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--rl-space-3);
+  min-height: var(--rl-control-height-md);
+  padding: var(--rl-space-1) var(--rl-space-3);
+  border-radius: var(--rl-radius-xs);
+  font: var(--rl-type-body-sm);
+  cursor: default;
+  outline: none;
+  user-select: none;
+}
+
+.rl-command__item[data-highlighted] {
+  background: var(--rl-bg-inverse);
+  color: var(--rl-fg-inverse);
+}
+
+.rl-command__item[data-disabled] {
+  color: var(--rl-fg-disabled);
+  cursor: not-allowed;
+}
+
+.rl-command__item[data-disabled][data-highlighted] {
+  background: var(--rl-bg-subtle);
+  color: var(--rl-fg-muted);
+}
+
+.rl-command__text {
+  display: grid;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.rl-command__description,
+.rl-command__reason {
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+}
+
+.rl-command__reason {
+  color: var(--rl-warning);
+}
+
+.rl-command__item[data-highlighted]:not([data-disabled]) :is(.rl-command__description, .rl-command__shortcut) {
+  color: inherit;
+}
+
+.rl-command__item[data-disabled][data-highlighted] .rl-command__reason {
+  color: var(--rl-warning);
+}
+
+.rl-command__mark {
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--rl-accent);
+  text-decoration-thickness: var(--rl-border-width-strong);
+  text-underline-offset: var(--rl-space-1);
+}
+
+.rl-command__shortcut {
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-mono);
+  color: var(--rl-fg-subtle);
+  white-space: nowrap;
+}
+
+.rl-command__hint {
+  margin: 0;
+  padding: var(--rl-space-2) var(--rl-space-4);
+  border-top: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: 0 0 var(--rl-radius-sm) var(--rl-radius-sm);
+  background: var(--rl-bg-surface);
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+}
+
+/* ---------- FileDropZone ---------- */
+.rl-file-drop {
+  box-sizing: border-box;
+  display: grid;
+  gap: var(--rl-space-2);
+  min-width: 0;
+}
+
+.rl-file-drop *,
+.rl-file-drop *::before,
+.rl-file-drop *::after {
+  box-sizing: border-box;
+}
+
+.rl-file-drop__label {
+  font: var(--rl-type-label);
+  color: var(--rl-fg-primary);
+}
+
+.rl-file-drop__description {
+  margin: 0;
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+}
+
+.rl-file-drop__area {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rl-space-2) var(--rl-space-3);
+  min-width: 0;
+  padding: var(--rl-space-6) var(--rl-space-4);
+  border: var(--rl-border-width-strong) dashed var(--rl-border-strong);
+  border-radius: var(--rl-radius-md);
+  background: var(--rl-bg-surface);
+  color: var(--rl-fg-muted);
+  text-align: center;
+  transition:
+    border-color var(--rl-motion-fast) var(--rl-ease-out),
+    background-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+.rl-file-drop__area[data-drag-over] {
+  border-color: var(--rl-accent);
+  border-style: solid;
+  background: var(--rl-accent-subtle);
+  color: var(--rl-fg-primary);
+}
+
+.rl-file-drop[data-invalid] .rl-file-drop__area {
+  border-color: var(--rl-danger);
+}
+
+.rl-file-drop[data-disabled] .rl-file-drop__area {
+  border-color: var(--rl-border-default);
+  background: var(--rl-bg-disabled);
+  color: var(--rl-fg-disabled);
+}
+
+.rl-file-drop__icon {
+  display: inline-flex;
+  flex: none;
+  width: var(--rl-icon-size-lg);
+  height: var(--rl-icon-size-lg);
+}
+
+.rl-file-drop__icon > svg {
+  width: 100%;
+  height: 100%;
+}
+
+.rl-file-drop__prompt {
+  min-width: 0;
+  font: var(--rl-type-body-sm);
+  overflow-wrap: anywhere;
+}
+
+/* Visually hidden but focusable: the label below is its visible face and click target. */
+.rl-file-drop__input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--rl-border-width);
+  height: var(--rl-border-width);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  opacity: 0;
+  clip-path: inset(50%);
+  border: 0;
+}
+
+.rl-file-drop__browse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--rl-control-height-sm);
+  padding: 0 var(--rl-control-padding-x-sm);
+  border: var(--rl-border-width) solid var(--rl-border-strong);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-raised);
+  color: var(--rl-fg-primary);
+  font: var(--rl-type-label-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--rl-motion-fast) var(--rl-ease-out),
+    border-color var(--rl-motion-fast) var(--rl-ease-out);
+}
+
+@media (hover: hover) {
+  .rl-file-drop:not([data-disabled]) .rl-file-drop__browse:hover {
+    background: var(--rl-bg-hover);
+    border-color: var(--rl-fg-primary);
+  }
+}
+
+.rl-file-drop__input:focus-visible + .rl-file-drop__browse {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}
+
+.rl-file-drop[data-disabled] .rl-file-drop__browse {
+  border-color: var(--rl-border-default);
+  background: var(--rl-bg-disabled);
+  color: var(--rl-fg-disabled);
+  cursor: not-allowed;
+}
+
+.rl-file-drop__error {
+  margin: 0;
+  font: var(--rl-type-meta);
+  font-weight: 600;
+  color: var(--rl-danger);
+}
+
+.rl-file-drop__status {
+  margin: 0;
+  font: var(--rl-type-meta);
+  color: var(--rl-fg-muted);
+  white-space: pre-line;
+}
+
+.rl-file-drop__status:empty {
+  display: none;
+}
+
+/* ---------- Reduced motion ---------- */
+.rl-theme[data-rl-motion='reduce'] .rl-combobox__popup[data-starting-style],
+.rl-theme[data-rl-motion='reduce'] .rl-combobox__popup[data-ending-style] {
+  translate: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rl-combobox__popup[data-starting-style],
+  .rl-combobox__popup[data-ending-style] {
+    translate: none;
+  }
+}
+
+/* ---------- Forced colours ---------- */
+@media (forced-colors: active) {
+  .rl-combobox { border-color: FieldText; }
+  .rl-combobox:focus-within,
+  .rl-file-drop__input:focus-visible + .rl-file-drop__browse { outline-color: Highlight; }
+  :is(.rl-combobox__item, .rl-command__item)[data-highlighted] { background: Highlight; color: HighlightText; }
+  :is(.rl-combobox__item, .rl-command__item)[data-disabled] { color: GrayText; }
+  .rl-combobox__popup,
+  .rl-command { border: var(--rl-border-width) solid CanvasText; }
+  .rl-command__mark { color: Highlight; }
+  .rl-file-drop__area { border-color: CanvasText; }
+  .rl-file-drop__area[data-drag-over] { border-color: Highlight; }
+  .rl-file-drop__browse { border-color: ButtonText; }
+}

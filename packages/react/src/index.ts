@@ -96,7 +96,12 @@ export { NumberField } from './components/NumberField.js';
 export type { NumberFieldProps } from './components/NumberField.js';
 export { ContextMenu } from './components/ContextMenu.js';
 export type { ContextMenuProps } from './components/ContextMenu.js';
-// @m12-f2-exports (M12 group 2: Combobox, CommandPalette, FileDropZone)
+export { Combobox } from './components/Combobox.js';
+export type { ComboboxFilter, ComboboxOption, ComboboxProps } from './components/Combobox.js';
+export { CommandPalette, matchHotkey } from './components/CommandPalette.js';
+export type { CommandItem, CommandPaletteProps } from './components/CommandPalette.js';
+export { FileDropZone, matchesAccept, validateFiles } from './components/FileDropZone.js';
+export type { FileDropZoneProps, FileRejection, FileRejectionReason } from './components/FileDropZone.js';
 export { DataTable } from './components/DataTable.js';
 export type {
   DataTableColumn,

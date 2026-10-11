@@ -7,7 +7,7 @@ import { motionDurations } from '@wzrhine/tokens';
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 
-const cssFiles = ['../src/components.css', '../src/reset.css', '../src/overlays.css', '../src/feedback.css', '../src/archive.css', '../src/forms.css', '../src/data.css', '../src/drawer.css', '../src/status.css', '../src/disclosure.css', '../src/advanced.css'];
+const cssFiles = ['../src/components.css', '../src/reset.css', '../src/overlays.css', '../src/feedback.css', '../src/archive.css', '../src/forms.css', '../src/data.css', '../src/drawer.css', '../src/status.css', '../src/disclosure.css', '../src/advanced.css', '../src/command.css'];
 const stripped = (path: string) =>
   read(path)
     .replace(/\/\*[\s\S]*?\*\//g, '')
@@ -61,6 +61,9 @@ const componentFiles = [
   'Slider',
   'NumberField',
   'ContextMenu',
+  'Combobox',
+  'CommandPalette',
+  'FileDropZone',
 ];
 
 /**

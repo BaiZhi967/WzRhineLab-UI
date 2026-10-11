@@ -37,6 +37,29 @@ export interface RhineMessages {
     /** Button that reveals collapsed levels. */
     expand: (count: number, format: RhineNumberFormat) => string;
   };
+  combobox: {
+    /** Shown in the list when nothing matches. */
+    empty: string;
+    /** Status row while `loading`. */
+    loading: string;
+    /** Accessible name of the clear button. */
+    clear: string;
+    /** Accessible name of the button that opens the list. */
+    openList: string;
+  };
+  commandPalette: {
+    /** Accessible name of the dialog (visually hidden). */
+    title: string;
+    /** Accessible name of the search input. */
+    inputLabel: string;
+    placeholder: string;
+    /** Shown when no command matches. */
+    empty: string;
+    /** Keyboard hint in the footer, also the input's description. */
+    hint: string;
+    /** Visually hidden close button for touch screen readers. */
+    close: string;
+  };
   dataTable: {
     empty: string;
     loading: string;
@@ -57,6 +80,20 @@ export interface RhineMessages {
   field: {
     /** Marker after the label of an `optional` field. */
     optional: string;
+  };
+  fileDropZone: {
+    /** Default prompt inside the drop area. */
+    prompt: string;
+    /** Text of the visible button that opens the file picker. */
+    browse: string;
+    /** A file whose type does not match `accept`. */
+    rejectedType: (fileName: string) => string;
+    /** A file larger than `maxSize`; `limit` is already formatted, e.g. "1 MB". */
+    rejectedSize: (fileName: string, limit: string) => string;
+    /** A file beyond `maxFiles`. */
+    rejectedCount: (fileName: string, max: number, format: RhineNumberFormat) => string;
+    /** Polite announcement after files were accepted. */
+    accepted: (count: number, format: RhineNumberFormat) => string;
   };
   metadataList: {
     /** Spoken text of an empty value shown as "—" (`empty="placeholder"`). */
@@ -124,6 +161,15 @@ export const zhCN: RhineMessages = {
   alert: { dismiss: '关闭提示' },
   alertDialog: { cancel: '取消', error: '操作未完成，请重试。' },
   breadcrumb: { nav: '路径', expand: (count) => `显示全部 ${count} 级路径` },
+  combobox: { empty: '没有匹配的选项', loading: '正在搜索…', clear: '清除选择', openList: '展开选项' },
+  commandPalette: {
+    title: '命令面板',
+    inputLabel: '搜索命令',
+    placeholder: '输入命令名称或关键词…',
+    empty: '没有匹配的命令',
+    hint: '↑ ↓ 选择，Enter 执行，Esc 关闭',
+    close: '关闭命令面板',
+  },
   dataTable: {
     empty: '没有符合条件的记录',
     loading: '正在加载…',
@@ -136,6 +182,14 @@ export const zhCN: RhineMessages = {
   },
   drawer: { close: '关闭' },
   field: { optional: '（可选）' },
+  fileDropZone: {
+    prompt: '将文件拖放到此处，或',
+    browse: '选择文件',
+    rejectedType: (name) => `「${name}」的文件类型不受支持`,
+    rejectedSize: (name, limit) => `「${name}」超过 ${limit} 的大小上限`,
+    rejectedCount: (name, max) => `「${name}」未添加：最多 ${max} 个文件`,
+    accepted: (count) => `已添加 ${count} 个文件`,
+  },
   metadataList: { missing: '未记录' },
   numberField: { decrement: '减少', increment: '增加', roleDescription: '数字输入框' },
   pagination: {
@@ -160,6 +214,15 @@ export const enUS: RhineMessages = {
   alert: { dismiss: 'Dismiss alert' },
   alertDialog: { cancel: 'Cancel', error: 'The action did not complete. Please try again.' },
   breadcrumb: { nav: 'Breadcrumb', expand: (count, f) => `Show all ${f(count)} levels` },
+  combobox: { empty: 'No matching options', loading: 'Searching…', clear: 'Clear selection', openList: 'Show options' },
+  commandPalette: {
+    title: 'Command palette',
+    inputLabel: 'Search commands',
+    placeholder: 'Type a command or keyword…',
+    empty: 'No matching commands',
+    hint: '↑ ↓ to choose, Enter to run, Esc to close',
+    close: 'Close command palette',
+  },
   dataTable: {
     empty: 'No matching records',
     loading: 'Loading…',
@@ -172,6 +235,14 @@ export const enUS: RhineMessages = {
   },
   drawer: { close: 'Close' },
   field: { optional: '(optional)' },
+  fileDropZone: {
+    prompt: 'Drop files here, or',
+    browse: 'Choose files',
+    rejectedType: (name) => `"${name}" is not a supported file type`,
+    rejectedSize: (name, limit) => `"${name}" is larger than ${limit}`,
+    rejectedCount: (name, max, f) => `"${name}" was not added: up to ${f(max)} files`,
+    accepted: (count, f) => `${f(count)} ${count === 1 ? 'file' : 'files'} added`,
+  },
   metadataList: { missing: 'Not recorded' },
   numberField: { decrement: 'Decrease', increment: 'Increase', roleDescription: 'Number field' },
   pagination: {
