@@ -2,7 +2,7 @@
 
 面向 React + Motion 的原创科研机构 / 档案终端风格设计系统。
 
-> 设计灵感来自《明日方舟》莱茵生命的科研机构、档案、航天信息表达，但本项目非官方项目，不使用原作的商标、标识、人物、专有素材或原始 UI 资源。
+> 设计灵感来自《明日方舟》莱茵生命的科研机构、档案、航天信息表达，但本项目非官方项目，不使用原作的商标、标识、人物、专有素材或原始 UI 资源。完整声明见[免责声明与商标归属](#免责声明与商标归属)。
 
 ## 当前阶段
 
@@ -78,6 +78,13 @@ import { AgentShell } from '@wzrhine/agent';
 `RhineProvider` 提供 `.rl-theme` 作用域、弹层挂载点、减动策略和通知队列（`useToast()`）；所有弹层组件都必须放在它内部才能拿到主题。
 
 组件分类、子部件和未实现候选见 [COMPONENTS.md](docs/design/COMPONENTS.md)。完整签名以 [`@wzrhine/react` API report](docs/api/react.md)、[`@wzrhine/agent-core` API report](docs/api/agent-core.md) 和 [`@wzrhine/agent` API report](docs/api/agent.md) 为准；集成方式参考 [examples/](examples/README.md)：独立 SPA、嵌入非 React 旧页面、SSR 水合。从源码直出期升级请看 [UPGRADING.md](docs/development/UPGRADING.md)。
+
+## 免责声明与商标归属
+
+- 本项目（WzRhineLab-UI 及 `@wzrhine/*` 各包）是维护者个人开发的**非官方、非商业**开源组件库，用于设计研究与工程实践，与鹰角网络（Hypergryph）及《明日方舟》（Arknights）官方**不存在任何关联、合作或背书**。
+- 「明日方舟」「Arknights」「莱茵生命（Rhine Lab）」及相关名称、商标与角色形象归**鹰角网络**所有。本项目命名与视觉气质是对原作科研机构 / 档案美学的致敬，不代表任何官方身份。
+- 仓库内的代码、组件实现、设计令牌与文档均为原创；概念图为自行生成的研究素材，不包含、不再分发任何原作的界面资源、图片、字体或音频。
+- 设计研究引用的公开资料与社区项目见 [REFERENCES](docs/research/REFERENCES.md)，其权利归各自作者所有。
 
 ## 视觉原件与参考资料
 
