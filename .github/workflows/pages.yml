@@ -6,6 +6,15 @@ name: Pages · Showcase
 on:
   push:
     branches: [main]
+    # 只在 Showcase 构建输入变化时部署：showcase 应用、workspace 包源码、
+    # lockfile 与根级构建配置。纯文档 / README 改动不触发（手动触发用 workflow_dispatch）。
+    paths:
+      - 'apps/docs/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'package.json'
+      - 'pnpm-workspace.yaml'
+      - 'tsconfig.base.json'
   workflow_dispatch:
 
 permissions:
