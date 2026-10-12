@@ -2,7 +2,7 @@
 
 面向科研、档案类界面的 React 组件库：可访问性优先，交互底座为 Base UI，动效使用 `motion/react`，视觉全部由 `--rl-*` tokens 决定。
 
-> 原创设计，非官方项目。`0.x` 阶段，未发布到 npm（许可证待定）。
+> 原创设计，非官方项目。MIT 许可证；`0.x` 阶段 API 可能调整。
 
 ```sh
 pnpm add @wzrhine/react @wzrhine/tokens react react-dom motion
@@ -34,3 +34,4 @@ export function App() {
 - 组件说明：[docs/components](https://github.com/BaiZhi967/WzRhineLab-UI/blob/main/docs/components)
 - API 参考（自动生成）：[docs/api/react.md](https://github.com/BaiZhi967/WzRhineLab-UI/blob/main/docs/api/react.md)
 - 变更记录与迁移：[CHANGELOG.md](./CHANGELOG.md)
+- 许可证：[MIT](./LICENSE)

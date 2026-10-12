@@ -4,7 +4,11 @@
 
 ## [Unreleased]
 
-尚未发布到 npm。首次发布时归入 `0.1.0`。
+（暂无）
+
+## [0.1.0] - 2026-10-12
+
+首次发布。
 
 ### Added
 - **M4（ADR-0004）**：`ArchiveReveal`（确定性解密、可中断、减动直接切换）、`ScanSurface`（单次扫描，减动时为静态描边）、`OrbitalDiagram`（仪器风格轨道，可选旋转）、`MotionPlayer`（Default / Slow ×0.25 / Reduced / Interrupt 四通道），以及 `EffectClock` / `useEffectTiming`。

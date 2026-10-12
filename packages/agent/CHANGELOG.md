@@ -4,7 +4,11 @@
 
 ## [Unreleased]
 
-尚未发布到 npm。首次发布时归入 `0.1.0`。
+（暂无）
+
+## [0.1.0] - 2026-10-12
+
+首次发布。
 
 ### Added
 - **M12（ADR-0010 / 0011 / 0012）**：新包。基座：`AgentMessagesProvider`（`agentZhCN` / `agentEnUS`）、`useAgentFormat`、`AgentIcon`、`StatusGlyph`、`AgentStatus`、`AgentSpark`、`AgentEntrance`、`useAgentLoop`。

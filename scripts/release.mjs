@@ -12,6 +12,7 @@
  *   - git working tree is clean and on `main`
  *   - every CHANGELOG has a `## [<version>]` section (not only Unreleased)
  *   - `pnpm release:check` passes (typecheck, tests, build, API report, tarball install check)
+ * Publishing is pinned to the official registry so a local mirror (e.g. npmmirror) can't intercept it.
  * Version bumping is explicit: this script writes <version> into the three package.json files
  * only after the gates pass, and the caller commits and tags it.
  */
@@ -73,7 +74,7 @@ sh('pnpm', ['release:check']);
 // ---------- publish ----------
 if (!publish) {
   for (const p of packages) {
-    sh('pnpm', ['publish', '--dry-run', '--no-git-checks', '--access', 'public'], { cwd: join(root, 'packages', p) });
+    sh('pnpm', ['publish', '--dry-run', '--no-git-checks', '--access', 'public', '--registry', 'https://registry.npmjs.org/'], { cwd: join(root, 'packages', p) });
   }
   console.log(`\ndry run complete for ${version}. ${problems.length ? `${problems.length} precondition(s) still open.` : 'All preconditions met.'}`);
   process.exit(0);
@@ -85,6 +86,6 @@ for (const p of packages) {
 }
 // Publish in dependency order so peers resolve on the registry.
 for (const p of packages) {
-  sh('pnpm', ['publish', '--access', 'public'], { cwd: join(root, 'packages', p) });
+  sh('pnpm', ['publish', '--access', 'public', '--registry', 'https://registry.npmjs.org/'], { cwd: join(root, 'packages', p) });
 }
 console.log(`\npublished ${version}. Commit the version bump and tag: git tag v${version}`);

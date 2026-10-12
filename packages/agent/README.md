@@ -4,7 +4,7 @@ WzRhineLab UI 的 **Agent 界面组件**：工作台外壳、会话索引、消�
 
 组件只接收 view-model 快照（类型来自 [`@wzrhine/agent-core`](../agent-core/README.md)，本包会重新导出）并发出动作回调；不包含任何运行时、请求、缓存、Markdown / 高亮库或桌面 API。
 
-> 实验性；未发布到 npm（许可证待定）。
+> 实验性（0.x 期间 API 可能调整）；MIT 许可证。
 
 ```sh
 pnpm add @wzrhine/agent @wzrhine/agent-core @wzrhine/react @wzrhine/tokens react react-dom motion
@@ -26,3 +26,4 @@ import { AgentStatus, runStatusMeta } from '@wzrhine/agent';
 - 接入指南：[docs/planning/agent-ui-adoption.md](https://github.com/BaiZhi967/WzRhineLab-UI/blob/main/docs/planning/agent-ui-adoption.md)
 - API 参考（自动生成）：[docs/api/agent.md](https://github.com/BaiZhi967/WzRhineLab-UI/blob/main/docs/api/agent.md)
 - 变更记录：[CHANGELOG.md](./CHANGELOG.md)
+- 许可证：[MIT](./LICENSE)

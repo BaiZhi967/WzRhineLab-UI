@@ -2,7 +2,7 @@
 
 WzRhineLab UI 的语义设计变量：`--rl-*` CSS 自定义属性（作用域为 `.rl-theme`，不修改 `:root`），以及一份类型化的 token 清单和对比度工具。
 
-> 原创配色，不是任何游戏的官方色板。未发布到 npm（许可证待定）。
+> 原创配色，不是任何游戏的官方色板。MIT 许可证。
 
 ```sh
 pnpm add @wzrhine/tokens
@@ -25,3 +25,4 @@ import { contrastRatio, motionDurations } from '@wzrhine/tokens';
 
 - API 参考（自动生成）：[docs/api/tokens.md](https://github.com/BaiZhi967/WzRhineLab-UI/blob/main/docs/api/tokens.md)
 - 变更记录：[CHANGELOG.md](./CHANGELOG.md)
+- 许可证：[MIT](./LICENSE)

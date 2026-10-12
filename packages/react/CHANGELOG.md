@@ -4,7 +4,11 @@
 
 ## [Unreleased]
 
-尚未发布到 npm。以下内容为截至 M12 的全部变更，首次发布时会归入 `0.1.0`。
+（暂无）
+
+## [0.1.0] - 2026-10-12
+
+首次发布（截至 M12 的全部变更）。
 
 ### Added
 - **M1-A**：`Button`（primary / accent / secondary / ghost，sm / md / lg，loading 保持焦点并阻止重复提交）、`Surface`、`StatusBadge`；`motion/presets` 与 `useRhineMotion()`。

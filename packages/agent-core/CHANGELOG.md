@@ -4,7 +4,11 @@
 
 ## [Unreleased]
 
-尚未发布到 npm。首次发布时归入 `0.1.0`。
+（暂无）
+
+## [0.1.0] - 2026-10-12
+
+首次发布。
 
 ### Added
 - **M12（ADR-0010 / ADR-0011）**：新包。Conversation、Message（13 种 part）、Run / Process、Tool（11 种专项 detail）、Approval、Questionnaire、Composer、Terminal、Subagent、ContextUsage、PinnedSummary、Ledger、FilePreview、RunSummary 的 view-model；状态轴 `RunStatus` / `RunPhase` / `SyncStatus` / `ActionStatus` / `ToolStatus` 等（统一 kebab-case）；`AgentActionContext` / `AgentActionResult` / `Capability`。
