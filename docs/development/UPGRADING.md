@@ -2,10 +2,10 @@
 
 本文面向已经在使用（源码直出期）或即将接入 `@wzrhine/*` 的项目，按版本列出**需要使用方动手**的变更。每个包的完整变更见各自的 CHANGELOG；本文只收集影响升级的条目，并给出改前 / 改后。
 
-版本策略见 [RELEASING.md](RELEASING.md)：`0.x` 允许破坏性变更，但每一项都会出现在这里。三个包同一版本线，请一起升级。
+版本策略见 [RELEASING.md](RELEASING.md)：`0.x` 允许破坏性变更，但每一项都会出现在这里。五个包同一版本线；使用 Agent UI 时连同 `@wzrhine/agent-core` 与 `@wzrhine/agent` 一起升级。
 
 ## 升级前检查清单
-1. 三个包升级到同一版本：`@wzrhine/tokens`、`@wzrhine/react`，以及使用了的话 `@wzrhine/effects`。
+1. 基础包升级到同一版本：`@wzrhine/tokens`、`@wzrhine/react`、以及使用了的话 `@wzrhine/effects`；使用 Agent UI 时再加入 `@wzrhine/agent-core` 与 `@wzrhine/agent`。
 2. 运行类型检查。破坏性的 API 变化都会体现在类型上（例如被移除的 variant 会报错）。
 3. 搜索下面每一节列出的关键字，逐项处理。
 4. 打开应用，在浅色、深色和系统主题下各看一遍；有弹层（Dialog / AlertDialog / Drawer / Select / Menu / Popover / Toast）的页面请实际打开一次。
@@ -21,6 +21,7 @@
 + import '@wzrhine/tokens/styles.css';
 + import '@wzrhine/react/styles.css';
 + import '@wzrhine/effects/styles.css'; // 仅在使用 effects 时
++ import '@wzrhine/agent/styles.css'; // 仅在使用 Agent UI 时，放在 react 样式之后
   import { Button } from '@wzrhine/react';
 ```
 
@@ -76,8 +77,8 @@ const style = { borderColor: tokenVar('--rl-border-strong') };
 
 ---
 
-## 0.1.0 基线之后（M7–M10，尚未发布）
-上面一节是 M6 时整理的 0.1.0 基线。之后 M7–M10 的变更仍在 `[Unreleased]` 中，首次发布时会一起归入 `0.1.0`；已经按 M6 基线以源码方式接入的项目，按本节处理。来源：[`@wzrhine/react` CHANGELOG](../../packages/react/CHANGELOG.md)、[`@wzrhine/effects` CHANGELOG](../../packages/effects/CHANGELOG.md)（`@wzrhine/tokens` 在 M7–M10 没有改动）。没有破坏性的类型变化；需要动手的是下面标「行为变化」或「DOM 变化」的项。
+## 0.1.0 基线之后（M7–M12，尚未发布）
+上面一节是 M6 时整理的 0.1.0 基线。之后 M7–M10 的变更仍在 `[Unreleased]` 中，首次发布时会一起归入 `0.1.0`；已经按 M6 基线以源码方式接入的项目，按本节处理。来源：[`@wzrhine/react` CHANGELOG](../../packages/react/CHANGELOG.md)、[`@wzrhine/effects` CHANGELOG](../../packages/effects/CHANGELOG.md)（`@wzrhine/tokens` 在 M7–M10 没有改动；M12 新增的 Agent 包见第 13 条）。没有破坏性的类型变化；需要动手的是下面标「行为变化」或「DOM 变化」的项。
 
 ### 1. 点击 Toast 操作后默认关闭（行为变化，M9）
 过去点击「撤销」等操作按钮后通知仍停留，现在执行 `onClick` 后关闭该通知。

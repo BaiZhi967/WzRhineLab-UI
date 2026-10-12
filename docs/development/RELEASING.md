@@ -8,6 +8,8 @@
 | `@wzrhine/tokens` | CSS 变量与 token 清单 | `.`、`./styles.css` |
 | `@wzrhine/react` | 组件 | `.`、`./styles.css` |
 | `@wzrhine/effects` | 可选展示动效（ADR-0004） | `.`、`./styles.css` |
+| `@wzrhine/agent-core` | 框架无关 Agent 契约与纯函数 | `.` |
+| `@wzrhine/agent` | React Agent UI、文案与动效 | `.`、`./styles.css` |
 
 - 开发时 `exports` 指向 `src/`（workspace 内由 Vite / Vitest 直接编译，ADR-0002）。
 - 打包或发布时 pnpm 使用 `publishConfig` 覆盖为 `dist/`：ESM `.js`、`.d.ts`、source map 和原样复制的 CSS。`workspace:` 版本号会被替换为真实版本。
@@ -16,7 +18,7 @@
 ## 命令
 | 命令 | 作用 |
 | --- | --- |
-| `pnpm build:packages` | 用 `tsc -p tsconfig.build.json` 构建三个包到 `dist/`，并复制 CSS |
+| `pnpm build:packages` | 用 `tsc -p tsconfig.build.json` 构建五个包到 `dist/`，并复制 CSS |
 | `pnpm api:report` | 根据 `dist/*.d.ts` 重新生成 `docs/api/*.md` |
 | `pnpm api:check` | API 报告与构建结果不一致时失败，用来在评审中暴露公开 API 的变化 |
 | `pnpm docs:check` | 文档搜索索引（`apps/docs/src/search-index.json`）与路由、文档标题、API 报告不一致时失败；`pnpm docs:index` 重新生成 |
@@ -29,7 +31,7 @@
 
 ### `verify:packages` 验证的内容
 1. tarball 不含 `src/` 和测试；manifest 中没有 `workspace:`；带有类型声明、`sideEffects`、README、CHANGELOG、`repository`；每个 export 指向的文件都在包内。
-2. 在临时目录新建一个使用方项目，安装三个 tarball 以及 npm 上的 react、react-dom、motion。
+2. 在临时目录新建一个使用方项目，安装五个 tarball 以及 npm 上的 react、react-dom、motion。
 3. 用 `skipLibCheck: false` 的严格模式类型检查使用方代码；并用 `@ts-expect-error` 确认错误用法（未知 variant、缺少名称的 IconButton）会被发布出去的类型拒绝。
 4. 在纯 Node ESM 下用 `react-dom/server` 渲染组件。
 5. 用 Vite 打包：tokens、`components.css` 以及它 `@import` 的全部八个分片（reset / overlays / feedback / archive / forms / data / drawer / status）都必须出现，每个分片用一个只属于它的选择器检查；没有引入 effects 的应用中不能出现 effects 代码。
@@ -41,9 +43,9 @@
 `release:check` 的最后一步。度量对象是 `dist/` 产物，`react` / `react-dom` / `motion` 视为外部依赖，`@base-ui/react` 与 `@wzrhine/tokens` 计入体积。任一条目的 gzip 体积超过预算、预算与度量条目不一致、或只导入 `Button` 的体积达到全量入口的 25%（tree-shaking 失效）时退出码为 1。度量方式、当前数值和修改预算的流程见 [SIZE.md](SIZE.md)。
 
 ## 发布前置条件（`release.mjs --publish` 强制）
-- [ ] **维护者选定许可证**：在仓库根目录加入 `LICENSE`，三个包都填写相同的 `license` 字段。**目前未选定**，README 中已注明。
-- [ ] 去掉三个包的 `"private": true`。
-- [ ] 核验 npm 包名：截至 2026-10-09，`@wzrhine/tokens`、`@wzrhine/react`、`@wzrhine/effects` 均返回 404，`@wzrhine` scope 不存在。发布前需要由维护者在 npm 上创建该 scope（或组织），并确认归属。
+- [ ] **维护者选定许可证**：在仓库根目录加入 `LICENSE`，五个可发布包都填写相同的 `license` 字段。**目前未选定**，README 中已注明。
+- [ ] 去掉五个可发布包的 `"private": true`。
+- [ ] 核验 npm 包名：截至 2026-10-09，`@wzrhine/tokens`、`@wzrhine/react`、`@wzrhine/effects`、`@wzrhine/agent-core`、`@wzrhine/agent` 均返回 404，`@wzrhine` scope 不存在。发布前需要由维护者在 npm 上创建该 scope（或组织），并确认归属。
 - [ ] 每个 CHANGELOG 把 `[Unreleased]` 改为 `## [x.y.z] - 日期`，并写明破坏性变更与迁移步骤。
 - [ ] 在 `main` 分支、工作区干净。
 - [ ] `pnpm release:check` 通过。
@@ -55,5 +57,5 @@ ROADMAP M5 写的是「Storybook 或自研 explorer」。本项目选择自研�
 
 ## 版本策略
 - `0.x`：允许破坏性变更，但必须写进 CHANGELOG 的 Changed 段，标注「破坏性」并附迁移说明。
-- 三个包保持相同的版本号，一起发布（effects 以 peer 方式依赖同版本线的 react 包）。
+- 五个包保持相同的版本号并按依赖顺序发布；`effects` 以 peer 方式依赖同版本线的 react 包，`agent` 依赖 `agent-core`。
 - 公开 API 的任何变化都会让 `api:check` 失败，需要重新生成 `docs/api/*.md`，并在 PR 中评审 diff。

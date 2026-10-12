@@ -1,7 +1,7 @@
 # WzRhineLab-UI 长期规划中心
 
 > 状态：Working plan  
-> 基线：M0–M10、M9.5 与 M12 已完成（Base UI 1.9.0，只支持 React 19；M11 按维护者决定跳过，M12 交付高级交互与 `@wzrhine/agent-core` / `@wzrhine/agent`）；下一步：Wpi-Agent 真实接入（M13 门禁）或 M11 Rendering Lab  
+> 基线：M0–M10、M9.5 与 M12 已完成（Base UI 1.9.0，只支持 React 19；M11 延期为独立实验，M12 交付高级交互与 `@wzrhine/agent-core` / `@wzrhine/agent`）；当前主线：Wpi-Agent 真实接入与 Rhine 领域模式（M13 门禁）  
 > 维护方式：规划文档描述目标和门禁，验收记录描述已经真实执行的结果。
 
 本目录是 WzRhineLab-UI 后续规划的统一入口。现有的 design、development 和 acceptance 文档继续作为规范、实现约束和事实记录；本目录负责回答三个问题：
@@ -17,18 +17,19 @@
 当前 main 已经完成：
 
 - React + TypeScript + Motion 的 pnpm workspace；
-- @wzrhine/tokens、@wzrhine/react、@wzrhine/effects 三个包；
+- 五个 workspace 包：`@wzrhine/tokens`、`@wzrhine/react`、`@wzrhine/effects`、`@wzrhine/agent-core`、`@wzrhine/agent`；
 - Base UI 1.9.0 作为唯一 headless 交互底座；
 - 基础原语、Fields、Navigation / Overlay、Data、Rhine archive patterns；
-- Agent UI 公共包尚未实现；其目标边界和契约见 Agent UI 平台规划；
+- M12 Agent UI 公共包已实现：`@wzrhine/agent-core` 提供框架无关契约与纯函数，`@wzrhine/agent` 提供 React 组件、文案与动效；真实 Wpi-Agent 消费页面仍是 M13 门禁；
 - M7 表单层：Textarea、Checkbox、CheckboxGroup、RadioGroup、Radio、Switch、Fieldset、Form、Separator、VisuallyHidden；
 - M8 数据与导航：Pagination、Breadcrumb、Progress、Meter、Stat，DataTable 加载 / 错误 / 空状态与分页（[验收记录](../development/acceptance/2026-10-10-m8.md)）；
 - M9 覆盖层与反馈：AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner，Toast 操作 / 撤销 / 更新与 Dialog 关闭保护（[验收记录](../development/acceptance/2026-10-10-m9.md)）；
 - M10 Motion Core 2.0：MotionPresence、RhineMotionGroup、按属性类型的减动、可见性暂停与生命周期、[动效模式目录](../design/MOTION-PATTERNS.md)（[验收记录](../development/acceptance/2026-10-10-m10.md)）；
-- 共四十二个组件和 RhineProvider（以 `packages/react/src/index.ts` 与 [API 报告](../api/react.md) 为准）；
+- `@wzrhine/react` API report 有 265 个导出，其中 73 个组件导出；[COMPONENTS.md](../design/COMPONENTS.md) 按设计族归并为 52 个主组件族。`@wzrhine/agent` API report 另有 377 个导出，其中 84 个组件导出；
 - 3 个示例应用：archive-desk、host-embed、ssr-hydrate；
 - 三内核自动化验收（Showcase E2E 每个内核 385 项）、axe 检查、74 张视觉回归基线（Windows Chromium）、package verification；
 - effects 包与 react 核心包之间的依赖边界；
+- API report 当前规模：tokens 34、react 265、effects 24、agent-core 128、agent 377 个导出；
 - 语义 token、主题作用域、Motion 时长与减动规范。
 
 当前明确未完成：
@@ -125,9 +126,6 @@ Agent UI 采用独立的 @wzrhine/agent 包。一个真实的 Agent 消费项目
 
 M8、M9、M10、M9.5 与 M12 已完成。M12 按维护者决定跳过 M11，交付了高级交互组件与 Agent UI 两个新包（[M12 验收记录](../development/acceptance/2026-10-11-m12.md)、[ADR-0010](../development/adr/0010-m12-agent-ui-plan.md)）。
 
-下一步有两条，由维护者决定先后：
-
-1. **Wpi-Agent 真实接入**：按 [接入指南](agent-ui-adoption.md) 用 `@wzrhine/agent` 替换 Wpi 的视图层，完成双层验收（组件库 + 消费项目）；这是 Agent UI 平台「完成定义」中尚未满足的一项，也是 M13 的门禁；
-2. **M11 Rendering Lab**（[路线图](roadmap.md#m11rendering-lab)、[执行清单](execution-backlog.md#m11rendering-lab)）：用实验决定是否需要 Canvas，而不是立即引入 3D 或第二套组件底座。
+下一步以 M13 为主线：按 [接入指南](agent-ui-adoption.md) 用 `@wzrhine/agent` 替换 Wpi 的视图层，完成双层验收（组件库 + 消费项目），并按真实科研 / 档案场景补齐 Rhine 领域模式。M11 Rendering Lab（[路线图](roadmap.md#m11rendering-lab)、[执行清单](execution-backlog.md#m11rendering-lab)）是独立的 Deferred / Planned 实验，可并行或稍后排期，用于决定是否需要 Canvas，而不是 M13 的前置条件。
 
 M9.5 已完成的范围见 [M9.5 验收记录](../development/acceptance/2026-10-11-m9.5.md)。Agent UI 后续新增组件按 [需求插入流程](demand-insertion-workflow.md) 进入。

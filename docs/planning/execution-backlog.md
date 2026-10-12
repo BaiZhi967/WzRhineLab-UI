@@ -7,8 +7,8 @@
 - 主分支：main；
 - Base UI：1.9.0；
 - 已完成：M0–M10（M9 覆盖层与反馈、M10 Motion Core 2.0 并行完成）、M9.5、M12（高级交互 + Agent UI，[验收](../development/acceptance/2026-10-11-m12.md)）；
-- M11 Rendering Lab：维护者决定跳过，仍为 Planned；
-- 下一步：Wpi-Agent 真实接入（下方「第六组」）或 [M11 Rendering Lab](#m11rendering-lab)；
+- M11 Rendering Lab：Deferred / Planned 独立实验，不阻塞 M13；
+- 下一步：Wpi-Agent 真实接入与 Rhine 领域模式（M13，下方「第六组」）；M11 可并行或稍后排期；
 - 发布状态：暂不发布；
 - React 18：未正式验证；
 - 自动 CI：暂不创建；

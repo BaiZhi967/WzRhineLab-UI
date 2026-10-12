@@ -2,17 +2,21 @@
 
 ## 1. 决策摘要
 
-WzRhineLab-UI 将 Agent UI 作为正式的可复用产品线，规划一个独立的 workspace 包：
+WzRhineLab-UI 将 Agent UI 作为正式的可复用产品线。M12 已把它拆成一个框架无关核心包和一个 React 视图包：
 
 ~~~text
 @wzrhine/tokens
         ↓
 @wzrhine/react
         ↓
+@wzrhine/agent-core
+        ↓
 @wzrhine/agent
         ↓
 Wpi-Agent / 其他 Agent 应用
 ~~~
+
+`@wzrhine/effects` 是可选展示包，不在 Agent 默认依赖链中。当前 workspace 因此有五个包：tokens、react、effects、agent-core、agent。
 
 > **状态（M12）**：已实现。实际拆为 `@wzrhine/agent-core`（框架无关契约与纯函数）+ `@wzrhine/agent`（React 组件、文案、动效），偏离本文 §3.1「只增加一个包」的理由见 [ADR-0010 §3](../development/adr/0010-m12-agent-ui-plan.md)；契约以 [ADR-0011](../development/adr/0011-agent-contracts.md) 为准，动效以 [ADR-0012](../development/adr/0012-agent-motion.md) 为准，验收见 [M12 验收记录](../development/acceptance/2026-10-11-m12.md)。§10 完成定义中「至少一套真实 Wpi 消费页面」仍未满足。本文其余内容保留为原始规划。
 
@@ -45,23 +49,20 @@ Wpi-Agent / 其他 Agent 应用
 
 ## 3. 包边界和依赖方向
 
-### 3.1 推荐包结构
+### 3.1 M12 实际包结构
 
-第一版只增加一个包，不提前拆出 agent-core、agent-motion、agent-runtime 等多个包：
+M12 已完成拆包；以下结构和命名是当前主干的事实，不再沿用「只增加一个包」的早期提案：
 
 ~~~text
 packages/
   tokens/
   react/
-  agent/
   effects/
+  agent-core/
+  agent/
 ~~~
 
-推荐包名：
-
-~~~text
-@wzrhine/agent
-~~~
+发布顺序和依赖闭包见 [RELEASING.md](../development/RELEASING.md)。`@wzrhine/agent-core` 只包含框架无关契约与纯函数；`@wzrhine/agent` 包含 React 组件、文案、动效，并依赖 `agent-core`。
 
 包内可以使用目录和子路径区分组件族：
 
@@ -97,17 +98,20 @@ packages/agent/
     ↓
 @wzrhine/react
     ↓
+@wzrhine/agent-core
+    ↓
 @wzrhine/agent
 
 @wzrhine/effects
     └─ 可选，不是 @wzrhine/agent 的默认依赖
 ~~~
 
-@wzrhine/agent 可以依赖：
+@wzrhine/agent-core 可以依赖 React 无关的类型与纯函数实现；`@wzrhine/agent` 可以依赖：
 
 - React；
 - @wzrhine/react；
 - @wzrhine/tokens；
+- @wzrhine/agent-core；
 - motion/react；
 - 为语法高亮、Markdown 或代码渲染提供的 peer 或 renderer slot。
 

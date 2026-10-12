@@ -23,9 +23,9 @@
 | M9 | Overlays & Feedback | AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner，Toast / Dialog 补强 | ✅ Accepted（[验收](../development/acceptance/2026-10-10-m9.md)） |
 | M10 | Motion Core 2.0 | 统一 motion contract、生命周期、模式目录、减动和中断测试 | ✅ Accepted（[验收](../development/acceptance/2026-10-10-m10.md)；与 M9 并行完成） |
 | M9.5 | Ecosystem hardening | React 18 / 19 与 locale ADR、use client 与 App Router 示例、hydration 回归、体积预算、文档搜索、安装 / 升级文档、npm scope 决定 | ✅ Done（[验收](../development/acceptance/2026-10-11-m9.5.md)） |
-| M11 | Rendering Lab | Canvas/SVG 性能实验、渲染适配器契约、是否引入 Canvas 的证据 | Planned（维护者决定跳过，排在 M12 之后） |
+| M11 | Rendering Lab | Canvas/SVG 性能实验、渲染适配器契约、是否引入 Canvas 的证据 | Deferred / Planned（独立实验，不阻塞 M13） |
 | M12 | Advanced interaction + Agent UI | react：Collapsible、Accordion、Slider、NumberField、ContextMenu、Combobox、CommandPalette、FileDropZone、SplitButton、ScrollArea；新包 `@wzrhine/agent-core` + `@wzrhine/agent`（图册 46 组件全覆盖 + Wpi 缺口补充） | ✅ Done（[验收](../development/acceptance/2026-10-11-m12.md)；[ADR-0010](../development/adr/0010-m12-agent-ui-plan.md)） |
-| M13 | Rhine domain patterns | InstrumentPanel、EvidencePanel、MetricPanel、ExperimentTimeline 等非 Agent 领域模式（Agent UI 已在 M12 提前交付）；Wpi-Agent 真实接入验收 | Planned |
+| M13 | Rhine domain patterns | M12 已交付的 Agent UI 真实 Wpi-Agent 消费页面、双层验收，以及 InstrumentPanel、EvidencePanel、MetricPanel、ExperimentTimeline 等非 Agent 领域模式 | Planned（当前主线门禁） |
 | M14 | Accessibility & internationalization | 屏幕阅读器、200% 缩放、真机、RTL、locale、日期时间策略 | Planned |
 | M15 | Public release | 许可证、npm scope、版本、changelog、公开文档和安装验证 | Planned |
 | M16 | Source distribution | registry、源码模板、CLI 评估、示例生成 | Planned |
@@ -36,7 +36,7 @@
 
 > **顺序调整（维护者决定，M8 开始时）**：M8 之后先做「覆盖层与反馈组件」（新 M9），原 M9 Ecosystem hardening 改为 M9.5。M10 及之后的编号保持不变，避免所有规划文件与验收记录里的交叉引用失效。Drawer 从 M12 提前到 M9。
 >
-> **实际完成顺序**：M8 → M9 与 M10 并行 → M9.5 → M12（维护者决定跳过 M11，并把 Agent UI 从 M13 提前到 M12，ADR-0010）。下文章节按实际完成顺序排列，因此 M10 排在 M9.5 之前。
+> **实际完成顺序**：M8 → M9 与 M10 并行 → M9.5 → M12。M11 在 M12 前被有意跳过并保留为 Deferred / Planned；M12 已独立交付 Agent UI。当前主线转入 M13 的 Wpi-Agent 真实消费与 Rhine 领域模式，M11 可按真实需求在并行窗口恢复，不是 M13 的依赖。
 
 ## M8：Data & Navigation
 
@@ -178,7 +178,7 @@ M9.5 不负责建立第二个 headless 组件底座，也不负责加入 Canvas 
 
 ## M11：Rendering Lab
 
-状态：Planned（M9.5 之后）。M10 留下的待办见 [ADR-0007「留给 M11」](../development/adr/0007-motion-ownership.md#留给-m11rendering-lab)。
+状态：Deferred / Planned（维护者决定跳过 M12 前置位置，作为独立实验保留）。M11 不阻塞 M13；M10 留下的待办见 [ADR-0007「留给 M11」](../development/adr/0007-motion-ownership.md#留给-m11rendering-lab)。
 
 ### 目标
 
@@ -212,7 +212,7 @@ M9.5 不负责建立第二个 headless 组件底座，也不负责加入 Canvas 
 
 ## M12：Advanced interaction + Agent UI
 
-状态：✅ 已完成。证据：[M12 验收记录](../development/acceptance/2026-10-11-m12.md)、[ADR-0010 范围与拆包](../development/adr/0010-m12-agent-ui-plan.md)、[ADR-0011 Agent 契约](../development/adr/0011-agent-contracts.md)、[ADR-0012 Agent 动效](../development/adr/0012-agent-motion.md)。FilterBar 与 DatePicker 仍为 Planned（无真实需求 / 等 locale 与时区策略）。下文「推荐顺序」保留为原始规划。
+状态：✅ 已完成。M12 提前承接并交付原计划中属于 M13 的 Agent UI；它不代表 M13 的真实消费项目门禁已经完成。证据：[M12 验收记录](../development/acceptance/2026-10-11-m12.md)、[ADR-0010 范围与拆包](../development/adr/0010-m12-agent-ui-plan.md)、[ADR-0011 Agent 契约](../development/adr/0011-agent-contracts.md)、[ADR-0012 Agent 动效](../development/adr/0012-agent-motion.md)。FilterBar 与 DatePicker 仍为 Planned（无真实需求 / 等 locale 与时区策略）。下文「推荐顺序」保留为原始规划。
 
 ### 推荐顺序
 
@@ -242,6 +242,8 @@ Agent UI 会优先消费真实场景中需要的高级交互能力：
 这些组件可以在真实 Wpi-Agent 阻塞时按需求插入流程提前交付。提前交付只关闭当前组件的最小闭环，不关闭整个 M12。
 
 ## M13：Rhine domain patterns
+
+状态：Planned，当前主线门禁。它消费 M12 的 Agent UI 输出；M11 Rendering Lab 不构成前置依赖。
 
 ### 目标
 

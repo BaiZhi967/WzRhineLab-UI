@@ -2,8 +2,20 @@
 
 > 状态：v0.3（2026-10-11，按 M12 的 `packages/react/src/index.ts` 与 `packages/agent/src/index.ts` 核对）。Draft 0.1（2026-10-09）只有层级规划，没有实现。
 
+## 计数口径
+API report 是导出符号的机器生成真值；本目录是按设计族整理的人工目录。当前数字如下：
+
+| 包 | API report 总导出 | API report 组件导出 | 本目录的主组件族 |
+| --- | ---: | ---: | ---: |
+| `@wzrhine/react` | 265 | 73 | 52 |
+| `@wzrhine/effects` | 24 | 5 | 5（独立效果包） |
+| `@wzrhine/agent-core` | 128 | — | —（框架无关契约与纯函数） |
+| `@wzrhine/agent` | 377 | 84 | 46 个概念图册条目对应的实际实现族 |
+
+因此，`@wzrhine/react` 的 52 是不计子部件、`RhineProvider` 与 Motion 工具的主组件族数量；API report 的 73 是所有公开组件导出符号，二者不再混称。Agent 组件在独立包 `@wzrhine/agent`（见第 10 层）；完整签名见自动生成的 [API 参考](../api/react.md) 与 [Agent API 参考](../api/agent.md)。
+
 ## 层级
-`@wzrhine/react` 现有 52 个组件（M12 新增 10 个；不计子部件、RhineProvider 与 Motion 工具）。Agent 组件在独立包 `@wzrhine/agent`（见第 10 层）。名称与 `index.ts` 的导出一致；完整签名见自动生成的 [API 参考](../api/react.md)。
+`@wzrhine/react` 按 52 个主组件族组织；M12 新增 10 个 React 高级交互组件。名称与 `index.ts` 的导出一致。
 
 1. **Primitives**：Button、IconButton、Text、Surface、Separator、VisuallyHidden。文档：[IconButton · Text](../components/icon-button-text.md)、[Separator · VisuallyHidden](../components/forms.md)；Button、Surface 只有 [API 参考](../api/react.md)。
 2. **Fields**：Field、Input、Textarea、Checkbox、CheckboxGroup、RadioGroup / Radio、Switch、Fieldset、Form。文档：[Field & Input](../components/field.md)、[Choice controls · Textarea · Fieldset · Form](../components/forms.md)。
@@ -15,7 +27,7 @@
 8. **Optional showcase（`@wzrhine/effects`，ADR-0004）**：ArchiveReveal、ScanSurface、OrbitalDiagram、MotionPlayer、EffectClock。文档：[Showcase effects](../components/effects.md)。不得让普通组件依赖 WebGL。
 
 9. **Advanced interaction（M12，[ADR-0010](../development/adr/0010-m12-agent-ui-plan.md)）**：Collapsible、Accordion / AccordionItem、Slider、NumberField、ContextMenu、Combobox、CommandPalette、FileDropZone、SplitButton、ScrollArea。文档：[Advanced interaction](../components/advanced.md)、[Combobox · CommandPalette · FileDropZone](../components/command.md)。
-10. **Agent UI（独立包 `@wzrhine/agent` + `@wzrhine/agent-core`，M12）**：工作台（AgentShell、AgentHeader、ConversationList、AgentSidePane…）、消息与过程（MessageList、AgentMessage、MessagePart、ThinkingBlock、AgentProcess、RunStatus…）、工具（ToolActivity、ToolRecord、CodeModeToolTree、DiffPreview、11 类工具专项详情…）、Composer（Composer、MentionMenu、SlashCommandMenu、ModelPicker、PermissionPicker…）、人工干预（ApprovalPanel、QuestionnaireCard、ErrorRecoveryNotice、GrantList）、工作区与产物（PersistentTerminal、SubAgentCard、ContextUsage、ArtifactCard、FilePreview…）。文档：[Shell](../components/agent-shell.md)、[Message](../components/agent-message.md)、[Tools](../components/agent-tools.md)、[Composer](../components/agent-composer.md)、[Intervention](../components/agent-intervention.md)、[Workspace](../components/agent-workspace.md)；契约 [ADR-0011](../development/adr/0011-agent-contracts.md)，动效 [ADR-0012](../development/adr/0012-agent-motion.md)。
+10. **Agent UI（独立包 `@wzrhine/agent` + `@wzrhine/agent-core`，M12；`@wzrhine/agent` API report 有 84 个组件导出）**：工作台（AgentShell、AgentHeader、ConversationList、AgentSidePane…）、消息与过程（MessageList、AgentMessage、MessagePart、ThinkingBlock、AgentProcess、RunStatus…）、工具（ToolActivity、ToolRecord、CodeModeToolTree、DiffPreview、11 类工具专项详情…）、Composer（Composer、MentionMenu、SlashCommandMenu、ModelPicker、PermissionPicker…）、人工干预（ApprovalPanel、QuestionnaireCard、ErrorRecoveryNotice、GrantList）、工作区与产物（PersistentTerminal、SubAgentCard、ContextUsage、ArtifactCard、FilePreview…）。文档：[Shell](../components/agent-shell.md)、[Message](../components/agent-message.md)、[Tools](../components/agent-tools.md)、[Composer](../components/agent-composer.md)、[Intervention](../components/agent-intervention.md)、[Workspace](../components/agent-workspace.md)；契约 [ADR-0011](../development/adr/0011-agent-contracts.md)，动效 [ADR-0012](../development/adr/0012-agent-motion.md)。
 
 **未实现、已排期**：FilterBar、DatePicker（等 locale / 时区策略）仍属 M12 余项；InspectorPanel、EvidencePanel 等非 Agent 领域组件属于 M13。顺序与进入条件见 [长期路线图](../planning/roadmap.md)。
 
