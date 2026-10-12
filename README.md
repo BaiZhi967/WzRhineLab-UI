@@ -10,7 +10,7 @@
 - **M13 — Rhine domain patterns 与 Wpi-Agent 真实接入（下一道门禁）**：当前主线重点是把 Agent UI 接入真实 Wpi-Agent 消费页面，并继续实现 InstrumentPanel、EvidencePanel、MetricPanel、ExperimentTimeline 等 Rhine 领域模式。M13 尚未完成，真实消费项目验收是关闭条件（见 [长期路线图](docs/planning/roadmap.md#m13-rhine-domain-patterns)）。
 - **M11 — Rendering Lab（延期的独立实验）**：维护者决定先交付 M12，因此 M11 没有成为 M12 的前置条件；它保留为 Planned，用于用可复现实验证据决定是否需要 Canvas / 其他渲染适配器，也不阻塞 M13。排期关系见 [ROADMAP](docs/ROADMAP.md)。
 - **后续 M14–M15**：M14 负责屏幕阅读器、200% 缩放、真机、RTL 与 locale 等人工验收；M15 才处理许可证、npm scope、版本、changelog 和公开发布门禁。
-- **当前仍未发布到 npm**：首发版本定为 `0.1.0`（各包 CHANGELOG 已定版、`private` 已移除）；剩余动作是创建 npm scope、登录后执行发布（见 [RELEASING](docs/development/RELEASING.md)）。许可证 MIT。只支持 React 19（ADR-0008）。
+- **已发布到 npm**：`0.1.0`（2026-10-12）已发布 `@wzrhine/tokens`、`@wzrhine/react`、`@wzrhine/effects`、`@wzrhine/agent-core`、`@wzrhine/agent`（见 [RELEASING](docs/development/RELEASING.md)）。许可证 MIT。只支持 React 19（ADR-0008）。
 - 规范入口：[docs/README.md](docs/README.md)、[DESIGN.md](DESIGN.md)、[docs/ROADMAP.md](docs/ROADMAP.md)。
 - 原型画板：[docs/concepts/README.md](docs/concepts/README.md)。
 
@@ -36,7 +36,7 @@ React 19 · TypeScript · Motion (`motion/react`) · CSS Variables / Semantic To
 
 `@wzrhine/react` 的 [COMPONENTS.md](docs/design/COMPONENTS.md) 另外按设计族归并为 52 个主组件族；该归并不计子部件、`RhineProvider` 与 Motion 工具，所以不能与 API report 的 73 个组件导出直接等同。Agent UI 的概念图册有 46 个概念条目，实际 `@wzrhine/agent` API report 已包含 84 个组件导出。
 
-五个包的首个发布版本为 `0.1.0`；发布到 npm 之前，请勿在外部项目中依赖未发布的 workspace 版本。
+五个包已发布 `0.1.0` 到 npm（`@wzrhine` scope，public access）；未发布的 workspace 版本仅供本仓库内部使用。
 
 ## 本地运行
 

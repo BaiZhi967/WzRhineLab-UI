@@ -1,6 +1,6 @@
 {
   "name": "@wzrhine/agent-core",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "description": "Framework-free Agent UI contracts for WzRhineLab UI: view-model types, the three status axes, status metadata and pure helpers (dedupe, revision guards, diffs, composer tokens, formatting).",
   "type": "module",

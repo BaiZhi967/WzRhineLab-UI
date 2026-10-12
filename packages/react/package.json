@@ -1,6 +1,6 @@
 {
   "name": "@wzrhine/react",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "description": "Accessible React components for research / archive interfaces, built on Base UI and motion/react.",
   "type": "module",

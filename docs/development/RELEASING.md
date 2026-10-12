@@ -45,12 +45,12 @@
 ## 发布前置条件（`release.mjs --publish` 强制）
 - [x] **维护者选定许可证**：已定为 MIT（2026-10-12，版权人 WhiteZhi）。仓库根目录与五个可发布包各有一份 `LICENSE`，六个 `package.json` 的 `license` 字段均为 `"MIT"`。
 - [x] 去掉五个可发布包的 `"private": true`（2026-10-12；根 workspace 的 `private` 保留，它不发布）。
-- [x] 核验 npm 包名：2026-10-12 对官方 registry（`registry.npmjs.org`）复验，五个包名均返回 404，可用。**仍需维护者**：在 npmjs.com 创建 `wzrhine` 组织（免费 Public Organization 即可，或确认 npm 用户名就是 `wzrhine`），并 `npm login --registry https://registry.npmjs.org/`。
+- [x] 核验 npm 包名：2026-10-12 对官方 registry（`registry.npmjs.org`）复验，五个包名当时均可用；`wzrhine` 组织随后创建（owner：whitezhi），登录与发布验证通过。
 - [x] 每个 CHANGELOG 已定版 `## [0.1.0] - 2026-10-12`；破坏性变更与迁移步骤已在各节写明。
-- [ ] 在 `main` 分支、工作区干净。
-- [ ] `pnpm release:check` 通过。
+- [x] 在 `main` 分支、工作区干净（2026-10-12 发布时满足）。
+- [x] `pnpm release:check` 通过（2026-10-12，完整两轮）。
 
-满足后执行 `node scripts/release.mjs 0.1.0 --publish`（脚本已把发布固定到官方 registry `registry.npmjs.org`，不受本机镜像配置影响），然后提交版本号变更并打 tag `v0.1.0`。
+首发 `0.1.0` 已于 2026-10-12 发布。因 npm 账号开启 2FA（auth-and-writes），实际流程为：脚本 dry run + `--publish` 阶段的 `pnpm release:check` 完成全部门禁校验，最终上传在交互终端手动逐包执行 `pnpm publish --access public --no-git-checks --registry https://registry.npmjs.org/`（每包输入一次 OTP）。后续版本如用脚本直发，可加 `--otp=<code>`（门禁耗时可能耗尽首码，剩余包用新码重试）。发布后提交版本号变更并打 tag `v<version>`。
 
 ## 文档站
 ROADMAP M5 写的是「Storybook 或自研 explorer」。本项目选择自研：`apps/docs` 就是 explorer，包括组件页、Playground、状态矩阵、动效对照和验收场景，并有三种浏览器内核的 E2E 覆盖。API 参考由 `api:report` 从类型声明自动生成，放在 `docs/api/`。目前不引入 Storybook，避免维护两套示例。

@@ -1,6 +1,6 @@
 {
   "name": "@wzrhine/tokens",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "description": "Semantic design tokens (CSS custom properties) and a typed token manifest for WzRhineLab UI.",
   "type": "module",

@@ -23,6 +23,10 @@ import { join, resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const [version, ...flags] = process.argv.slice(2);
 const publish = flags.includes('--publish');
+// npm 2FA one-time password (auth-and-writes accounts), e.g. --otp=123456.
+// Forwarded to every publish call; codes expire (~30s), so a long gate run may
+// consume the first code — retry the remaining packages with a fresh one.
+const otp = flags.find((f) => f.startsWith('--otp='));
 const packages = ['tokens', 'react', 'effects', 'agent-core', 'agent'];
 const problems = [];
 const isWin = process.platform === 'win32';
@@ -89,6 +93,6 @@ for (const p of packages) {
 // so pnpm's own "unclean tree" check would always fire; the clean-tree-on-main
 // precondition is enforced by this script before any writes happen.
 for (const p of packages) {
-  sh('pnpm', ['publish', '--access', 'public', '--no-git-checks', '--registry', 'https://registry.npmjs.org/'], { cwd: join(root, 'packages', p) });
+  sh('pnpm', ['publish', '--access', 'public', '--no-git-checks', ...(otp ? [otp] : []), '--registry', 'https://registry.npmjs.org/'], { cwd: join(root, 'packages', p) });
 }
 console.log(`\npublished ${version}. Commit the version bump and tag: git tag v${version}`);
