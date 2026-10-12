@@ -40,6 +40,8 @@ React 19 · TypeScript · Motion (`motion/react`) · CSS Variables / Semantic To
 
 ## 本地运行
 
+- 在线 Showcase（GitHub Pages，随 main 自动部署）：<https://baizhi967.github.io/WzRhineLab-UI/>
+
 需要 Node.js 20.19+，并启用 Corepack / pnpm 10：
 
 ```sh
@@ -94,4 +96,4 @@ import { AgentShell } from '@wzrhine/agent';
 
 ## 设计与工程状态
 
-M0–M10、M9.5 与 M12 都有验收记录；M13 的真实 Wpi-Agent 消费页面、M14 的人工可访问性验收和 M15 的发布审批仍未关闭。源代码采用 MIT 许可证（根目录与五个包各带 `LICENSE`）；未配置自动 GitHub Actions（避免配额消耗）。Chromium、Firefox、WebKit 的自动化验收已通过，屏幕阅读器、200% 缩放与真机仍需人工验收。
+M0–M10、M9.5 与 M12 都有验收记录；M13 的真实 Wpi-Agent 消费页面、M14 的人工可访问性验收和 M15 的发布审批仍未关闭。源代码采用 MIT 许可证（根目录与五个包各带 `LICENSE`）；测试 CI 暂未自动化，唯一的 Actions workflow 是 Showcase 的 GitHub Pages 部署（公开仓库 Actions 免费，2026-10-12 经维护者批准）。Chromium、Firefox、WebKit 的自动化验收已通过，屏幕阅读器、200% 缩放与真机仍需人工验收。

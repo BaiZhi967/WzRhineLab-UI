@@ -1,0 +1,41 @@
+# Showcase → GitHub Pages 自动部署。
+# 依据 AGENTS.md「创建 workflow 前需维护者确认」：本 workflow 已于 2026-10-12 由维护者批准；
+# 公开仓库 Actions 分钟数免费，且这只是部署流水线，不运行测试 CI。
+name: Pages · Showcase
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4 # 读取根 package.json 的 packageManager 字段
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @wzrhine/showcase build:pages
+      - run: touch apps/docs/dist/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/docs/dist
+      - id: deployment
+        uses: actions/deploy-pages@v4
