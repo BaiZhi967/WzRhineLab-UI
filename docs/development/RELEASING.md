@@ -43,7 +43,7 @@
 `release:check` 的最后一步。度量对象是 `dist/` 产物，`react` / `react-dom` / `motion` 视为外部依赖，`@base-ui/react` 与 `@wzrhine/tokens` 计入体积。任一条目的 gzip 体积超过预算、预算与度量条目不一致、或只导入 `Button` 的体积达到全量入口的 25%（tree-shaking 失效）时退出码为 1。度量方式、当前数值和修改预算的流程见 [SIZE.md](SIZE.md)。
 
 ## 发布前置条件（`release.mjs --publish` 强制）
-- [ ] **维护者选定许可证**：在仓库根目录加入 `LICENSE`，五个可发布包都填写相同的 `license` 字段。**目前未选定**，README 中已注明。
+- [x] **维护者选定许可证**：已定为 MIT（2026-10-12，版权人 WhiteZhi）。仓库根目录与五个可发布包各有一份 `LICENSE`，六个 `package.json` 的 `license` 字段均为 `"MIT"`。
 - [ ] 去掉五个可发布包的 `"private": true`。
 - [ ] 核验 npm 包名：截至 2026-10-09，`@wzrhine/tokens`、`@wzrhine/react`、`@wzrhine/effects`、`@wzrhine/agent-core`、`@wzrhine/agent` 均返回 404，`@wzrhine` scope 不存在。发布前需要由维护者在 npm 上创建该 scope（或组织），并确认归属。
 - [ ] 每个 CHANGELOG 把 `[Unreleased]` 改为 `## [x.y.z] - 日期`，并写明破坏性变更与迁移步骤。

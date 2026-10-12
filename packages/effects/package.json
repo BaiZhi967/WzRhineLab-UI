@@ -2,6 +2,7 @@
   "name": "@wzrhine/effects",
   "version": "0.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Optional showcase effects (decrypt reveal, scan, orbit) and a four-lane motion player for WzRhineLab UI.",
   "type": "module",
   "repository": {

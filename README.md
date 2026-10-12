@@ -10,7 +10,7 @@
 - **M13 — Rhine domain patterns 与 Wpi-Agent 真实接入（下一道门禁）**：当前主线重点是把 Agent UI 接入真实 Wpi-Agent 消费页面，并继续实现 InstrumentPanel、EvidencePanel、MetricPanel、ExperimentTimeline 等 Rhine 领域模式。M13 尚未完成，真实消费项目验收是关闭条件（见 [长期路线图](docs/planning/roadmap.md#m13-rhine-domain-patterns)）。
 - **M11 — Rendering Lab（延期的独立实验）**：维护者决定先交付 M12，因此 M11 没有成为 M12 的前置条件；它保留为 Planned，用于用可复现实验证据决定是否需要 Canvas / 其他渲染适配器，也不阻塞 M13。排期关系见 [ROADMAP](docs/ROADMAP.md)。
 - **后续 M14–M15**：M14 负责屏幕阅读器、200% 缩放、真机、RTL 与 locale 等人工验收；M15 才处理许可证、npm scope、版本、changelog 和公开发布门禁。
-- **当前仍未发布到 npm**：根目录和五个 workspace 包都保留发布前状态；发布前仍需完成许可证、版本号、npm scope、包清单与真实安装验证（见 [RELEASING](docs/development/RELEASING.md)）。只支持 React 19（ADR-0008）。
+- **当前仍未发布到 npm**：根目录和五个 workspace 包都保留发布前状态；发布前仍需完成版本号、npm scope、包清单与真实安装验证（见 [RELEASING](docs/development/RELEASING.md)）；许可证已定为 MIT。只支持 React 19（ADR-0008）。
 - 规范入口：[docs/README.md](docs/README.md)、[DESIGN.md](DESIGN.md)、[docs/ROADMAP.md](docs/ROADMAP.md)。
 - 原型画板：[docs/concepts/README.md](docs/concepts/README.md)。
 
@@ -94,4 +94,4 @@ import { AgentShell } from '@wzrhine/agent';
 
 ## 设计与工程状态
 
-M0–M10、M9.5 与 M12 都有验收记录；M13 的真实 Wpi-Agent 消费页面、M14 的人工可访问性验收和 M15 的发布审批仍未关闭。根目录尚未选择源代码许可证；未配置自动 GitHub Actions（避免配额消耗）。Chromium、Firefox、WebKit 的自动化验收已通过，屏幕阅读器、200% 缩放与真机仍需人工验收。
+M0–M10、M9.5 与 M12 都有验收记录；M13 的真实 Wpi-Agent 消费页面、M14 的人工可访问性验收和 M15 的发布审批仍未关闭。源代码采用 MIT 许可证（根目录与五个包各带 `LICENSE`）；未配置自动 GitHub Actions（避免配额消耗）。Chromium、Firefox、WebKit 的自动化验收已通过，屏幕阅读器、200% 缩放与真机仍需人工验收。
