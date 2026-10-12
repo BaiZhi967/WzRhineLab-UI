@@ -85,7 +85,10 @@ for (const p of packages) {
   writeFileSync(file, `${JSON.stringify({ ...manifests[p], version }, null, 2)}\n`);
 }
 // Publish in dependency order so peers resolve on the registry.
+// --no-git-checks: the script writes the version bump itself before publishing,
+// so pnpm's own "unclean tree" check would always fire; the clean-tree-on-main
+// precondition is enforced by this script before any writes happen.
 for (const p of packages) {
-  sh('pnpm', ['publish', '--access', 'public', '--registry', 'https://registry.npmjs.org/'], { cwd: join(root, 'packages', p) });
+  sh('pnpm', ['publish', '--access', 'public', '--no-git-checks', '--registry', 'https://registry.npmjs.org/'], { cwd: join(root, 'packages', p) });
 }
 console.log(`\npublished ${version}. Commit the version bump and tag: git tag v${version}`);
