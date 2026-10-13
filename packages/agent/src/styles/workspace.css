@@ -435,6 +435,9 @@
   color: var(--rl-fg-muted);
 }
 
+.rl-agent-terminal-row__receipt[data-status='rejected'] { color: var(--rl-danger); }
+.rl-agent-terminal-row__receipt[data-status='unknown'] { color: var(--rl-warning); }
+
 /* ---------- SubAgentCard / SubAgentList ---------- */
 .rl-agent-subagent-list {
   display: grid;

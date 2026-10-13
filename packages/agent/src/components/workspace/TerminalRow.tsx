@@ -68,6 +68,7 @@ export const TerminalRow = React.forwardRef<HTMLDivElement, TerminalRowProps>(fu
       {terminal.source && <span className="rl-agent-terminal-row__source">{terminal.source}</span>}
       {terminal.activity && <span className="rl-agent-terminal-row__activity">{terminal.activity}</span>}
       {terminal.tail && <span className="rl-agent-terminal-row__tail" title={terminal.tail}>{terminal.tail}</span>}
+      {terminal.receipt && terminal.receipt.status !== 'idle' && <span className="rl-agent-terminal-row__receipt" data-status={terminal.receipt.status}>{status.action[terminal.receipt.status]}{terminal.receipt.reason ? ` · ${terminal.receipt.reason}` : ''}</span>}
       <span className="rl-agent-terminal-row__meta">
         {terminal.calls !== undefined && <span>{m.terminalCalls(terminal.calls)}</span>}
         {readOnly && <span className="rl-agent-terminal-row__readonly">{m.terminalReadOnlyDescription}</span>}
