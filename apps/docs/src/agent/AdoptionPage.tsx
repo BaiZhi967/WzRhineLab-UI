@@ -5,10 +5,12 @@ import {
   Composer,
   ContextUsage,
   ModelPicker,
+  PermissionPicker,
   ReferencePicker,
   RunOverview,
   SkillPicker,
   TerminalList,
+  ToolRecord,
 } from '@wzrhine/agent';
 import type { SkillOption } from '@wzrhine/agent';
 import { AgentShell } from '@wzrhine/agent';
@@ -23,6 +25,16 @@ const subagents: NonNullable<React.ComponentProps<typeof RunOverview>['subagents
   { id: 'child-1', name: '资料核查', task: '核对引用来源', status: 'running', phase: 'executing-tool' },
   { id: 'child-2', name: '旧记录', task: '上一轮运行快照', status: 'completed', inherited: true },
 ];
+const permissionModes = [{ id: 'safe', label: '安全模式', risk: 'normal' as const }, { id: 'elevated', label: '增强权限', risk: 'elevated' as const }];
+const demoTool = {
+  id: 'tool-read-1',
+  name: 'read_file',
+  displayName: '读取文件',
+  category: 'read' as const,
+  status: 'completed' as const,
+  subject: 'src/agent.tsx',
+  detail: { kind: 'file-read' as const, path: 'src/agent.tsx', preview: 'export function Agent() {}', nextOffset: 128, nextOffsetUnit: 'lines' as const },
+} satisfies React.ComponentProps<typeof ToolRecord>['tool'];
 
 function AdoptionWorkbench() {
   const [indexOpen, setIndexOpen] = React.useState(true);
@@ -42,7 +54,7 @@ function AdoptionWorkbench() {
         index={<NavList aria-label="Agent 页面"><NavGroup label="运行"><NavItem label="当前运行" active badge={<span>2</span>} /><NavItem label="历史运行" /></NavGroup><NavGroup label="资源"><NavItem label="终端" /><NavItem label="产物" /></NavGroup></NavList>}
         header={<div className="sc-row"><strong>Wpi 接入验收工作台</strong><Button size="sm" variant="ghost" onClick={() => setIndexOpen((open) => !open)}>{indexOpen ? '收起索引' : '打开索引'}</Button></div>}
         conversation={<div className="sc-card-list"><p>组件只接收 adapter 提供的快照，流式内容可以在阅读区独立滚动。</p><ScanSurface scanKey={skillsSelected.length}><div className="sc-effect-card"><ArchiveReveal text="RUN-0.2.0" revealed duration={480} /></div></ScanSurface><Tree label="工作区" nodes={[{ id: 'src', label: 'src', hasChildren: true, children: [{ id: 'agent', label: 'agent.tsx' }] }, { id: 'docs', label: 'docs' }]} defaultExpandedIds={['src']} /><ContextUsage usage={{ used: 12400, max: 32000, unit: 'tokens', completeness: 'estimated', estimated: true, segments: [{ id: 'input', label: '输入', value: 8200, tone: 'info' }, { id: 'output', label: '输出', value: 4200, tone: 'accent' }] }} variant="full" segmentScale="fit-used" /></div>}
-        composer={<Composer allowEmptyText attachments={[{ id: 'a', name: 'screen.png', kind: 'image', status: 'ready' }]} onSubmit={() => undefined} toolbarEnd={<><SkillPicker skills={skills} selected={skillsSelected} onChange={setSkillsSelected} max={4} /><ReferencePicker open={referenceOpen} onOpenChange={setReferenceOpen} value="src/agent.tsx" items={[{ path: 'src/agent.tsx', name: 'agent.tsx', kind: 'file' }]} onAdd={async () => true} anchor={document.body} /></>} />}
+        composer={<Composer allowEmptyText attachments={[{ id: 'a', name: 'screen.png', kind: 'image', status: 'ready' }]} onSubmit={() => undefined} toolbarEnd={<><SkillPicker skills={skills} selected={skillsSelected} onChange={setSkillsSelected} max={4} /><ReferencePicker open={referenceOpen} onOpenChange={setReferenceOpen} value="src/agent.tsx" items={[{ path: 'src/agent.tsx', name: 'agent.tsx', kind: 'file' }]} onAdd={async () => true} /></>} />}
         context={<RunOverview open={overviewOpen} onOpenChange={setOverviewOpen} facts={[{ label: '模型', value: 'Atlas 14 · 极深' }, { label: '上下文', value: '12.4K / 32K' }]} subagents={subagents} terminals={<TerminalList terminals={terminals} total={1} />} sections={[{ id: 'notes', title: '运行事实', content: <p>权限、消息与用量均来自当前快照。</p> }]} />}
       />
     </AgentMessagesProvider>
@@ -68,6 +80,25 @@ export function AdoptionPage() {
         </Specimen>
         <Specimen id="agent-adoption-contracts" index="03" title="接入标准" span="half" align="start">
           <ul className="sc-rules"><li data-kind="do">所有异步动作携带稳定 actionId 与回执状态</li><li data-kind="do">材料不完整或统计不可靠时明确提示，不猜测事实</li><li data-kind="do">Provider、消息表和 CSS 入口可独立 tree-shake</li><li data-kind="dont">不在 Wpi 复制组件视觉 CSS 或动效实现</li></ul>
+        </Specimen>
+        <Specimen id="agent-adoption-react-foundation" index="04" title="React 外壳与导航" note="同页同时展示可下沉的 Workbench、导航、树与拖动句柄；Wpi 只需注入路由内容。">
+          <div style={{ minHeight: '15rem' }}>
+            <Workbench
+              indexLabel="接入索引"
+              mainLabel="接入内容"
+              rail={<NavRail aria-label="公共模块" collapsed><NavItem label="Agent" icon={<Icon name="MessagesSquare" />} active /><NavItem label="设置" icon={<Icon name="Settings" />} /></NavRail>}
+              index={<NavList aria-label="公共分类"><NavGroup label="Agent"><NavItem label="运行" active /><NavItem label="工具" /></NavGroup></NavList>}
+              header={<strong>React foundation</strong>}
+            >
+              <p>Workbench 的 header、index、reading column 和 ResizeHandle 都来自公共入口。</p>
+            </Workbench>
+          </div>
+        </Specimen>
+        <Specimen id="agent-adoption-async" index="05" title="模型、权限与工具材料" span="half" align="start" note="ModelPicker / PermissionPicker 的回执由宿主控制；ToolRecord 只渲染已交付的材料。">
+          <div className="sc-card-list">
+            <div className="sc-row"><ModelPicker providers={providers} selectedModel="atlas" effort="medium" /><PermissionPicker modes={permissionModes} value="safe" onChange={() => undefined} /></div>
+            <ToolRecord tool={demoTool} defaultExpanded />
+          </div>
         </Specimen>
       </SpecimenGrid>
     </div>

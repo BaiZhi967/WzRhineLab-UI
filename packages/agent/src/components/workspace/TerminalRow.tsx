@@ -101,7 +101,7 @@ export const TerminalRow = React.forwardRef<HTMLDivElement, TerminalRowProps>(fu
         )}
         <AgentStatus className="rl-agent-terminal-row__status" {...statusProps(meta, status.terminal[terminal.status])} />
         {canStop && (
-          <IconButton size="sm" variant="ghost" icon={<AgentIcon name={receiptUnknown ? 'retry' : 'stop'} />} label={receiptUnknown ? m.terminalRetryStop : m.terminalStop(terminal.name)} onClick={() => void onStop!(terminal, { actionId: terminal.receipt?.actionId ?? `${terminal.id}:stop` })} />
+          <IconButton size="sm" variant="ghost" icon={<AgentIcon name={receiptUnknown ? 'retry' : 'stop'} />} label={receiptUnknown ? m.terminalRetryStop : m.terminalStop(terminal.name)} onClick={() => void onStop!(terminal, { actionId: receiptUnknown ? (terminal.receipt?.actionId ?? `${terminal.id}:stop`) : `${terminal.id}:stop` })} />
         )}
       </div>
       {description}
