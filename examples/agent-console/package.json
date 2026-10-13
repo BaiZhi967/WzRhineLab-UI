@@ -17,7 +17,7 @@
     "@wzrhine/agent-core": "workspace:*",
     "@wzrhine/react": "workspace:*",
     "@wzrhine/tokens": "workspace:*",
-    "motion": "12.43.0",
+    "motion": "14.1.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },

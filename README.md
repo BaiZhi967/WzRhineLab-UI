@@ -35,7 +35,7 @@
 
 ## 快速开始
 
-React 19 · motion 12（peer 依赖）：
+React 19 · motion 14（peer 依赖）：
 
 ```sh
 pnpm add @wzrhine/react @wzrhine/tokens react react-dom motion
