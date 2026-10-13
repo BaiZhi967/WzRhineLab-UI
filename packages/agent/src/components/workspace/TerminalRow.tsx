@@ -41,8 +41,9 @@ export const TerminalRow = React.forwardRef<HTMLDivElement, TerminalRowProps>(fu
   const readOnly = isTerminalReadOnly(terminal);
   const meta = terminalStatusMeta[terminal.status];
   const receiptPending = terminal.receipt?.status === 'submitting' || terminal.receipt?.status === 'accepted';
-  const receiptUnknown = terminal.receipt?.status === 'unknown';
-  const canStop = Boolean(onStop) && Boolean(terminal.stoppable) && !readOnly && !meta.settled && !receiptPending && terminal.status !== 'stop-pending' && terminal.status !== 'closing';
+  const receiptUnknown = terminal.receipt?.status === 'unknown' && terminal.receipt.retryable !== false;
+  const receiptUnretryable = terminal.receipt?.status === 'unknown' && terminal.receipt.retryable === false;
+  const canStop = Boolean(onStop) && Boolean(terminal.stoppable) && !readOnly && !meta.settled && !receiptPending && !receiptUnretryable && terminal.status !== 'stop-pending' && terminal.status !== 'closing';
 
   const name = (
     <>

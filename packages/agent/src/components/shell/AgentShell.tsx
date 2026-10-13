@@ -446,7 +446,7 @@ export const AgentShell = React.forwardRef<HTMLDivElement, AgentShellProps>(func
       {hasContext && !inlineContext && (
         <Drawer
           open={sheetsReady && contextOpen}
-          onOpenChange={(open) => { ctx.set(open, 'dismiss'); if (!open) onContextClosed?.(); }}
+          onOpenChange={(open) => { ctx.set(open, 'dismiss'); }}
           side="end"
           size="md"
           title={contextLabel ?? messages.contextLabel}

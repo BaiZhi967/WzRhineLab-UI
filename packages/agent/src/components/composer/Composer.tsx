@@ -55,7 +55,7 @@ export type ComposerProps = {
   // ---------- send / stop ----------
   /** Receives the plain text (`@name` / `/name`), the raw value with markers, references and attachments. */
   onSubmit?: (input: SendInput) => void;
-  /** Allow sending when the text is empty if at least one attachment/reference exists. */
+  /** Allow sending when the text is empty if at least one attachment or reference exists. */
   allowEmptyText?: boolean;
   /** Receipt of the last send. `submitting` / `unknown` block Enter and the button (no duplicates). */
   submitStatus?: ActionStatus | ActionReceipt;
@@ -281,7 +281,7 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
   const blockedReason = typeof blocked === 'string' ? blocked : blocked ? messages.blockedPlaceholder : undefined;
   const replaced = replacement != null && replacement !== false;
   const inert = disabled || readOnly || blockedReason !== undefined || replaced;
-  const hasPayload = plain.trim() !== '' || attachments.length > 0;
+  const hasPayload = plain.trim() !== '' || attachments.length > 0 || references.length > 0;
   const sendReason =
     disabled
       ? disabledReason

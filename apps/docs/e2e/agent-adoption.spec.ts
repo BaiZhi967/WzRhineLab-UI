@@ -9,6 +9,8 @@ test.describe('Wpi adoption readiness showcase', () => {
     await expect(page.getByText('Wpi 接入验收工作台')).toBeVisible();
     await expect(page.locator('.rl-agent-run-overview').locator('strong', { hasText: '运行概览' })).toBeVisible();
     await expect(page.getByText('契约')).toBeVisible();
+    await page.getByRole('button', { name: '添加引用' }).click();
+    await expect(page.getByRole('dialog', { name: '添加文件引用' })).toBeVisible();
     await page.getByRole('button', { name: '切换选中节点' }).click();
     await expect(page.locator('.rl-orbit__node[data-selected="true"]')).toHaveCount(1);
     await page.getByRole('button', { name: '收起索引' }).click();

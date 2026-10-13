@@ -158,11 +158,18 @@ export function AlertDialog({
   };
   const handleAlternate = () => {
     if (pending || !alternateAction?.onClick) return;
+    attempt.current += 1;
+    const id = attempt.current;
     try {
       const result = alternateAction.onClick();
       if (isThenable(result)) {
         setPending(true);
-        result.then(() => { setPending(false); setOpen(false); }, () => fail());
+        result.then(
+          () => { if (attempt.current !== id) return; setPending(false); setOpen(false); },
+          () => { if (attempt.current !== id) return; fail(); },
+        );
+      } else {
+        setOpen(false);
       }
     } catch {
       fail();
@@ -204,7 +211,7 @@ export function AlertDialog({
               data-slot="alert-dialog"
               data-size="sm"
               data-tone={tone}
-              initialFocus={emphasis === 'confirm' ? confirmRef : cancelRef}
+              initialFocus={emphasis === 'confirm' && !confirmDisabled ? confirmRef : cancelRef}
               render={
                 <motion.div
                   initial={{ opacity: 0, y: rise }}
