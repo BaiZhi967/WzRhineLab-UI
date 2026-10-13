@@ -458,7 +458,7 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `allowEmptyText` | `boolean` | Allow sending when the text is empty if at least one attachment/reference exists. |
+| `allowEmptyText` | `boolean` | Allow sending when the text is empty if at least one attachment or reference exists. |
 | `aria-label` | `string` |  |
 | `attachments` | `readonly AttachmentView[]` |  |
 | `blocked` | `string \| boolean` | Input blocked by a pending intervention (e.g. a questionnaire): the textarea becomes read-only and `aria-disabled`, the reason replaces the placeholder and shows in the feedback line. `true` uses the default copy ("请先在上方回答问题"). |
