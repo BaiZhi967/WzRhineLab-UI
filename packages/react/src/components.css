@@ -50,7 +50,7 @@
 .rl-workbench__rail { grid-column: 1; grid-row: 1 / -1; min-width: 0; min-height: 0; padding: var(--rl-space-3); border-inline-end: var(--rl-border-width) solid var(--rl-border-default); background: var(--rl-bg-surface); overflow: auto; }
 .rl-workbench__index { grid-column: 2; grid-row: 2; min-width: 0; min-height: 0; padding: var(--rl-space-3); border-inline-end: var(--rl-border-width) solid var(--rl-border-default); background: var(--rl-bg-surface); overflow: auto; }
 .rl-workbench__resize { grid-column: 3; grid-row: 2; }
-.rl-workbench__main { grid-column: 4; grid-row: 2; display: grid; min-width: 0; min-height: 0; overflow: hidden; overflow-wrap: anywhere; }
+.rl-workbench__main { grid-column: 4; grid-row: 2; display: grid; min-width: 0; min-height: 0; overflow: auto; overflow-wrap: anywhere; }
 .rl-workbench__header { grid-column: 2 / -1; grid-row: 1; display: flex; align-items: center; min-height: var(--rl-control-height-lg); gap: var(--rl-space-2); padding: 0 var(--rl-space-4); border-bottom: var(--rl-border-width) solid var(--rl-border-default); }
 .rl-workbench__content { min-width: 0; min-height: 0; overflow: auto; }
 .rl-workbench__index-toggle { margin-inline-start: auto; min-width: var(--rl-control-height-md); min-height: var(--rl-control-height-md); border: 0; background: transparent; color: var(--rl-fg-muted); }
