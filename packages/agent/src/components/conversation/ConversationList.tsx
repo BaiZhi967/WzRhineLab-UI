@@ -239,7 +239,7 @@ export const ConversationList = React.forwardRef<HTMLDivElement, ConversationLis
             const headingId = `${uid}-${section.id}`;
             return (
               <div key={section.id} className="rl-agent-list__section">
-                {collapsibleGroups && <Collapsible open={!collapsedGroups.includes(section.id)} onOpenChange={(open) => onCollapsedGroupsChange?.(open ? collapsedGroups.filter((id) => id !== section.id) : [...collapsedGroups, section.id])} trigger={section.label}><ul className="rl-agent-list__rows" aria-label={section.label}>{section.items.map((item) => <ConversationRow key={item.id} item={item} selected={item.id === selectedId} disabled={isDisabled?.(item)} onSelect={onSelect} now={now} />)}</ul></Collapsible>}
+                {collapsibleGroups && <Collapsible open={!collapsedGroups.includes(section.id)} onOpenChange={(open) => onCollapsedGroupsChange?.(open ? collapsedGroups.filter((id) => id !== section.id) : [...collapsedGroups, section.id])} trigger={section.label}><ul className="rl-agent-list__rows" aria-label={section.label}>{section.items.map((item) => <ConversationRow key={item.id} item={item} selected={item.id === selectedId} disabled={isDisabled?.(item)} onSelect={onSelect} onPin={onPin} onArchive={onArchive} onUnarchive={onUnarchive} onDelete={onDelete} actions={renderActions?.(item)} now={now} />)}</ul></Collapsible>}
                 {!collapsibleGroups && <>
                 <Heading id={headingId} className="rl-agent-list__heading">
                   {section.label}

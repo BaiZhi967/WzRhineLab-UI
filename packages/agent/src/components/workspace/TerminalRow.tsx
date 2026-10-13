@@ -40,7 +40,9 @@ export const TerminalRow = React.forwardRef<HTMLDivElement, TerminalRowProps>(fu
   const descId = `${id}-desc`;
   const readOnly = isTerminalReadOnly(terminal);
   const meta = terminalStatusMeta[terminal.status];
-  const canStop = Boolean(onStop) && Boolean(terminal.stoppable) && !readOnly && !meta.settled && terminal.status !== 'stop-pending' && terminal.status !== 'closing';
+  const receiptPending = terminal.receipt?.status === 'submitting' || terminal.receipt?.status === 'accepted';
+  const receiptUnknown = terminal.receipt?.status === 'unknown';
+  const canStop = Boolean(onStop) && Boolean(terminal.stoppable) && !readOnly && !meta.settled && !receiptPending && terminal.status !== 'stop-pending' && terminal.status !== 'closing';
 
   const name = (
     <>
@@ -98,7 +100,7 @@ export const TerminalRow = React.forwardRef<HTMLDivElement, TerminalRowProps>(fu
         )}
         <AgentStatus className="rl-agent-terminal-row__status" {...statusProps(meta, status.terminal[terminal.status])} />
         {canStop && (
-          <IconButton size="sm" variant="ghost" icon={<AgentIcon name="stop" />} label={m.terminalStop(terminal.name)} onClick={() => void onStop!(terminal, { actionId: `${terminal.id}:stop` })} />
+          <IconButton size="sm" variant="ghost" icon={<AgentIcon name={receiptUnknown ? 'retry' : 'stop'} />} label={receiptUnknown ? m.terminalRetryStop : m.terminalStop(terminal.name)} onClick={() => void onStop!(terminal, { actionId: terminal.receipt?.actionId ?? `${terminal.id}:stop` })} />
         )}
       </div>
       {description}
@@ -175,6 +177,7 @@ export function TerminalList({
     <div {...rest} className={cx('rl-agent-terminal-list', className)} role="group" aria-label={m.terminalList}>
       {loading && <p role="status">{m.terminalLoading}</p>}
       {error && <p role="alert">{error}{onRetry && <Button size="sm" variant="secondary" onClick={onRetry}>{m.retry}</Button>}</p>}
+      {!loading && !error && total !== undefined && <p className="rl-agent-terminal-list__total" aria-live="polite">{terminals.length} / {total}</p>}
       {!loading && !error && groups.length === 0 && <p className="rl-agent-terminal-list__empty">{empty ?? m.terminalEmpty}</p>}
       {groups.map(({ key, items }) => (
         <Collapsible

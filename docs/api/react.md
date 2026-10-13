@@ -1290,6 +1290,7 @@
 | `children` * | `React.ReactNode` |  |
 | `disabled` | `boolean` |  |
 | `onRemove` | `(() => void)` |  |
+| `removeLabel` | `string` | Override the localized remove label when the tag is used outside the default locale. |
 | `tone` | `"neutral" \| "invalid"` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
@@ -1381,8 +1382,8 @@
 | `label` * | `string` |  |
 | `nodes` * | `readonly TreeNode[]` |  |
 | `onExpandedChange` | `((ids: string[]) => void)` |  |
-| `onLoadChildren` | `((node: TreeNode) => void)` |  |
-| `onRetry` | `((node: TreeNode) => void)` |  |
+| `onLoadChildren` | `((node: TreeNode) => void \| Promise<void>)` |  |
+| `onRetry` | `((node: TreeNode) => void \| Promise<void>)` |  |
 | `onSelect` | `((node: TreeNode) => void)` |  |
 | `onToggle` | `(React.ToggleEventHandler<HTMLDivElement> & ((node: TreeNode, expanded: boolean) => void))` |  |
 | `renderActions` | `((node: TreeNode) => React.ReactNode)` |  |
@@ -1854,6 +1855,7 @@ const zhCN: RhineMessages
 | `combobox` * | `{ empty: string; loading: string; clear: string; openList: string; }` |  |
 | `commandPalette` * | `{ title: string; inputLabel: string; placeholder: string; empty: string; hint: string; close: string; loading: string; }` |  |
 | `dataTable` * | `{ empty: string; loading: string; error: string; retry: string; selectAll: string; deselectAll: string; selectRow: (label: string) => string; selection: (count: number, offPage: number, format: RhineNumberFormat) => string; }` |  |
+| `dialog` * | `{ close: string; }` |  |
 | `drawer` * | `{ close: string; }` |  |
 | `field` * | `{ optional: string; }` |  |
 | `fileDropZone` * | `{ prompt: string; browse: string; rejectedType: (fileName: string) => string; rejectedSize: (fileName: string, limit: string) => string; rejectedCount: (fileName: string, max: number, format: RhineNumberFormat) => string; accepted: (count: number, format: RhineNumberFormat) => string; }` |  |
@@ -2901,10 +2903,6 @@ type TabsVariant = 'line' | 'segmented'
 ### `TagProps`
 
 *type*
-
-```ts
-type TagProps = Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> & { children: React.ReactNode; tone?: 'neutral' | 'invalid'; onRemove?: () => void; disabled?: boolean; }
-```
 
 ### `TextareaProps`
 

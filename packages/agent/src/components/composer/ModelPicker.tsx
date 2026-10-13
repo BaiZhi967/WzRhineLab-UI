@@ -151,6 +151,7 @@ export function ModelPicker({
           <AgentIcon name="chevron-right" />
         </button>
       </div>
+      {effortState === 'invalid' && efforts.length === 0 && <div className="rl-agent-model__invalid" role="alert"><span>{messages.effortInvalid}</span>{onEffortReset && <Button size="sm" variant="secondary" onClick={onEffortReset}>{messages.resetEffort}</Button>}</div>}
       {model && efforts.length > 0 ? (
         <>
           {invalidEffort && <div className="rl-agent-model__invalid" role="alert"><span>{messages.effortInvalid}</span>{onEffortReset && <Button size="sm" variant="secondary" onClick={onEffortReset}>{messages.resetEffort}</Button>}</div>}

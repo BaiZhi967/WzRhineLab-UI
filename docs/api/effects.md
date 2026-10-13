@@ -60,6 +60,7 @@
 | `nodes` * | `readonly OrbitNode[]` |  |
 | `period` | `number` | Seconds per revolution of the outer ring at speed 1. |
 | `rings` | `number` |  |
+| `selectedLabel` | `string` | Localised suffix announced for a selected node. |
 | `size` | `number` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。

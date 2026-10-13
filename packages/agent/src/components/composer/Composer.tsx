@@ -281,7 +281,7 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
   const blockedReason = typeof blocked === 'string' ? blocked : blocked ? messages.blockedPlaceholder : undefined;
   const replaced = replacement != null && replacement !== false;
   const inert = disabled || readOnly || blockedReason !== undefined || replaced;
-  const hasPayload = plain.trim() !== '' || attachments.length > 0 || references.length > 0;
+  const hasPayload = plain.trim() !== '' || attachments.length > 0;
   const sendReason =
     disabled
       ? disabledReason
@@ -392,6 +392,8 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
       setNotice(messages.optionUnavailable(option.disabledReason));
       if (onDisabledCommand) {
         // Preserve the original one-argument callback while enabling the richer match-aware API.
+        // Keep the pre-0.2 one-argument callback source-compatible while exposing the richer
+        // match-aware signature to hosts that declare the second parameter.
         if (onDisabledCommand.length >= 2) onDisabledCommand(option, match);
         else (onDisabledCommand as (option: CommandOption) => unknown)(option);
       }

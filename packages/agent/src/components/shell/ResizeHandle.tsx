@@ -90,10 +90,12 @@ export const ResizeHandle = React.forwardRef<HTMLDivElement, ResizeHandleProps>(
   };
 
   const endDrag = () => {
+    if (!drag.current) return;
     drag.current = null;
     setDragging(false);
     onDraggingChange?.(false);
   };
+  React.useEffect(() => () => { if (drag.current) onDraggingChange?.(false); }, [onDraggingChange]);
 
   return (
     <div
@@ -129,6 +131,7 @@ export const ResizeHandle = React.forwardRef<HTMLDivElement, ResizeHandleProps>(
       onPointerDown={(event) => {
         onPointerDown?.(event);
         if (event.defaultPrevented || disabled || event.button !== 0) return;
+        if (drag.current) return;
         event.currentTarget.setPointerCapture?.(event.pointerId);
         drag.current = { x: event.clientX, size, dir: growDirection(event.currentTarget), id: event.pointerId };
         setDragging(true);
@@ -149,11 +152,11 @@ export const ResizeHandle = React.forwardRef<HTMLDivElement, ResizeHandleProps>(
       }}
       onPointerCancel={(event) => {
         onPointerCancel?.(event);
-        endDrag();
+        if (drag.current?.id === event.pointerId) endDrag();
       }}
       onLostPointerCapture={(event) => {
         onLostPointerCapture?.(event);
-        endDrag();
+        if (drag.current && (!event.pointerId || drag.current.id === event.pointerId)) endDrag();
       }}
       onDoubleClick={(event) => {
         onDoubleClick?.(event);

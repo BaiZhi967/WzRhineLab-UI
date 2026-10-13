@@ -65,7 +65,7 @@ function deleteTokenAt: (value: string, selectionStart: number, selectionEnd: nu
 *function* — Detect an active `@` / `/` trigger before the caret. Triggers only start at the beginning of a line or after whitespace, never inside code, and the query cannot contain whitespace. `/` commands are only recognised at the start of the message or a line (paths stay text).
 
 ```ts
-function detectTrigger: (value: string, caret: number, triggers?: readonly TriggerChar[]) => TriggerMatch | null
+function detectTrigger: (value: string, caret: number, triggers?: readonly TriggerChar[], options?: { slash?: "line-start" | "word-start"; }) => TriggerMatch | null
 ```
 
 ### `diffStats`

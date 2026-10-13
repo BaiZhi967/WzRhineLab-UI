@@ -33,6 +33,7 @@ export const routes = [
   { name: 'agent-intervention', hash: '/#/agent/intervention' },
   { name: 'agent-workspace', hash: '/#/agent/workspace' },
   { name: 'agent-motion', hash: '/#/agent/motion' },
+  { name: 'agent-adoption', hash: '/#/agent/adoption' },
   { name: 'archive', hash: '/#/archive' },
   { name: 'data', hash: '/#/archive/data' },
   { name: 'scenarios', hash: '/#/archive/scenarios' },

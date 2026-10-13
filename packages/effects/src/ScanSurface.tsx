@@ -28,7 +28,7 @@ export type ScanSurfaceProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'child
 
 const DURATIONS = { fast: 120, base: 200, panel: 280, showcase: 700 } as const;
 
-export function ScanSurface({ children, scanKey, duration = 900, onScanEnd, tone = 'accent', overflow = 'hidden', containerType = true, className, ...rest }: ScanSurfaceProps) {
+export function ScanSurface({ children, scanKey, duration = 'showcase', onScanEnd, tone = 'accent', overflow = 'hidden', containerType = true, className, ...rest }: ScanSurfaceProps) {
   const durationMs = typeof duration === 'number' ? duration : DURATIONS[duration];
   const timing = useEffectTiming();
   const visible = usePageVisible();

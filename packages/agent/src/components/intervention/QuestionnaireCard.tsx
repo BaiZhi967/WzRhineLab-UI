@@ -670,7 +670,7 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
                     </Button>
                   )
                 ) : (
-                  <Button type="submit" size="sm" variant="accent" loading={busy} disabled={!EDITABLE.has(status) && !busy}>
+                  <Button type="submit" size="sm" variant="accent" loading={busy} disabled={disabled || busy || !EDITABLE.has(status)}>
                     {m.questionSubmit}
                   </Button>
                 ))}

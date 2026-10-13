@@ -382,6 +382,12 @@ export function pathCrumbs(path: string | undefined, root?: string): { items: Br
   let outside = false;
   if (root) {
     const base = norm(root);
+    const relative = !full.startsWith('/') && !/^[a-z]:\//i.test(full);
+    if (relative) {
+      const rootName = base.split('/').filter(Boolean).pop() ?? base;
+      segments = [rootName, ...full.split('/').filter(Boolean)];
+      return { items: segments.map((label) => ({ label })), outside: false };
+    }
     const under = full === base || full.startsWith(`${base}/`) || (/^[a-z]:/i.test(base) && full.toLowerCase().startsWith(`${base.toLowerCase()}/`));
     if (under) {
       const rootName = base.split('/').filter(Boolean).pop() ?? base;

@@ -8,6 +8,7 @@ import { AgentComposerPage } from './ComposerPage';
 import { AgentInterventionPage } from './InterventionPage';
 import { AgentWorkspacePage } from './WorkspacePage';
 import { AgentMotionPage } from './MotionPage';
+import { AdoptionPage } from './AdoptionPage';
 
 /** Lazy chunk entry: every Agent UI page plus the agent stylesheet. */
 export function AgentPages({ id }: { id: string }) {
@@ -26,6 +27,8 @@ export function AgentPages({ id }: { id: string }) {
       return <AgentWorkspacePage />;
     case 'agent-motion':
       return <AgentMotionPage />;
+    case 'agent-adoption':
+      return <AdoptionPage />;
     default:
       return <AgentOverviewPage />;
   }

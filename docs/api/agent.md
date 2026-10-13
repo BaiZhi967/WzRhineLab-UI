@@ -172,6 +172,7 @@
 | `defaultContextOpen` | `boolean` |  |
 | `defaultContextSize` | `number` |  |
 | `defaultIndexOpen` | `boolean` |  |
+| `direction` | `"forward" \| "back"` | Direction of the view drill-down animation. |
 | `header` | `React.ReactNode` |  |
 | `indexLabel` | `string` | Accessible name of the index column and title of the index sheet. |
 | `indexOpen` | `boolean` |  |
@@ -187,6 +188,7 @@
 | `resizable` | `boolean` | Show the ResizeHandle between reading column and pane (default true). |
 | `resizeLargeStep` | `number` |  |
 | `resizeStep` | `number` |  |
+| `viewKey` | `string` | Stable view identity for main conversation ↔ sub-task transitions. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -1101,12 +1103,16 @@
 | `defaultOpen` | `boolean` |  |
 | `disabled` | `boolean` |  |
 | `error` | `React.ReactNode` |  |
+| `hasMore` | `boolean` |  |
 | `hideTrigger` | `boolean` |  |
 | `items` | `readonly ReferenceOption[]` |  |
+| `loadingMore` | `boolean` |  |
 | `loading` | `boolean` |  |
 | `onAdd` * | `(path: string) => Promise<boolean> \| boolean` |  |
+| `onLoadMore` | `(() => void)` |  |
 | `onNavigate` | `((path: string) => void)` |  |
 | `onOpenChange` | `((open: boolean) => void)` |  |
+| `onRetry` | `(() => void)` |  |
 | `onSearch` | `((query: string) => void)` |  |
 | `onUp` | `(() => void)` |  |
 | `onValueChange` | `((value: string) => void)` |  |
@@ -1169,10 +1175,13 @@
 | --- | --- | --- |
 | `defaultOpen` | `boolean` |  |
 | `facts` | `readonly RunOverviewFact[]` |  |
+| `messages` | `Partial<AgentWorkspaceMessages>` |  |
 | `onClose` | `(() => void)` |  |
 | `onOpenChange` | `((open: boolean) => void)` |  |
 | `onReopen` | `(() => void)` |  |
+| `onSectionOpenChange` | `((id: string, open: boolean) => void)` |  |
 | `open` | `boolean` |  |
+| `sectionOpen` | `Readonly<Record<string, boolean>>` |  |
 | `sections` | `readonly RunOverviewSection[]` |  |
 | `subagents` | `readonly SubagentView[]` |  |
 | `terminals` | `React.ReactNode` |  |
@@ -1264,8 +1273,10 @@
 | `hideTrigger` | `boolean` |  |
 | `loading` | `boolean` |  |
 | `max` | `number` |  |
-| `onChange` * | `React.ChangeEventHandler<HTMLDivElement, Element> & ((skills: SkillOption[]) => void)` |  |
+| `onChange` * | `(skills: SkillOption[]) => void` |  |
+| `onLimitReached` | `((max: number) => void)` |  |
 | `onOpenChange` | `((open: boolean) => void)` |  |
+| `onRetry` | `(() => void)` |  |
 | `open` | `boolean` |  |
 | `selected` * | `readonly SkillOption[]` |  |
 | `skills` * | `readonly SkillOption[]` |  |
@@ -1477,7 +1488,9 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
+| `beforeActions` | `ChunkPagerActions` |  |
 | `detail` | `ToolDetailView` |  |
+| `loadingMore` | `boolean` |  |
 | `onCopyText` | `((text: string) => void \| Promise<void>)` |  |
 | `onLoadMoreOperations` | `((tool: ToolCallView) => void)` |  |
 | `onLoadMoreOutput` | `((tool: ToolCallView) => void)` |  |
@@ -1489,6 +1502,9 @@
 | `onReload` | `((tool: ToolCallView, path?: string) => void)` |  |
 | `onRetrySave` | `((tool: ToolCallView) => void)` |  |
 | `onViewFull` | `((tool: ToolCallView, path?: string) => void)` |  |
+| `pageActions` | `ChunkPagerActions` |  |
+| `rawActions` | `ChunkPagerActions` |  |
+| `retrying` | `boolean` |  |
 | `tool` * | `ToolCallView` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
@@ -1693,7 +1709,7 @@ function deleteTokenAt: (value: string, selectionStart: number, selectionEnd: nu
 *function* — Detect an active `@` / `/` trigger before the caret. Triggers only start at the beginning of a line or after whitespace, never inside code, and the query cannot contain whitespace. `/` commands are only recognised at the start of the message or a line (paths stay text).
 
 ```ts
-function detectTrigger: (value: string, caret: number, triggers?: readonly TriggerChar[]) => TriggerMatch | null
+function detectTrigger: (value: string, caret: number, triggers?: readonly TriggerChar[], options?: { slash?: "line-start" | "word-start"; }) => TriggerMatch | null
 ```
 
 ### `diffStats`
@@ -2313,6 +2329,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `inputHint` * | `string` | Screen-reader hint linked to the textarea with aria-describedby. |
 | `inputLabel` * | `string` | Accessible name of the message textarea. |
 | `kind` * | `Record<"unknown" \| "image" \| "file" \| "pdf" \| "text" \| "code", string>` |  |
+| `loadMore` * | `string` |  |
 | `mentionDrill` * | `string` | Spoken suffix for drillable folder options. |
 | `mentionEmpty` * | `string` |  |
 | `mentionError` * | `string` |  |
@@ -2739,6 +2756,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `runMetrics` * | `string` |  |
 | `runOpenDetails` * | `string` |  |
 | `runOpenTrace` * | `string` |  |
+| `runOverview` * | `{ label: string; capsule: string; close: string; collapse: string; subagents: string; }` |  |
 | `runPartial` * | `string` |  |
 | `runPersistence` * | `Record<RunPersistenceKey, string>` |  |
 | `runRetrySave` * | `string` |  |
@@ -2751,6 +2769,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `subagentAttention` * | `string` |  |
 | `subagentEmpty` * | `string` |  |
 | `subagentEstimatedUsage` * | `string` |  |
+| `subagentGroup` * | `Record<"completed" \| "attention" \| "active" \| "inherited", string>` |  |
 | `subagentInheritedGroup` * | `string` |  |
 | `subagentInherited` * | `string` |  |
 | `subagentList` * | `string` |  |
@@ -3941,6 +3960,8 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 
 | Member | Type | Description |
 | --- | --- | --- |
+| `beforeActions` | `ChunkPagerActions` |  |
+| `loadingMore` | `boolean` |  |
 | `onCopyText` | `((text: string) => void \| Promise<void>)` |  |
 | `onLoadMoreOperations` | `((tool: ToolCallView) => void)` |  |
 | `onLoadMoreOutput` | `((tool: ToolCallView) => void)` |  |
@@ -3952,6 +3973,9 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `onReload` | `((tool: ToolCallView, path?: string) => void)` |  |
 | `onRetrySave` | `((tool: ToolCallView) => void)` |  |
 | `onViewFull` | `((tool: ToolCallView, path?: string) => void)` |  |
+| `pageActions` | `ChunkPagerActions` |  |
+| `rawActions` | `ChunkPagerActions` |  |
+| `retrying` | `boolean` |  |
 
 ### `ToolOutputView`
 

@@ -1,7 +1,9 @@
 'use client';
 
 import * as React from 'react';
+import { motion } from 'motion/react';
 import { Drawer } from '@wzrhine/react';
+import { useRhineMotion } from '@wzrhine/react';
 import { useAgentMessages } from '../../provider/AgentMessages.js';
 import { cx } from '../../utils/cx.js';
 import { ResizeHandle } from './ResizeHandle.js';
@@ -118,6 +120,10 @@ export type AgentShellProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'childr
   layout?: AgentShellLayout;
   /** Id of the conversation being read; a change closes the index sheet on narrow layouts. */
   activeId?: string;
+  /** Stable view identity for main conversation ↔ sub-task transitions. */
+  viewKey?: string;
+  /** Direction of the view drill-down animation. */
+  direction?: 'forward' | 'back';
 };
 
 const DEFAULT_BREAKPOINTS = { context: 64, index: 40 };
@@ -240,6 +246,8 @@ export const AgentShell = React.forwardRef<HTMLDivElement, AgentShellProps>(func
     breakpoints,
     layout: layoutProp,
     activeId,
+    viewKey,
+    direction = 'forward',
     className,
     style,
     ...rest
@@ -247,6 +255,7 @@ export const AgentShell = React.forwardRef<HTMLDivElement, AgentShellProps>(func
   forwardedRef,
 ) {
   const messages = useAgentMessages().shell;
+  const motionPrefs = useRhineMotion();
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const contextRef = React.useRef<HTMLDivElement | null>(null);
   const setRoot = React.useCallback(
@@ -317,8 +326,9 @@ export const AgentShell = React.forwardRef<HTMLDivElement, AgentShellProps>(func
       if (target?.isConnected) target.focus();
       else rootRef.current?.querySelector<HTMLElement>('.rl-agent-shell__main')?.focus();
     }
+    onContextClosed?.();
     opener.current = null;
-  }, [ctx.open]);
+  }, [ctx.open, onContextClosed]);
 
   const [innerSize, setInnerSize] = React.useState(defaultContextSize);
   const rawSize = contextSize ?? innerSize;
@@ -370,14 +380,23 @@ export const AgentShell = React.forwardRef<HTMLDivElement, AgentShellProps>(func
         )}
         <section className="rl-agent-shell__main" aria-label={mainLabel ?? messages.mainLabel} tabIndex={-1}>
           {present(header) && <div className="rl-agent-shell__header">{header}</div>}
-          <div ref={scroller.ref} className="rl-agent-shell__conversation" tabIndex={scroller.scrollable ? 0 : undefined}>
-            <div className="rl-agent-shell__reading">{conversation}</div>
-          </div>
-          {present(composer) && (
-            <div className="rl-agent-shell__composer">
-              <div className="rl-agent-shell__reading">{composer}</div>
+          <motion.div
+            key={viewKey}
+            className="rl-agent-shell__view"
+            data-view-key={viewKey}
+            initial={viewKey ? { opacity: 0, x: motionPrefs.reduced ? 0 : direction === 'forward' ? 16 : -16 } : false}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ opacity: motionPrefs.resolve('opacity', 'base'), x: motionPrefs.resolve('transform', 'base') }}
+          >
+            <div ref={scroller.ref} className="rl-agent-shell__conversation" tabIndex={scroller.scrollable ? 0 : undefined}>
+              <div className="rl-agent-shell__reading">{conversation}</div>
             </div>
-          )}
+            {present(composer) && (
+              <div className="rl-agent-shell__composer">
+                <div className="rl-agent-shell__reading">{composer}</div>
+              </div>
+            )}
+          </motion.div>
         </section>
         {inlineContext && resizable && contextOpen && (
           <ResizeHandle

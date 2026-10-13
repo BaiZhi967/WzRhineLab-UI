@@ -74,6 +74,7 @@ test.describe('Archive patterns page', () => {
   test('status pulse animation is off under reduced motion', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/#/archive/scenarios');
+    await expect(page.locator('.rl-theme')).toBeVisible();
     await page.evaluate(() => {
       const el = document.createElement('span');
       el.className = 'rl-status';

@@ -145,6 +145,9 @@ export interface AgentToolsMessages {
   writeMode: Record<WriteDetail['mode'], string>;
   writeTarget: string;
   writeModeLabel: string;
+  writeCreated: string;
+  writeObservedBytes: (bytes: string) => string;
+  writeStatsUnreliable: string;
   expectedVersion: string;
   currentVersion: string;
   versionConflict: (expected: string, current: string) => string;
@@ -193,6 +196,10 @@ export interface AgentToolsMessages {
   // ---------- model ----------
   modelTitle: (provider: string, model: string) => string;
   modelProvider: string;
+  modelRoute: string;
+  modelHash: string;
+  modelStopReason: string;
+  modelRemote: string;
   modelPurpose: string;
   modelInputs: string;
   modelDestination: (destination: string) => string;
@@ -378,6 +385,9 @@ export const zhTools: AgentToolsMessages = {
   writeMode: { create: '新建文件', overwrite: '覆盖写入', append: '追加写入' },
   writeTarget: '目标文件',
   writeModeLabel: '写入方式',
+  writeCreated: '新建文件',
+  writeObservedBytes: (bytes) => `已观测 ${bytes}`,
+  writeStatsUnreliable: '增删行数不可可靠计算，已隐藏统计',
   expectedVersion: '期望版本',
   currentVersion: '当前版本',
   versionConflict: (expected, current) => `文件版本已变化：期望 ${expected}，当前 ${current}`,
@@ -444,6 +454,10 @@ export const zhTools: AgentToolsMessages = {
 
   modelTitle: (provider, model) => `${provider} · ${model}`,
   modelProvider: '模型',
+  modelRoute: '路由',
+  modelHash: 'SHA-256',
+  modelStopReason: '停止原因',
+  modelRemote: '远端',
   modelPurpose: '用途',
   modelInputs: '输入材料',
   modelDestination: (d) => `发送至 ${d}`,
@@ -639,6 +653,9 @@ export const enTools: AgentToolsMessages = {
   },
   writeTarget: 'Target file',
   writeModeLabel: 'Write mode',
+  writeCreated: 'Created file',
+  writeObservedBytes: (bytes) => `Observed ${bytes}`,
+  writeStatsUnreliable: 'Line totals are not reliable; statistics are hidden',
   expectedVersion: 'Expected version',
   currentVersion: 'Current version',
   versionConflict: (expected, current) => `File changed: expected ${expected}, now ${current}`,
@@ -705,6 +722,10 @@ export const enTools: AgentToolsMessages = {
 
   modelTitle: (provider, model) => `${provider} · ${model}`,
   modelProvider: 'Model',
+  modelRoute: 'Route',
+  modelHash: 'SHA-256',
+  modelStopReason: 'Stop reason',
+  modelRemote: 'Remote',
   modelPurpose: 'Purpose',
   modelInputs: 'Input material',
   modelDestination: (d) => `Sent to ${d}`,

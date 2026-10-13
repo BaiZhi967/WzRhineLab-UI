@@ -59,6 +59,7 @@ export interface AgentComposerMessages {
   submitFailed: string;
   submitUnknown: string;
   retry: string;
+  loadMore: string;
   emptyReason: string;
   uploadingReason: string;
   overLimitReason: string;
@@ -147,6 +148,7 @@ export const zhComposer: AgentComposerMessages = {
   submitFailed: '发送失败，草稿已保留',
   submitUnknown: '发送结果待确认，未重复发送',
   retry: '重试',
+  loadMore: '加载更多',
   emptyReason: '输入内容后才能发送',
   uploadingReason: '附件仍在上传',
   overLimitReason: '内容超出字数上限',
@@ -229,6 +231,7 @@ export const enComposer: AgentComposerMessages = {
   submitFailed: 'Send failed; the draft is kept',
   submitUnknown: 'Send result not confirmed; nothing was sent twice',
   retry: 'Retry',
+  loadMore: 'Load more',
   emptyReason: 'Type a message to send',
   uploadingReason: 'Attachments are still uploading',
   overLimitReason: 'The message is over the character limit',

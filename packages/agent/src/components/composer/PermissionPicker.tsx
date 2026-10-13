@@ -65,6 +65,7 @@ export function PermissionPicker({
   const label = current?.label ?? value;
 
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [changeError, setChangeError] = React.useState<React.ReactNode>(null);
   const pick = (id: string) => {
     setMenuOpen(false);
     const mode = modes.find((m) => m.id === id);
@@ -74,7 +75,10 @@ export function PermissionPicker({
       setConfirmOpen(true);
       return;
     }
-    void onChange(id, mode);
+    setChangeError(null);
+    Promise.resolve(onChange(id, mode)).catch((reason) => {
+      setChangeError(reason instanceof Error ? reason.message : (confirmErrorText ?? messages.permissionConfirmDescription));
+    });
   };
 
   return (
@@ -117,7 +121,7 @@ export function PermissionPicker({
           ))}
         </MenuRadioGroup>
       </Menu>
-      {error && <Alert tone="danger" size="sm" title={error === true ? 'Permission change failed' : undefined}>{error === true ? 'Permission change failed' : null}</Alert>}
+      {(error || changeError) && <Alert tone="danger" size="sm" title={error === true ? messages.permissionMenu : undefined}>{error === true ? messages.permissionMenu : (error || changeError)}</Alert>}
       {receipt && <p className="rl-agent-permission__receipt" role="status">{receipt}</p>}
       {pending && onChange && (
         <AlertDialog

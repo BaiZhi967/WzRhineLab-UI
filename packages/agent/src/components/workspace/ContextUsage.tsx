@@ -50,7 +50,7 @@ function useDerived(usage: ContextUsageView, override?: WorkspaceMessagesProp): 
   if (usage.used !== undefined && usage.completeness !== 'unknown') {
     summary = usage.max !== undefined && usage.max > 0 ? `${value(usage.used)} / ${value(usage.max)}` : value(usage.used);
   }
-  return { m, percent, level, summary, tag: completenessTag(usage.completeness, status.completeness), label: usage.label ?? m.contextTitle };
+  return { m, percent, level, summary, tag: completenessTag(usage.estimated ? 'estimated' : usage.completeness, status.completeness), label: usage.label ?? m.contextTitle };
 }
 
 /** The ring: an arc for a reliable percentage, a dashed circle when there is none. */
@@ -113,13 +113,13 @@ function Measure({ usage, d, size }: { usage: ContextUsageView; d: Derived & { m
   );
 }
 
-function Breakdown({ usage, m }: { usage: ContextUsageView; m: ReturnType<typeof useWorkspaceMessages> }) {
+function Breakdown({ usage, m, segmentScale }: { usage: ContextUsageView; m: ReturnType<typeof useWorkspaceMessages>; segmentScale: 'full' | 'fit-used' }) {
   const format = useAgentFormat();
   const segments = (usage.segments ?? []).filter((s) => s.value > 0);
   if (segments.length === 0) return null;
   const sum = segments.reduce((acc, s) => acc + s.value, 0);
   // With a reliable max the stacked bar shows the share of the window; otherwise the composition.
-  const total = usage.max && usage.max > 0 && usage.completeness !== 'unknown' ? Math.max(usage.max, sum) : sum;
+  const total = segmentScale === 'fit-used' ? sum : usage.max && usage.max > 0 && usage.completeness !== 'unknown' ? Math.max(usage.max, sum) : sum;
   const value = (n: number) => (usage.unit === 'bytes' ? format.bytes(n) : format.compact(n));
   return (
     <div className="rl-agent-context__breakdown">
@@ -160,7 +160,7 @@ export const ContextUsage = React.forwardRef<HTMLDivElement, ContextUsageProps>(
 
   if (variant === 'ring') {
     return (
-      <div {...rest} ref={ref} className={cx('rl-agent-context', className)} data-variant="ring" data-level={level} data-estimated={usage.estimated || usage.completeness === 'estimated' || undefined}>
+      <div {...rest} ref={ref} className={cx('rl-agent-context', className)} data-variant="ring" data-level={level} data-disabled={usage.disabled ? true : undefined} data-estimated={usage.estimated || usage.completeness === 'estimated' || undefined}>
         <Popover
           side={side}
           align={align}
@@ -170,39 +170,39 @@ export const ContextUsage = React.forwardRef<HTMLDivElement, ContextUsageProps>(
           onOpenChange={onOpenChange}
           title={m.contextTitle}
           trigger={
-            <button type="button" className="rl-agent-context__trigger" data-level={level} aria-label={m.contextTrigger(tag ? `${summary} · ${tag}` : summary)}>
+            <button type="button" className="rl-agent-context__trigger" data-level={level} aria-label={m.contextTrigger(tag ? `${summary} · ${tag}` : summary)} disabled={Boolean(usage.disabled)}>
               <Ring percent={d.percent} level={level} />
               <span className="rl-agent-context__value">{summary}</span>
               {tag && <span className="rl-agent-context__tag">{tag}</span>}
             </button>
           }
         >
-          <ContextUsageDetail usage={usage} d={d} />
+          <ContextUsageDetail usage={usage} d={d} segmentScale={segmentScale} />
         </Popover>
       </div>
     );
   }
 
   return (
-    <div {...rest} ref={ref} className={cx('rl-agent-context', className)} data-variant={variant} data-level={level} data-estimated={usage.estimated || usage.completeness === 'estimated' || undefined} data-segment-scale={segmentScale}>
+    <div {...rest} ref={ref} className={cx('rl-agent-context', className)} data-variant={variant} data-level={level} data-disabled={usage.disabled ? true : undefined} data-estimated={usage.estimated || usage.completeness === 'estimated' || undefined} data-segment-scale={segmentScale}>
       {variant === 'bar' ? (
         <>
           <Measure usage={usage} d={d} size="sm" />
           <Warning level={level} m={m} />
         </>
       ) : (
-        <ContextUsageDetail usage={usage} d={d} />
+        <ContextUsageDetail usage={usage} d={d} segmentScale={segmentScale} />
       )}
     </div>
   );
 });
 
-function ContextUsageDetail({ usage, d }: { usage: ContextUsageView; d: ReturnType<typeof useDerived> }) {
+function ContextUsageDetail({ usage, d, segmentScale }: { usage: ContextUsageView; d: ReturnType<typeof useDerived>; segmentScale: 'full' | 'fit-used' }) {
   return (
     <div className="rl-agent-context__detail">
       <Measure usage={usage} d={d} size="md" />
       <Warning level={d.level} m={d.m} />
-      <Breakdown usage={usage} m={d.m} />
+      <Breakdown usage={usage} m={d.m} segmentScale={segmentScale} />
       <Stats sections={usage.stats} m={d.m} />
       {usage.note && (
         <p className="rl-agent-context__note">

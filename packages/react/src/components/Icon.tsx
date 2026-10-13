@@ -25,6 +25,6 @@ const PATHS: Record<IconName, React.ReactNode> = {
 
 export type IconProps = Omit<React.SVGAttributes<SVGSVGElement>, 'name'> & { name: IconName; size?: number | string };
 
-export const Icon = React.forwardRef<SVGSVGElement, IconProps>(function Icon({ name, size, className, strokeWidth = 1.75, ...rest }, ref) {
-  return <svg {...rest} ref={ref} className={cx('rl-icon', className)} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" data-icon={name} aria-hidden={rest['aria-label'] ? undefined : true}>{PATHS[name]}</svg>;
+export const Icon = React.forwardRef<SVGSVGElement, IconProps>(function Icon({ name, size = 24, className, strokeWidth = 1.75, ...rest }, ref) {
+  return <svg {...rest} ref={ref} className={cx('rl-icon', className)} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" data-icon={name} role={rest['aria-label'] ? 'img' : undefined} aria-hidden={rest['aria-label'] ? undefined : true} focusable="false">{PATHS[name]}</svg>;
 });

@@ -42,7 +42,7 @@ export const ArchiveReveal = React.forwardRef<HTMLSpanElement, ArchiveRevealProp
     const onVisibility = () => { if (!document.hidden) setInViewport(true); };
     document.addEventListener('visibilitychange', onVisibility);
     if (typeof IntersectionObserver === 'undefined') return () => document.removeEventListener('visibilitychange', onVisibility);
-    const observer = new IntersectionObserver(([entry]) => setInViewport(entry?.isIntersecting ?? true), { threshold: 0 });
+    const observer = new IntersectionObserver(([entry]) => setInViewport(entry?.isIntersecting ?? false), { threshold: 0 });
     observer.observe(element);
     return () => { observer.disconnect(); document.removeEventListener('visibilitychange', onVisibility); };
   }, []);

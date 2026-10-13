@@ -405,6 +405,23 @@
   row-gap: var(--rl-space-1);
 }
 
+.rl-choice-group[data-hide-label] .rl-choice-group__legend {
+  position: absolute;
+  width: var(--rl-border-width);
+  height: var(--rl-border-width);
+  margin: calc(var(--rl-border-width) * -1);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.rl-choice-group[data-appearance='chip'] .rl-choice-group__items,
+.rl-choice-group[data-appearance='card'] .rl-choice-group__items { display: flex; flex-wrap: wrap; gap: var(--rl-space-2); }
+.rl-choice-group[data-appearance='chip'] .rl-choice__label,
+.rl-choice-group[data-appearance='card'] .rl-choice__label { min-height: var(--rl-control-height-md); padding: var(--rl-space-2) var(--rl-space-3); border: var(--rl-border-width) solid var(--rl-border-default); border-radius: var(--rl-radius-round); background: var(--rl-bg-surface); }
+.rl-choice-group[data-appearance='card'] .rl-choice { flex: 1 1 var(--rl-space-16); }
+.rl-choice-group[data-appearance='card'] .rl-choice__label { align-items: flex-start; border-radius: var(--rl-radius-sm); background: var(--rl-bg-subtle); }
+
 /* ---------- Fieldset ---------- */
 .rl-fieldset {
   display: grid;

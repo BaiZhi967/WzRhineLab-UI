@@ -34,6 +34,7 @@ export interface RhineMessages {
     /** Shown when `onConfirm` rejects and no `errorText` is given. */
     error: string;
   };
+  dialog: { close: string };
   breadcrumb: {
     /** Accessible name of the `<nav>`. */
     nav: string;
@@ -168,6 +169,7 @@ export const zhCN: RhineMessages = {
   tag: { remove: (name) => `移除 ${name}` },
   alert: { dismiss: '关闭提示' },
   alertDialog: { cancel: '取消', error: '操作未完成，请重试。' },
+  dialog: { close: '关闭' },
   breadcrumb: { nav: '路径', expand: (count) => `显示全部 ${count} 级路径` },
   combobox: { empty: '没有匹配的选项', loading: '正在搜索…', clear: '清除选择', openList: '展开选项' },
   commandPalette: {
@@ -225,6 +227,7 @@ export const enUS: RhineMessages = {
   tag: { remove: (name) => `Remove ${name}` },
   alert: { dismiss: 'Dismiss alert' },
   alertDialog: { cancel: 'Cancel', error: 'The action did not complete. Please try again.' },
+  dialog: { close: 'Close' },
   breadcrumb: { nav: 'Breadcrumb', expand: (count, f) => `Show all ${f(count)} levels` },
   combobox: { empty: 'No matching options', loading: 'Searching…', clear: 'Clear selection', openList: 'Show options' },
   commandPalette: {

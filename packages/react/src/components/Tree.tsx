@@ -25,8 +25,8 @@ export type TreeProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 
   defaultExpandedIds?: readonly string[];
   onExpandedChange?: (ids: string[]) => void;
   onToggle?: (node: TreeNode, expanded: boolean) => void;
-  onLoadChildren?: (node: TreeNode) => void;
-  onRetry?: (node: TreeNode) => void;
+  onLoadChildren?: (node: TreeNode) => void | Promise<void>;
+  onRetry?: (node: TreeNode) => void | Promise<void>;
   empty?: React.ReactNode;
   renderActions?: (node: TreeNode) => React.ReactNode;
 };
@@ -38,6 +38,7 @@ export function Tree({ label, nodes, selectedId, defaultSelectedId, onSelect, ex
   const [selected, setSelected] = React.useState(defaultSelectedId);
   const [innerExpanded, setExpanded] = React.useState<string[]>([...defaultExpandedIds]);
   const [focused, setFocused] = React.useState<string | undefined>(selectedId ?? defaultSelectedId ?? nodes[0]?.id);
+  const requested = React.useRef(new Set<string>());
   const expanded = new Set(expandedIds ?? innerExpanded);
   const active = selectedId ?? selected;
   const flat: Array<{ node: TreeNode; parent?: string }> = [];
@@ -49,6 +50,18 @@ export function Tree({ label, nodes, selectedId, defaultSelectedId, onSelect, ex
     if (expanded.has(node.id) && node.children) walk(node.children, node.id);
   });
   walk(nodes);
+  React.useEffect(() => {
+    if (!onLoadChildren) return;
+    for (const { node } of flat) {
+      if (expanded.has(node.id) && node.hasChildren && node.children === undefined && !node.loading && !node.error && !requested.current.has(node.id)) {
+        requested.current.add(node.id);
+        void onLoadChildren(node);
+      }
+    }
+  }, [expandedIds, innerExpanded, nodes, onLoadChildren]);
+  React.useEffect(() => {
+    if (selectedId !== undefined) setFocused(selectedId);
+  }, [selectedId]);
   const focus = (id: string | undefined) => {
     if (!id) return;
     setFocused(id);
@@ -65,7 +78,10 @@ export function Tree({ label, nodes, selectedId, defaultSelectedId, onSelect, ex
     if (expandedIds === undefined) setExpanded(ids);
     onExpandedChange?.(ids);
     onToggle?.(node, open);
-    if (open && node.hasChildren && node.children === undefined && !node.loading && !node.error) onLoadChildren?.(node);
+    if (open && node.hasChildren && node.children === undefined && !node.loading && !node.error && !requested.current.has(node.id)) {
+      requested.current.add(node.id);
+      void onLoadChildren?.(node);
+    }
   };
   const typeahead = React.useRef({ value: '', at: 0 });
   const keyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -90,7 +106,7 @@ export function Tree({ label, nodes, selectedId, defaultSelectedId, onSelect, ex
       const query = now - typeahead.current.at < 600 ? typeahead.current.value + event.key : event.key;
       typeahead.current = { value: query, at: now };
       const reordered = [...flat.slice(index + 1), ...flat.slice(0, index + 1)];
-      next = reordered.find(({ node: candidate }) => (candidate.textValue ?? String(candidate.label)).toLocaleLowerCase().startsWith(query.toLocaleLowerCase()))?.node.id;
+      next = reordered.find(({ node: candidate }) => !candidate.disabled && (candidate.textValue ?? String(candidate.label)).toLocaleLowerCase().startsWith(query.toLocaleLowerCase()))?.node.id;
     } else return;
     event.preventDefault();
     if (next) focus(next);

@@ -129,7 +129,7 @@ export function AlertDialog({
   };
 
   const handleConfirm = () => {
-    if (pending) return;
+    if (pending || confirmDisabled) return;
     attempt.current += 1;
     const id = attempt.current;
     let result: void | Promise<unknown>;
@@ -155,6 +155,18 @@ export function AlertDialog({
         fail();
       },
     );
+  };
+  const handleAlternate = () => {
+    if (pending || !alternateAction?.onClick) return;
+    try {
+      const result = alternateAction.onClick();
+      if (isThenable(result)) {
+        setPending(true);
+        result.then(() => { setPending(false); setOpen(false); }, () => fail());
+      }
+    } catch {
+      fail();
+    }
   };
 
   return (
@@ -219,7 +231,7 @@ export function AlertDialog({
                 </div>
               )}
               <footer className="rl-dialog__actions">
-                {alternateAction && <Button variant="ghost" disabled={alternateAction.disabled || pending} onClick={() => void alternateAction.onClick?.()}>{alternateAction.label}</Button>}
+                {alternateAction && <Button variant="ghost" disabled={alternateAction.disabled || pending} onClick={handleAlternate}>{alternateAction.label}</Button>}
                 <BaseAlertDialog.Close
                   disabled={pending}
                   render={<Button ref={cancelRef} variant="ghost" className="rl-alert-dialog__cancel" />}

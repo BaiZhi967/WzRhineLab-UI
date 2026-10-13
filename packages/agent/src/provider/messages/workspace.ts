@@ -71,6 +71,7 @@ export interface AgentWorkspaceMessages {
   subagentInheritedGroup: string;
   subagentOpenSnapshot: string;
   subagentOpenSnapshotNamed: (name: string) => string;
+  subagentGroup: Record<'active' | 'completed' | 'attention' | 'inherited', string>;
   // ---------- ContextUsage ----------
   contextTitle: string;
   contextTrigger: (summary: string) => string;
@@ -86,6 +87,8 @@ export interface AgentWorkspaceMessages {
   contextStatMissing: string;
   /** Formatted value + unit of one statistic (`ms` values arrive already formatted as a duration). */
   contextStatValue: (value: string, unit: UsageStatUnit) => string;
+  // ---------- RunOverview ----------
+  runOverview: { label: string; capsule: string; close: string; collapse: string; subagents: string };
   // ---------- PinnedSummary ----------
   summaryStatus: Record<PinnedSummaryView['status'], string>;
   summaryToggle: string;
@@ -239,6 +242,7 @@ export const zhWorkspace: AgentWorkspaceMessages = {
   subagentInheritedGroup: '继承的子任务记录',
   subagentOpenSnapshot: '查看快照',
   subagentOpenSnapshotNamed: (name) => `查看快照：${name}`,
+  subagentGroup: { active: '进行中', completed: '已结束', attention: '需要处理', inherited: '继承记录' },
   contextTitle: '上下文用量',
   contextTrigger: (summary) => `上下文用量 ${summary}`,
   contextUnknown: '用量未知',
@@ -252,6 +256,7 @@ export const zhWorkspace: AgentWorkspaceMessages = {
   contextStatMissing: '无数据',
   contextStatValue: (value, unit) =>
     unit === 'tokens' ? `${value} token` : unit === 'percent' ? `${value}%` : unit === 'tokens-per-s' ? `${value} token/s` : unit === 'count' ? `${value} 次` : value,
+  runOverview: { label: '运行概览', capsule: '打开运行概览', close: '关闭运行概览', collapse: '收起运行概览', subagents: '子 Agent' },
   summaryStatus: { current: '最新', updating: '正在更新', stale: '摘要可能已过期', missing: '暂无摘要' },
   summaryToggle: '摘要内容',
   summaryPin: '固定摘要',
@@ -405,6 +410,7 @@ export const enWorkspace: AgentWorkspaceMessages = {
   subagentInheritedGroup: 'Inherited sub-task records',
   subagentOpenSnapshot: 'View snapshot',
   subagentOpenSnapshotNamed: (name) => `View snapshot: ${name}`,
+  subagentGroup: { active: 'Active', completed: 'Ended', attention: 'Needs attention', inherited: 'Inherited' },
   contextTitle: 'Context usage',
   contextTrigger: (summary) => `Context usage ${summary}`,
   contextUnknown: 'Usage unknown',
@@ -418,6 +424,7 @@ export const enWorkspace: AgentWorkspaceMessages = {
   contextStatMissing: 'No data',
   contextStatValue: (value, unit) =>
     unit === 'tokens' ? `${value} tokens` : unit === 'percent' ? `${value}%` : unit === 'tokens-per-s' ? `${value} tokens/s` : value,
+  runOverview: { label: 'Run overview', capsule: 'Open run overview', close: 'Close run overview', collapse: 'Collapse run overview', subagents: 'Sub-agents' },
   summaryStatus: { current: 'Current', updating: 'Updating', stale: 'Summary may be out of date', missing: 'No summary yet' },
   summaryToggle: 'Summary',
   summaryPin: 'Pin summary',

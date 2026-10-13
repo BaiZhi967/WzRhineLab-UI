@@ -55,7 +55,6 @@ export function Workbench({ rail, index, header, children, indexLabel, mainLabel
   const mainRef = React.useRef<HTMLElement>(null);
   const indexRef = React.useRef<HTMLElement>(null);
   const focusedIndex = React.useRef(false);
-  const lastIndexFocus = React.useRef<HTMLElement | null>(null);
   const previousOpen = React.useRef(indexOpen ?? defaultIndexOpen);
   const open = indexOpen ?? inner;
   const hasIndex = index != null || registered.size > 0;
@@ -69,23 +68,22 @@ export function Workbench({ rail, index, header, children, indexLabel, mainLabel
     return next;
   }), []);
   React.useLayoutEffect(() => {
-    if (previousOpen.current && !open && (focusedIndex.current || indexRef.current?.contains(document.activeElement) || lastIndexFocus.current?.isConnected)) {
+    if (previousOpen.current && !open && (focusedIndex.current || indexRef.current?.contains(document.activeElement))) {
       const target = mainRef.current;
       if (target) {
         target.focus();
         if (document.activeElement !== target) requestAnimationFrame(() => target.focus());
       }
       focusedIndex.current = false;
-      lastIndexFocus.current = null;
     }
     previousOpen.current = open;
   }, [open]);
   const value = React.useMemo(() => ({ target, register, indexOpen: open, setIndexOpen: setOpen }), [target, register, open, setOpen]);
   return <WorkbenchContext.Provider value={value}>
-    <div {...rest} className={cx('rl-workbench', className)} style={{ ...style, '--rl-workbench-index-size': `${open && hasIndex ? size : 0}px` } as React.CSSProperties} data-index-open={(open && hasIndex) || undefined} data-dragging={dragging || undefined}>
+    <div {...rest} className={cx('rl-workbench', className)} style={{ ...style, '--rl-workbench-index-size': `${open && hasIndex ? size : 0}px` } as React.CSSProperties} data-has-rail={rail != null || undefined} data-index-open={(open && hasIndex) || undefined} data-dragging={dragging || undefined}>
       {rail && <div className="rl-workbench__rail">{rail}</div>}
       {header && <header className="rl-workbench__header">{header}</header>}
-      <aside ref={indexRef} role="complementary" className="rl-workbench__index" aria-label={indexLabel ?? messages.workbench.index} hidden={!open || !hasIndex} onFocusCapture={(event) => { focusedIndex.current = true; lastIndexFocus.current = event.target as HTMLElement; }} onBlurCapture={(event) => {
+      <aside ref={indexRef} role="complementary" className="rl-workbench__index" aria-label={indexLabel ?? messages.workbench.index} hidden={!open || !hasIndex} onFocusCapture={() => { focusedIndex.current = true; }} onBlurCapture={(event) => {
         if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget as Node)) focusedIndex.current = false;
       }}>
         {index}<div ref={setTarget} />

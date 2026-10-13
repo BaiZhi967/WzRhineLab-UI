@@ -71,6 +71,7 @@ export const ToolRecord = React.forwardRef<HTMLDivElement, ToolRecordProps>(func
   const open = expanded ?? innerOpen;
   const requested = React.useRef(false);
   const needsLoad = tool.detailsLoaded === false || detailsLoading;
+  const disabled = Boolean(tool.disabled);
 
   // One request per row while the record is missing; StrictMode-safe via the ref.
   React.useEffect(() => {
@@ -133,12 +134,14 @@ export const ToolRecord = React.forwardRef<HTMLDivElement, ToolRecordProps>(func
       data-category={category}
       data-active={meta.active || undefined}
       data-tool-id={tool.id}
+      data-disabled={disabled || undefined}
     >
       <div className="rl-agent-tool__head">
         {tool.failure && <Notice tone="danger" action={tool.failure.retryable && onRetry && <ActionButton icon="retry" onClick={() => onRetry(tool)}>{m.retry}</ActionButton>}><code>{tool.failure.code}</code> {tool.failure.message}</Notice>}
         <Collapsible
           className="rl-agent-tool__disclosure"
           open={open}
+          disabled={disabled}
           onOpenChange={setOpen}
           trigger={trigger}
           triggerProps={{

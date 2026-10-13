@@ -115,6 +115,7 @@ export type FileWriteDetailProps = DetailBase & {
 /** FileWriteDetail (atlas 38): target, write mode, expected vs current version, proposal diff. */
 export function FileWriteDetail({ detail, onReload, onViewFull, beforeActions, display = 'diff', className, ...rest }: FileWriteDetailProps) {
   const m = useAgentMessages().tools;
+  const fmt = useAgentFormat();
   const conflict = detail.expectedVersion != null && detail.currentVersion != null && detail.expectedVersion !== detail.currentVersion;
   return (
     <div {...rest} className={cx('rl-agent-detail', className)} data-kind="file-write">
@@ -122,6 +123,8 @@ export function FileWriteDetail({ detail, onReload, onViewFull, beforeActions, d
         items={[
           { label: m.writeTarget, value: detail.path, mono: true },
           { label: m.writeModeLabel, value: m.writeMode[detail.mode] },
+          detail.diff?.created && { label: m.writeCreated, value: m.writeCreated },
+          detail.diff?.observedBytes !== undefined && { label: m.writeObservedBytes(fmt.bytes(detail.diff.observedBytes)), value: fmt.bytes(detail.diff.observedBytes), mono: true },
           detail.expectedVersion != null && {
             label: m.expectedVersion,
             value: detail.expectedVersion,
@@ -149,7 +152,9 @@ export function FileWriteDetail({ detail, onReload, onViewFull, beforeActions, d
         </Notice>
       )}
       {detail.materialReady === false && <Notice tone="info">{m.materialPending}</Notice>}
+      {detail.diff?.statsReliable === false && <Notice tone="info">{m.writeStatsUnreliable}</Notice>}
       {detail.diff?.before && <ChunkPager page={detail.diff.before} label={m.expectedVersion} canGoBack={false} {...beforeActions} />}
+      {detail.diff && display === 'verbatim' && <CodeView code={detail.diff.hunks.flatMap((hunk) => hunk.lines.filter((line) => line.kind !== 'meta').map((line) => line.text)).join('\n')} label={m.writeTarget} />}
       {detail.diff && display === 'diff' && (
         <DiffPreview
           diff={conflict && !detail.diff.status ? { ...detail.diff, status: 'conflict' } : detail.diff}
@@ -281,6 +286,7 @@ export function ManageFilesDetail({ detail, onLoadMore, loadingMore, pageActions
     <div {...rest} className={cx('rl-agent-detail', className)} data-kind="manage-files">
       {detail.materialReady === false && <Notice tone="info">{m.materialPending}</Notice>}
       {detail.counts && <dl className="rl-agent-detail__counts">{Object.entries(detail.counts).map(([kind, count]) => <div key={kind}><dt>{m.manageOp[kind as keyof typeof m.manageOp]}</dt><dd>{count}</dd></div>)}</dl>}
+      {detail.total !== undefined && <p className="rl-agent-detail__aside">{detail.total}</p>}
       {detail.page && <ChunkPager page={detail.page} label={m.manageList} canGoBack={false} {...pageActions} />}
       <div className="rl-agent-detail__table-scroll" role="region" tabIndex={0} aria-label={m.codeRegion(m.manageList)}>
         <table className="rl-agent-ops">
@@ -527,11 +533,11 @@ export function NativeModelDetail({ detail, running, onRetrySave, retrying, clas
           },
           detail.purpose && { label: m.modelPurpose, value: detail.purpose },
           detail.endpoint && { label: m.mcpEndpoint, value: detail.endpoint, mono: true },
-          detail.route && { label: 'Route', value: detail.route, mono: true },
+          detail.route && { label: m.modelRoute, value: detail.route, mono: true },
           detail.timeoutMs !== undefined && { label: m.commandTimeout, value: fmt.duration(detail.timeoutMs) },
-          detail.sha256 && { label: 'SHA-256', value: detail.sha256, mono: true },
-          detail.stopReason && { label: 'Stop reason', value: detail.stopReason },
-          detail.remote !== undefined && { label: 'Remote', value: String(detail.remote) },
+          detail.sha256 && { label: m.modelHash, value: detail.sha256, mono: true },
+          detail.stopReason && { label: m.modelStopReason, value: detail.stopReason },
+          detail.remote !== undefined && { label: m.modelRemote, value: String(detail.remote) },
         ]}
       />
       {detail.arguments !== undefined && <ToolOutput output={{ kind: 'json', content: toDisplayJson(detail.arguments) }} label={m.mcpArguments} />}
@@ -696,6 +702,11 @@ export interface ToolDetailActions {
   onLoadMoreOutput?: (tool: ToolCallView) => void;
   onOpenFullOutput?: (tool: ToolCallView) => void;
   onCopyText?: (text: string) => void | Promise<void>;
+  beforeActions?: ChunkPagerActions;
+  pageActions?: ChunkPagerActions;
+  rawActions?: ChunkPagerActions;
+  loadingMore?: boolean;
+  retrying?: boolean;
 }
 
 export type ToolDetailProps = ToolDetailActions & {
@@ -720,16 +731,18 @@ export function ToolDetail({ tool, detail = tool.detail, ...actions }: ToolDetai
           detail={detail}
           onReload={actions.onReload ? () => actions.onReload!(tool, detail.path) : undefined}
           onViewFull={actions.onViewFull ? () => actions.onViewFull!(tool, detail.path) : undefined}
+          beforeActions={actions.beforeActions}
         />
       );
     case 'file-edit':
-      return <EditFileDetail detail={detail} />;
+      return <EditFileDetail detail={detail} pageActions={actions.pageActions} />;
     case 'patch':
       return (
         <ApplyPatchDetail
           detail={detail}
           onReload={actions.onReload ? (p) => actions.onReload!(tool, p) : undefined}
           onViewFull={actions.onViewFull ? (p) => actions.onViewFull!(tool, p) : undefined}
+          rawActions={actions.rawActions}
         />
       );
     case 'manage-files':
@@ -737,6 +750,8 @@ export function ToolDetail({ tool, detail = tool.detail, ...actions }: ToolDetai
         <ManageFilesDetail
           detail={detail}
           onLoadMore={actions.onLoadMoreOperations ? () => actions.onLoadMoreOperations!(tool) : undefined}
+          loadingMore={actions.loadingMore}
+          pageActions={actions.pageActions}
         />
       );
     case 'command':
@@ -762,6 +777,7 @@ export function ToolDetail({ tool, detail = tool.detail, ...actions }: ToolDetai
           detail={detail}
           running={tool.status === 'running' || tool.status === 'queued'}
           onRetrySave={actions.onRetrySave ? () => actions.onRetrySave!(tool) : undefined}
+          retrying={actions.retrying}
         />
       );
     case 'question':

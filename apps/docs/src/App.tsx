@@ -213,6 +213,7 @@ export default function App() {
       case 'agent-intervention':
       case 'agent-workspace':
       case 'agent-motion':
+      case 'agent-adoption':
         return (
           <React.Suspense fallback={<p className="sc-small" role="status">正在加载 Agent 组件…</p>}>
             <AgentPages id={route.id} />

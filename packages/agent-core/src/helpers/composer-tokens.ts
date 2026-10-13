@@ -167,7 +167,7 @@ function insideCode(value: string, index: number): boolean {
  * line or after whitespace, never inside code, and the query cannot contain whitespace.
  * `/` commands are only recognised at the start of the message or a line (paths stay text).
  */
-export function detectTrigger(value: string, caret: number, triggers: readonly TriggerChar[] = ['@', '/']): TriggerMatch | null {
+export function detectTrigger(value: string, caret: number, triggers: readonly TriggerChar[] = ['@', '/'], options: { slash?: 'line-start' | 'word-start' } = {}): TriggerMatch | null {
   const before = value.slice(0, caret);
   // `@` queries may contain `/` (folder drilling: `@src/comp`); `/` queries may not.
   const match = /(^|[\s\u2069])(@)([^\s@\u2068\u2069]*)$/.exec(before) ?? /(^|[\s\u2069])(\/)([^\s/@\u2068\u2069]*)$/.exec(before);
@@ -176,10 +176,12 @@ export function detectTrigger(value: string, caret: number, triggers: readonly T
   if (!triggers.includes(trigger)) return null;
   const from = caret - match[3]!.length - 1;
   if (trigger === '/') {
-    // Only at line start (optionally after other tokens), so "a/b" or "see /etc" stay plain text.
+    // Line-start commands avoid treating ordinary paths as commands. `word-start` is useful for
+    // hosts that intentionally offer commands after prose; both modes still require whitespace
+    // before the slash and never match inside code.
     const lineStart = value.lastIndexOf('\n', from - 1) + 1;
     const lead = value.slice(lineStart, from).replace(TOKEN_RE, '').trim();
-    if (lead !== '') return null;
+    if ((options.slash ?? 'line-start') === 'line-start' && lead !== '') return null;
   }
   if (insideCode(value, from)) return null;
   return { trigger, query: match[3]!, from, to: caret };

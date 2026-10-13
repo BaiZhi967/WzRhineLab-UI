@@ -192,6 +192,11 @@ export function SubAgentList({
   const titleLevel = Math.max(2, headingLevel - 1) as HeadingLevel;
   const live = groupBy === 'state' || groupInherited ? unique.filter((a) => !a.inherited) : unique;
   const inheritedGroup = groupBy === 'state' || groupInherited ? unique.filter((a) => a.inherited) : [];
+  const stateGroups = groupBy === 'state' ? ([
+    ['active', live.filter((a) => ['queued', 'preparing', 'running', 'waiting-children'].includes(a.status))],
+    ['attention', live.filter((a) => ['waiting-user', 'needs-attention'].includes(a.status))],
+    ['completed', live.filter((a) => !['queued', 'preparing', 'running', 'waiting-children', 'waiting-user', 'needs-attention'].includes(a.status))],
+  ] as const).filter(([, items]) => items.length > 0) : [];
   const renderItems = (items: SubagentView[]) => (
     <ul className="rl-agent-subagent-list__items">
       {items.map((agent) => (
@@ -212,7 +217,7 @@ export function SubAgentList({
         <p className="rl-agent-subagent-list__empty">{empty ?? m.subagentEmpty}</p>
       ) : (
         <>
-          {live.length > 0 && renderItems(live)}
+          {groupBy === 'state' ? stateGroups.map(([key, items]) => <div key={key} className="rl-agent-subagent-list__group" role="group" aria-label={m.subagentGroup[key]}><Heading level={titleLevel} className="rl-agent-subagent-list__group-title">{m.subagentGroup[key]}</Heading>{renderItems(items)}</div>) : live.length > 0 && renderItems(live)}
           {inheritedGroup.length > 0 && (
             <div className="rl-agent-subagent-list__group" role="group" aria-labelledby={`${id}-inherited`}>
               <Heading level={titleLevel} id={`${id}-inherited`} className="rl-agent-subagent-list__group-title">

@@ -41,6 +41,7 @@ export const routes = [
   { id: 'agent-intervention', path: '/agent/intervention', label: 'Approval & questions', group: 'agent', index: '35' },
   { id: 'agent-workspace', path: '/agent/workspace', label: 'Workspace & artifacts', group: 'agent', index: '36' },
   { id: 'agent-motion', path: '/agent/motion', label: 'Agent motion', group: 'agent', index: '37' },
+  { id: 'agent-adoption', path: '/agent/adoption', label: 'Wpi adoption readiness', group: 'agent', index: '38' },
   { id: 'archive', path: '/archive', label: 'Archive patterns', group: 'archive', index: '16' },
   { id: 'data', path: '/archive/data', label: 'Data & navigation', group: 'archive', index: '20' },
   { id: 'scenarios', path: '/archive/scenarios', label: 'Acceptance scenarios', group: 'archive', index: '17' },

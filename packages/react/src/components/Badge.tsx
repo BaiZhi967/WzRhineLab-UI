@@ -12,7 +12,8 @@ export type CountBadgeProps = Omit<React.HTMLAttributes<HTMLSpanElement>, 'child
 
 export function CountBadge({ value, max = 99, live = false, className, ...rest }: CountBadgeProps) {
   if (value <= 0) return null;
-  const text = value > max ? `${max}+` : String(value);
+  const safeMax = Number.isFinite(max) && max > 0 ? Math.floor(max) : 99;
+  const text = value > safeMax ? `${safeMax}+` : String(value);
   return <span {...rest} className={cx('rl-count-badge', className)} data-live={live || undefined} role={live ? 'status' : undefined}>{text}</span>;
 }
 
@@ -21,12 +22,14 @@ export type TagProps = Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> &
   tone?: 'neutral' | 'invalid';
   onRemove?: () => void;
   disabled?: boolean;
+  /** Override the localized remove label when the tag is used outside the default locale. */
+  removeLabel?: string;
 };
 
-export function Tag({ children, tone = 'neutral', onRemove, disabled = false, className, ...rest }: TagProps) {
+export function Tag({ children, tone = 'neutral', onRemove, disabled = false, removeLabel, className, ...rest }: TagProps) {
   const label = typeof children === 'string' ? children : 'tag';
   return <span {...rest} className={cx('rl-tag', className)} data-tone={tone} data-disabled={disabled || undefined}>
     <span className="rl-tag__label">{children}</span>
-    {onRemove && <button type="button" className="rl-tag__remove" aria-label={`Remove ${label}`} disabled={disabled} onClick={onRemove}><Icon name="X" size={14} /></button>}
+    {onRemove && <button type="button" className="rl-tag__remove" aria-label={removeLabel ?? `Remove ${label}`} disabled={disabled} onClick={onRemove}><Icon name="X" size={14} /></button>}
   </span>;
 }

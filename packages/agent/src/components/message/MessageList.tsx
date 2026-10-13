@@ -138,7 +138,8 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
   const [following, setFollowingState] = React.useState(true);
   const [leaveLastId, setLeaveLastId] = React.useState<string | null>(null);
   const lastTop = React.useRef(0);
-  const ignoreScrollUntil = React.useRef(0);
+  const programmatic = React.useRef(false);
+  const programmaticTimer = React.useRef<number | undefined>(undefined);
   const touchY = React.useRef<number | null>(null);
   const anchor = React.useRef<Anchor | null>(null);
   const messagesRef = React.useRef(messages);
@@ -150,6 +151,7 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
   const holdBase = React.useRef<string | null>(holdFollow ? (messages[messages.length - 1]?.id ?? null) : null);
   const prevHold = React.useRef(holdFollow);
   const mounted = React.useRef(false);
+  React.useEffect(() => () => window.clearTimeout(programmaticTimer.current), []);
 
   const setFollowing = React.useCallback((next: boolean) => {
     if (followingRef.current === next) return;
@@ -202,7 +204,9 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
       setFollowing(true);
       setHeld(false);
       if (!el) return;
-      ignoreScrollUntil.current = Date.now() + 350;
+      programmatic.current = true;
+      window.clearTimeout(programmaticTimer.current);
+      programmaticTimer.current = window.setTimeout(() => { programmatic.current = false; }, 1200);
       const smooth = (options?.smooth ?? true) && !reduced;
       if (smooth && typeof el.scrollTo === 'function') el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
       else {
@@ -212,7 +216,7 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
         if (typeof requestAnimationFrame === 'function') {
           let frames = 0;
           const settle = () => {
-            if (!followingRef.current || holdRef.current || frames++ > 300) return;
+            if (!followingRef.current || holdRef.current || frames++ > 40) { programmatic.current = false; return; }
             toBottom();
             requestAnimationFrame(settle);
           };
@@ -343,7 +347,7 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
     if (!el) return;
     const top = el.scrollTop;
     const distance = distanceFromBottom(el);
-    if (Date.now() < ignoreScrollUntil.current) {
+    if (programmatic.current) {
       lastTop.current = top;
       return;
     }
@@ -399,12 +403,16 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
         onScroll={handleScroll}
         onWheel={(event) => {
           if (!ownsEvent(event.target) || (event.target instanceof Element && event.target.closest(nestedScrollSelector))) return;
+          programmatic.current = false;
+          window.clearTimeout(programmaticTimer.current);
           anchor.current = null;
           if (event.deltaY < 0) releaseFollow();
         }}
         onKeyDown={(event) => {
           if (event.target !== event.currentTarget) return;
           if (UP_KEYS.has(event.key) || (event.key === ' ' && event.shiftKey)) {
+            programmatic.current = false;
+            window.clearTimeout(programmaticTimer.current);
             anchor.current = null;
             releaseFollow();
           }
@@ -416,6 +424,8 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
           if (event.target instanceof Element && event.target.closest(nestedScrollSelector)) return;
           const y = event.touches[0]?.clientY;
           if (touchY.current !== null && y !== undefined) {
+            programmatic.current = false;
+            window.clearTimeout(programmaticTimer.current);
             if (y > touchY.current) {
               anchor.current = null;
               releaseFollow();
