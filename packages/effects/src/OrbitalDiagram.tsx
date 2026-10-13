@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { animate as animateValue, motion, useMotionValue } from 'motion/react';
-import { useMotionLifecycle } from '@wzrhine/react';
+import { useMotionLifecycle, useRhineLocale } from '@wzrhine/react';
 import { useEffectTiming } from './clock.js';
 
 /**
@@ -46,7 +46,9 @@ export type OrbitalDiagramProps = {
 
 const SIZE = 240;
 
-export function OrbitalDiagram({ nodes, rings = 3, size = SIZE, center, animate = false, period = 60, label, selectedLabel = '当前', className }: OrbitalDiagramProps) {
+export function OrbitalDiagram({ nodes, rings = 3, size = SIZE, center, animate = false, period = 60, label, selectedLabel, className }: OrbitalDiagramProps) {
+  const { locale } = useRhineLocale();
+  const selectedText = selectedLabel ?? (locale.toLowerCase().startsWith('en') ? 'selected' : '当前');
   const timing = useEffectTiming();
   const ref = React.useRef<HTMLDivElement>(null);
   const lifecycle = useMotionLifecycle({ active: animate, viewportRef: ref, reduced: timing.reduced });
@@ -113,7 +115,7 @@ export function OrbitalDiagram({ nodes, rings = 3, size = SIZE, center, animate 
               R{node.ring + 1}
             </span>
             {node.label}
-            {(node.active || node.selected) && <span className="rl-effect-sr">({selectedLabel})</span>}
+            {(node.active || node.selected) && <span className="rl-effect-sr">({selectedText})</span>}
           </li>
         ))}
       </ul>

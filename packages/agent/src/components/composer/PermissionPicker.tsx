@@ -66,6 +66,8 @@ export function PermissionPicker({
 
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [changeError, setChangeError] = React.useState<React.ReactNode>(null);
+  const [changing, setChanging] = React.useState(false);
+  const changeAttempt = React.useRef(0);
   const pick = (id: string) => {
     setMenuOpen(false);
     const mode = modes.find((m) => m.id === id);
@@ -76,9 +78,12 @@ export function PermissionPicker({
       return;
     }
     setChangeError(null);
-    Promise.resolve(onChange(id, mode)).catch((reason) => {
-      setChangeError(reason instanceof Error ? reason.message : (confirmErrorText ?? messages.permissionConfirmDescription));
-    });
+    const attempt = ++changeAttempt.current;
+    setChanging(true);
+    Promise.resolve().then(() => onChange(id, mode)).then(
+      () => { if (changeAttempt.current === attempt) setChanging(false); },
+      (reason) => { if (changeAttempt.current !== attempt) return; setChanging(false); setChangeError(reason instanceof Error ? reason.message : (confirmErrorText ?? messages.permissionConfirmDescription)); },
+    );
   };
 
   return (
@@ -88,7 +93,7 @@ export function PermissionPicker({
         onOpenChange={setMenuOpen}
         side={side}
         align={align}
-        disabled={disabled || !onChange}
+        disabled={disabled || !onChange || changing}
         className={cx('rl-agent-permission-menu', className)}
         trigger={
           <Button
@@ -97,7 +102,7 @@ export function PermissionPicker({
             size="sm"
             className="rl-agent-picker-trigger rl-agent-permission"
             data-risk={elevated ? 'elevated' : 'normal'}
-            disabled={disabled || !onChange}
+            disabled={disabled || !onChange || changing}
             title={disabledReason}
             aria-label={messages.permissionTriggerLabel(label)}
             iconStart={<AgentIcon name={elevated ? 'warning' : 'shield'} />}
