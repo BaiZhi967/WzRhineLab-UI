@@ -1,6 +1,6 @@
 # @wzrhine/agent-core · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.1.0，共 128 个导出（30 functions & hooks，9 constants，56 interfaces，33 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.2.0，共 131 个导出（32 functions & hooks，9 constants，57 interfaces，33 types）。
 
 ## Functions & hooks
 
@@ -178,6 +178,22 @@ function parseTokens: (value: string) => ComposerToken[]
 
 ```ts
 function parseUnifiedDiff: (source: string) => FileDiffView[]
+```
+
+### `pathCrumbs`
+
+*function* — Split a workspace path into human-readable crumbs. Relative paths are treated as rooted paths instead of being discarded; when an absolute path is under `root`, the root directory is the first crumb. This pure helper is also useful to non-React adapters.
+
+```ts
+function pathCrumbs: (path: string | undefined, root?: string) => string[]
+```
+
+### `reconcileTokens`
+
+*function* — Reconcile bindings restored by a host with the tokens that are still present in a draft. Bindings are returned in their original order, while stale bindings are omitted. Matching is by trigger and exact token name, including spaces; the helper never invents a binding.
+
+```ts
+function reconcileTokens: <T extends TokenBinding>(value: string, bindings: readonly T[]) => T[]
 ```
 
 ### `sequenceGaps`
@@ -506,6 +522,8 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | Member | Type | Description |
 | --- | --- | --- |
 | `completeness` * | `Completeness` |  |
+| `disabled` | `boolean \| { reason?: string; }` |  |
+| `estimated` | `boolean` | The number is an estimate rather than a sampled provider value. |
 | `label` | `string` |  |
 | `max` | `number` | Only reliable maxima produce a percentage. |
 | `note` | `string` | "模型配置已变化，等待重新估计" etc. |
@@ -542,6 +560,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | --- | --- | --- |
 | `archived` | `boolean` |  |
 | `attention` | `"error" \| "approval" \| "question" \| "children"` | Needs the user (approval, question, child needs attention). Shown above unread. |
+| `disabled` | `boolean \| { reason?: string; }` |  |
 | `id` * | `string` |  |
 | `origin` | `ConversationOrigin` |  |
 | `pinned` | `boolean` |  |
@@ -550,6 +569,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `runPhase` | `RunPhase` |  |
 | `runStatus` | `RunStatus` |  |
 | `title` * | `string` |  |
+| `unreadOutcome` | `"unknown" \| "failed" \| "delivered" \| "pending"` | Whether the latest reference/result was delivered to the host. |
 | `unread` | `number` | Unread finished-run count; 0 / undefined hides the marker. |
 | `updatedAt` | `string` | ISO timestamp of the last activity. |
 
@@ -590,15 +610,19 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | Member | Type | Description |
 | --- | --- | --- |
 | `additions` | `number` |  |
+| `before` | `MaterialPageView` | Original material before the write, when the host provides it. |
 | `binary` | `boolean` |  |
 | `change` * | `"add" \| "delete" \| "update" \| "move"` |  |
 | `conflictReason` | `string` |  |
+| `created` | `boolean` | True when this operation created the target rather than modifying it. |
 | `deletions` | `number` |  |
 | `hunks` * | `DiffHunkView[]` |  |
 | `movedTo` | `string` | Target path for moves / renames. |
 | `noNewlineAtEnd` | `{ old?: boolean; new?: boolean; }` | No trailing newline at end of file (old / new). |
+| `observedBytes` | `number` | Observed byte size used when line statistics are unavailable. |
 | `path` * | `string` |  |
 | `revision` | `string` |  |
+| `statsReliable` | `boolean` | Whether additions/deletions came from a complete, trustworthy observation. |
 | `status` | `"unavailable" \| "preview" \| "proposed" \| "applied" \| "conflict"` |  |
 | `truncated` | `boolean` | Lines omitted from the shown hunks. |
 
@@ -860,6 +884,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 
 | Member | Type | Description |
 | --- | --- | --- |
+| `delivered` | `boolean` |  |
 | `detail` | `string` | Full path / URL / description used for the accessible name and tooltip. |
 | `external` | `boolean` | Outside the workspace. |
 | `id` * | `string` |  |
@@ -991,9 +1016,11 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 
 | Member | Type | Description |
 | --- | --- | --- |
+| `activity` | `string` |  |
 | `backend` | `"pty" \| "process"` |  |
 | `calls` | `number` |  |
 | `cwd` | `string` |  |
+| `disabled` | `boolean \| { reason?: string; }` |  |
 | `exitCode` | `number` |  |
 | `history` | `{ id: string; command: string; status: "running" \| "returned" \| "failed" \| "unknown"; exitCode?: number; at?: string; }[]` | Commands run in this terminal, newest last. |
 | `id` * | `string` |  |
@@ -1008,8 +1035,11 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `readOnly` | `boolean` | Inherited from a parent / earlier run: history only, no input, no stop. |
 | `receipt` | `ActionReceipt` |  |
 | `shell` | `string` |  |
+| `source` | `string` |  |
 | `status` * | `TerminalSessionStatus` |  |
+| `stopReason` | `string` |  |
 | `stoppable` | `boolean` | The host can stop it. Without it no stop control is drawn. |
+| `tail` | `string` |  |
 
 ### `ThinkingView`
 
@@ -1024,6 +1054,15 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `status` * | `"completed" \| "interrupted" \| "streaming"` |  |
 | `summary` | `string` | Approved summary text (markdown allowed through the renderer). |
 | `truncated` | `boolean` | The shown summary is cut; offer the full record. |
+
+### `TokenBinding`
+
+*interface* — A host binding associated with one composer token. Extra fields are preserved.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `name` * | `string` |  |
+| `trigger` * | `TriggerChar` |  |
 
 ### `TokenUsageView`
 
@@ -1059,8 +1098,10 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `children` | `ToolCallView[]` |  |
 | `detail` | `ToolDetailView` |  |
 | `detailsLoaded` | `boolean` | Full record not loaded; expanding calls `onLoadDetails`. |
+| `disabled` | `boolean \| { reason?: string; }` | Host-level busy/disabled state, with an optional explanation. |
 | `displayName` | `string` | Localised name. Falls back to `name`. |
 | `elapsedMs` | `number` |  |
+| `failure` | `{ code?: string; message: string; retryable?: boolean; }` | Structured failure information; a failed row may still be retryable. |
 | `id` * | `string` | Operation id; never shown twice in one list (adapter dedupes). |
 | `name` * | `string` | Raw tool name (`read_file`, `mcp.execute`). |
 | `parentId` | `string` | Parent operation for nested (Code Mode / script) calls. |
@@ -1259,7 +1300,7 @@ type MessageStatus = 'pending' | 'streaming' | 'complete' | 'partial' | 'failed'
 *type*
 
 ```ts
-type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max'
+type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh'
 ```
 
 ### `ProcessBlockView`

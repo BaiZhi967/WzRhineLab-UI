@@ -18,7 +18,7 @@ export type TerminalRowProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'child
   /** Opens the terminal (row button). Without it the row is plain text. */
   onOpen?: (terminal: TerminalView) => void;
   /** Stop action; a separate button, drawn only when the terminal is stoppable. */
-  onStop?: AgentActionHandler<[terminal: TerminalView]>;
+  onStop?: AgentActionHandler<[terminal: TerminalView, context: { actionId: string }]>;
   /** Marks the open terminal (`aria-current`). */
   current?: boolean;
   messages?: WorkspaceMessagesProp;
@@ -62,6 +62,9 @@ export const TerminalRow = React.forwardRef<HTMLDivElement, TerminalRowProps>(fu
           {terminal.cwd}
         </span>
       )}
+      {terminal.source && <span className="rl-agent-terminal-row__source">{terminal.source}</span>}
+      {terminal.activity && <span className="rl-agent-terminal-row__activity">{terminal.activity}</span>}
+      {terminal.tail && <span className="rl-agent-terminal-row__tail" title={terminal.tail}>{terminal.tail}</span>}
       <span className="rl-agent-terminal-row__meta">
         {terminal.calls !== undefined && <span>{m.terminalCalls(terminal.calls)}</span>}
         {readOnly && <span className="rl-agent-terminal-row__readonly">{m.terminalReadOnlyDescription}</span>}
@@ -95,7 +98,7 @@ export const TerminalRow = React.forwardRef<HTMLDivElement, TerminalRowProps>(fu
         )}
         <AgentStatus className="rl-agent-terminal-row__status" {...statusProps(meta, status.terminal[terminal.status])} />
         {canStop && (
-          <IconButton size="sm" variant="ghost" icon={<AgentIcon name="stop" />} label={m.terminalStop(terminal.name)} onClick={() => void onStop!(terminal)} />
+          <IconButton size="sm" variant="ghost" icon={<AgentIcon name="stop" />} label={m.terminalStop(terminal.name)} onClick={() => void onStop!(terminal, { actionId: `${terminal.id}:stop` })} />
         )}
       </div>
       {description}
@@ -124,6 +127,12 @@ export type TerminalListProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'chil
   /** Groups collapsed on first render (uncontrolled per group). Default: inherited. */
   defaultCollapsed?: TerminalGroupKey[];
   messages?: WorkspaceMessagesProp;
+  loading?: boolean;
+  error?: React.ReactNode;
+  onRetry?: () => void;
+  empty?: React.ReactNode;
+  loadingMore?: boolean;
+  total?: number;
 };
 
 /**
@@ -140,6 +149,12 @@ export function TerminalList({
   onLoadMore,
   defaultCollapsed = ['inherited'],
   messages: override,
+  loading = false,
+  error,
+  onRetry,
+  empty,
+  loadingMore = false,
+  total,
   className,
   ...rest
 }: TerminalListProps) {
@@ -158,7 +173,9 @@ export function TerminalList({
 
   return (
     <div {...rest} className={cx('rl-agent-terminal-list', className)} role="group" aria-label={m.terminalList}>
-      {groups.length === 0 && <p className="rl-agent-terminal-list__empty">{m.terminalEmpty}</p>}
+      {loading && <p role="status">{m.terminalLoading}</p>}
+      {error && <p role="alert">{error}{onRetry && <Button size="sm" variant="secondary" onClick={onRetry}>{m.retry}</Button>}</p>}
+      {!loading && !error && groups.length === 0 && <p className="rl-agent-terminal-list__empty">{empty ?? m.terminalEmpty}</p>}
       {groups.map(({ key, items }) => (
         <Collapsible
           key={key}
@@ -182,8 +199,8 @@ export function TerminalList({
         </Collapsible>
       ))}
       {hasMore !== false && onLoadMore && (
-        <Button size="sm" variant="ghost" className="rl-agent-terminal-list__more" onClick={onLoadMore}>
-          {m.terminalLoadMore}
+        <Button size="sm" variant="ghost" loading={loadingMore} className="rl-agent-terminal-list__more" onClick={onLoadMore}>
+          {total !== undefined ? `${m.terminalLoadMore} (${total})` : m.terminalLoadMore}
         </Button>
       )}
     </div>

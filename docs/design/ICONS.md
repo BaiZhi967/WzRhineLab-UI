@@ -25,3 +25,7 @@ default currentColor；hover 继承按钮/链接；active/selected 与 focus-vis
 
 ## 验收
 16/20/24px 原始像素检查：视觉居中、线条厚度、边缘留白、光学补偿；同时检查暗色、禁用、RTL方向（箭头类）、屏幕阅读器名称及高倍率缩放。
+
+## 0.2.0 公共入口
+
+R01 采用库内原创 SVG 路线：`Icon` 可从 `@wzrhine/react` 或 `@wzrhine/react/icons` 导入。公共集合统一 24×24 viewBox、1.75 stroke、round cap/join、currentColor。`AgentIcon` 的 16×16 网格保留为已有内部/兼容图标体系；新消费界面优先使用公共入口。本仓不新增 lucide-react 运行时依赖。

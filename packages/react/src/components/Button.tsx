@@ -18,11 +18,13 @@ type MotionConflictingProps =
 
 export type ButtonVariant = 'primary' | 'accent' | 'secondary' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonTone = 'default' | 'danger';
 
 export type ButtonProps = Omit<React.ComponentPropsWithoutRef<'button'>, 'disabled' | MotionConflictingProps> & {
   /** Visual weight. `primary` = ink fill; `accent` = research-orange signal, use once per view. */
   variant?: ButtonVariant;
   size?: ButtonSize;
+  tone?: ButtonTone;
   /** Blocks activation and announces busy state while keeping focus and the accessible name. */
   loading?: boolean;
   disabled?: boolean;
@@ -36,6 +38,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
   {
     variant = 'primary',
     size = 'md',
+    tone = 'default',
     loading = false,
     disabled = false,
     type = 'button',
@@ -72,6 +75,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
       data-slot="button"
       data-variant={variant}
       data-size={size}
+      data-tone={tone}
       data-loading={loading || undefined}
       className={cx('rl-button', className)}
       onClick={handleClick}

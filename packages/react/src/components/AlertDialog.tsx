@@ -19,6 +19,7 @@ import { Button } from './Button.js';
  */
 
 export type AlertDialogTone = 'danger' | 'default';
+export type AlertDialogAlternateAction = { label: React.ReactNode; onClick?: () => void | Promise<unknown>; disabled?: boolean };
 
 export type AlertDialogProps = {
   /** Element that opens the dialog (usually a Button). Omit when opening programmatically. */
@@ -35,6 +36,9 @@ export type AlertDialogProps = {
   cancelLabel?: React.ReactNode;
   /** `danger` (default) fills the confirm button with the danger colour. */
   tone?: AlertDialogTone;
+  confirmDisabled?: boolean;
+  emphasis?: 'confirm' | 'cancel';
+  alternateAction?: AlertDialogAlternateAction;
   /** Runs on confirm. Return a Promise to keep the dialog open until it settles. */
   onConfirm: () => void | Promise<unknown>;
   /** Shown in a role="alert" message when the Promise from `onConfirm` rejects. */
@@ -65,6 +69,9 @@ export function AlertDialog({
   cancelLabel: cancelLabelProp,
   tone = 'danger',
   onConfirm,
+  confirmDisabled = false,
+  emphasis = 'cancel',
+  alternateAction,
   errorText: errorTextProp,
   open: openProp,
   defaultOpen = false,
@@ -185,7 +192,7 @@ export function AlertDialog({
               data-slot="alert-dialog"
               data-size="sm"
               data-tone={tone}
-              initialFocus={cancelRef}
+              initialFocus={emphasis === 'confirm' ? confirmRef : cancelRef}
               render={
                 <motion.div
                   initial={{ opacity: 0, y: rise }}
@@ -212,6 +219,7 @@ export function AlertDialog({
                 </div>
               )}
               <footer className="rl-dialog__actions">
+                {alternateAction && <Button variant="ghost" disabled={alternateAction.disabled || pending} onClick={() => void alternateAction.onClick?.()}>{alternateAction.label}</Button>}
                 <BaseAlertDialog.Close
                   disabled={pending}
                   render={<Button ref={cancelRef} variant="ghost" className="rl-alert-dialog__cancel" />}
@@ -221,8 +229,9 @@ export function AlertDialog({
                 <Button
                   ref={confirmRef}
                   className="rl-alert-dialog__confirm"
-                  data-tone={tone}
+                  tone={tone === 'danger' ? 'danger' : 'default'}
                   loading={pending}
+                  disabled={confirmDisabled}
                   onClick={handleConfirm}
                 >
                   {confirmLabel}

@@ -53,7 +53,7 @@ export interface CommandOption {
   group?: string;
 }
 
-export type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max';
+export type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh';
 
 export interface ModelOptionView {
   id: string;

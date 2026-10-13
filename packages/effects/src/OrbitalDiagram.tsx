@@ -23,10 +23,13 @@ export interface OrbitNode {
   angle: number;
   /** Highlight one node (e.g. the current subject). */
   active?: boolean;
+  selected?: boolean;
+  tone?: 'accent' | 'info' | 'warning' | 'success' | 'neutral';
 }
 
 export type OrbitalDiagramProps = {
   nodes: readonly OrbitNode[];
+  size?: number;
   rings?: number;
   /** Centre caption, e.g. a record ID. */
   center?: string;
@@ -42,7 +45,7 @@ export type OrbitalDiagramProps = {
 const SIZE = 240;
 const C = SIZE / 2;
 
-export function OrbitalDiagram({ nodes, rings = 3, center, animate = false, period = 60, label, className }: OrbitalDiagramProps) {
+export function OrbitalDiagram({ nodes, rings = 3, size = SIZE, center, animate = false, period = 60, label, className }: OrbitalDiagramProps) {
   const timing = useEffectTiming();
   const ref = React.useRef<HTMLDivElement>(null);
   const lifecycle = useMotionLifecycle({ active: animate, viewportRef: ref, reduced: timing.reduced });
@@ -61,12 +64,13 @@ export function OrbitalDiagram({ nodes, rings = 3, center, animate = false, peri
     const controls = animateValue(rotate, [from, from + 360], { duration: revolution, ease: 'linear', repeat: Infinity });
     return () => controls.stop();
   }, [spinning, revolution, lifecycle.state, timing.reduced, rotate]);
-  const radius = (ring: number) => 36 + (ring * (C - 48)) / Math.max(1, rings - 1);
+  const centerPoint = size / 2;
+  const radius = (ring: number) => 36 * (size / SIZE) + (ring * (centerPoint - 48 * (size / SIZE))) / Math.max(1, rings - 1);
 
   return (
     <div className="rl-orbit-wrap">
-    <div ref={ref} className={['rl-orbit', className].filter(Boolean).join(' ')} data-slot="orbital-diagram" data-spinning={spinning || undefined} data-lifecycle={lifecycle.state} data-paused={lifecycle.pauseReason ?? undefined}>
-      <svg className="rl-orbit__svg" viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden="true" focusable="false">
+    <div ref={ref} className={['rl-orbit', className].filter(Boolean).join(' ')} data-slot="orbital-diagram" data-size={size} data-spinning={spinning || undefined} data-lifecycle={lifecycle.state} data-paused={lifecycle.pauseReason ?? undefined}>
+      <svg className="rl-orbit__svg" viewBox={`0 0 ${size} ${size}`} aria-hidden="true" focusable="false">
         <g className="rl-orbit__ticks">
           {Array.from({ length: 24 }, (_, i) => {
             const a = (i * 15 * Math.PI) / 180;
@@ -86,7 +90,8 @@ export function OrbitalDiagram({ nodes, rings = 3, center, animate = false, peri
               <circle
                 key={node.id}
                 className="rl-orbit__node"
-                data-active={node.active || undefined}
+                data-active={node.active || node.selected || undefined}
+                data-tone={node.tone ?? undefined}
                 cx={C + r * Math.sin(a)}
                 cy={C - r * Math.cos(a)}
                 r={node.active ? 5 : 3.5}

@@ -95,3 +95,21 @@ export function matchRanges(text: string, query: string): Array<[number, number]
   }
   return ranges;
 }
+
+/**
+ * Split a workspace path into human-readable crumbs. Relative paths are treated as rooted paths
+ * instead of being discarded; when an absolute path is under `root`, the root directory is the
+ * first crumb. This pure helper is also useful to non-React adapters.
+ */
+export function pathCrumbs(path: string | undefined, root?: string): string[] {
+  if (!path) return [];
+  const normalize = (value: string) => value.replace(/\\/g, '/').replace(/\/+/g, '/').replace(/\/$/, '');
+  const full = normalize(path);
+  const base = root ? normalize(root) : undefined;
+  const under = base && (full === base || full.startsWith(`${base}/`) || (/^[a-z]:/i.test(base) && full.toLowerCase().startsWith(`${base.toLowerCase()}/`)));
+  if (under && base) {
+    const rootName = base.split('/').filter(Boolean).pop() ?? base;
+    return [rootName, ...full.slice(base.length).split('/').filter(Boolean)];
+  }
+  return full.split('/').filter(Boolean);
+}

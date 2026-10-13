@@ -41,6 +41,9 @@ export interface ConversationView {
   attention?: 'approval' | 'question' | 'children' | 'error';
   origin?: ConversationOrigin;
   revision?: string;
+  /** Whether the latest reference/result was delivered to the host. */
+  unreadOutcome?: 'delivered' | 'pending' | 'failed' | 'unknown';
+  disabled?: boolean | { reason?: string };
 }
 
 export interface ConversationSection {
@@ -83,6 +86,7 @@ export interface ReferenceView {
   external?: boolean;
   status?: 'ready' | 'loading' | 'stale' | 'failed';
   reason?: string;
+  delivered?: boolean;
 }
 
 export interface CitationView {

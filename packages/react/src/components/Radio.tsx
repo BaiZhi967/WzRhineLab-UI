@@ -34,6 +34,9 @@ export type RadioGroupProps = Pick<BaseGroupProps, 'value' | 'defaultValue' | 'o
   disabled?: boolean;
   validationMode?: FieldValidationMode;
   orientation?: ChoiceOrientation;
+  appearance?: 'default' | 'chip' | 'card';
+  hideLabel?: boolean;
+  renderIcon?: (value: string) => React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
   children: React.ReactNode;
@@ -51,6 +54,9 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(func
     disabled,
     validationMode,
     orientation = 'vertical',
+    appearance = 'default',
+    hideLabel = false,
+    renderIcon,
     className,
     style,
     children,
@@ -69,6 +75,8 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(func
       className={cx('rl-choice-group', className)}
       style={style}
       data-slot="radio-group"
+      data-appearance={appearance}
+      data-hide-label={hideLabel || undefined}
     >
       <BaseFieldset.Root
         className="rl-choice-group__fieldset"
@@ -78,7 +86,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(func
           <LabelText label={label} required={required} optional={optional} />
         </BaseFieldset.Legend>
         <div className="rl-choice-group__items" data-orientation={orientation}>
-          <ChoiceGroupContext.Provider value="radio">{children}</ChoiceGroupContext.Provider>
+          <ChoiceGroupContext.Provider value="radio">{React.Children.map(children, (child) => React.isValidElement(child) && renderIcon ? React.cloneElement(child as React.ReactElement<{ icon?: React.ReactNode; value?: string }>, { icon: renderIcon(String((child.props as { value?: string }).value)) }) : child)}</ChoiceGroupContext.Provider>
         </div>
       </BaseFieldset.Root>
       {description != null && <BaseField.Description className="rl-field__description">{description}</BaseField.Description>}
@@ -101,10 +109,11 @@ export type RadioProps = Omit<
   description?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  icon?: React.ReactNode;
 };
 
 export const Radio = React.forwardRef<HTMLElement, RadioProps>(function Radio(
-  { value, label, description, disabled, className, style, ...rest },
+  { value, label, description, disabled, className, style, icon, ...rest },
   ref,
 ) {
   // Outside <RadioGroup> Base UI throws (Field.Item needs a Field.Root), which is the intended failure.
@@ -114,7 +123,7 @@ export const Radio = React.forwardRef<HTMLElement, RadioProps>(function Radio(
         <BaseRadio.Root {...rest} ref={ref} value={value} disabled={disabled} className="rl-radio" data-slot="radio">
           <BaseRadio.Indicator className="rl-radio__indicator" keepMounted />
         </BaseRadio.Root>
-        <span className="rl-choice__text">{label}</span>
+        {icon && <span className="rl-choice__icon" aria-hidden="true">{icon}</span>}<span className="rl-choice__text">{label}</span>
       </BaseField.Label>
       {description != null && (
         <BaseField.Description className="rl-choice__description">{description}</BaseField.Description>

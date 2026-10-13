@@ -16,6 +16,8 @@ export interface ModelPickerProps {
   /** Selected effort (controlled); must be one of the model's `efforts`. */
   effort?: ModelEffort | null;
   onEffortChange?: (effort: ModelEffort) => void;
+  onEffortReset?: () => void;
+  effortState?: 'unset' | 'invalid' | 'default';
   loading?: boolean;
   /** Error text for the model list (`true` → default copy). */
   error?: React.ReactNode;
@@ -60,6 +62,8 @@ export function ModelPicker({
   onModelChange,
   effort,
   onEffortChange,
+  onEffortReset,
+  effortState,
   loading = false,
   error,
   disabled = false,
@@ -82,7 +86,8 @@ export function ModelPicker({
   const moved = React.useRef(false);
   const model = findModel(providers, selectedModel);
   const efforts = model?.efforts ?? [];
-  const effortLabel = effort && efforts.includes(effort) ? messages.effort[effort] : undefined;
+  const invalidEffort = effortState === 'invalid' || (effort != null && efforts.length > 0 && !efforts.includes(effort));
+  const effortLabel = !invalidEffort && effort && efforts.includes(effort) ? messages.effort[effort] : undefined;
   const modelLabel = model?.label ?? messages.modelPlaceholder;
 
   const setOpen = (next: boolean) => {
@@ -147,6 +152,8 @@ export function ModelPicker({
         </button>
       </div>
       {model && efforts.length > 0 ? (
+        <>
+          {invalidEffort && <div className="rl-agent-model__invalid" role="alert"><span>{messages.effortInvalid}</span>{onEffortReset && <Button size="sm" variant="secondary" onClick={onEffortReset}>{messages.resetEffort}</Button>}</div>}
         <RadioGroup
           label={messages.effortHeading}
           className="rl-agent-model__efforts"
@@ -162,6 +169,7 @@ export function ModelPicker({
             <Radio key={value} value={value} label={messages.effort[value]} />
           ))}
         </RadioGroup>
+        </>
       ) : (
         <p className="rl-agent-model__note">{model ? messages.effortNone : messages.modelPlaceholder}</p>
       )}

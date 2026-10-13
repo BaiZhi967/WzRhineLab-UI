@@ -52,6 +52,8 @@
   isolation: isolate;
 }
 
+.rl-scan[data-overflow='visible'] { overflow: visible; }
+
 .rl-scan__line {
   position: absolute;
   inset: 0 auto 0 0;
@@ -78,6 +80,7 @@
 .rl-scan {
   container-type: inline-size;
 }
+.rl-scan[data-container-type='none'] { container-type: normal; }
 
 /* Reduced motion: no travelling line; a brief static outline marks the scan instead. */
 .rl-scan[data-reduced] .rl-scan__line,

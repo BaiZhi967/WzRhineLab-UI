@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { AlertDialog, Button, Menu, MenuRadioGroup, MenuRadioItem } from '@wzrhine/react';
+import { Alert, AlertDialog, Button, Menu, MenuRadioGroup, MenuRadioItem } from '@wzrhine/react';
 import type { PermissionModeView } from '@wzrhine/agent-core';
 import { AgentIcon } from '../../primitives/icons.js';
 import { useAgentMessages } from '../../provider/AgentMessages.js';
@@ -18,6 +18,10 @@ export interface PermissionPickerProps {
    */
   onChange?: (modeId: string, mode: PermissionModeView) => void | Promise<unknown>;
   disabled?: boolean;
+  error?: React.ReactNode;
+  receipt?: React.ReactNode;
+  confirmErrorText?: React.ReactNode;
+  disabledReason?: string;
   /** Override the confirmation copy for elevated modes. */
   confirmTitle?: (mode: PermissionModeView) => React.ReactNode;
   confirmDescription?: (mode: PermissionModeView) => React.ReactNode;
@@ -40,6 +44,10 @@ export function PermissionPicker({
   value,
   onChange,
   disabled = false,
+  error,
+  receipt,
+  confirmErrorText,
+  disabledReason,
   confirmTitle,
   confirmDescription,
   confirmLabel,
@@ -86,6 +94,7 @@ export function PermissionPicker({
             className="rl-agent-picker-trigger rl-agent-permission"
             data-risk={elevated ? 'elevated' : 'normal'}
             disabled={disabled || !onChange}
+            title={disabledReason}
             aria-label={messages.permissionTriggerLabel(label)}
             iconStart={<AgentIcon name={elevated ? 'warning' : 'shield'} />}
             iconEnd={<AgentIcon name="chevron-down" />}
@@ -108,6 +117,8 @@ export function PermissionPicker({
           ))}
         </MenuRadioGroup>
       </Menu>
+      {error && <Alert tone="danger" size="sm" title={error === true ? 'Permission change failed' : undefined}>{error === true ? 'Permission change failed' : null}</Alert>}
+      {receipt && <p className="rl-agent-permission__receipt" role="status">{receipt}</p>}
       {pending && onChange && (
         <AlertDialog
           open={confirmOpen}
@@ -121,6 +132,7 @@ export function PermissionPicker({
           description={confirmDescription ? confirmDescription(pending) : (pending.description ?? messages.permissionConfirmDescription)}
           confirmLabel={confirmLabel ? confirmLabel(pending) : messages.permissionConfirm(pending.label)}
           onConfirm={() => onChange(pending.id, pending)}
+          errorText={confirmErrorText}
         >
           {pending.description && confirmDescription === undefined && <p className="rl-agent-permission__warning">{messages.permissionConfirmDescription}</p>}
         </AlertDialog>

@@ -19,7 +19,9 @@ export type PopoverSize = 'sm' | 'md' | 'lg';
 
 export type PopoverProps = {
   /** Element that toggles the popover (usually a Button or IconButton with its own name). */
-  trigger: React.ReactElement<Record<string, unknown>>;
+  trigger?: React.ReactElement<Record<string, unknown>>;
+  /** External element or virtual rectangle used when the popover has no trigger. */
+  anchor?: React.RefObject<HTMLElement | null> | HTMLElement | { getBoundingClientRect: () => DOMRect };
   /** Visible heading; also the popup's accessible name. Use `aria-label` when there is no title. */
   title?: React.ReactNode;
   description?: React.ReactNode;
@@ -37,7 +39,8 @@ export type PopoverProps = {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   /** Element to focus on open; defaults to the first tabbable element, or the popup. */
-  initialFocus?: React.RefObject<HTMLElement | null>;
+  initialFocus?: boolean | React.RefObject<HTMLElement | null>;
+  sideOffset?: number;
   /** Accessible name when no visible `title` is rendered. */
   'aria-label'?: string;
   className?: string;
@@ -45,6 +48,7 @@ export type PopoverProps = {
 
 export function Popover({
   trigger,
+  anchor,
   title,
   description,
   children,
@@ -58,6 +62,7 @@ export function Popover({
   defaultOpen,
   onOpenChange,
   initialFocus,
+  sideOffset = 8,
   'aria-label': ariaLabel,
   className,
 }: PopoverProps) {
@@ -68,13 +73,14 @@ export function Popover({
       defaultOpen={defaultOpen}
       onOpenChange={onOpenChange ? (next) => onOpenChange(next) : undefined}
     >
-      <BasePopover.Trigger render={trigger} openOnHover={openOnHover} />
+      {trigger && <BasePopover.Trigger render={trigger} openOnHover={openOnHover} />}
       <BasePopover.Portal container={container}>
         <BasePopover.Positioner
           className="rl-popover__positioner"
           side={side}
           align={align}
-          sideOffset={8}
+          sideOffset={sideOffset}
+          anchor={anchor && ('current' in anchor ? anchor.current : anchor)}
           collisionPadding={8}
           positionMethod="fixed"
         >

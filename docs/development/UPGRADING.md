@@ -158,3 +158,11 @@ Button 的加载指示、DataTable 的首次加载骨架与空状态、Stat 的�
 
 ## 以后的版本
 每次发布时在这里追加一节，格式与上面相同：标题写目标版本；每项写明是否破坏性、搜索关键字和改前 / 改后。未列出的版本表示无需动手。
+
+## 升到 0.2.0（Wpi 接入补齐，待发布）
+
+- 五个包一起升级到 0.2.0。`react`、`effects`、`agent` 的 motion peer 为 `^14.0.0`，本仓验证使用 14.1.0；使用方应统一安装 motion 14.1.0，确保 React / motion 各一份。
+- `@wzrhine/react` 新增公共图标入口 `@wzrhine/react/icons`，原创线性 SVG 的 viewBox 为 24×24、描边 1.75；原 AgentIcon 继续兼容。
+- token 名称允许空格；历史草稿由 `reconcileTokens(value, bindings)` 与宿主绑定对账。
+- 复制失败提示持续保留，直到下一次复制成功；不要额外用自动消失的 Toast 代替该错误。
+- 新组件和 API 仍由现有 `styles.css` 包含，导入顺序保持 tokens → react → effects → agent。

@@ -43,6 +43,7 @@ export type ComposerProps = {
   placeholder?: string;
   'aria-label'?: string;
   submitOn?: 'enter' | 'mod-enter';
+  slash?: 'line-start' | 'word-start';
   /** Shows a character counter and blocks sending above the limit (code points of the plain text). */
   maxLength?: number;
   /** Show the counter without a limit. */
@@ -54,6 +55,8 @@ export type ComposerProps = {
   // ---------- send / stop ----------
   /** Receives the plain text (`@name` / `/name`), the raw value with markers, references and attachments. */
   onSubmit?: (input: SendInput) => void;
+  /** Allow sending when the text is empty if at least one attachment/reference exists. */
+  allowEmptyText?: boolean;
   /** Receipt of the last send. `submitting` / `unknown` block Enter and the button (no duplicates). */
   submitStatus?: ActionStatus | ActionReceipt;
   runStatus?: RunStatus;
@@ -68,6 +71,9 @@ export type ComposerProps = {
   // ---------- draft ----------
   draftStatus?: DraftStatus;
   onRetryDraftSave?: () => void;
+  persistence?: DraftStatus | 'idle';
+  onRetryPersistence?: () => void;
+  retryBusy?: boolean;
 
   // ---------- references & attachments ----------
   references?: readonly ReferenceView[];
@@ -106,7 +112,7 @@ export type ComposerProps = {
    */
   onCommand?: (option: CommandOption, match: TriggerMatch) => 'insert' | void;
   /** A disabled command was chosen: nothing is dispatched; its reason shows in the feedback line. */
-  onDisabledCommand?: (option: CommandOption) => void;
+  onDisabledCommand?: (option: CommandOption, match: TriggerMatch) => 'consume' | void;
 
   // ---------- states & slots ----------
   disabled?: boolean;
@@ -181,11 +187,13 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
     placeholder,
     'aria-label': ariaLabel,
     submitOn = 'enter',
+    slash = 'line-start',
     maxLength,
     showCount = false,
     onTokenRemoved,
     tokenKind,
     onSubmit,
+    allowEmptyText = false,
     submitStatus,
     runStatus,
     onStop,
@@ -195,6 +203,9 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
     sendDisabledReason,
     draftStatus,
     onRetryDraftSave,
+    persistence,
+    onRetryPersistence,
+    retryBusy = false,
     references = [],
     attachments = [],
     onRemoveReference,
@@ -270,6 +281,7 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
   const blockedReason = typeof blocked === 'string' ? blocked : blocked ? messages.blockedPlaceholder : undefined;
   const replaced = replacement != null && replacement !== false;
   const inert = disabled || readOnly || blockedReason !== undefined || replaced;
+  const hasPayload = plain.trim() !== '' || attachments.length > 0 || references.length > 0;
   const sendReason =
     disabled
       ? disabledReason
@@ -281,7 +293,7 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
             ? onStop
               ? undefined
               : messages.runningReason
-            : plain.trim() === ''
+              : (!allowEmptyText && plain.trim() === '') || (allowEmptyText && !hasPayload)
               ? messages.emptyReason
               : uploading
                 ? messages.uploadingReason
@@ -290,7 +302,7 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
                   : !canSendProp
                     ? sendDisabledReason
                     : undefined;
-  const canSend = onSubmit !== undefined && !inert && !sendBusy && !running && plain.trim() !== '' && !uploading && !overLimit && canSendProp;
+  const canSend = onSubmit !== undefined && !inert && !sendBusy && !running && (allowEmptyText ? hasPayload : plain.trim() !== '') && !uploading && !overLimit && canSendProp && persistence !== 'error';
 
   // The Esc memory survives caret moves and leaving the word; editing the word (or another
   // trigger) forgets it, so the menu reopens once the query really changes.
@@ -378,7 +390,11 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
     if (!match) return;
     if (option.disabled) {
       setNotice(messages.optionUnavailable(option.disabledReason));
-      onDisabledCommand?.(option);
+      if (onDisabledCommand) {
+        // Preserve the original one-argument callback while enabling the richer match-aware API.
+        if (onDisabledCommand.length >= 2) onDisabledCommand(option, match);
+        else (onDisabledCommand as (option: CommandOption) => unknown)(option);
+      }
       return;
     }
     const result = onCommand?.(option, match);
@@ -475,10 +491,10 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
   } else if (submit === 'unknown') {
     statusText = messages.submitUnknown;
     statusTone = 'warning';
-  } else if (draftStatus === 'error') {
+  } else if (draftStatus === 'error' || persistence === 'error') {
     statusText = messages.draftError;
     statusTone = 'danger';
-    if (onRetryDraftSave) retry = { label: messages.retrySave, onClick: onRetryDraftSave };
+    if (onRetryPersistence || onRetryDraftSave) retry = { label: messages.retrySave, onClick: onRetryPersistence ?? onRetryDraftSave! };
   } else if (draftStatus === 'saving') {
     statusText = messages.draftSaving;
   } else if (draftStatus === 'saved') {
@@ -577,6 +593,7 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
                 onValueChange={handleValueChange}
                 onSubmit={onSubmit ? doSubmit : undefined}
                 submitOn={submitOn}
+                slash={slash}
                 onMenuKey={handleMenuKey}
                 onTriggerChange={handleTrigger}
                 onTokenRemoved={onTokenRemoved}
@@ -611,6 +628,9 @@ export const Composer = React.forwardRef<ComposerInputHandle, ComposerProps>(fun
                     stopReceipt={stopStatus}
                     onSend={onSubmit ? doSubmit : undefined}
                     onStop={onStop}
+                    draftStatus={draftStatus ?? (persistence === 'error' ? 'error' : persistence === 'saving' ? 'saving' : undefined)}
+                    onRetrySave={persistence ? (onRetryPersistence ?? onRetryDraftSave) : undefined}
+                    retryBusy={retryBusy}
                     onRetry={onRetryAction}
                     disabledReason={sendReason}
                   />

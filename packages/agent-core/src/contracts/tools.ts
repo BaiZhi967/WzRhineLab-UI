@@ -66,6 +66,14 @@ export interface FileDiffView {
   status?: 'preview' | 'proposed' | 'applied' | 'conflict' | 'unavailable';
   conflictReason?: string;
   revision?: string;
+  /** Whether additions/deletions came from a complete, trustworthy observation. */
+  statsReliable?: boolean;
+  /** Original material before the write, when the host provides it. */
+  before?: MaterialPageView;
+  /** True when this operation created the target rather than modifying it. */
+  created?: boolean;
+  /** Observed byte size used when line statistics are unavailable. */
+  observedBytes?: number;
 }
 
 /**
@@ -108,6 +116,8 @@ export type ToolDetailView =
       nextOffset?: number;
       totalLines?: number;
       bytes?: number;
+      version?: string;
+      nextOffsetUnit?: 'lines' | 'bytes';
       error?: 'not-found' | 'forbidden' | 'error';
     }
   | {
@@ -135,12 +145,18 @@ export type ToolDetailView =
       }[];
       expectedVersion?: string;
       materialReady?: boolean;
+      replacementCount?: number;
+      page?: MaterialPageView;
+      complete?: boolean;
     }
   | {
       kind: 'patch';
       files: FileDiffView[];
       revision?: string;
       materialReady?: boolean;
+      hunksAvailable?: boolean;
+      baseVersion?: string;
+      raw?: MaterialPageView;
     }
   | {
       kind: 'manage-files';
@@ -156,6 +172,9 @@ export type ToolDetailView =
       /** More operations exist than are loaded. */
       hasMore?: boolean;
       materialReady?: boolean;
+      counts?: Partial<Record<'mkdir' | 'move' | 'copy' | 'rename' | 'delete', number>>;
+      total?: number;
+      page?: MaterialPageView;
     }
   | {
       kind: 'command';
@@ -197,6 +216,15 @@ export type ToolDetailView =
       save?: 'pending' | 'saving' | 'saved' | 'partial' | 'failed';
       /** Running model calls show activity without a number. */
       costNotice?: string;
+      endpoint?: string;
+      route?: string;
+      timeoutMs?: number;
+      sha256?: string;
+      arguments?: unknown;
+      remote?: boolean | 'pending' | 'completed' | 'failed' | 'unknown';
+      stopReason?: string;
+      saveRetry?: boolean;
+      saveError?: string;
     }
   | {
       kind: 'question';
@@ -240,4 +268,8 @@ export interface ToolCallView {
   /** Script source for Code Mode parents. */
   script?: { language?: string; source: string; truncated?: boolean };
   receipt?: ActionReceipt;
+  /** Structured failure information; a failed row may still be retryable. */
+  failure?: { code?: string; message: string; retryable?: boolean };
+  /** Host-level busy/disabled state, with an optional explanation. */
+  disabled?: boolean | { reason?: string };
 }

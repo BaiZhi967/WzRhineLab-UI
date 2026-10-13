@@ -30,7 +30,7 @@
     "docs:index": "node scripts/docs-index.mjs",
     "docs:check": "node scripts/docs-index.mjs --check",
     "release:check": "pnpm check && pnpm api:check && pnpm docs:check && pnpm license:audit && pnpm verify:packages && pnpm size:check",
-    "release:dry": "node scripts/release.mjs 0.1.0",
+    "release:dry": "node scripts/release.mjs 0.2.0",
     "license:audit": "node scripts/license-audit.mjs"
   }
 }

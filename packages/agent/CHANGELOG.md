@@ -4,7 +4,15 @@
 
 ## [Unreleased]
 
-（暂无）
+### Added
+- Wpi 接入：`SkillPicker`、`ReferencePicker`、`RunOverview`；Composer 附件发送、持久化重试、slash 触发规则；ModelPicker 失效 effort 重置。
+- 工具材料分页与统计可靠性展示；权限错误/回执；终端和子任务列表加载/错误/分组；ContextUsage 受控打开、估算状态。
+
+### Fixed
+- MessageActions / CodeBlock 复制失败保留可访问错误；MessageList 嵌套滚动可标记内部归属；历史阅读阈值可配置。
+
+### Changed
+- peer `motion` 为 `^14.0.0`，目标发行版本 0.2.0。
 
 ## [0.1.0] - 2026-10-12
 

@@ -24,6 +24,7 @@ import { cx } from '../utils/cx.js';
  */
 
 export type ScrollAreaOrientation = 'vertical' | 'both';
+export type ScrollReveal = 'always' | 'hover' | 'scroll';
 
 export type ScrollAreaProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 'onScroll' | 'aria-label' | 'role'> & {
   /** Accessible name of the scrollable region, e.g. 「运行日志」. */
@@ -41,12 +42,14 @@ export type ScrollAreaProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'childr
   onScrollIntentUp?: () => void;
   /** Class on the viewport, for padding or content layout. */
   viewportClassName?: string;
+  reveal?: ScrollReveal;
+  thumbMinSize?: string;
 };
 
 const UP_KEYS = new Set(['ArrowUp', 'PageUp', 'Home']);
 
 export const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(function ScrollArea(
-  { label, children, viewportRef, maxHeight, orientation = 'vertical', onScroll, onScrollIntentUp, viewportClassName, className, style, ...rest },
+  { label, children, viewportRef, maxHeight, orientation = 'vertical', onScroll, onScrollIntentUp, viewportClassName, reveal = 'hover', thumbMinSize, className, style, ...rest },
   ref,
 ) {
   const dragY = React.useRef<number | null>(null);
@@ -105,7 +108,8 @@ export const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(func
       className={cx('rl-scroll-area', className)}
       data-slot="scroll-area"
       data-orientation={orientation}
-      style={rootStyle}
+      style={{ ...rootStyle, ...(thumbMinSize ? { '--rl-scroll-thumb-min': thumbMinSize } as React.CSSProperties : undefined) }}
+      data-reveal={reveal}
     >
       <BaseScrollArea.Viewport
         ref={viewportRef}

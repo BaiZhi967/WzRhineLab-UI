@@ -23,8 +23,9 @@ export function useClipboardAvailable(): boolean {
 }
 
 /** Copy with a short copied / failed state. The timeout only resets feedback; it never polls. */
-export function useCopy(onCopy?: CopyHandler): { state: CopyState; copy: (text: string) => Promise<void> } {
+export function useCopy(onCopy?: CopyHandler): { state: CopyState; failed: boolean; copy: (text: string) => Promise<void> } {
   const [state, setState] = React.useState<CopyState>('idle');
+  const [failed, setFailed] = React.useState(false);
   const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const mounted = React.useRef(true);
   React.useEffect(() => {
@@ -50,6 +51,7 @@ export function useCopy(onCopy?: CopyHandler): { state: CopyState; copy: (text: 
       }
       if (!mounted.current) return;
       setState(ok ? 'copied' : 'failed');
+      setFailed(!ok);
       timer.current = setTimeout(() => {
         if (mounted.current) setState('idle');
       }, COPY_FEEDBACK_MS);
@@ -57,7 +59,7 @@ export function useCopy(onCopy?: CopyHandler): { state: CopyState; copy: (text: 
     [onCopy],
   );
 
-  return { state, copy };
+  return { state, failed, copy };
 }
 
 /** Text to announce after a minimum gap, so fast phase changes are merged (ADR-0012 §4). */

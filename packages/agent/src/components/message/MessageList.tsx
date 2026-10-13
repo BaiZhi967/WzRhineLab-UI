@@ -79,6 +79,9 @@ export type MessageListProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'child
   animateEntrance?: boolean;
   /** Pause auto-follow while true (content still renders); resumes on release if still at the latest. */
   holdFollow?: boolean;
+  jumpThreshold?: number;
+  followThreshold?: number;
+  nestedScrollSelector?: string;
 };
 
 type Anchor = { id: string; offset: number };
@@ -119,6 +122,9 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
     label,
     animateEntrance = true,
     holdFollow = false,
+    jumpThreshold = 1,
+    followThreshold = FOLLOW_THRESHOLD_PX,
+    nestedScrollSelector = '[data-scroll-ownership="inner"]',
     className,
     ...rest
   },
@@ -132,6 +138,7 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
   const [following, setFollowingState] = React.useState(true);
   const [leaveLastId, setLeaveLastId] = React.useState<string | null>(null);
   const lastTop = React.useRef(0);
+  const ignoreScrollUntil = React.useRef(0);
   const touchY = React.useRef<number | null>(null);
   const anchor = React.useRef<Anchor | null>(null);
   const messagesRef = React.useRef(messages);
@@ -169,7 +176,7 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
     const el = viewportRef.current;
     if (!el) return;
     if (holdRef.current && mounted.current) {
-      if (distanceFromBottom(el) > FOLLOW_THRESHOLD_PX) setHeld(true);
+      if (distanceFromBottom(el) > followThreshold) setHeld(true);
       return;
     }
     toBottom();
@@ -195,9 +202,23 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
       setFollowing(true);
       setHeld(false);
       if (!el) return;
+      ignoreScrollUntil.current = Date.now() + 350;
       const smooth = (options?.smooth ?? true) && !reduced;
       if (smooth && typeof el.scrollTo === 'function') el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-      else toBottom();
+      else {
+        toBottom();
+        // Firefox can commit image/font layout one frame after the user message. Keep the
+        // explicit jump anchored for two frames so a just-sent message cannot leave a stale gap.
+        if (typeof requestAnimationFrame === 'function') {
+          let frames = 0;
+          const settle = () => {
+            if (!followingRef.current || holdRef.current || frames++ > 300) return;
+            toBottom();
+            requestAnimationFrame(settle);
+          };
+          requestAnimationFrame(settle);
+        }
+      }
     },
     [reduced, setFollowing, toBottom],
   );
@@ -271,6 +292,13 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
     if (mounted.current && followingRef.current && !anchor.current) toBottom();
   }, [holdFollow, toBottom]);
 
+  // A state transition back to following can occur in the same commit as a new message. The
+  // layout effect runs after the new rows are measured, which keeps Firefox from retaining the
+  // pre-send scroll gap when the earlier `scrollTo` happened before its layout flush.
+  React.useLayoutEffect(() => {
+    if (following && mounted.current && !holdFollow && !anchor.current) toBottom();
+  }, [following, holdFollow, toBottom]);
+
   // Content growth (streaming text, disclosures, images): keep the bottom or the anchor.
   React.useEffect(() => {
     const content = contentRef.current;
@@ -280,7 +308,11 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
       if (followingRef.current) followBottom();
     });
     observer.observe(content);
-    return () => observer.disconnect();
+    const mutations = typeof MutationObserver === 'undefined' ? undefined : new MutationObserver(() => {
+      if (followingRef.current) followBottom();
+    });
+    mutations?.observe(content, { childList: true, subtree: true, characterData: true });
+    return () => { observer.disconnect(); mutations?.disconnect(); };
   }, [restoreAnchor, followBottom]);
 
   const reportedFollow = React.useRef(following);
@@ -290,17 +322,37 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
     onFollowChange?.(following);
   }, [following, onFollowChange]);
 
+  const previousFollowing = React.useRef(following);
+  React.useEffect(() => {
+    const resumed = following && !previousFollowing.current && !holdFollow;
+    previousFollowing.current = following;
+    if (!resumed) return undefined;
+    let ticks = 0;
+    const timer = window.setInterval(() => {
+      if (!followingRef.current || holdRef.current || ticks++ > 100) {
+        window.clearInterval(timer);
+        return;
+      }
+      toBottom();
+    }, 50);
+    return () => window.clearInterval(timer);
+  }, [following, holdFollow, toBottom]);
+
   const handleScroll = () => {
     const el = viewportRef.current;
     if (!el) return;
     const top = el.scrollTop;
     const distance = distanceFromBottom(el);
+    if (Date.now() < ignoreScrollUntil.current) {
+      lastTop.current = top;
+      return;
+    }
     // Programmatic moves update `lastTop` first, so any other change is the reader's own scroll.
     if (Math.abs(top - lastTop.current) > 1 && !loadingEarlier) anchor.current = null;
-    if (top < lastTop.current - 1 && distance > FOLLOW_THRESHOLD_PX) {
+    if (top < lastTop.current - jumpThreshold && distance > followThreshold) {
       // Moved up and not by us: scrollbar drag, keyboard, wheel, touch, find-in-page.
       releaseFollow();
-    } else if (distance <= FOLLOW_THRESHOLD_PX && !anchor.current) {
+    } else if (distance <= followThreshold && !anchor.current) {
       setFollowing(true);
       setHeld(false);
     }
@@ -346,7 +398,7 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
         tabIndex={0}
         onScroll={handleScroll}
         onWheel={(event) => {
-          if (!ownsEvent(event.target)) return;
+          if (!ownsEvent(event.target) || (event.target instanceof Element && event.target.closest(nestedScrollSelector))) return;
           anchor.current = null;
           if (event.deltaY < 0) releaseFollow();
         }}
@@ -361,6 +413,7 @@ export const MessageList = React.forwardRef<MessageListHandle, MessageListProps>
           touchY.current = event.touches[0]?.clientY ?? null;
         }}
         onTouchMove={(event) => {
+          if (event.target instanceof Element && event.target.closest(nestedScrollSelector)) return;
           const y = event.touches[0]?.clientY;
           if (touchY.current !== null && y !== undefined) {
             if (y > touchY.current) {

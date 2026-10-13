@@ -155,6 +155,10 @@ export type SubAgentListProps = Omit<React.HTMLAttributes<HTMLElement>, 'childre
   title?: React.ReactNode;
   animate?: boolean;
   messages?: WorkspaceMessagesProp;
+  groupBy?: 'none' | 'state';
+  variant?: 'card' | 'row';
+  disabled?: boolean;
+  empty?: React.ReactNode;
 };
 
 /**
@@ -172,6 +176,10 @@ export function SubAgentList({
   title,
   animate,
   messages: override,
+  groupBy = groupInherited ? 'state' : 'none',
+  variant = 'card',
+  disabled = false,
+  empty,
   className,
   ...rest
 }: SubAgentListProps) {
@@ -182,13 +190,13 @@ export function SubAgentList({
     return agents.filter((a) => (seen.has(a.id) ? false : (seen.add(a.id), true)));
   }, [agents]);
   const titleLevel = Math.max(2, headingLevel - 1) as HeadingLevel;
-  const live = groupInherited ? unique.filter((a) => !a.inherited) : unique;
-  const inheritedGroup = groupInherited ? unique.filter((a) => a.inherited) : [];
+  const live = groupBy === 'state' || groupInherited ? unique.filter((a) => !a.inherited) : unique;
+  const inheritedGroup = groupBy === 'state' || groupInherited ? unique.filter((a) => a.inherited) : [];
   const renderItems = (items: SubagentView[]) => (
     <ul className="rl-agent-subagent-list__items">
       {items.map((agent) => (
         <li key={agent.id}>
-          <SubAgentCard agent={agent} onOpen={onOpen} onOpenSnapshot={onOpenSnapshot} headingLevel={headingLevel} animate={animate} messages={override} />
+          <SubAgentCard agent={agent} onOpen={disabled ? undefined : onOpen} onOpenSnapshot={disabled ? undefined : onOpenSnapshot} headingLevel={headingLevel} animate={animate} messages={override} data-variant={variant} aria-disabled={disabled || undefined} />
         </li>
       ))}
     </ul>
@@ -201,7 +209,7 @@ export function SubAgentList({
         </Heading>
       )}
       {unique.length === 0 ? (
-        <p className="rl-agent-subagent-list__empty">{m.subagentEmpty}</p>
+        <p className="rl-agent-subagent-list__empty">{empty ?? m.subagentEmpty}</p>
       ) : (
         <>
           {live.length > 0 && renderItems(live)}

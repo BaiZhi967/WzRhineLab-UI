@@ -49,6 +49,7 @@ export type ArtifactCardProps = Omit<React.HTMLAttributes<HTMLElement>, 'childre
   renderPreview?: (artifact: ArtifactView) => React.ReactNode;
   headingLevel?: HeadingLevel;
   messages?: WorkspaceMessagesProp;
+  compact?: boolean;
 };
 
 /**
@@ -62,7 +63,7 @@ export type ArtifactCardProps = Omit<React.HTMLAttributes<HTMLElement>, 'childre
  * `ArtifactList` gives new items one AgentEntrance.
  */
 export const ArtifactCard = React.forwardRef<HTMLElement, ArtifactCardProps>(function ArtifactCard(
-  { artifact, onOpen, onDownload, onReveal, onRetry, renderPreview, headingLevel = 3, messages: override, className, ...rest },
+  { artifact, onOpen, onDownload, onReveal, onRetry, renderPreview, headingLevel = 3, messages: override, compact = false, className, ...rest },
   ref,
 ) {
   const m = useWorkspaceMessages(override);
@@ -96,6 +97,7 @@ export const ArtifactCard = React.forwardRef<HTMLElement, ArtifactCardProps>(fun
       aria-busy={busy || undefined}
       data-status={artifact.status}
       data-kind={artifact.kind}
+      data-compact={compact || undefined}
     >
       <div className="rl-agent-artifact__preview">{preview}</div>
       <div className="rl-agent-artifact__body">

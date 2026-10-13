@@ -125,7 +125,8 @@ export {
   tokenCounts,
   toPlainText,
 } from './helpers/composer-tokens.js';
-export type { ComposerToken, EditResult, TriggerMatch } from './helpers/composer-tokens.js';
+export type { ComposerToken, EditResult, TokenBinding, TriggerMatch } from './helpers/composer-tokens.js';
+export { reconcileTokens } from './helpers/composer-tokens.js';
 export { diffStats, lineDiff, parseUnifiedDiff } from './helpers/diff.js';
 export type { LineDiffOptions } from './helpers/diff.js';
-export { codePointLength, formatBytes, formatCompact, formatDuration, lastLine, matchRanges, usageLevel, usagePercent } from './helpers/format.js';
+export { codePointLength, formatBytes, formatCompact, formatDuration, lastLine, matchRanges, pathCrumbs, usageLevel, usagePercent } from './helpers/format.js';

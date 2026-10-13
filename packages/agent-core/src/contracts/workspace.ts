@@ -51,6 +51,11 @@ export interface TerminalView {
   notes?: string[];
   /** Commands run in this terminal, newest last. */
   history?: { id: string; command: string; status: 'running' | 'returned' | 'failed' | 'unknown'; exitCode?: number; at?: string }[];
+  source?: string;
+  stopReason?: string;
+  activity?: string;
+  tail?: string;
+  disabled?: boolean | { reason?: string };
 }
 
 export type SubagentStatus =
@@ -115,6 +120,9 @@ export interface ContextUsageView {
   note?: string;
   /** Extra provider-neutral statistics (cache hit rate, TTFT, TPS…). */
   stats?: UsageStatSection[];
+  /** The number is an estimate rather than a sampled provider value. */
+  estimated?: boolean;
+  disabled?: boolean | { reason?: string };
 }
 
 export interface PinnedSummaryView {

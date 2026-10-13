@@ -25,6 +25,9 @@ export type ContextUsageProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'chil
   align?: PopoverAlign;
   /** `ring`: also open the Popover on hover (focus and click still open it). */
   openOnHover?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  segmentScale?: 'full' | 'fit-used';
   messages?: WorkspaceMessagesProp;
 };
 
@@ -149,7 +152,7 @@ function Breakdown({ usage, m }: { usage: ContextUsageView; m: ReturnType<typeof
  * Motion: none of its own (the Popover has its CSS transition); values update directly.
  */
 export const ContextUsage = React.forwardRef<HTMLDivElement, ContextUsageProps>(function ContextUsage(
-  { usage, variant = 'full', side = 'top', align = 'end', openOnHover, messages: override, className, ...rest },
+  { usage, variant = 'full', side = 'top', align = 'end', openOnHover, open, onOpenChange, segmentScale = 'full', messages: override, className, ...rest },
   ref,
 ) {
   const d = useDerived(usage, override);
@@ -157,12 +160,14 @@ export const ContextUsage = React.forwardRef<HTMLDivElement, ContextUsageProps>(
 
   if (variant === 'ring') {
     return (
-      <div {...rest} ref={ref} className={cx('rl-agent-context', className)} data-variant="ring" data-level={level}>
+      <div {...rest} ref={ref} className={cx('rl-agent-context', className)} data-variant="ring" data-level={level} data-estimated={usage.estimated || usage.completeness === 'estimated' || undefined}>
         <Popover
           side={side}
           align={align}
           size="sm"
           openOnHover={openOnHover}
+          open={open}
+          onOpenChange={onOpenChange}
           title={m.contextTitle}
           trigger={
             <button type="button" className="rl-agent-context__trigger" data-level={level} aria-label={m.contextTrigger(tag ? `${summary} · ${tag}` : summary)}>
@@ -179,7 +184,7 @@ export const ContextUsage = React.forwardRef<HTMLDivElement, ContextUsageProps>(
   }
 
   return (
-    <div {...rest} ref={ref} className={cx('rl-agent-context', className)} data-variant={variant} data-level={level}>
+    <div {...rest} ref={ref} className={cx('rl-agent-context', className)} data-variant={variant} data-level={level} data-estimated={usage.estimated || usage.completeness === 'estimated' || undefined} data-segment-scale={segmentScale}>
       {variant === 'bar' ? (
         <>
           <Measure usage={usage} d={d} size="sm" />

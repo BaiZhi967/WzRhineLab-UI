@@ -13,9 +13,10 @@ export type FieldsetProps = Omit<BaseRootProps, 'className' | 'style' | 'render'
   description?: React.ReactNode;
   /** `disabled` disables every Field and control inside, including Base UI ones. */
   disabled?: boolean;
+  legendOptional?: boolean;
   className?: string;
   style?: React.CSSProperties;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 /**
@@ -26,7 +27,7 @@ export type FieldsetProps = Omit<BaseRootProps, 'className' | 'style' | 'render'
  *   </Fieldset>
  */
 export const Fieldset = React.forwardRef<HTMLElement, FieldsetProps>(function Fieldset(
-  { legend, description, className, style, children, ...rest },
+  { legend, description, legendOptional = false, className, style, children, ...rest },
   ref,
 ) {
   const descriptionId = React.useId();
@@ -39,7 +40,7 @@ export const Fieldset = React.forwardRef<HTMLElement, FieldsetProps>(function Fi
       data-slot="fieldset"
       aria-describedby={description != null ? descriptionId : undefined}
     >
-      <BaseFieldset.Legend className="rl-fieldset__legend">{legend}</BaseFieldset.Legend>
+      <BaseFieldset.Legend className="rl-fieldset__legend">{legend}<span className={legendOptional ? undefined : 'rl-visually-hidden'}>{legendOptional ? '(optional)' : ''}</span></BaseFieldset.Legend>
       {description != null && (
         <p id={descriptionId} className="rl-fieldset__description">
           {description}

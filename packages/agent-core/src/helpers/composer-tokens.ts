@@ -19,11 +19,11 @@ export interface ComposerToken {
   end: number;
 }
 
-/** `/` or `@` + name; name has no whitespace and no isolate characters. */
-const TOKEN_RE = /\u2068([@/])([^\u2068\u2069\s]+)\u2069/g;
+/** `/` or `@` + name; token names may contain spaces but never isolate characters. */
+const TOKEN_RE = /\u2068([@/])([^\u2068\u2069]+?)\u2069/g;
 
 export function encodeToken(trigger: TriggerChar, name: string): string {
-  return `${TOKEN_OPEN}${trigger}${name.replace(/[\s\u2068\u2069]+/g, '-')}${TOKEN_CLOSE}`;
+  return `${TOKEN_OPEN}${trigger}${name.replace(/[\u2068\u2069]/g, '')}${TOKEN_CLOSE}`;
 }
 
 export function parseTokens(value: string): ComposerToken[] {
@@ -116,6 +116,31 @@ export function tokenCounts(value: string): Map<string, number> {
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
   return counts;
+}
+
+/** A host binding associated with one composer token. Extra fields are preserved. */
+export interface TokenBinding {
+  trigger: TriggerChar;
+  name: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Reconcile bindings restored by a host with the tokens that are still present in a draft.
+ * Bindings are returned in their original order, while stale bindings are omitted. Matching is
+ * by trigger and exact token name, including spaces; the helper never invents a binding.
+ */
+export function reconcileTokens<T extends TokenBinding>(value: string, bindings: readonly T[]): T[] {
+  const counts = tokenCounts(value);
+  const seen = new Map<string, number>();
+  return bindings.filter((binding) => {
+    const key = `${binding.trigger}${binding.name}`;
+    const used = seen.get(key) ?? 0;
+    const available = counts.get(key) ?? 0;
+    if (used >= available) return false;
+    seen.set(key, used + 1);
+    return true;
+  });
 }
 
 export interface TriggerMatch {

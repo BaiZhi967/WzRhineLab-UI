@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { motion } from 'motion/react';
-import { Alert, Button, EmptyState, Input, Skeleton } from '@wzrhine/react';
+import { Alert, Button, Collapsible, EmptyState, Input, Skeleton } from '@wzrhine/react';
 import type { ConversationSection, ConversationView } from '@wzrhine/agent-core';
 import { useAgentFormat, useAgentMessages } from '../../provider/AgentMessages.js';
 import { AgentIcon } from '../../primitives/icons.js';
@@ -62,6 +62,9 @@ export type ConversationListProps = Omit<React.HTMLAttributes<HTMLDivElement>, '
   now?: Date;
   /** Number of skeleton rows while loading. */
   skeletonRows?: number;
+  collapsibleGroups?: boolean;
+  collapsedGroups?: readonly string[];
+  onCollapsedGroupsChange?: (groups: string[]) => void;
 };
 
 const ROW_SELECTOR = '.rl-agent-row__main';
@@ -87,6 +90,9 @@ export const ConversationList = React.forwardRef<HTMLDivElement, ConversationLis
     empty,
     now,
     skeletonRows = 5,
+    collapsibleGroups = false,
+    collapsedGroups = [],
+    onCollapsedGroupsChange,
     className,
     ...rest
   },
@@ -233,6 +239,8 @@ export const ConversationList = React.forwardRef<HTMLDivElement, ConversationLis
             const headingId = `${uid}-${section.id}`;
             return (
               <div key={section.id} className="rl-agent-list__section">
+                {collapsibleGroups && <Collapsible open={!collapsedGroups.includes(section.id)} onOpenChange={(open) => onCollapsedGroupsChange?.(open ? collapsedGroups.filter((id) => id !== section.id) : [...collapsedGroups, section.id])} trigger={section.label}><ul className="rl-agent-list__rows" aria-label={section.label}>{section.items.map((item) => <ConversationRow key={item.id} item={item} selected={item.id === selectedId} disabled={isDisabled?.(item)} onSelect={onSelect} now={now} />)}</ul></Collapsible>}
+                {!collapsibleGroups && <>
                 <Heading id={headingId} className="rl-agent-list__heading">
                   {section.label}
                 </Heading>
@@ -253,6 +261,7 @@ export const ConversationList = React.forwardRef<HTMLDivElement, ConversationLis
                     />
                   ))}
                 </ul>
+                </>}
               </div>
             );
           })}

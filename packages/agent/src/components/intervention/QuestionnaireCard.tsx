@@ -70,6 +70,9 @@ export interface QuestionnaireCardProps extends Omit<React.FormHTMLAttributes<HT
   title?: React.ReactNode;
   /** Start on this page instead of the first unanswered question. */
   initialPage?: number;
+  advanceOnSingleChoice?: boolean;
+  draftError?: React.ReactNode;
+  disabled?: boolean;
 }
 
 const CUSTOM = '__rl_agent_custom__';
@@ -187,7 +190,7 @@ function firstControl(root: HTMLElement | null): HTMLElement | null {
 }
 
 export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, QuestionnaireCardProps>(function QuestionnaireCard(
-  { questionnaire, onAnswerChange, onSubmit, onRetrySave, onFlush, onCopyAnswers, onDiscardDraft, title, initialPage, className, ...rest },
+  { questionnaire, onAnswerChange, onSubmit, onRetrySave, onFlush, onCopyAnswers, onDiscardDraft, title, initialPage, advanceOnSingleChoice = false, draftError, disabled = false, className, ...rest },
   ref,
 ) {
   const m = useAgentMessages().intervention;
@@ -257,7 +260,7 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
   }
 
   const busy = status === 'submit-pending' || questionnaire.submitStatus === 'submitting' || lock.locked;
-  const editable = EDITABLE.has(status) && !busy && !!onAnswerChange;
+  const editable = EDITABLE.has(status) && !busy && !!onAnswerChange && !disabled;
   const unknown = status === 'unknown' || questionnaire.submitStatus === 'unknown';
   const question = questions[index];
   const states: QuestionAnswerState[] = questions.map((q) => answerState(q, answers.get(q.id)));
@@ -345,7 +348,7 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
 
   const choose = (optionId: string) => {
     if (!question) return;
-    if (question.kind === 'single') update(question, { questionId: question.id, optionIds: [optionId] });
+    if (question.kind === 'single') { update(question, { questionId: question.id, optionIds: [optionId] }); if (advanceOnSingleChoice && !last) go(index + 1); }
     else {
       const ids = answer?.optionIds ?? [];
       const nextIds = ids.includes(optionId) ? ids.filter((x) => x !== optionId) : [...ids, optionId];
@@ -527,7 +530,7 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
     }
   }
 
-  const draftText = m.questionDraft[questionnaire.draftStatus];
+  const draftText = draftError ?? m.questionDraft[questionnaire.draftStatus];
   const statusMeta =
     busy ? { glyph: 'pending' as const, tone: 'info' as const, active: true } : unknown ? { glyph: 'unknown' as const, tone: 'warning' as const } : { glyph: 'waiting-user' as const, tone: 'warning' as const };
 

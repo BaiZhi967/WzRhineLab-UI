@@ -1,6 +1,6 @@
 # @wzrhine/react · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.1.0，共 265 个导出（73 components，17 functions & hooks，7 constants，30 interfaces，138 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.2.0，共 294 个导出（83 components，19 functions & hooks，8 constants，31 interfaces，153 types）。
 
 ## Components
 
@@ -51,6 +51,7 @@
 | `icon` | `React.ReactNode` | Replace the tone icon; `null` removes it. |
 | `live` | `AlertLive` |  |
 | `onDismiss` | `(() => void)` | Shows a close button. The caller removes the Alert and places focus. |
+| `size` | `AlertSize` |  |
 | `title` | `React.ReactNode` |  |
 | `tone` | `AlertTone` |  |
 
@@ -62,14 +63,17 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
+| `alternateAction` | `AlertDialogAlternateAction` |  |
 | `aria-label` | `undefined` | The accessible name and description always come from `title` / `description`. |
 | `aria-labelledby` | `undefined` |  |
 | `cancelLabel` | `React.ReactNode` |  |
 | `children` | `React.ReactNode` | Extra detail about the consequences, e.g. the affected records. |
 | `className` | `string` |  |
+| `confirmDisabled` | `boolean` |  |
 | `confirmLabel` * | `React.ReactNode` | Label of the confirming action; name it after the action ("删除记录"), not "确定". |
 | `defaultOpen` | `boolean` |  |
 | `description` * | `React.ReactNode` | Required: a confirmation must say what will happen. |
+| `emphasis` | `"confirm" \| "cancel"` |  |
 | `errorText` | `React.ReactNode` | Shown in a role="alert" message when the Promise from `onConfirm` rejects. |
 | `eyebrow` | `React.ReactNode` | Small archive-style label above the title, e.g. "ARCHIVE / DELETE". |
 | `onClosed` | `(() => void)` | Fires after the exit animation, when focus has returned. |
@@ -142,6 +146,7 @@
 | `iconStart` | `React.ReactNode` | Decorative leading icon; hidden from assistive tech. |
 | `loading` | `boolean` | Blocks activation and announces busy state while keeping focus and the accessible name. |
 | `size` | `ButtonSize` |  |
+| `tone` | `ButtonTone` |  |
 | `variant` | `ButtonVariant` | Visual weight. `primary` = ink fill; `accent` = research-orange signal, use once per view. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
@@ -300,6 +305,18 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `CountBadge`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `live` | `boolean` |  |
+| `max` | `number` |  |
+| `value` * | `number` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `DataTable`
 
 *component*
@@ -343,10 +360,12 @@
 | `actions` | `React.ReactNode` | Footer actions. Use `<DialogClose>` for buttons that only dismiss. |
 | `children` | `React.ReactNode` |  |
 | `className` | `string` |  |
+| `closeButton` | `boolean` | Render the standard top-right close control (default true). |
 | `defaultOpen` | `boolean` |  |
 | `description` | `React.ReactNode` |  |
 | `dismissOnOutsideClick` | `boolean` | `false` keeps outside clicks from dismissing (use for destructive confirmations). |
 | `eyebrow` | `React.ReactNode` | Small archive-style label above the title, e.g. "ARCHIVE / CONFIRM". |
+| `finalFocus` | `boolean \| React.RefObject<HTMLElement \| null> \| null` | Focus target after closing; `false` leaves focus where the browser left it. |
 | `initialFocus` | `React.RefObject<HTMLElement \| null>` | Element to focus on open; defaults to the first tabbable element. |
 | `onCloseRequest` | `((reason: DialogCloseReason) => boolean \| void)` | Called before a user-initiated close. Return `false` to keep the dialog open (focus stays put), e.g. to ask "放弃未保存的更改？" in a nested AlertDialog. Programmatic `open={false}` skips it. |
 | `onClosed` | `(() => void)` | Fires after the exit animation, when focus has returned. |
@@ -445,10 +464,11 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `children` * | `React.ReactNode` |  |
+| `children` | `React.ReactNode` |  |
 | `className` | `string` |  |
 | `description` | `React.ReactNode` | Read after the legend as the group's description. |
 | `disabled` | `boolean` | `disabled` disables every Field and control inside, including Base UI ones. |
+| `legendOptional` | `boolean` |  |
 | `legend` * | `React.ReactNode` | Section title; names the group for assistive tech. |
 | `style` | `React.CSSProperties` |  |
 
@@ -488,7 +508,19 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `className` | `string` |  |
+| `disabled` | `boolean` |  |
 | `style` | `React.CSSProperties` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Icon`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `name` * | `"Settings" \| "Settings2" \| "SlidersHorizontal" \| "Minus" \| "Maximize" \| "Maximize2" \| "Minimize2" \| "PanelTopClose" \| "PanelTopOpen" \| "Power" \| "Square" \| "FolderOpen" \| "FolderPlus" \| "FolderMinus" \| "FileCode2" \| "FoldVertical" \| "Plug" \| "Puzzle" \| "Boxes" \| "ShieldAlert" \| "ShieldHalf" \| "ChevronUp" \| "Eye" \| "ImagePlus" \| "MessagesSquare" \| "PinOff" \| "RotateCcw" \| "SquareChartGantt" \| "Users" \| "ChevronDown" \| "ChevronLeft" \| "ChevronRight" \| "Plus" \| "X" \| "Check"` |  |
+| `size` | `string \| number` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -676,6 +708,57 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `NavGroup`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `collapsed` | `boolean` |  |
+| `label` * | `React.ReactNode` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `NavItem`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` |  |
+| `badge` | `React.ReactNode` |  |
+| `collapsed` | `boolean` |  |
+| `disabled` | `boolean` |  |
+| `href` | `string` |  |
+| `icon` | `React.ReactNode` |  |
+| `label` * | `React.ReactNode` |  |
+| `render` | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>> \| ((props: React.HTMLAttributes<HTMLElement>) => React.ReactElement)` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `NavList`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `label` | `string` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `NavRail`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `collapsed` | `boolean` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `NumberField`
 
 *component*
@@ -688,6 +771,7 @@
 | `error` | `React.ReactNode` | Error text: shows on native validity failure, or always together with `invalid`. |
 | `format` | `Intl.NumberFormatOptions` | Intl options for display and parsing (e.g. `{ style: 'percent' }`); locale comes from RhineProvider. |
 | `hideLabel` | `boolean` |  |
+| `inherited` | `string \| number \| boolean` |  |
 | `inputRef` | `React.Ref<HTMLInputElement>` | Ref to the visible text input. |
 | `invalid` | `boolean` |  |
 | `label` * | `React.ReactNode` |  |
@@ -706,6 +790,7 @@
 | `smallStep` | `number` |  |
 | `snapOnStep` | `boolean` | Snap stepped values to multiples of `step`. |
 | `step` | `number` |  |
+| `submitOnEnter` | `boolean` |  |
 | `unit` | `React.ReactNode` | Trailing unit text (e.g. "个"), read as part of the description. |
 | `value` | `number \| null` | `null` means empty. |
 
@@ -739,20 +824,22 @@
 | --- | --- | --- |
 | `actions` | `React.ReactNode` | Footer actions. Wrap dismiss-only buttons in `<PopoverClose>`. |
 | `align` | `PopoverAlign` |  |
+| `anchor` | `HTMLElement \| React.RefObject<HTMLElement \| null> \| { getBoundingClientRect: () => DOMRect; }` | External element or virtual rectangle used when the popover has no trigger. |
 | `aria-label` | `string` | Accessible name when no visible `title` is rendered. |
 | `arrow` | `boolean` | Show a pointer arrow toward the trigger. |
 | `children` | `React.ReactNode` |  |
 | `className` | `string` |  |
 | `defaultOpen` | `boolean` |  |
 | `description` | `React.ReactNode` |  |
-| `initialFocus` | `React.RefObject<HTMLElement \| null>` | Element to focus on open; defaults to the first tabbable element, or the popup. |
+| `initialFocus` | `boolean \| React.RefObject<HTMLElement \| null>` | Element to focus on open; defaults to the first tabbable element, or the popup. |
 | `onOpenChange` | `((open: boolean) => void)` |  |
 | `openOnHover` | `boolean` | Also open on hover (for preview content). Focus and click still open it. |
 | `open` | `boolean` |  |
+| `sideOffset` | `number` |  |
 | `side` | `PopoverSide` |  |
 | `size` | `PopoverSize` |  |
 | `title` | `React.ReactNode` | Visible heading; also the popup's accessible name. Use `aria-label` when there is no title. |
-| `trigger` * | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>>` | Element that toggles the popover (usually a Button or IconButton with its own name). |
+| `trigger` | `React.ReactElement<Record<string, unknown>, string \| React.JSXElementConstructor<any>>` | Element that toggles the popover (usually a Button or IconButton with its own name). |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -797,6 +884,7 @@
 | `aria-labelledby` | `undefined` |  |
 | `className` | `string` |  |
 | `description` | `React.ReactNode` |  |
+| `icon` | `React.ReactNode` |  |
 | `label` * | `React.ReactNode` |  |
 | `style` | `React.CSSProperties` |  |
 | `value` * | `string` |  |
@@ -809,16 +897,19 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
+| `appearance` | `"default" \| "chip" \| "card"` |  |
 | `children` * | `React.ReactNode` |  |
 | `className` | `string` |  |
 | `description` | `React.ReactNode` |  |
 | `disabled` | `boolean` |  |
 | `error` | `React.ReactNode` | Shown when nothing is chosen on submit (`required`) or when `invalid` is set. |
+| `hideLabel` | `boolean` |  |
 | `invalid` | `boolean` |  |
 | `label` * | `React.ReactNode` |  |
 | `name` | `string` |  |
 | `optional` | `boolean` |  |
 | `orientation` | `ChoiceOrientation` |  |
+| `renderIcon` | `((value: string) => React.ReactNode)` |  |
 | `required` | `boolean` |  |
 | `style` | `React.CSSProperties` |  |
 | `validationMode` | `FieldValidationMode` |  |
@@ -841,6 +932,28 @@
 | `title` * | `React.ReactNode` |  |
 | `trailLabel` | `string` | Accessible name of the breadcrumb navigation. |
 | `trail` | `readonly BreadcrumbItem[]` | Ancestors of this record. Rendered as a breadcrumb <nav>; the last item is the current page. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `ResizeHandle`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `defaultSize` | `number` |  |
+| `disabled` | `boolean` |  |
+| `getAriaValueText` | `((size: number) => string)` |  |
+| `label` | `string` |  |
+| `largeStep` | `number` |  |
+| `max` * | `number` |  |
+| `min` * | `number` |  |
+| `onDraggingChange` | `((dragging: boolean) => void)` |  |
+| `onSizeChange` | `((size: number) => void)` |  |
+| `pane` | `"start" \| "end"` |  |
+| `resetSize` | `number` |  |
+| `size` | `number` |  |
+| `step` | `number` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -914,6 +1027,8 @@
 | `onScrollIntentUp` | `(() => void)` | The user tried to scroll up (see component docs). |
 | `onScroll` | `React.UIEventHandler<HTMLDivElement>` | Native scroll events of the viewport. |
 | `orientation` | `ScrollAreaOrientation` | `vertical` (default) wraps content to the width; `both` also scrolls horizontally. |
+| `reveal` | `ScrollReveal` |  |
+| `thumbMinSize` | `string` |  |
 | `viewportClassName` | `string` | Class on the viewport, for padding or content layout. |
 | `viewportRef` | `React.Ref<HTMLDivElement>` | Ref to the native scroller (for `scrollTo`, measuring, observers). |
 
@@ -1166,6 +1281,19 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `Tag`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` * | `React.ReactNode` |  |
+| `disabled` | `boolean` |  |
+| `onRemove` | `(() => void)` |  |
+| `tone` | `"neutral" \| "invalid"` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `Text`
 
 *component*
@@ -1240,6 +1368,28 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `Tree`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `defaultExpandedIds` | `readonly string[]` |  |
+| `defaultSelectedId` | `string` |  |
+| `empty` | `React.ReactNode` |  |
+| `expandedIds` | `readonly string[]` |  |
+| `label` * | `string` |  |
+| `nodes` * | `readonly TreeNode[]` |  |
+| `onExpandedChange` | `((ids: string[]) => void)` |  |
+| `onLoadChildren` | `((node: TreeNode) => void)` |  |
+| `onRetry` | `((node: TreeNode) => void)` |  |
+| `onSelect` | `((node: TreeNode) => void)` |  |
+| `onToggle` | `(React.ToggleEventHandler<HTMLDivElement> & ((node: TreeNode, expanded: boolean) => void))` |  |
+| `renderActions` | `((node: TreeNode) => React.ReactNode)` |  |
+| `selectedId` | `string` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `VisuallyHidden`
 
 *component* — Content for assistive tech only: still in the accessibility tree, removed from layout. Not a way to hide focusable controls unless `focusable` makes them reappear on focus.
@@ -1248,6 +1398,29 @@
 | --- | --- | --- |
 | `as` | `VisuallyHiddenElement` |  |
 | `focusable` | `boolean` | Become visible while it or a descendant has focus (skip links). |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Workbench`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` |  |
+| `defaultIndexOpen` | `boolean` |  |
+| `defaultIndexSize` | `number` |  |
+| `header` | `React.ReactNode` |  |
+| `indexLabel` | `string` |  |
+| `indexMax` | `number` |  |
+| `indexMin` | `number` |  |
+| `indexOpen` | `boolean` |  |
+| `indexSize` | `number` |  |
+| `index` | `React.ReactNode` |  |
+| `mainLabel` | `string` |  |
+| `onIndexOpenChange` | `((open: boolean) => void)` |  |
+| `onIndexSizeChange` | `((size: number) => void)` |  |
+| `rail` | `React.ReactNode` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -1381,12 +1554,28 @@ function useRhineMotion: () => RhineMotion
 function useToast: () => ToastApi
 ```
 
+### `useWorkbench`
+
+*function*
+
+```ts
+function useWorkbench: () => WorkbenchContextValue | null
+```
+
 ### `validateFiles`
 
 *function* — Splits files into accepted and rejected ones; first failing rule wins (type → size → count).
 
 ```ts
 function validateFiles: (files: readonly File[], { accept, maxSize, maxFiles }: { accept?: string; maxSize?: number; maxFiles?: number; }) => { accepted: File[]; rejected: FileRejection[]; }
+```
+
+### `WorkbenchIndex`
+
+*function* — Route-owned index content. A portal preserves the route's data/provider context.
+
+```ts
+function WorkbenchIndex: ({ children }: { children?: React.ReactNode; }) => React.ReactPortal | null
 ```
 
 ## Constants
@@ -1421,6 +1610,14 @@ const enUS: RhineMessages
 
 ```ts
 const fadePresence: { readonly initial: { readonly opacity: 0; }; readonly animate: { readonly opacity: 1; }; readonly exit: { readonly opacity: 0; }; }
+```
+
+### `iconNames`
+
+*const* — Public, dependency-free line icon entry used by consumers that need a stable icon grid.
+
+```ts
+const iconNames: readonly ["Settings", "Settings2", "SlidersHorizontal", "Minus", "Maximize", "Maximize2", "Minimize2", "PanelTopClose", "PanelTopOpen", "Power", "Square", "FolderOpen", "FolderPlus", "FolderMinus", "FileCode2", "FoldVertical", "Plug", "Puzzle", "Boxes", "ShieldAlert", "ShieldHalf", "ChevronUp", "Eye", "ImagePlus", "MessagesSquare", "PinOff", "RotateCcw", "SquareChartGantt", "Users", "ChevronDown", "ChevronLeft", "ChevronRight", "Plus", "X", "Check"]
 ```
 
 ### `pressScale`
@@ -1667,9 +1864,12 @@ const zhCN: RhineMessages
 | `recordHeader` * | `{ trail: string; }` |  |
 | `select` * | `{ placeholder: string; }` |  |
 | `stat` * | `{ loading: string; empty: string; up: string; down: string; flat: string; }` |  |
+| `tag` * | `{ remove: (name: string) => string; }` |  |
 | `textarea` * | `{ count: (current: number, max: number, format: RhineNumberFormat) => string; }` |  |
 | `timeline` * | `{ empty: string; }` |  |
 | `toast` * | `{ close: string; region: string; }` |  |
+| `tree` * | `{ loading: string; empty: string; retry: (name: string) => string; expand: (name: string) => string; collapse: (name: string) => string; }` |  |
+| `workbench` * | `{ index: string; content: string; resize: string; width: (width: string) => string; }` |  |
 
 ### `RhineMessagesProviderProps`
 
@@ -1801,6 +2001,21 @@ const zhCN: RhineMessages
 | `loading` * | `string \| ToastOptions` | Shown until the promise settles; never auto-dismisses. Status defaults to `info`. |
 | `success` * | `ToastPromiseStage<Value>` | Status defaults to `success`. |
 
+### `TreeNode`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `children` | `TreeNode[]` |  |
+| `disabled` | `boolean` |  |
+| `error` | `React.ReactNode` |  |
+| `hasChildren` | `boolean` |  |
+| `id` * | `string` |  |
+| `label` * | `React.ReactNode` |  |
+| `loading` | `boolean` |  |
+| `textValue` | `string` |  |
+
 ## Types
 
 ### `AccordionHeadingLevel`
@@ -1818,6 +2033,14 @@ type AccordionHeadingLevel = 2 | 3 | 4 | 5 | 6
 ### `AccordionProps`
 
 *type*
+
+### `AlertDialogAlternateAction`
+
+*type*
+
+```ts
+type AlertDialogAlternateAction = { label: React.ReactNode; onClick?: () => void | Promise<unknown>; disabled?: boolean; }
+```
 
 ### `AlertDialogProps`
 
@@ -1842,6 +2065,14 @@ type AlertLive = 'off' | 'polite' | 'assertive'
 ### `AlertProps`
 
 *type*
+
+### `AlertSize`
+
+*type*
+
+```ts
+type AlertSize = 'sm' | 'md'
+```
 
 ### `AlertTone`
 
@@ -1877,6 +2108,14 @@ type ArchiveIdentityProps = { /** Record ID; must match the `ArchiveCard` it con
 
 ```ts
 type ButtonSize = 'sm' | 'md' | 'lg'
+```
+
+### `ButtonTone`
+
+*type*
+
+```ts
+type ButtonTone = 'default' | 'danger'
 ```
 
 ### `ButtonVariant`
@@ -1942,6 +2181,14 @@ type CommandFilter = (command: CommandItem, query: string) => boolean
 ### `ContextMenuProps`
 
 *type* — Context menu on Base UI ContextMenu (ADR-0010 §2). Opens at the pointer on right click, on long press (touch, 500 ms) and, from the keyboard, on Shift+F10 / the ContextMenu key while the target has focus (the browser fires `contextmenu` on the focused element). It reuses the Menu parts and styling: put `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuGroup` and `MenuSeparator` inside. Escape and outside click close it; focus returns to the target.
+
+### `CountBadgeProps`
+
+*type*
+
+```ts
+type CountBadgeProps = Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> & { value: number; max?: number; live?: boolean; }
+```
 
 ### `DataTableProps`
 
@@ -2080,7 +2327,7 @@ type FileRejectionReason = 'type' | 'size' | 'count'
 *type*
 
 ```ts
-type FormProps = Omit<BaseFormProps, 'className' | 'style' | 'render'> & { className?: string; style?: React.CSSProperties; }
+type FormProps = Omit<BaseFormProps, 'className' | 'style' | 'render'> & { disabled?: boolean; className?: string; style?: React.CSSProperties; }
 ```
 
 ### `IconButtonProps`
@@ -2093,6 +2340,22 @@ type FormProps = Omit<BaseFormProps, 'className' | 'style' | 'render'> & { class
 
 ```ts
 type IconButtonVariant = 'secondary' | 'ghost' | 'primary'
+```
+
+### `IconName`
+
+*type*
+
+```ts
+type IconName = (typeof iconNames)[number]
+```
+
+### `IconProps`
+
+*type*
+
+```ts
+type IconProps = Omit<React.SVGAttributes<SVGSVGElement>, 'name'> & { name: IconName; size?: number | string; }
 ```
 
 ### `InputProps`
@@ -2239,6 +2502,34 @@ type MotionPresencePreset = 'fade' | 'panel' | 'rise'
 type MotionPropertyKind = 'color' | 'opacity' | 'transform' | 'layout' | 'loop'
 ```
 
+### `NavGroupProps`
+
+*type*
+
+```ts
+type NavGroupProps = React.HTMLAttributes<HTMLElement> & { label: React.ReactNode; children: React.ReactNode; collapsed?: boolean; }
+```
+
+### `NavItemProps`
+
+*type*
+
+### `NavListProps`
+
+*type*
+
+```ts
+type NavListProps = React.HTMLAttributes<HTMLElement> & { children: React.ReactNode; label?: string; }
+```
+
+### `NavRailProps`
+
+*type*
+
+```ts
+type NavRailProps = React.HTMLAttributes<HTMLElement> & { children: React.ReactNode; collapsed?: boolean; }
+```
+
 ### `NumberFieldProps`
 
 *type* — Numeric input with stepper buttons on Base UI NumberField + Field (ADR-0010 §2). Label, description and error are wired like `Field` (aria-labelledby / aria-describedby / aria-invalid). The visible text input parses and formats with the provider locale; a hidden native input carries the raw number for form submission under `name`.
@@ -2331,6 +2622,10 @@ type ProgressTone = 'neutral' | 'accent' | 'success' | 'warning' | 'danger'
 type RecordTrailItem = BreadcrumbItem
 ```
 
+### `ResizeHandleProps`
+
+*type*
+
 ### `RhineDensity`
 
 *type*
@@ -2406,6 +2701,14 @@ type ScrollAreaOrientation = 'vertical' | 'both'
 ### `ScrollAreaProps`
 
 *type*
+
+### `ScrollReveal`
+
+*type*
+
+```ts
+type ScrollReveal = 'always' | 'hover' | 'scroll'
+```
 
 ### `SelectProps`
 
@@ -2595,6 +2898,14 @@ type TabsSize = 'sm' | 'md'
 type TabsVariant = 'line' | 'segmented'
 ```
 
+### `TagProps`
+
+*type*
+
+```ts
+type TagProps = Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> & { children: React.ReactNode; tone?: 'neutral' | 'invalid'; onRemove?: () => void; disabled?: boolean; }
+```
+
 ### `TextareaProps`
 
 *type*
@@ -2675,6 +2986,10 @@ type ToastStatus = Exclude<StatusKind, 'neutral'> | 'neutral'
 type TooltipSide = 'top' | 'bottom' | 'left' | 'right'
 ```
 
+### `TreeProps`
+
+*type*
+
 ### `VisuallyHiddenElement`
 
 *type*
@@ -2690,4 +3005,8 @@ type VisuallyHiddenElement = 'span' | 'div' | 'p' | 'h2' | 'h3' | 'label' | 'leg
 ```ts
 type VisuallyHiddenProps = React.HTMLAttributes<HTMLElement> & { as?: VisuallyHiddenElement; /** Become visible while it or a descendant has focus (skip links). */ focusable?: boolean; }
 ```
+
+### `WorkbenchProps`
+
+*type*
 

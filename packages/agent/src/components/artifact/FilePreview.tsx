@@ -40,6 +40,8 @@ export type FilePreviewProps = Omit<React.HTMLAttributes<HTMLElement>, 'children
   onOpenExternal?: (file: FilePreviewView) => void;
   /** Adds the file as a reference to the conversation. */
   onReference?: (file: FilePreviewView) => void;
+  referenceDisabled?: boolean;
+  reloading?: boolean;
   onClose?: () => void;
   /** Ways to open the file. With `onOpenWith` they render a split button + menu. */
   openTargets?: FileOpenTarget[];
@@ -93,6 +95,8 @@ export const FilePreview = React.forwardRef<HTMLElement, FilePreviewProps>(funct
     onLoadMore,
     onOpenExternal,
     onReference,
+    referenceDisabled = false,
+    reloading = false,
     onClose,
     openTargets,
     defaultOpenTarget,
@@ -159,7 +163,7 @@ export const FilePreview = React.forwardRef<HTMLElement, FilePreviewProps>(funct
         file={file}
         canCopy={canCopy}
         onOpenExternal={onOpenExternal}
-        onReference={onReference}
+        onReference={referenceDisabled ? undefined : onReference}
         onReload={onReload}
         openTargets={openTargets}
         defaultOpenTarget={defaultOpenTarget}
@@ -258,7 +262,7 @@ function FileActions({
           defaultTarget={defaultOpenTarget}
           onOpenWith={onOpenWith!}
           onCopyPath={file.path ? () => void copyPath() : undefined}
-          onReference={onReference}
+        onReference={onReference}
           m={m}
         />
       )}

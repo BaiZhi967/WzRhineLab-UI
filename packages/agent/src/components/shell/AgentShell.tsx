@@ -103,6 +103,10 @@ export type AgentShellProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'childr
   contextSize?: number;
   defaultContextSize?: number;
   onContextSizeChange?: (size: number) => void;
+  readingMin?: number;
+  resizeStep?: number;
+  resizeLargeStep?: number;
+  onContextClosed?: () => void;
   contextMin?: number;
   contextMax?: number;
   /** Show the ResizeHandle between reading column and pane (default true). */
@@ -228,6 +232,10 @@ export const AgentShell = React.forwardRef<HTMLDivElement, AgentShellProps>(func
     onContextSizeChange,
     contextMin = 288,
     contextMax = 640,
+    readingMin = READING_MIN,
+    resizeStep = 16,
+    resizeLargeStep = 64,
+    onContextClosed,
     resizable = true,
     breakpoints,
     layout: layoutProp,
@@ -314,7 +322,7 @@ export const AgentShell = React.forwardRef<HTMLDivElement, AgentShellProps>(func
 
   const [innerSize, setInnerSize] = React.useState(defaultContextSize);
   const rawSize = contextSize ?? innerSize;
-  const fitMax = measured.width ? Math.max(contextMin, Math.min(contextMax, measured.width - measured.side - READING_MIN)) : contextMax;
+  const fitMax = measured.width ? Math.max(contextMin, Math.min(contextMax, measured.width - measured.side - readingMin)) : contextMax;
   const paneSize = Math.round(Math.min(Math.max(rawSize, contextMin), fitMax));
   const setSize = (next: number) => {
     if (contextSize === undefined) setInnerSize(next);
@@ -380,6 +388,8 @@ export const AgentShell = React.forwardRef<HTMLDivElement, AgentShellProps>(func
             max={fitMax}
             resetSize={defaultContextSize}
             pane="end"
+            step={resizeStep}
+            largeStep={resizeLargeStep}
           />
         )}
         {inlineContext && (
@@ -389,7 +399,7 @@ export const AgentShell = React.forwardRef<HTMLDivElement, AgentShellProps>(func
             data-open={contextOpen || undefined}
             inert={!contextOpen}
             aria-hidden={!contextOpen || undefined}
-            onFocus={() => {
+          onFocus={() => {
               focusWithin.current = true;
             }}
             onBlur={(event) => {
@@ -417,7 +427,7 @@ export const AgentShell = React.forwardRef<HTMLDivElement, AgentShellProps>(func
       {hasContext && !inlineContext && (
         <Drawer
           open={sheetsReady && contextOpen}
-          onOpenChange={(open) => ctx.set(open, 'dismiss')}
+          onOpenChange={(open) => { ctx.set(open, 'dismiss'); if (!open) onContextClosed?.(); }}
           side="end"
           size="md"
           title={contextLabel ?? messages.contextLabel}

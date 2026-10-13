@@ -21,6 +21,7 @@ export type ResizeHandleProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'chil
   size?: number;
   defaultSize?: number;
   onSizeChange?: (size: number) => void;
+  onDraggingChange?: (dragging: boolean) => void;
   min: number;
   max: number;
   /** Arrow-key step in CSS pixels. */
@@ -33,6 +34,7 @@ export type ResizeHandleProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'chil
   pane?: 'start' | 'end';
   /** Accessible name; defaults to the shell copy 「调整详情面板宽度」. */
   label?: string;
+  getAriaValueText?: (size: number) => string;
   disabled?: boolean;
 };
 
@@ -48,6 +50,7 @@ export const ResizeHandle = React.forwardRef<HTMLDivElement, ResizeHandleProps>(
     size: sizeProp,
     defaultSize,
     onSizeChange,
+    onDraggingChange,
     min,
     max,
     step = 16,
@@ -55,6 +58,7 @@ export const ResizeHandle = React.forwardRef<HTMLDivElement, ResizeHandleProps>(
     resetSize,
     pane = 'end',
     label,
+    getAriaValueText,
     disabled = false,
     className,
     onKeyDown,
@@ -88,6 +92,7 @@ export const ResizeHandle = React.forwardRef<HTMLDivElement, ResizeHandleProps>(
   const endDrag = () => {
     drag.current = null;
     setDragging(false);
+    onDraggingChange?.(false);
   };
 
   return (
@@ -100,7 +105,7 @@ export const ResizeHandle = React.forwardRef<HTMLDivElement, ResizeHandleProps>(
       aria-valuenow={size}
       aria-valuemin={min}
       aria-valuemax={Math.max(min, max)}
-      aria-valuetext={messages.resizeValue(format.number(size))}
+      aria-valuetext={getAriaValueText ? getAriaValueText(size) : messages.resizeValue(format.number(size))}
       aria-disabled={disabled || undefined}
       tabIndex={disabled ? -1 : 0}
       className={cx('rl-agent-resize', className)}
@@ -127,6 +132,7 @@ export const ResizeHandle = React.forwardRef<HTMLDivElement, ResizeHandleProps>(
         event.currentTarget.setPointerCapture?.(event.pointerId);
         drag.current = { x: event.clientX, size, dir: growDirection(event.currentTarget), id: event.pointerId };
         setDragging(true);
+        onDraggingChange?.(true);
         // Keeps the drag from selecting text; focus still lands on the handle.
         event.preventDefault();
         event.currentTarget.focus();

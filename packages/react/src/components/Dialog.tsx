@@ -6,6 +6,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { usePortalContainer } from '../provider/portal.js';
 import { useRhineMotion } from '../motion/useRhineMotion.js';
 import { cx } from '../utils/cx.js';
+import { IconButton } from './IconButton.js';
+import { Icon } from './Icon.js';
 
 /**
  * Modal dialog on Base UI Dialog (ADR-0001): focus trap, Escape, scroll lock, inert background
@@ -46,6 +48,10 @@ export type DialogProps = {
   dismissOnOutsideClick?: boolean;
   /** Element to focus on open; defaults to the first tabbable element. */
   initialFocus?: React.RefObject<HTMLElement | null>;
+  /** Render the standard top-right close control (default true). */
+  closeButton?: boolean;
+  /** Focus target after closing; `false` leaves focus where the browser left it. */
+  finalFocus?: boolean | null | React.RefObject<HTMLElement | null>;
   /**
    * Called before a user-initiated close. Return `false` to keep the dialog open (focus stays put),
    * e.g. to ask "放弃未保存的更改？" in a nested AlertDialog. Programmatic `open={false}` skips it.
@@ -70,6 +76,8 @@ export function Dialog({
   size = 'md',
   dismissOnOutsideClick = true,
   initialFocus,
+  closeButton = true,
+  finalFocus,
   onCloseRequest,
   className,
 }: DialogProps) {
@@ -123,6 +131,7 @@ export function Dialog({
               data-slot="dialog"
               data-size={size}
               initialFocus={initialFocus}
+              finalFocus={finalFocus === null ? false : finalFocus}
               render={
                 <motion.div
                   initial={{ opacity: 0, y: rise }}
@@ -138,6 +147,7 @@ export function Dialog({
                 {description != null && (
                   <BaseDialog.Description className="rl-dialog__description">{description}</BaseDialog.Description>
                 )}
+                {closeButton && <BaseDialog.Close render={<IconButton className="rl-dialog__close" variant="ghost" size="sm" icon={<Icon name="X" />} label="Close" />} />}
               </header>
               {children != null && <div className="rl-dialog__body">{children}</div>}
               {actions != null && <footer className="rl-dialog__actions">{actions}</footer>}

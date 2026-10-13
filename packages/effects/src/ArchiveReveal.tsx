@@ -16,7 +16,7 @@ import { usePageVisible } from './usePageVisible.js';
  * Never use it to delay business data: pass content that is already loaded.
  */
 
-export type ArchiveRevealProps = {
+export type ArchiveRevealProps = Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> & {
   text: string;
   /** Target state. Changing it animates from the current position. */
   revealed: boolean;
@@ -26,14 +26,27 @@ export type ArchiveRevealProps = {
   onSettled?: (revealed: boolean) => void;
   /** Accessible text while concealed, e.g. "受限内容". Defaults to the text itself. */
   concealedLabel?: string;
-  className?: string;
+  paused?: boolean;
 };
 
 const FRAME_MS = 48;
 
-export function ArchiveReveal({ text, revealed, duration = 640, onSettled, concealedLabel, className }: ArchiveRevealProps) {
+export const ArchiveReveal = React.forwardRef<HTMLSpanElement, ArchiveRevealProps>(function ArchiveReveal({ text, revealed, duration = 640, onSettled, concealedLabel, paused = false, className, ...rest }, ref) {
   const timing = useEffectTiming();
   const visible = usePageVisible();
+  const viewportRef = React.useRef<HTMLSpanElement>(null);
+  const [inViewport, setInViewport] = React.useState(true);
+  React.useEffect(() => {
+    const element = viewportRef.current;
+    if (!element) return undefined;
+    const onVisibility = () => { if (!document.hidden) setInViewport(true); };
+    document.addEventListener('visibilitychange', onVisibility);
+    if (typeof IntersectionObserver === 'undefined') return () => document.removeEventListener('visibilitychange', onVisibility);
+    const observer = new IntersectionObserver(([entry]) => setInViewport(entry?.isIntersecting ?? true), { threshold: 0 });
+    observer.observe(element);
+    return () => { observer.disconnect(); document.removeEventListener('visibilitychange', onVisibility); };
+  }, []);
+  const effectiveVisible = visible && inViewport && !paused;
   const target = revealed ? 1 : 0;
   const [progress, setProgress] = React.useState(target);
   const [frame, setFrame] = React.useState(0);
@@ -49,7 +62,7 @@ export function ArchiveReveal({ text, revealed, duration = 640, onSettled, conce
       return;
     }
     if (progressRef.current === target) return;
-    if (!visible) {
+    if (!effectiveVisible) {
       // Paused: settle nothing now; the effect re-runs (and resumes from the current progress) on visibility.
       return;
     }
@@ -83,7 +96,7 @@ export function ArchiveReveal({ text, revealed, duration = 640, onSettled, conce
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [target, revealed, duration, timing, visible]);
+  }, [target, revealed, duration, timing, effectiveVisible]);
 
   const cells = scrambleCells(text, progress, frame);
   const settled = progress === target;
@@ -91,10 +104,14 @@ export function ArchiveReveal({ text, revealed, duration = 640, onSettled, conce
 
   return (
     <span
+      {...rest}
+      ref={(node) => { viewportRef.current = node; if (typeof ref === 'function') ref(node); else if (ref) ref.current = node; }}
       className={['rl-reveal', className].filter(Boolean).join(' ')}
       data-slot="archive-reveal"
       data-state={settled ? (revealed ? 'revealed' : 'concealed') : 'animating'}
       data-reduced={timing.reduced || undefined}
+      data-paused={paused || !effectiveVisible || undefined}
+      aria-label={rest['aria-label'] ?? label}
     >
       <span className="rl-effect-sr">{label}</span>
       <span className="rl-reveal__glyphs" aria-hidden="true">
@@ -106,4 +123,4 @@ export function ArchiveReveal({ text, revealed, duration = 640, onSettled, conce
       </span>
     </span>
   );
-}
+});

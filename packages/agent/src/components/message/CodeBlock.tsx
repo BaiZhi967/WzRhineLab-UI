@@ -42,7 +42,7 @@ export const CodeBlock = React.forwardRef<HTMLElement, CodeBlockProps>(function 
   const t = useAgentMessages().message;
   const captionId = React.useId();
   const clipboard = useClipboardAvailable();
-  const { state, copy } = useCopy(onCopy);
+  const { state, failed, copy } = useCopy(onCopy);
   const canCopy = copyable && (onCopy !== undefined || clipboard);
   const caption = filename ?? language ?? t.codeLabel;
   const lines = React.useMemo(() => (showLineNumbers ? code.split('\n') : []), [code, showLineNumbers]);
@@ -74,6 +74,7 @@ export const CodeBlock = React.forwardRef<HTMLElement, CodeBlockProps>(function 
           </span>
         )}
       </figcaption>
+      {failed && <p className="rl-agent-code__error" role="alert">{t.copyFailed}</p>}
       <div className="rl-agent-code__scroll" tabIndex={0} role="region" aria-labelledby={captionId} style={scrollStyle} data-max-height={maxHeight ? '' : undefined}>
         {showLineNumbers && (
           <span className="rl-agent-code__gutter" aria-hidden="true">

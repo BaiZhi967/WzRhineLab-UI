@@ -4,7 +4,12 @@
 
 ## [Unreleased]
 
-（暂无）
+### Added
+- Wpi 接入：公共 `Icon` / `./icons` 入口；`Workbench`、`NavRail`、`NavList`、`Tree`、`CountBadge`、`Tag` 和公共 `ResizeHandle`。
+- Popover 外部锚点、`sideOffset`、`initialFocus={false}`；AlertDialog 禁用确认/强调方式/第三按钮；Dialog 关闭按钮与最终焦点；RadioGroup chip/card、隐藏标签与图标槽。
+
+### Changed
+- peer `motion` 从 `^12` 升到 `^14.0.0`，开发和验证版本为 14.1.0；0.x 破坏性变更，目标发行版本 0.2.0。
 
 ## [0.1.0] - 2026-10-12
 

@@ -89,6 +89,21 @@ export const colorGroups = [
     ],
   },
   {
+    id: 'category',
+    label: 'Category',
+    description: '分类辅助色，必须和可读标签一起使用。',
+    tokens: [
+      { name: '--rl-category-1', role: '分类 1' },
+      { name: '--rl-category-2', role: '分类 2' },
+      { name: '--rl-category-3', role: '分类 3' },
+      { name: '--rl-category-4', role: '分类 4' },
+      { name: '--rl-category-5', role: '分类 5' },
+      { name: '--rl-category-6', role: '分类 6' },
+      { name: '--rl-category-7', role: '分类 7' },
+      { name: '--rl-category-8', role: '分类 8' },
+    ],
+  },
+  {
     id: 'focus',
     label: 'Focus',
     description: '焦点色独立于品牌橙与危险色。',

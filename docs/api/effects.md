@@ -1,6 +1,6 @@
 # @wzrhine/effects · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.1.0，共 24 个导出（5 components，9 functions & hooks，5 interfaces，5 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.2.0，共 24 个导出（5 components，9 functions & hooks，5 interfaces，5 types）。
 
 ## Components
 
@@ -10,10 +10,10 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `className` | `string` |  |
 | `concealedLabel` | `string` | Accessible text while concealed, e.g. "受限内容". Defaults to the text itself. |
 | `duration` | `number` | Full reveal duration at speed 1 (ms). |
 | `onSettled` | `((revealed: boolean) => void)` | Called once the effect settles at the requested state. |
+| `paused` | `boolean` |  |
 | `revealed` * | `boolean` | Target state. Changing it animates from the current position. |
 | `text` * | `string` |  |
 
@@ -60,6 +60,7 @@
 | `nodes` * | `readonly OrbitNode[]` |  |
 | `period` | `number` | Seconds per revolution of the outer ring at speed 1. |
 | `rings` | `number` |  |
+| `size` | `number` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -71,9 +72,12 @@
 | --- | --- | --- |
 | `children` * | `React.ReactNode` |  |
 | `className` | `string` |  |
-| `duration` | `number` | Sweep duration at speed 1 (ms). |
+| `containerType` | `boolean` |  |
+| `duration` | `number \| "fast" \| "base" \| "panel" \| "showcase"` | Sweep duration at speed 1 (ms). |
 | `onScanEnd` | `(() => void)` |  |
+| `overflow` | `"hidden" \| "visible"` |  |
 | `scanKey` | `string \| number` | Change this value to run one sweep (a counter or timestamp). |
+| `tone` | `"accent" \| "info" \| "warning" \| "success" \| "neutral"` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -194,6 +198,8 @@ function usePageVisible: () => boolean
 | `id` * | `string` |  |
 | `label` * | `string` |  |
 | `ring` * | `number` | Ring index, 0 = innermost. |
+| `selected` | `boolean` |  |
+| `tone` | `"accent" \| "info" \| "warning" \| "success" \| "neutral"` |  |
 
 ### `ScrambleCell`
 
@@ -229,8 +235,4 @@ type MotionLane = 'default' | 'slow' | 'reduced' | 'interrupt'
 ### `ScanSurfaceProps`
 
 *type* — Single-pass scan line over a surface, triggered by the user (e.g. "re-scan"). Showcase effect: - One sweep per `scanKey` change, never an idle infinite loop (STYLE.md forbids default infinite scans). - Children render immediately and stay interactive; the sweep is a pointer-events:none overlay. - Reduced motion: no moving line; a brief static outline marks the "scanned" moment instead. - Stop conditions (ADR-0007): skipped while the page is hidden, cut short if the page hides mid-sweep, cleared on unmount. One-shot, so it does not track the viewport.
-
-```ts
-type ScanSurfaceProps = { children: React.ReactNode; /** Change this value to run one sweep (a counter or timestamp). */ scanKey?: number | string; /** Sweep duration at speed 1 (ms). */ duration?: number; onScanEnd?: () => void; className?: string; }
-```
 

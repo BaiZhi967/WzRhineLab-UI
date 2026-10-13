@@ -4,7 +4,11 @@
 
 ## [Unreleased]
 
-（暂无）
+### Added
+- OrbitalDiagram 尺寸、节点色调与选中态；ScanSurface 色调、时长预设和容器副作用开关；ArchiveReveal 原生属性/ref、视口暂停与受控暂停。
+
+### Changed
+- peer `motion` 为 `^14.0.0`，目标发行版本 0.2.0。
 
 ## [0.1.0] - 2026-10-12
 

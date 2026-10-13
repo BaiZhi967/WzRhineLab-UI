@@ -1,6 +1,6 @@
 # @wzrhine/agent · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.1.0，共 377 个导出（84 components，64 functions & hooks，18 constants，92 interfaces，119 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.2.0，共 389 个导出（87 components，65 functions & hooks，18 constants，97 interfaces，122 types）。
 
 ## Components
 
@@ -86,7 +86,7 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `name` * | `"agent" \| "tool" \| "image" \| "file" \| "code" \| "folder" \| "info" \| "warning" \| "chevron-down" \| "chevron-right" \| "chevron-left" \| "arrow-down" \| "arrow-up" \| "arrow-left" \| "close" \| "plus" \| "search" \| "more" \| "pin" \| "archive" \| "unarchive" \| "trash" \| "edit" \| "fork" \| "copy" \| "check" \| "retry" \| "send" \| "stop" \| "attach" \| "at" \| "slash" \| "terminal" \| "shield" \| "question" \| "spark" \| "panel" \| "link" \| "external" \| "download" \| "history" \| "clock" \| "model" \| "globe" \| "database" \| "layers" \| "list"` |  |
+| `name` * | `"agent" \| "tool" \| "retry" \| "image" \| "file" \| "code" \| "folder" \| "info" \| "warning" \| "chevron-down" \| "chevron-right" \| "chevron-left" \| "arrow-down" \| "arrow-up" \| "arrow-left" \| "close" \| "plus" \| "search" \| "more" \| "pin" \| "archive" \| "unarchive" \| "trash" \| "edit" \| "fork" \| "copy" \| "check" \| "send" \| "stop" \| "attach" \| "at" \| "slash" \| "terminal" \| "shield" \| "question" \| "spark" \| "panel" \| "link" \| "external" \| "download" \| "history" \| "clock" \| "model" \| "globe" \| "database" \| "layers" \| "list"` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -178,11 +178,15 @@
 | `index` | `React.ReactNode` | Conversation index column, usually a ConversationList. |
 | `layout` | `AgentShellLayout` | Force a layout (tests, hosts that already know their size). Overrides measurement. |
 | `mainLabel` | `string` | Accessible name of the reading column. |
+| `onContextClosed` | `(() => void)` |  |
 | `onContextOpenChange` | `((open: boolean, reason: AgentShellOpenReason) => void)` |  |
 | `onContextSizeChange` | `((size: number) => void)` |  |
 | `onIndexOpenChange` | `((open: boolean, reason: AgentShellOpenReason) => void)` |  |
 | `rail` | `React.ReactNode` | App navigation rail (hidden on narrow layouts; the host offers its own menu there). |
+| `readingMin` | `number` |  |
 | `resizable` | `boolean` | Show the ResizeHandle between reading column and pane (default true). |
+| `resizeLargeStep` | `number` |  |
+| `resizeStep` | `number` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -257,9 +261,10 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `detail` * | `{ kind: "patch"; files: FileDiffView[]; revision?: string; materialReady?: boolean; }` |  |
+| `detail` * | `{ kind: "patch"; files: FileDiffView[]; revision?: string; materialReady?: boolean; hunksAvailable?: boolean; baseVersion?: string; raw?: MaterialPageView; }` |  |
 | `onReload` | `((path: string) => void)` |  |
 | `onViewFull` | `((path: string) => void)` |  |
+| `rawActions` | `ChunkPagerActions` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -293,6 +298,7 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `artifact` * | `ArtifactView` |  |
+| `compact` | `boolean` |  |
 | `headingLevel` | `HeadingLevel` |  |
 | `messages` | `Partial<AgentWorkspaceMessages>` |  |
 | `onDownload` | `((artifact: ArtifactView) => void)` |  |
@@ -450,6 +456,7 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
+| `allowEmptyText` | `boolean` | Allow sending when the text is empty if at least one attachment/reference exists. |
 | `aria-label` | `string` |  |
 | `attachments` | `readonly AttachmentView[]` |  |
 | `blocked` | `string \| boolean` | Input blocked by a pending intervention (e.g. a questionnaire): the textarea becomes read-only and `aria-disabled`, the reason replaces the placeholder and shows in the feedback line. `true` uses the default copy ("请先在上方回答问题"). |
@@ -472,7 +479,7 @@
 | `menuSide` | `"top" \| "bottom"` | Side the menus open on. |
 | `onCommandQuery` | `((query: string \| null) => void)` |  |
 | `onCommand` | `((option: CommandOption, match: TriggerMatch) => "insert" \| void)` | A command or skill was chosen. Return `'insert'` to replace the typed `/query` with a token; otherwise the typed query is removed and the host dispatches its own action. |
-| `onDisabledCommand` | `((option: CommandOption) => void)` | A disabled command was chosen: nothing is dispatched; its reason shows in the feedback line. |
+| `onDisabledCommand` | `((option: CommandOption, match: TriggerMatch) => "consume" \| void)` | A disabled command was chosen: nothing is dispatched; its reason shows in the feedback line. |
 | `onFilesDrop` | `((files: File[]) => void)` | Files dropped on the frame (drag-over highlight while dragging). No callback → no drop zone. |
 | `onFilesPaste` | `((files: File[]) => void)` | Files pasted into the textarea. Text paste is untouched. |
 | `onMentionDrill` | `((option: MentionOption) => void)` | A folder was drilled into (the query is already rewritten to `folder/`). |
@@ -484,17 +491,21 @@
 | `onRetryAction` | `((kind: "send" \| "stop", actionId: string \| undefined) => void)` | Retry an `unknown` send / stop with its original actionId (ADR-0011 §4). |
 | `onRetryAttachment` | `((attachment: AttachmentView) => void)` |  |
 | `onRetryDraftSave` | `(() => void)` |  |
+| `onRetryPersistence` | `(() => void)` |  |
 | `onStop` | `(() => void)` |  |
 | `onSubmit` | `((input: SendInput) => void)` | Receives the plain text (`@name` / `/name`), the raw value with markers, references and attachments. |
 | `onTokenRemoved` | `((token: ComposerToken) => void)` | A token disappeared from the text (whole-token delete, cut, overwrite): unbind its reference. |
 | `onValueChange` | `((value: string) => void)` |  |
+| `persistence` | `"idle" \| DraftStatus` |  |
 | `placeholder` | `string` |  |
 | `readOnly` | `boolean` |  |
 | `references` | `readonly ReferenceView[]` |  |
 | `replacement` | `React.ReactNode` | Rendered instead of the input frame, menus and feedback line, e.g. a `ComposerNotice` for a sub-agent, archived or inherited thread. The `intervention` slot stays above it, so approvals and questions still dock. The draft value is kept and comes back when `replacement` is removed. |
+| `retryBusy` | `boolean` |  |
 | `runStatus` | `RunStatus` |  |
 | `sendDisabledReason` | `string` |  |
 | `showCount` | `boolean` | Show the counter without a limit. |
+| `slash` | `"line-start" \| "word-start"` |  |
 | `stopStatus` | `ActionReceipt \| ActionStatus` |  |
 | `submitOn` | `"enter" \| "mod-enter"` |  |
 | `submitStatus` | `ActionReceipt \| ActionStatus` | Receipt of the last send. `submitting` / `unknown` block Enter and the button (no duplicates). |
@@ -520,6 +531,7 @@
 | `onTokenRemoved` | `((token: ComposerToken) => void)` | A token disappeared from the text through a user edit (whole-token delete, cut, overwrite). |
 | `onTriggerChange` | `((match: TriggerMatch \| null) => void)` | Active `@` / `/` trigger before the caret; `null` when none. Not called during IME composition. |
 | `onValueChange` | `((value: string, caret: number) => void)` | Every edit (typing, IME, paste, cut, token insert / delete). `caret` is the new selection end. |
+| `slash` | `"line-start" \| "word-start"` |  |
 | `submitOn` | `"enter" \| "mod-enter"` |  |
 | `tokenKind` | `((token: ComposerToken) => ComposerTokenKind)` | Mirror colour per token (default: `@` → file, `/` → command). |
 | `triggers` | `readonly TriggerChar[]` | Triggers to detect (default both). |
@@ -551,7 +563,10 @@
 | --- | --- | --- |
 | `align` | `PopoverAlign` |  |
 | `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `onOpenChange` | `((open: boolean) => void)` |  |
 | `openOnHover` | `boolean` | `ring`: also open the Popover on hover (focus and click still open it). |
+| `open` | `boolean` |  |
+| `segmentScale` | `"full" \| "fit-used"` |  |
 | `side` | `PopoverSide` | Popover placement for `ring`. |
 | `usage` * | `ContextUsageView` |  |
 | `variant` | `ContextUsageVariant` | `ring`: compact trigger (ring + 「12.4K / 32K」) that opens the full view in a Popover. `bar`: one line with a meter. `full`: meter, breakdown legend, warnings and note. |
@@ -564,6 +579,8 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
+| `collapsedGroups` | `readonly string[]` |  |
+| `collapsibleGroups` | `boolean` |  |
 | `empty` | `React.ReactNode` | Empty state shown when there are no conversations and no search. |
 | `error` | `React.ReactNode` | Error message; `true` uses the default copy. |
 | `headingLevel` | `2 \| 3 \| 4 \| 5 \| 6` | Level of the group headings (and the empty-state title). |
@@ -572,6 +589,7 @@
 | `loading` | `boolean` |  |
 | `now` | `Date` | Reference time for row timestamps (default: now). |
 | `onArchive` | `((item: ConversationView) => void)` |  |
+| `onCollapsedGroupsChange` | `((groups: string[]) => void)` |  |
 | `onDelete` | `((item: ConversationView) => void \| Promise<unknown>)` |  |
 | `onPin` | `((item: ConversationView, pinned: boolean) => void)` |  |
 | `onRetry` | `(() => void)` |  |
@@ -649,7 +667,9 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `detail` * | `{ kind: "file-edit"; path: string; edits: { id: string; range?: ReadRangeView; before: string; after: string; strategy?: string; truncated?: boolean; }[]; expectedVersion?: string; materialReady?: boolean; }` |  |
+| `detail` * | `{ kind: "file-edit"; path: string; edits: { id: string; range?: ReadRangeView; before: string; after: string; strategy?: string; truncated?: boolean; }[]; expectedVersion?: string; materialReady?: boolean; replacementCount?: number; page?: MaterialPageView; complete?: boolean; }` |  |
+| `display` | `"diff" \| "verbatim"` |  |
+| `pageActions` | `ChunkPagerActions` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -692,6 +712,8 @@
 | `onReload` | `(() => void)` |  |
 | `onRetry` | `(() => void)` |  |
 | `openTargets` | `FileOpenTarget[]` | Ways to open the file. With `onOpenWith` they render a split button + menu. |
+| `referenceDisabled` | `boolean` |  |
+| `reloading` | `boolean` |  |
 | `renderCode` | `((code: string, language?: string) => React.ReactNode)` | Code renderer (highlighting); default is numbered plain lines. |
 | `renderMarkdown` | `((source: string) => React.ReactNode)` | Markdown renderer for the preview tab; default shows the source. |
 | `zoomLevels` | `number[]` | Image zoom percentages (of the natural width); a 「适应宽度」 option is always added. |
@@ -721,7 +743,7 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `detail` * | `{ kind: "file-read"; path: string; range?: ReadRangeView; preview?: string; eof?: boolean; nextOffset?: number; totalLines?: number; bytes?: number; error?: "not-found" \| "forbidden" \| "error"; }` |  |
+| `detail` * | `{ kind: "file-read"; path: string; range?: ReadRangeView; preview?: string; eof?: boolean; nextOffset?: number; totalLines?: number; bytes?: number; version?: string; nextOffsetUnit?: "lines" \| "bytes"; error?: "not-found" \| "forbidden" \| "error"; }` |  |
 | `onReadMore` | `((nextOffset: number) => void)` | Continue reading from the runtime-provided `nextOffset`. Rendered only when `nextOffset` exists. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
@@ -732,7 +754,9 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
+| `beforeActions` | `ChunkPagerActions` |  |
 | `detail` * | `{ kind: "file-write"; path: string; mode: "create" \| "overwrite" \| "append"; diff?: FileDiffView; expectedVersion?: string; currentVersion?: string; materialReady?: boolean; }` |  |
+| `display` | `"diff" \| "verbatim"` |  |
 | `onReload` | `(() => void)` |  |
 | `onViewFull` | `(() => void)` |  |
 
@@ -801,9 +825,10 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `detail` * | `{ kind: "manage-files"; operations: { id: string; type: "mkdir" \| "move" \| "copy" \| "rename" \| "delete"; source: string; target?: string; recursive?: boolean; status?: "pending" \| "completed" \| "failed" \| "conflict"; reason?: string; }[]; hasMore?: boolean; materialReady?: boolean; }` |  |
+| `detail` * | `{ kind: "manage-files"; operations: { id: string; type: "mkdir" \| "move" \| "copy" \| "rename" \| "delete"; source: string; target?: string; recursive?: boolean; status?: "pending" \| "completed" \| "failed" \| "conflict"; reason?: string; }[]; hasMore?: boolean; materialReady?: boolean; counts?: Partial<Record<"mkdir" \| "move" \| "copy" \| "rename" \| "delete", number>>; total?: number; page?: MaterialPageView; }` |  |
 | `loadingMore` | `boolean` |  |
 | `onLoadMore` | `(() => void)` |  |
+| `pageActions` | `ChunkPagerActions` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -859,6 +884,7 @@
 | `onFork` | `(() => void)` |  |
 | `onRegenerate` | `(() => void)` |  |
 | `onRestoreInput` | `(() => void)` | Restore this turn's input into the composer (not the same as `onEdit`). |
+| `order` | `MessageActionKey[]` | Preferred action order; omitted uses the library order. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -882,15 +908,18 @@
 | `animateEntrance` | `boolean` | Turn off entrance motion for appended messages. |
 | `earlierError` | `React.ReactNode` | Error text for the last earlier-load attempt; shows a retry button. |
 | `empty` | `React.ReactNode` | Replaces the default empty state. |
+| `followThreshold` | `number` |  |
 | `footer` | `React.ReactNode` | Content after the last message inside the scroller (run summary, typing line). |
 | `hasEarlier` | `boolean` |  |
 | `holdFollow` | `boolean` | Pause auto-follow while true (content still renders); resumes on release if still at the latest. |
 | `isStreaming` | `boolean` |  |
+| `jumpThreshold` | `number` |  |
 | `label` | `string` | Accessible name of the viewport. |
 | `loadingEarlier` | `boolean` |  |
 | `loading` | `boolean` | First load: no messages yet. |
 | `messageProps` | `Omit<AgentMessageProps, "message">` | Props forwarded to the default AgentMessage (handlers, renderers). |
 | `messages` * | `MessageView[]` |  |
+| `nestedScrollSelector` | `string` |  |
 | `onFollowChange` | `((following: boolean) => void)` |  |
 | `onLoadEarlier` | `(() => void)` |  |
 | `renderMessage` | `((message: MessageView, index: number) => React.ReactNode)` | Custom rendering per message; the list still wraps it in a keyed `<li data-message-id>`. |
@@ -925,10 +954,12 @@
 | `defaultLayer` | `"effort" \| "models"` | Initial layer when the popover opens. |
 | `defaultOpen` | `boolean` |  |
 | `disabled` | `boolean` |  |
+| `effortState` | `"default" \| "unset" \| "invalid"` |  |
 | `effort` | `ModelEffort \| null` | Selected effort (controlled); must be one of the model's `efforts`. |
 | `error` | `React.ReactNode` | Error text for the model list (`true` → default copy). |
 | `loading` | `boolean` |  |
 | `onEffortChange` | `((effort: ModelEffort) => void)` |  |
+| `onEffortReset` | `(() => void)` |  |
 | `onModelChange` | `((modelId: string, model: ModelOptionView) => void)` |  |
 | `onOpenChange` | `((open: boolean) => void)` |  |
 | `open` | `boolean` |  |
@@ -960,7 +991,7 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `detail` * | `{ kind: "model"; provider: string; model: string; purpose?: string; inputs?: { id: string; label: string; size?: number; mimeType?: string; destination?: string; }[]; params?: Record<string, string \| number \| boolean>; results?: { id: string; label: string; preview?: string; alt?: string; saved: boolean; }[]; save?: "pending" \| "saving" \| "saved" \| "partial" \| "failed"; costNotice?: string; }` |  |
+| `detail` * | `{ kind: "model"; provider: string; model: string; purpose?: string; inputs?: { id: string; label: string; size?: number; mimeType?: string; destination?: string; }[]; params?: Record<string, string \| number \| boolean>; results?: { id: string; label: string; preview?: string; alt?: string; saved: boolean; }[]; save?: "pending" \| "saving" \| "saved" \| "partial" \| "failed"; costNotice?: string; endpoint?: string; route?: string; timeoutMs?: number; sha256?: string; arguments?: unknown; remote?: boolean \| "pending" \| "completed" \| "failed" \| "unknown"; stopReason?: string; saveRetry?: boolean; saveError?: string; }` |  |
 | `onRetrySave` | `(() => void)` | Save the generated material again (never calls the model again). Shown for partial / failed saves. |
 | `retrying` | `boolean` |  |
 | `running` | `boolean` | The tool call is still running: show activity without a percentage. |
@@ -976,11 +1007,15 @@
 | `align` | `"end" \| "start" \| "center"` |  |
 | `className` | `string` |  |
 | `confirmDescription` | `((mode: PermissionModeView) => React.ReactNode)` |  |
+| `confirmErrorText` | `React.ReactNode` |  |
 | `confirmLabel` | `((mode: PermissionModeView) => React.ReactNode)` |  |
 | `confirmTitle` | `((mode: PermissionModeView) => React.ReactNode)` | Override the confirmation copy for elevated modes. |
+| `disabledReason` | `string` |  |
 | `disabled` | `boolean` |  |
+| `error` | `React.ReactNode` |  |
 | `modes` * | `readonly PermissionModeView[]` |  |
 | `onChange` | `((modeId: string, mode: PermissionModeView) => void \| Promise<unknown>)` | Called with the chosen mode. Elevated modes call it only after the AlertDialog is confirmed. Return a Promise to keep the confirmation open (loading) until it settles; a rejection keeps it open with the AlertDialog error text. Without it the trigger is rendered disabled. |
+| `receipt` | `React.ReactNode` |  |
 | `side` | `"top" \| "bottom"` |  |
 | `value` * | `string` | Current mode id (controlled). |
 
@@ -1031,6 +1066,9 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
+| `advanceOnSingleChoice` | `boolean` |  |
+| `disabled` | `boolean` |  |
+| `draftError` | `React.ReactNode` |  |
 | `initialPage` | `number` | Start on this page instead of the first unanswered question. |
 | `onAnswerChange` | `((answer: QuestionAnswer) => void)` |  |
 | `onCopyAnswers` | `((text: string) => void)` | Read-only summary: copy the answers as plain text (host writes the clipboard). |
@@ -1053,6 +1091,31 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `ReferencePicker`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `anchor` | `HTMLElement \| React.RefObject<HTMLElement \| null>` |  |
+| `defaultOpen` | `boolean` |  |
+| `disabled` | `boolean` |  |
+| `error` | `React.ReactNode` |  |
+| `hideTrigger` | `boolean` |  |
+| `items` | `readonly ReferenceOption[]` |  |
+| `loading` | `boolean` |  |
+| `onAdd` * | `(path: string) => Promise<boolean> \| boolean` |  |
+| `onNavigate` | `((path: string) => void)` |  |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `onSearch` | `((query: string) => void)` |  |
+| `onUp` | `(() => void)` |  |
+| `onValueChange` | `((value: string) => void)` |  |
+| `open` | `boolean` |  |
+| `truncated` | `boolean` |  |
+| `value` | `string` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ### `ResizeHandle`
 
 *component*
@@ -1061,10 +1124,12 @@
 | --- | --- | --- |
 | `defaultSize` | `number` |  |
 | `disabled` | `boolean` |  |
+| `getAriaValueText` | `((size: number) => string)` |  |
 | `label` | `string` | Accessible name; defaults to the shell copy 「调整详情面板宽度」. |
 | `largeStep` | `number` | Shift + arrow step. |
 | `max` * | `number` |  |
 | `min` * | `number` |  |
+| `onDraggingChange` | `((dragging: boolean) => void)` |  |
 | `onSizeChange` | `((size: number) => void)` |  |
 | `pane` | `"end" \| "start"` | Logical side of the handle the resized pane is on. |
 | `resetSize` | `number` | Size restored on double-click; defaults to `defaultSize`. |
@@ -1093,6 +1158,24 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `details` * | `RunDetailsView` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `RunOverview`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `defaultOpen` | `boolean` |  |
+| `facts` | `readonly RunOverviewFact[]` |  |
+| `onClose` | `(() => void)` |  |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `onReopen` | `(() => void)` |  |
+| `open` | `boolean` |  |
+| `sections` | `readonly RunOverviewSection[]` |  |
+| `subagents` | `readonly SubagentView[]` |  |
+| `terminals` | `React.ReactNode` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -1161,9 +1244,31 @@
 | `onRetry` | `((kind: "send" \| "stop", actionId: string \| undefined) => void)` | Retry an `unknown` action with its original `actionId` (ADR-0011 §4). Without it, or when the receipt says `retryable: false`, the unknown state is inert so no duplicate action is created. |
 | `onSend` | `(() => void)` |  |
 | `onStop` | `(() => void)` |  |
+| `retryBusy` | `boolean` |  |
 | `runStatus` | `RunStatus` |  |
 | `sendReceipt` | `ActionReceipt \| ActionStatus` | Receipt of the last send (`submitting` → inert, `unknown` → 结果待确认). |
 | `stopReceipt` | `ActionReceipt \| ActionStatus` | Receipt of the last stop request (`submitting` / `accepted` while the run still runs → 停止待确认). |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `SkillPicker`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `anchor` | `HTMLElement \| React.RefObject<HTMLElement \| null>` |  |
+| `defaultOpen` | `boolean` |  |
+| `disabled` | `boolean` |  |
+| `error` | `React.ReactNode` |  |
+| `hideTrigger` | `boolean` |  |
+| `loading` | `boolean` |  |
+| `max` | `number` |  |
+| `onChange` * | `React.ChangeEventHandler<HTMLDivElement, Element> & ((skills: SkillOption[]) => void)` |  |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `open` | `boolean` |  |
+| `selected` * | `readonly SkillOption[]` |  |
+| `skills` * | `readonly SkillOption[]` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -1234,12 +1339,16 @@
 | --- | --- | --- |
 | `agents` * | `SubagentView[]` |  |
 | `animate` | `boolean` |  |
+| `disabled` | `boolean` |  |
+| `empty` | `React.ReactNode` |  |
+| `groupBy` | `"none" \| "state"` |  |
 | `groupInherited` | `boolean` | Put inherited records under their own 「继承的子任务记录」 heading after the live ones. |
 | `headingLevel` | `HeadingLevel` | Level of each card heading; the list heading (`title`) is one level above. |
 | `messages` | `Partial<AgentWorkspaceMessages>` |  |
 | `onOpenSnapshot` | `((id: string) => void)` |  |
 | `onOpen` | `((id: string) => void)` |  |
 | `title` | `string \| (string & React.ReactElement<unknown, string \| React.JSXElementConstructor<any>>) \| (string & Iterable<React.ReactNode>) \| (string & React.ReactPortal) \| (string & Promise<AwaitedReactNode>)` | Visible list heading; omitted → the list is named by `aria-label` only. |
+| `variant` | `"row" \| "card"` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -1262,12 +1371,18 @@
 | --- | --- | --- |
 | `currentId` | `string` |  |
 | `defaultCollapsed` | `TerminalGroupKey[]` | Groups collapsed on first render (uncontrolled per group). Default: inherited. |
+| `empty` | `React.ReactNode` |  |
+| `error` | `React.ReactNode` |  |
 | `hasMore` | `boolean` | `false` hides the 「加载更多终端」 button even when `onLoadMore` is given. |
+| `loadingMore` | `boolean` |  |
+| `loading` | `boolean` |  |
 | `messages` | `Partial<AgentWorkspaceMessages>` |  |
 | `onLoadMore` | `(() => void)` |  |
 | `onOpen` | `((terminal: TerminalView) => void)` |  |
-| `onStop` | `AgentActionHandler<[terminal: TerminalView]>` |  |
+| `onRetry` | `(() => void)` |  |
+| `onStop` | `AgentActionHandler<[terminal: TerminalView, context: { actionId: string; }]>` |  |
 | `terminals` * | `TerminalView[]` |  |
+| `total` | `number` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -1280,7 +1395,7 @@
 | `current` | `boolean` | Marks the open terminal (`aria-current`). |
 | `messages` | `Partial<AgentWorkspaceMessages>` |  |
 | `onOpen` | `((terminal: TerminalView) => void)` | Opens the terminal (row button). Without it the row is plain text. |
-| `onStop` | `AgentActionHandler<[terminal: TerminalView]>` | Stop action; a separate button, drawn only when the terminal is stoppable. |
+| `onStop` | `AgentActionHandler<[terminal: TerminalView, context: { actionId: string; }]>` | Stop action; a separate button, drawn only when the terminal is stoppable. |
 | `terminal` * | `TerminalView` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
@@ -1442,9 +1557,11 @@
 | `detailActions` | `ToolDetailActions` | Callbacks for the built-in detail views (read more, reload, open terminal…). |
 | `detailsError` | `React.ReactNode` | Loading the full record failed (shown with a retry when `onLoadDetails` exists). |
 | `detailsFooter` | `React.ReactNode` | Extra content at the end of the details (e.g. Code Mode script). |
+| `detailsLoading` | `boolean` |  |
 | `expanded` | `boolean` |  |
 | `onExpandedChange` | `((expanded: boolean, id: string) => void)` |  |
 | `onLoadDetails` | `((id: string) => void)` | Called when the row opens and `tool.detailsLoaded === false`, and on retry. |
+| `onRetry` | `((tool: ToolCallView) => void)` |  |
 | `renderDetail` | `((tool: ToolCallView) => React.ReactNode \| undefined)` | Override the detail body. Return `undefined` to fall back to the built-in view. |
 | `tool` * | `ToolCallView` |  |
 
@@ -1809,6 +1926,14 @@ function parseUnifiedDiff: (source: string) => FileDiffView[]
 
 ```ts
 function pathCrumbs: (path: string | undefined, root?: string) => { items: BreadcrumbItem[]; outside: boolean; } | undefined
+```
+
+### `reconcileTokens`
+
+*function* — Reconcile bindings restored by a host with the tokens that are still present in a draft. Bindings are returned in their original order, while stale bindings are omitted. Matching is by trigger and exact token name, including spaces; the helper never invents a binding.
+
+```ts
+function reconcileTokens: <T extends TokenBinding>(value: string, bindings: readonly T[]) => T[]
 ```
 
 ### `removeTokens`
@@ -2178,6 +2303,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `draftSaving` * | `string` |  |
 | `dropFiles` * | `string` |  |
 | `effortHeading` * | `string` |  |
+| `effortInvalid` * | `string` |  |
 | `effortNone` * | `string` |  |
 | `effortNote` * | `string` |  |
 | `effort` * | `Record<ModelEffort, string>` |  |
@@ -2214,7 +2340,9 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `referenceFailed` * | `string` |  |
 | `referenceKind` * | `Record<"symbol" \| "file" \| "folder" \| "skill" \| "command" \| "url" \| "custom", string>` |  |
 | `referenceLoading` * | `string` |  |
+| `referencePicker` * | `{ label: string; add: string; up: string; search: string; loading: string; error: string; empty: string; truncated: string; }` |  |
 | `remove` * | `(name: string) => string` |  |
+| `resetEffort` * | `string` |  |
 | `resultPending` * | `string` |  |
 | `retrySameSend` * | `string` |  |
 | `retrySameStop` * | `string` |  |
@@ -2225,6 +2353,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `send` * | `string` |  |
 | `sending` * | `string` |  |
 | `skillGroup` * | `string` |  |
+| `skillPicker` * | `{ label: string; add: string; limit: (max: string) => string; loading: string; error: string; empty: string; }` |  |
 | `skillSelected` * | `string` |  |
 | `stale` * | `string` |  |
 | `stopPending` * | `string` |  |
@@ -2603,6 +2732,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `ledgerLoading` * | `string` |  |
 | `ledgerOpen` * | `(title: string) => string` |  |
 | `ledgerOutcome` * | `Record<LedgerOutcomeKey, string>` |  |
+| `retry` * | `string` |  |
 | `runArtifacts` * | `string` |  |
 | `runElapsed` * | `string` |  |
 | `runFailedTools` * | `string` |  |
@@ -2658,6 +2788,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `terminalList` * | `string` |  |
 | `terminalLoadEarlier` * | `string` |  |
 | `terminalLoadMore` * | `string` |  |
+| `terminalLoading` * | `string` |  |
 | `terminalNewOutput` * | `string` |  |
 | `terminalNoOutput` * | `string` |  |
 | `terminalNotes` * | `string` |  |
@@ -2924,6 +3055,8 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | Member | Type | Description |
 | --- | --- | --- |
 | `completeness` * | `Completeness` |  |
+| `disabled` | `boolean \| { reason?: string; }` |  |
+| `estimated` | `boolean` | The number is an estimate rather than a sampled provider value. |
 | `label` | `string` |  |
 | `max` | `number` | Only reliable maxima produce a percentage. |
 | `note` | `string` | "模型配置已变化，等待重新估计" etc. |
@@ -2960,6 +3093,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | --- | --- | --- |
 | `archived` | `boolean` |  |
 | `attention` | `"children" \| "question" \| "error" \| "approval"` | Needs the user (approval, question, child needs attention). Shown above unread. |
+| `disabled` | `boolean \| { reason?: string; }` |  |
 | `id` * | `string` |  |
 | `origin` | `ConversationOrigin` |  |
 | `pinned` | `boolean` |  |
@@ -2968,6 +3102,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `runPhase` | `RunPhase` |  |
 | `runStatus` | `RunStatus` |  |
 | `title` * | `string` |  |
+| `unreadOutcome` | `"unknown" \| "failed" \| "pending" \| "delivered"` | Whether the latest reference/result was delivered to the host. |
 | `unread` | `number` | Unread finished-run count; 0 / undefined hides the marker. |
 | `updatedAt` | `string` | ISO timestamp of the last activity. |
 
@@ -3020,15 +3155,19 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | Member | Type | Description |
 | --- | --- | --- |
 | `additions` | `number` |  |
+| `before` | `MaterialPageView` | Original material before the write, when the host provides it. |
 | `binary` | `boolean` |  |
 | `change` * | `"add" \| "delete" \| "update" \| "move"` |  |
 | `conflictReason` | `string` |  |
+| `created` | `boolean` | True when this operation created the target rather than modifying it. |
 | `deletions` | `number` |  |
 | `hunks` * | `DiffHunkView[]` |  |
 | `movedTo` | `string` | Target path for moves / renames. |
 | `noNewlineAtEnd` | `{ old?: boolean; new?: boolean; }` | No trailing newline at end of file (old / new). |
+| `observedBytes` | `number` | Observed byte size used when line statistics are unavailable. |
 | `path` * | `string` |  |
 | `revision` | `string` |  |
+| `statsReliable` | `boolean` | Whether additions/deletions came from a complete, trustworthy observation. |
 | `status` | `"unavailable" \| "preview" \| "proposed" \| "applied" \| "conflict"` |  |
 | `truncated` | `boolean` | Lines omitted from the shown hunks. |
 
@@ -3283,10 +3422,12 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `defaultLayer` | `"effort" \| "models"` | Initial layer when the popover opens. |
 | `defaultOpen` | `boolean` |  |
 | `disabled` | `boolean` |  |
+| `effortState` | `"default" \| "unset" \| "invalid"` |  |
 | `effort` | `ModelEffort \| null` | Selected effort (controlled); must be one of the model's `efforts`. |
 | `error` | `React.ReactNode` | Error text for the model list (`true` → default copy). |
 | `loading` | `boolean` |  |
 | `onEffortChange` | `((effort: ModelEffort) => void)` |  |
+| `onEffortReset` | `(() => void)` |  |
 | `onModelChange` | `((modelId: string, model: ModelOptionView) => void)` |  |
 | `onOpenChange` | `((open: boolean) => void)` |  |
 | `open` | `boolean` |  |
@@ -3326,11 +3467,15 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `align` | `"end" \| "start" \| "center"` |  |
 | `className` | `string` |  |
 | `confirmDescription` | `((mode: PermissionModeView) => React.ReactNode)` |  |
+| `confirmErrorText` | `React.ReactNode` |  |
 | `confirmLabel` | `((mode: PermissionModeView) => React.ReactNode)` |  |
 | `confirmTitle` | `((mode: PermissionModeView) => React.ReactNode)` | Override the confirmation copy for elevated modes. |
+| `disabledReason` | `string` |  |
 | `disabled` | `boolean` |  |
+| `error` | `React.ReactNode` |  |
 | `modes` * | `readonly PermissionModeView[]` |  |
 | `onChange` | `((modeId: string, mode: PermissionModeView) => void \| Promise<unknown>)` | Called with the chosen mode. Elevated modes call it only after the AlertDialog is confirmed. Return a Promise to keep the confirmation open (loading) until it settles; a rejection keeps it open with the AlertDialog error text. Without it the trigger is rendered disabled. |
+| `receipt` | `React.ReactNode` |  |
 | `side` | `"top" \| "bottom"` |  |
 | `value` * | `string` | Current mode id (controlled). |
 
@@ -3386,6 +3531,9 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 
 | Member | Type | Description |
 | --- | --- | --- |
+| `advanceOnSingleChoice` | `boolean` |  |
+| `disabled` | `boolean` |  |
+| `draftError` | `React.ReactNode` |  |
 | `initialPage` | `number` | Start on this page instead of the first unanswered question. |
 | `onAnswerChange` | `((answer: QuestionAnswer) => void)` |  |
 | `onCopyAnswers` | `((text: string) => void)` | Read-only summary: copy the answers as plain text (host writes the clipboard). |
@@ -3461,12 +3609,24 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `preserved` | `string[]` | What is still safe: output kept, draft kept… |
 | `title` * | `string` |  |
 
+### `ReferenceOption`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `disabled` | `boolean` |  |
+| `kind` | `"file" \| "folder"` |  |
+| `name` * | `string` |  |
+| `path` * | `string` |  |
+
 ### `ReferenceView`
 
 *interface* — A context reference attached to a message or the composer (file, folder, skill, URL…).
 
 | Member | Type | Description |
 | --- | --- | --- |
+| `delivered` | `boolean` |  |
 | `detail` | `string` | Full path / URL / description used for the accessible name and tooltip. |
 | `external` | `boolean` | Outside the workspace. |
 | `id` * | `string` |  |
@@ -3495,6 +3655,26 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `startedAt` | `string` |  |
 | `toolModelUsage` | `(TokenUsageView & { unreportedCalls?: number; })` | Usage of models called from inside tools. |
 | `usage` | `TokenUsageView` |  |
+
+### `RunOverviewFact`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `label` * | `React.ReactNode` |  |
+| `value` * | `React.ReactNode` |  |
+
+### `RunOverviewSection`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `content` * | `React.ReactNode` |  |
+| `defaultOpen` | `boolean` |  |
+| `id` * | `string` |  |
+| `title` * | `React.ReactNode` |  |
 
 ### `RunSummaryView`
 
@@ -3579,6 +3759,18 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `icon` * | `"send" \| "stop"` | Icon shown: arrow or square. |
 | `state` * | `SendStopState` |  |
 
+### `SkillOption`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `disabledReason` | `string` |  |
+| `disabled` | `boolean` |  |
+| `id` * | `string` |  |
+| `label` * | `string` |  |
+| `source` | `string` |  |
+
 ### `SkillUseView`
 
 *interface* — A skill / plugin that was actually loaded for a turn (vs. merely requested).
@@ -3646,9 +3838,11 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 
 | Member | Type | Description |
 | --- | --- | --- |
+| `activity` | `string` |  |
 | `backend` | `"pty" \| "process"` |  |
 | `calls` | `number` |  |
 | `cwd` | `string` |  |
+| `disabled` | `boolean \| { reason?: string; }` |  |
 | `exitCode` | `number` |  |
 | `history` | `{ id: string; command: string; status: "running" \| "returned" \| "failed" \| "unknown"; exitCode?: number; at?: string; }[]` | Commands run in this terminal, newest last. |
 | `id` * | `string` |  |
@@ -3663,8 +3857,11 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `readOnly` | `boolean` | Inherited from a parent / earlier run: history only, no input, no stop. |
 | `receipt` | `ActionReceipt` |  |
 | `shell` | `string` |  |
+| `source` | `string` |  |
 | `status` * | `TerminalSessionStatus` |  |
+| `stopReason` | `string` |  |
 | `stoppable` | `boolean` | The host can stop it. Without it no stop control is drawn. |
+| `tail` | `string` |  |
 
 ### `ThinkingView`
 
@@ -3679,6 +3876,15 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `status` * | `"completed" \| "interrupted" \| "streaming"` |  |
 | `summary` | `string` | Approved summary text (markdown allowed through the renderer). |
 | `truncated` | `boolean` | The shown summary is cut; offer the full record. |
+
+### `TokenBinding`
+
+*interface* — A host binding associated with one composer token. Extra fields are preserved.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `name` * | `string` |  |
+| `trigger` * | `TriggerChar` |  |
 
 ### `TokenUsageView`
 
@@ -3714,8 +3920,10 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `children` | `ToolCallView[]` |  |
 | `detail` | `ToolDetailView` |  |
 | `detailsLoaded` | `boolean` | Full record not loaded; expanding calls `onLoadDetails`. |
+| `disabled` | `boolean \| { reason?: string; }` | Host-level busy/disabled state, with an optional explanation. |
 | `displayName` | `string` | Localised name. Falls back to `name`. |
 | `elapsedMs` | `number` |  |
+| `failure` | `{ code?: string; message: string; retryable?: boolean; }` | Structured failure information; a failed row may still be retryable. |
 | `id` * | `string` | Operation id; never shown twice in one list (adapter dedupes). |
 | `name` * | `string` | Raw tool name (`read_file`, `mcp.execute`). |
 | `parentId` | `string` | Parent operation for nested (Code Mode / script) calls. |
@@ -3928,7 +4136,7 @@ type AgentTone = 'neutral' | 'info' | 'success' | 'warning' | 'danger' | 'accent
 *type*
 
 ```ts
-type ApplyPatchDetailProps = DetailBase & { detail: DetailOf<'patch'>; onReload?: (path: string) => void; onViewFull?: (path: string) => void; }
+type ApplyPatchDetailProps = DetailBase & { detail: DetailOf<'patch'>; onReload?: (path: string) => void; onViewFull?: (path: string) => void; rawActions?: ChunkPagerActions; }
 ```
 
 ### `ApprovalRisk`
@@ -4124,7 +4332,7 @@ type DraftStatus = 'clean' | 'dirty' | 'saving' | 'saved' | 'error'
 *type*
 
 ```ts
-type EditFileDetailProps = DetailBase & { detail: DetailOf<'file-edit'>; }
+type EditFileDetailProps = DetailBase & { detail: DetailOf<'file-edit'>; pageActions?: ChunkPagerActions; display?: 'verbatim' | 'diff'; }
 ```
 
 ### `FilePreviewMode`
@@ -4164,7 +4372,7 @@ type FileReadDetailProps = DetailBase & { detail: DetailOf<'file-read'>; /** Con
 *type*
 
 ```ts
-type FileWriteDetailProps = DetailBase & { detail: DetailOf<'file-write'>; onReload?: () => void; onViewFull?: () => void; }
+type FileWriteDetailProps = DetailBase & { detail: DetailOf<'file-write'>; onReload?: () => void; onViewFull?: () => void; beforeActions?: ChunkPagerActions; display?: 'verbatim' | 'diff'; }
 ```
 
 ### `GenericToolDetailProps`
@@ -4204,7 +4412,7 @@ type LedgerFilterKey = 'all' | LedgerActor
 *type*
 
 ```ts
-type ManageFilesDetailProps = DetailBase & { detail: DetailOf<'manage-files'>; onLoadMore?: () => void; loadingMore?: boolean; }
+type ManageFilesDetailProps = DetailBase & { detail: DetailOf<'manage-files'>; onLoadMore?: () => void; loadingMore?: boolean; pageActions?: ChunkPagerActions; }
 ```
 
 ### `MCPExecuteDetailProps`
@@ -4276,7 +4484,7 @@ type MessageStatus = 'pending' | 'streaming' | 'complete' | 'partial' | 'failed'
 *type*
 
 ```ts
-type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max'
+type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh'
 ```
 
 ### `MultiFileDiffProps`
@@ -4331,6 +4539,10 @@ type QuestionnaireStatus = 'waiting' | 'drafting' | 'saving' | 'submit-pending' 
 type QuestionToolDetailProps = DetailBase & { detail: DetailOf<'question'>; }
 ```
 
+### `ReferencePickerProps`
+
+*type*
+
 ### `ResizeHandleProps`
 
 *type* — ResizeHandle (atlas 01): a focusable vertical splitter between two columns.
@@ -4346,6 +4558,10 @@ type QuestionToolDetailProps = DetailBase & { detail: DetailOf<'question'>; }
 ```ts
 type RunDetailsProps = Omit<React.HTMLAttributes<HTMLDListElement>, 'children'> & { details: RunDetailsView; }
 ```
+
+### `RunOverviewProps`
+
+*type*
 
 ### `RunPhase`
 
@@ -4374,6 +4590,10 @@ type RunPhase = | 'queued' | 'preparing' | 'waiting-model' | 'thinking' | 'respo
 ```ts
 type SendStopState = 'send' | 'sending' | 'send-unknown' | 'retry-save' | 'stop' | 'stop-pending' | 'stop-unknown'
 ```
+
+### `SkillPickerProps`
+
+*type*
 
 ### `SkillUseListProps`
 

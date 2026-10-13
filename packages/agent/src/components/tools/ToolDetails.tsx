@@ -7,6 +7,8 @@ import { useAgentFormat, useAgentMessages } from '../../provider/AgentMessages.j
 import { AgentSpark } from '../../primitives/AgentSpark.js';
 import { cx } from '../../utils/cx.js';
 import { DiffPreview, MultiFileDiff } from './DiffPreview.js';
+import { ChunkPager } from './ChunkPager.js';
+import type { ChunkPagerActions } from './ChunkPager.js';
 import { ToolOutput } from './ToolOutput.js';
 import type { ToolOutputProps } from './ToolOutput.js';
 import { ActionButton, CodeView, CopyButton, MetaList, Notice, Pill, toDisplayJson } from './shared.js';
@@ -54,7 +56,7 @@ export type FileReadDetailProps = DetailBase & {
 export function FileReadDetail({ detail, onReadMore, className, ...rest }: FileReadDetailProps) {
   const m = useAgentMessages().tools;
   const fmt = useAgentFormat();
-  const unit = detail.range?.unit ?? 'lines';
+  const unit = detail.nextOffsetUnit ?? detail.range?.unit ?? 'lines';
   const startLine = detail.range?.unit === 'lines' ? detail.range.start : detail.range ? undefined : 1;
   // Only facts the runtime reported; nothing is inferred (no "next offset" without `nextOffset`).
   const facts = [
@@ -69,6 +71,7 @@ export function FileReadDetail({ detail, onReadMore, className, ...rest }: FileR
       <MetaList
         items={[
           { label: m.path, value: detail.path, mono: true },
+          detail.version != null && { label: m.currentVersion, value: detail.version, mono: true },
           detail.range && {
             label: m.editRange,
             value: m.readRange(detail.range.start, detail.range.end, detail.range.unit),
@@ -105,10 +108,12 @@ export type FileWriteDetailProps = DetailBase & {
   detail: DetailOf<'file-write'>;
   onReload?: () => void;
   onViewFull?: () => void;
+  beforeActions?: ChunkPagerActions;
+  display?: 'verbatim' | 'diff';
 };
 
 /** FileWriteDetail (atlas 38): target, write mode, expected vs current version, proposal diff. */
-export function FileWriteDetail({ detail, onReload, onViewFull, className, ...rest }: FileWriteDetailProps) {
+export function FileWriteDetail({ detail, onReload, onViewFull, beforeActions, display = 'diff', className, ...rest }: FileWriteDetailProps) {
   const m = useAgentMessages().tools;
   const conflict = detail.expectedVersion != null && detail.currentVersion != null && detail.expectedVersion !== detail.currentVersion;
   return (
@@ -144,7 +149,8 @@ export function FileWriteDetail({ detail, onReload, onViewFull, className, ...re
         </Notice>
       )}
       {detail.materialReady === false && <Notice tone="info">{m.materialPending}</Notice>}
-      {detail.diff && (
+      {detail.diff?.before && <ChunkPager page={detail.diff.before} label={m.expectedVersion} canGoBack={false} {...beforeActions} />}
+      {detail.diff && display === 'diff' && (
         <DiffPreview
           diff={conflict && !detail.diff.status ? { ...detail.diff, status: 'conflict' } : detail.diff}
           onReload={conflict ? undefined : onReload}
@@ -160,10 +166,12 @@ export function FileWriteDetail({ detail, onReload, onViewFull, className, ...re
 
 export type EditFileDetailProps = DetailBase & {
   detail: DetailOf<'file-edit'>;
+  pageActions?: ChunkPagerActions;
+  display?: 'verbatim' | 'diff';
 };
 
 /** EditFileDetail (atlas 39): every edit as 「编辑 N」 with range, strategy and a before/after diff. */
-export function EditFileDetail({ detail, className, ...rest }: EditFileDetailProps) {
+export function EditFileDetail({ detail, pageActions, display = 'diff', className, ...rest }: EditFileDetailProps) {
   const m = useAgentMessages().tools;
   return (
     <div {...rest} className={cx('rl-agent-detail', className)} data-kind="file-edit">
@@ -178,6 +186,9 @@ export function EditFileDetail({ detail, className, ...rest }: EditFileDetailPro
         ]}
       />
       {detail.materialReady === false && <Notice tone="info">{m.materialPending}</Notice>}
+      {detail.replacementCount !== undefined && <p className="rl-agent-detail__aside">{m.editTitle(detail.replacementCount)}</p>}
+      {detail.complete === false && <Notice tone="info">{m.editTruncated}</Notice>}
+      {detail.page && <ChunkPager page={detail.page} label={m.editRange} canGoBack={false} {...pageActions} />}
       <ol className="rl-agent-detail__edits">
         {detail.edits.map((edit, i) => {
           const result = lineDiff(edit.before, edit.after);
@@ -200,7 +211,7 @@ export function EditFileDetail({ detail, className, ...rest }: EditFileDetailPro
                   </span>
                 )}
               </p>
-              <DiffPreview
+              {display === 'verbatim' ? <><CodeView code={edit.before} label={m.expectedVersion} /><CodeView code={edit.after} label={m.currentVersion} /></> : <DiffPreview
                 hideHeader
                 diff={{
                   path: `${detail.path} · ${m.editTitle(i + 1)}`,
@@ -208,7 +219,7 @@ export function EditFileDetail({ detail, className, ...rest }: EditFileDetailPro
                   hunks: [{ ...result.hunk, id: `${edit.id}-h`, lines }],
                   truncated: edit.truncated || result.truncated,
                 }}
-              />
+              />}
             </li>
           );
         })}
@@ -224,18 +235,21 @@ export type ApplyPatchDetailProps = DetailBase & {
   detail: DetailOf<'patch'>;
   onReload?: (path: string) => void;
   onViewFull?: (path: string) => void;
+  rawActions?: ChunkPagerActions;
 };
 
 /** ApplyPatchDetail (atlas 40): per-file change and status; a conflict names its files. */
-export function ApplyPatchDetail({ detail, onReload, onViewFull, className, ...rest }: ApplyPatchDetailProps) {
+export function ApplyPatchDetail({ detail, onReload, onViewFull, rawActions, className, ...rest }: ApplyPatchDetailProps) {
   const m = useAgentMessages().tools;
   const conflicts = detail.files.filter((f) => f.status === 'conflict').map((f) => f.path);
   return (
     <div {...rest} className={cx('rl-agent-detail', className)} data-kind="patch">
       {detail.revision && <p className="rl-agent-detail__aside">{m.revision(detail.revision)}</p>}
+      {detail.baseVersion && <p className="rl-agent-detail__aside">{m.expectedVersion} {detail.baseVersion}</p>}
+      {detail.raw && <ChunkPager page={detail.raw} label={m.patchFiles} canGoBack={false} {...rawActions} />}
       {conflicts.length > 0 && <Notice tone="warning">{m.patchConflict(conflicts.join(', '))}</Notice>}
       {detail.materialReady === false && <Notice tone="info">{m.materialPending}</Notice>}
-      <MultiFileDiff files={detail.files} label={m.patchFiles} onReload={onReload} onViewFull={onViewFull} />
+      {detail.hunksAvailable === false ? <ul aria-label={m.patchFiles}>{detail.files.map((file) => <li key={file.path}>{file.path}</li>)}</ul> : <MultiFileDiff files={detail.files} label={m.patchFiles} onReload={onReload} onViewFull={onViewFull} />}
     </div>
   );
 }
@@ -247,6 +261,7 @@ export type ManageFilesDetailProps = DetailBase & {
   detail: DetailOf<'manage-files'>;
   onLoadMore?: () => void;
   loadingMore?: boolean;
+  pageActions?: ChunkPagerActions;
 };
 
 const opStatusMeta: Record<
@@ -260,11 +275,13 @@ const opStatusMeta: Record<
 };
 
 /** ManageFilesDetail (atlas 41): operation table; delete rows carry 「不能自动恢复」 in text. */
-export function ManageFilesDetail({ detail, onLoadMore, loadingMore, className, ...rest }: ManageFilesDetailProps) {
+export function ManageFilesDetail({ detail, onLoadMore, loadingMore, pageActions, className, ...rest }: ManageFilesDetailProps) {
   const m = useAgentMessages().tools;
   return (
     <div {...rest} className={cx('rl-agent-detail', className)} data-kind="manage-files">
       {detail.materialReady === false && <Notice tone="info">{m.materialPending}</Notice>}
+      {detail.counts && <dl className="rl-agent-detail__counts">{Object.entries(detail.counts).map(([kind, count]) => <div key={kind}><dt>{m.manageOp[kind as keyof typeof m.manageOp]}</dt><dd>{count}</dd></div>)}</dl>}
+      {detail.page && <ChunkPager page={detail.page} label={m.manageList} canGoBack={false} {...pageActions} />}
       <div className="rl-agent-detail__table-scroll" role="region" tabIndex={0} aria-label={m.codeRegion(m.manageList)}>
         <table className="rl-agent-ops">
           <caption className="rl-agent-sr">{m.manageList}</caption>
@@ -498,7 +515,7 @@ export function NativeModelDetail({ detail, running, onRetrySave, retrying, clas
   const fmt = useAgentFormat();
   const hintId = React.useId();
   const params = detail.params ? Object.entries(detail.params) : [];
-  const canRetry = (detail.save === 'partial' || detail.save === 'failed') && onRetrySave;
+  const canRetry = (detail.save === 'partial' || detail.save === 'failed' || detail.saveRetry === true) && onRetrySave;
   return (
     <div {...rest} className={cx('rl-agent-detail', className)} data-kind="model">
       <MetaList
@@ -509,8 +526,16 @@ export function NativeModelDetail({ detail, running, onRetrySave, retrying, clas
             mono: true,
           },
           detail.purpose && { label: m.modelPurpose, value: detail.purpose },
+          detail.endpoint && { label: m.mcpEndpoint, value: detail.endpoint, mono: true },
+          detail.route && { label: 'Route', value: detail.route, mono: true },
+          detail.timeoutMs !== undefined && { label: m.commandTimeout, value: fmt.duration(detail.timeoutMs) },
+          detail.sha256 && { label: 'SHA-256', value: detail.sha256, mono: true },
+          detail.stopReason && { label: 'Stop reason', value: detail.stopReason },
+          detail.remote !== undefined && { label: 'Remote', value: String(detail.remote) },
         ]}
       />
+      {detail.arguments !== undefined && <ToolOutput output={{ kind: 'json', content: toDisplayJson(detail.arguments) }} label={m.mcpArguments} />}
+      {detail.saveError && <Notice tone="danger">{detail.saveError}</Notice>}
       {running && (
         <p className="rl-agent-detail__activity" role="status">
           <AgentSpark phase="executing" />

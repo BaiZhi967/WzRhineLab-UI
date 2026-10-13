@@ -82,6 +82,10 @@ export interface AgentComposerMessages {
   modelsError: string;
   modelsEmpty: string;
   effort: Record<ModelEffort, string>;
+  effortInvalid: string;
+  resetEffort: string;
+  skillPicker: { label: string; add: string; limit: (max: string) => string; loading: string; error: string; empty: string };
+  referencePicker: { label: string; add: string; up: string; search: string; loading: string; error: string; empty: string; truncated: string };
   capability: Record<NonNullable<ModelOptionView['capabilities']>[number], string>;
   // ---------- permission picker ----------
   permissionTriggerLabel: (label: string) => string;
@@ -162,7 +166,11 @@ export const zhComposer: AgentComposerMessages = {
   modelsLoading: '正在读取模型…',
   modelsError: '模型列表读取失败',
   modelsEmpty: '没有可用的模型',
-  effort: { off: '关闭', low: '快速', medium: '均衡', high: '深入', max: '最大' },
+  effort: { off: '关闭', low: '快速', medium: '均衡', high: '深入', max: '最大', xhigh: '极深' },
+  effortInvalid: '当前思考强度对这个模型不可用',
+  resetEffort: '重置思考强度',
+  skillPicker: { label: '选择技能', add: '添加技能', limit: (max) => `最多选择 ${max} 项`, loading: '正在读取技能…', error: '技能读取失败', empty: '没有可用技能' },
+  referencePicker: { label: '添加文件引用', add: '添加引用', up: '返回上级', search: '搜索路径', loading: '正在读取路径…', error: '路径读取失败', empty: '没有匹配路径', truncated: '结果已截断' },
   capability: { image: '图片', video: '视频', tools: '工具', reasoning: '推理', 'long-context': '长上下文' },
   permissionTriggerLabel: (label) => `权限模式：${label}`,
   permissionMenu: '权限模式',
@@ -240,7 +248,11 @@ export const enComposer: AgentComposerMessages = {
   modelsLoading: 'Loading models…',
   modelsError: 'Could not load models',
   modelsEmpty: 'No models available',
-  effort: { off: 'Off', low: 'Fast', medium: 'Balanced', high: 'Deep', max: 'Max' },
+  effort: { off: 'Off', low: 'Fast', medium: 'Balanced', high: 'Deep', max: 'Max', xhigh: 'Extra deep' },
+  effortInvalid: 'This reasoning effort is not available for the model',
+  resetEffort: 'Reset effort',
+  skillPicker: { label: 'Choose skills', add: 'Add skill', limit: (max) => `Choose up to ${max}`, loading: 'Loading skills…', error: 'Could not load skills', empty: 'No skills available' },
+  referencePicker: { label: 'Add file reference', add: 'Add reference', up: 'Up one level', search: 'Search path', loading: 'Loading paths…', error: 'Could not load paths', empty: 'No matching paths', truncated: 'Results are truncated' },
   capability: { image: 'Images', video: 'Video', tools: 'Tools', reasoning: 'Reasoning', 'long-context': 'Long context' },
   permissionTriggerLabel: (label) => `Permission mode: ${label}`,
   permissionMenu: 'Permission mode',

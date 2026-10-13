@@ -4,7 +4,12 @@
 
 ## [Unreleased]
 
-（暂无）
+### Added
+- `ModelEffort.xhigh`；文件材料的可信统计、原文/编辑/补丁分页、基线版本；manage-files 计数与分页、原生模型结果字段、结构化工具失败、终端来源/活动/尾输出、上下文估算。
+- `reconcileTokens` 和 `pathCrumbs`；token 名称支持空格，保留宿主绑定。
+
+### Changed
+- 目标发行版本为 0.2.0，token 编码不再把名称中的空格替换为连字符。
 
 ## [0.1.0] - 2026-10-12
 

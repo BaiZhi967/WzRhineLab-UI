@@ -52,6 +52,7 @@ export type ComposerInputProps = NativeTextareaProps & {
   onTriggerChange?: (match: TriggerMatch | null) => void;
   /** Triggers to detect (default both). */
   triggers?: readonly TriggerChar[];
+  slash?: 'line-start' | 'word-start';
   /** A token disappeared from the text through a user edit (whole-token delete, cut, overwrite). */
   onTokenRemoved?: (token: ComposerToken) => void;
   /** Mirror colour per token (default: `@` → file, `/` → command). */
@@ -131,6 +132,7 @@ export const ComposerInput = React.forwardRef<ComposerInputHandle, ComposerInput
     onMenuKey,
     onTriggerChange,
     triggers = ['@', '/'],
+    slash = 'line-start',
     onTokenRemoved,
     tokenKind = defaultTokenKind,
     hint,
@@ -174,12 +176,16 @@ export const ComposerInput = React.forwardRef<ComposerInputHandle, ComposerInput
   const emitTrigger = React.useCallback(
     (text: string, start: number, end: number) => {
       if (composing.current) return;
-      const match = start === end ? detectTrigger(text, start, triggers) : null;
+      let match = start === end ? detectTrigger(text, start, triggers) : null;
+      if (!match && start === end && slash === 'word-start' && triggers.includes('/') && !text.slice(0, start).includes('```')) {
+        const candidate = /(^|\s)\/([^\s/@\u2068\u2069]*)$/.exec(text.slice(0, start));
+        if (candidate) match = { trigger: '/', query: candidate[2] ?? '', from: start - (candidate[2]?.length ?? 0) - 1, to: start };
+      }
       if (sameMatch(match, lastMatch.current)) return;
       lastMatch.current = match;
       onTriggerChange?.(match);
     },
-    [onTriggerChange, triggers],
+    [onTriggerChange, slash, triggers],
   );
 
   /** Single entry for every user edit: strips stray isolates, reports removed tokens, re-detects triggers. */

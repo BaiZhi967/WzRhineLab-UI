@@ -54,6 +54,8 @@ export type MessageActionsProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'ch
   label?: string;
   /** Extra trailing buttons (rendered inside the toolbar, part of the roving order). */
   children?: React.ReactNode;
+  /** Preferred action order; omitted uses the library order. */
+  order?: MessageActionKey[];
 };
 
 type ActionButtonProps = {
@@ -109,12 +111,12 @@ function ActionButton({ action, label, icon, cap, onPress, pressed, state }: Act
 }
 
 export const MessageActions = React.forwardRef<HTMLDivElement, MessageActionsProps>(function MessageActions(
-  { copyText, onCopy, onRegenerate, onEdit, onFork, onRestoreInput, feedback = null, onFeedback, capabilities, label, children, className, onKeyDown, ...rest },
+  { copyText, onCopy, onRegenerate, onEdit, onFork, onRestoreInput, feedback = null, onFeedback, capabilities, label, children, order, className, onKeyDown, ...rest },
   ref,
 ) {
   const t = useAgentMessages().message;
   const clipboard = useClipboardAvailable();
-  const { state, copy } = useCopy(onCopy);
+  const { state, failed, copy } = useCopy(onCopy);
   const [active, setActive] = React.useState(0);
   const root = React.useRef<HTMLDivElement | null>(null);
   React.useImperativeHandle(ref, () => root.current as HTMLDivElement);
@@ -168,6 +170,7 @@ export const MessageActions = React.forwardRef<HTMLDivElement, MessageActionsPro
       aria-label={label ?? t.actionsLabel}
       aria-orientation="horizontal"
       className={cx('rl-agent-actions', className)}
+      data-order={order?.join(' ') || undefined}
       onKeyDown={handleKeyDown}
       onFocus={handleFocus}
     >
@@ -208,6 +211,7 @@ export const MessageActions = React.forwardRef<HTMLDivElement, MessageActionsPro
         </>
       )}
       {children}
+      {failed && <p className="rl-agent-actions__error" role="alert">{t.copyFailed}</p>}
       {canCopy && (
         <span className="rl-agent-sr" role="status">
           {state === 'copied' ? t.copied : state === 'failed' ? t.copyFailed : ''}

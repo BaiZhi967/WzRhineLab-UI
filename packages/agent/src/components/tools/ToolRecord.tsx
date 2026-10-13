@@ -33,6 +33,8 @@ export type ToolRecordProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'childr
   onLoadDetails?: (id: string) => void;
   /** Loading the full record failed (shown with a retry when `onLoadDetails` exists). */
   detailsError?: React.ReactNode;
+  detailsLoading?: boolean;
+  onRetry?: (tool: ToolCallView) => void;
   /** Override the detail body. Return `undefined` to fall back to the built-in view. */
   renderDetail?: (tool: ToolCallView) => React.ReactNode | undefined;
   /** Callbacks for the built-in detail views (read more, reload, open terminal…). */
@@ -51,6 +53,8 @@ export const ToolRecord = React.forwardRef<HTMLDivElement, ToolRecordProps>(func
     onExpandedChange,
     onLoadDetails,
     detailsError,
+    detailsLoading = false,
+    onRetry,
     renderDetail,
     detailActions,
     actions,
@@ -66,7 +70,7 @@ export const ToolRecord = React.forwardRef<HTMLDivElement, ToolRecordProps>(func
   const [innerOpen, setInnerOpen] = React.useState(defaultExpanded);
   const open = expanded ?? innerOpen;
   const requested = React.useRef(false);
-  const needsLoad = tool.detailsLoaded === false;
+  const needsLoad = tool.detailsLoaded === false || detailsLoading;
 
   // One request per row while the record is missing; StrictMode-safe via the ref.
   React.useEffect(() => {
@@ -131,6 +135,7 @@ export const ToolRecord = React.forwardRef<HTMLDivElement, ToolRecordProps>(func
       data-tool-id={tool.id}
     >
       <div className="rl-agent-tool__head">
+        {tool.failure && <Notice tone="danger" action={tool.failure.retryable && onRetry && <ActionButton icon="retry" onClick={() => onRetry(tool)}>{m.retry}</ActionButton>}><code>{tool.failure.code}</code> {tool.failure.message}</Notice>}
         <Collapsible
           className="rl-agent-tool__disclosure"
           open={open}

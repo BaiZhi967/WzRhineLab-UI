@@ -127,6 +127,25 @@ describe('MessageList semantics', () => {
 });
 
 describe('MessageList scroll ownership', () => {
+  it('keeps follow ownership while the reader scrolls an inner code region', () => {
+    render(<MessageList messages={many(6)} renderMessage={(message) => <pre data-scroll-ownership="inner">{message.id}</pre>} />);
+    fireEvent.wheel(screen.getByText('m1'), { deltaY: -40 });
+    expect(following()).toBe(true);
+    fireEvent.touchStart(screen.getByText('m1'), { touches: [{ clientY: 10 }] });
+    fireEvent.touchMove(screen.getByText('m1'), { touches: [{ clientY: 50 }] });
+    expect(following()).toBe(true);
+  });
+
+  it('keeps a prepended reading anchor while historical content continues growing', () => {
+    const { rerender } = render(<MessageList messages={many(6)} hasEarlier onLoadEarlier={() => {}} />);
+    scrollTo(100);
+    fireEvent.click(screen.getByRole('button', { name: '加载更早消息' }));
+    rerender(<MessageList messages={[msg('old'), ...many(6)]} />);
+    expect(viewport().scrollTop).toBe(200);
+    const saved = viewport().scrollTop;
+    act(() => observers.forEach((callback) => callback()));
+    expect(viewport().scrollTop).toBe(saved);
+  });
   it('starts at the bottom and follows appended content', () => {
     const { rerender } = render(<MessageList messages={many(5)} />);
     expect(viewport().scrollTop).toBe(200);

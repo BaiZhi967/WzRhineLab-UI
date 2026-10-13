@@ -52,6 +52,8 @@ export interface AgentWorkspaceMessages {
   terminalGroup: Record<TerminalGroupKey, string>;
   terminalList: string;
   terminalLoadMore: string;
+  terminalLoading: string;
+  retry: string;
   // ---------- SubAgentCard / SubAgentList ----------
   subagentList: string;
   subagentParent: (id: string) => string;
@@ -219,6 +221,8 @@ export const zhWorkspace: AgentWorkspaceMessages = {
   terminalGroup: { open: '未关闭', ended: '已结束', unknown: '状态待确认', inherited: '继承记录' },
   terminalList: '终端列表',
   terminalLoadMore: '加载更多终端',
+  terminalLoading: '正在读取终端…',
+  retry: '重试',
   subagentList: '子任务',
   subagentParent: (id) => `父任务 ${id}`,
   subagentOpen: '查看子任务',
@@ -383,6 +387,8 @@ export const enWorkspace: AgentWorkspaceMessages = {
   terminalGroup: { open: 'Open', ended: 'Ended', unknown: 'Status unconfirmed', inherited: 'Inherited' },
   terminalList: 'Terminals',
   terminalLoadMore: 'Load more terminals',
+  terminalLoading: 'Loading terminals…',
+  retry: 'Retry',
   subagentList: 'Sub-tasks',
   subagentParent: (id) => `Parent ${id}`,
   subagentOpen: 'View sub-task',

@@ -217,7 +217,7 @@ function DiffHeaderParts({ diff }: { diff: FileDiffView }) {
         </span>
       )}
       <span className="rl-agent-diff__change">{m.diffChange[diff.change]}</span>
-      {!diff.binary && <DiffStats additions={t.additions} deletions={t.deletions} />}
+      {!diff.binary && diff.statsReliable !== false && <DiffStats additions={t.additions} deletions={t.deletions} />}
       {diff.status && <DiffStatusPill status={diff.status} />}
     </>
   );
@@ -283,7 +283,7 @@ export const MultiFileDiff = React.forwardRef<HTMLDivElement, MultiFileDiffProps
     <div {...rest} ref={ref} className={cx('rl-agent-multidiff', className)}>
       <p className="rl-agent-multidiff__summary">
         <span>{m.diffFiles(files.length)}</span>
-        <DiffStats additions={stats.additions} deletions={stats.deletions} />
+        {files.every((file) => file.statsReliable !== false) && <DiffStats additions={stats.additions} deletions={stats.deletions} />}
       </p>
       <ul className="rl-agent-multidiff__list" aria-label={label ?? m.multiFileList}>
         {files.map((file) => (

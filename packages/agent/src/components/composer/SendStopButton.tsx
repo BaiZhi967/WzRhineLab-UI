@@ -36,6 +36,7 @@ export type SendStopButtonProps = Omit<
   onRetry?: (kind: 'send' | 'stop', actionId: string | undefined) => void;
   /** Draft save failed: the button becomes 重试保存. */
   onRetrySave?: () => void;
+  retryBusy?: boolean;
   /** Why sending is not possible; shown in the tooltip and linked with aria-describedby. */
   disabledReason?: string;
   /** Override labels per state. */
@@ -73,6 +74,7 @@ export const SendStopButton = React.forwardRef<HTMLButtonElement, SendStopButton
     onStop,
     onRetry,
     onRetrySave,
+    retryBusy = false,
     disabledReason,
     labels,
     className,
@@ -101,7 +103,8 @@ export const SendStopButton = React.forwardRef<HTMLButtonElement, SendStopButton
     retryable: unknown?.retryable,
     hasRetrySave: onRetrySave !== undefined,
   });
-  const { state, enabled, action, icon } = resolved;
+  const { state, enabled: resolvedEnabled, action, icon } = resolved;
+  const enabled = retryBusy && state === 'retry-save' ? false : resolvedEnabled;
 
   const label =
     state === 'send'

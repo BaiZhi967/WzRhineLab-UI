@@ -53,6 +53,8 @@ export type NumberFieldProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'child
   placeholder?: string;
   /** Trailing unit text (e.g. "个"), read as part of the description. */
   unit?: React.ReactNode;
+  inherited?: string | number | boolean;
+  submitOnEnter?: boolean;
   /** Ref to the visible text input. */
   inputRef?: React.Ref<HTMLInputElement>;
   ref?: React.Ref<HTMLDivElement>;
@@ -99,6 +101,8 @@ export function NumberField({
   size = 'md',
   placeholder,
   unit,
+  inherited,
+  submitOnEnter = true,
   inputRef,
   className,
   style,
@@ -159,6 +163,14 @@ export function NumberField({
               placeholder={placeholder}
               aria-roledescription={messages.numberField.roleDescription}
               aria-describedby={unit != null ? unitId : undefined}
+              data-inherited={inherited || undefined}
+              onKeyDown={(event) => {
+                if (submitOnEnter && event.key === 'Enter') {
+                  event.preventDefault();
+                  (event.currentTarget as HTMLInputElement).blur();
+                  onValueCommitted?.(value ?? defaultValue ?? null);
+                }
+              }}
             />
             {unit != null && (
               <span id={unitId} className="rl-input__adornment rl-number-field__unit">

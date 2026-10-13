@@ -7,6 +7,7 @@ import { cx } from '../utils/cx.js';
 type BaseFormProps = React.ComponentProps<typeof BaseForm>;
 
 export type FormProps = Omit<BaseFormProps, 'className' | 'style' | 'render'> & {
+  disabled?: boolean;
   className?: string;
   style?: React.CSSProperties;
 };
@@ -22,6 +23,6 @@ export type FormProps = Omit<BaseFormProps, 'className' | 'style' | 'render'> & 
  *     <Button type="submit">保存</Button>
  *   </Form>
  */
-export const Form = React.forwardRef<HTMLFormElement, FormProps>(function Form({ className, style, ...rest }, ref) {
-  return <BaseForm {...rest} ref={ref} className={cx('rl-form', className)} style={style} data-slot="form" />;
+export const Form = React.forwardRef<HTMLFormElement, FormProps>(function Form({ className, style, disabled = false, children, ...rest }, ref) {
+  return <BaseForm {...rest} ref={ref} className={cx('rl-form', className)} style={style} data-slot="form" data-disabled={disabled || undefined}>{disabled ? <fieldset disabled className="rl-form__disabled">{children}</fieldset> : children}</BaseForm>;
 });

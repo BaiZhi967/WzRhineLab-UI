@@ -157,6 +157,16 @@
   --rl-danger: #b12f2b;
   --rl-danger-subtle: #f8e3e0;
 
+  /* Category accents: data classification, never a substitute for status text. */
+  --rl-category-1: #1f6680;
+  --rl-category-2: #22704a;
+  --rl-category-3: #a8421b;
+  --rl-category-4: #8a5400;
+  --rl-category-5: #5d4a8a;
+  --rl-category-6: #7b4d2a;
+  --rl-category-7: #2f6b73;
+  --rl-category-8: #6a4f7a;
+
   --rl-focus: #1f5aa8;
   --rl-inverse-hover: #343a33;
 
@@ -204,6 +214,15 @@
   --rl-warning-subtle: #372d18;
   --rl-danger: #ff9c93;
   --rl-danger-subtle: #3d2323;
+
+  --rl-category-1: #7cc7da;
+  --rl-category-2: #82d6a4;
+  --rl-category-3: #ffb07a;
+  --rl-category-4: #f2c27a;
+  --rl-category-5: #c6b4ff;
+  --rl-category-6: #d6a77d;
+  --rl-category-7: #8ad5dd;
+  --rl-category-8: #d0b4e8;
 
   --rl-focus: #8db8f2;
   --rl-inverse-hover: #cfd4cc;
@@ -253,6 +272,15 @@
     --rl-warning-subtle: #372d18;
     --rl-danger: #ff9c93;
     --rl-danger-subtle: #3d2323;
+
+    --rl-category-1: #7cc7da;
+    --rl-category-2: #82d6a4;
+    --rl-category-3: #ffb07a;
+    --rl-category-4: #f2c27a;
+    --rl-category-5: #c6b4ff;
+    --rl-category-6: #d6a77d;
+    --rl-category-7: #8ad5dd;
+    --rl-category-8: #d0b4e8;
 
     --rl-focus: #8db8f2;
     --rl-inverse-hover: #cfd4cc;

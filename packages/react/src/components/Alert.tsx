@@ -24,6 +24,7 @@ import { IconButton } from './IconButton.js';
 
 export type AlertTone = 'neutral' | 'info' | 'success' | 'warning' | 'danger';
 export type AlertLive = 'off' | 'polite' | 'assertive';
+export type AlertSize = 'sm' | 'md';
 
 type BaseProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'role'> & {
   tone?: AlertTone;
@@ -34,6 +35,7 @@ type BaseProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'role'> & 
 };
 
 export type AlertProps = BaseProps & {
+  size?: AlertSize;
   live?: AlertLive;
   /** Follow-up control(s), e.g. a small Button 「查看」. */
   action?: React.ReactNode;
@@ -103,12 +105,12 @@ function Message({
 }
 
 export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  { tone = 'info', title, children, icon, live = 'off', action, onDismiss, dismissLabel, className, ...rest },
+  { tone = 'info', title, children, icon, live = 'off', action, onDismiss, dismissLabel, size = 'md', className, ...rest },
   ref,
 ) {
   const messages = useRhineMessages();
   return (
-    <div {...rest} ref={ref} className={cx('rl-alert', className)} data-slot="alert" data-tone={tone} data-live={live}>
+    <div {...rest} ref={ref} className={cx('rl-alert', className)} data-slot="alert" data-tone={tone} data-live={live} data-size={size}>
       <Message tone={tone} icon={icon} title={title} role={liveRole[live]}>
         {children}
       </Message>

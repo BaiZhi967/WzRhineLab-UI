@@ -22,6 +22,9 @@ export type RhineNumberFormat = (value: number) => string;
  * pre-M9.5 output, which prints raw digits).
  */
 export interface RhineMessages {
+  workbench: { index: string; content: string; resize: string; width: (width: string) => string; };
+  tree: { loading: string; empty: string; retry: (name: string) => string; expand: (name: string) => string; collapse: (name: string) => string; };
+  tag: { remove: (name: string) => string; };
   alert: {
     /** Dismiss button of a dismissible Alert. */
     dismiss: string;
@@ -160,6 +163,9 @@ export type RhineMessagesOverrides = { [K in keyof RhineMessages]?: Partial<Rhin
 
 /** Built-in default (zh-CN). Output is identical to the pre-M9.5 hard-coded defaults. */
 export const zhCN: RhineMessages = {
+  workbench: { index: '索引', content: '工作台内容', resize: '调整索引宽度', width: (width) => `宽度 ${width} 像素` },
+  tree: { loading: '正在读取…', empty: '暂无项目', retry: (name) => `重试读取 ${name}`, expand: (name) => `展开 ${name}`, collapse: (name) => `收起 ${name}` },
+  tag: { remove: (name) => `移除 ${name}` },
   alert: { dismiss: '关闭提示' },
   alertDialog: { cancel: '取消', error: '操作未完成，请重试。' },
   breadcrumb: { nav: '路径', expand: (count) => `显示全部 ${count} 级路径` },
@@ -214,6 +220,9 @@ export const zhCN: RhineMessages = {
 
 /** Reference English translation (参考译文): wording may change before 1.0. */
 export const enUS: RhineMessages = {
+  workbench: { index: 'Index', content: 'Workbench content', resize: 'Resize index', width: (width) => `Width ${width} pixels` },
+  tree: { loading: 'Loading…', empty: 'No items', retry: (name) => `Retry loading ${name}`, expand: (name) => `Expand ${name}`, collapse: (name) => `Collapse ${name}` },
+  tag: { remove: (name) => `Remove ${name}` },
   alert: { dismiss: 'Dismiss alert' },
   alertDialog: { cancel: 'Cancel', error: 'The action did not complete. Please try again.' },
   breadcrumb: { nav: 'Breadcrumb', expand: (count, f) => `Show all ${f(count)} levels` },
