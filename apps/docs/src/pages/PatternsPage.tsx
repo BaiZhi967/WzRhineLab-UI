@@ -2,7 +2,16 @@ import * as React from 'react';
 import '@wzrhine/patterns/styles.css';
 import { Button, MetadataList, RecordHeader, StatusBadge } from '@wzrhine/react';
 import type { MetadataItem } from '@wzrhine/react';
-import { AppliedFilters, InspectorPanel, ListDetail, QueryToolbar, ViewSwitcher } from '@wzrhine/patterns';
+import {
+  AppliedFilters,
+  InspectorPanel,
+  ListDetail,
+  QueryToolbar,
+  ResourceGrid,
+  SectionIndex,
+  SelectionToolbar,
+  ViewSwitcher,
+} from '@wzrhine/patterns';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
 
 /** Static specimen records: deterministic content for screenshots and e2e (no live data). */
@@ -73,6 +82,15 @@ function ListDetailSpecimen() {
                   { label: '关联条目', value: 'ARC-0998、ARC-1003', mono: true },
                 ]}
               />
+              <SectionIndex
+                label="本记录章节"
+                sections={[
+                  { id: 'spec-summary', label: '概览' },
+                  { id: 'spec-method', label: '方法' },
+                  { id: 'spec-result', label: '结果' },
+                ]}
+                activeId="spec-summary"
+              />
             </div>
           ) : null
         }
@@ -140,9 +158,38 @@ function CollectionSpecimen() {
           { value: 'grid', label: '网格' },
         ]}
       />
+      <SelectionToolbar
+        selectedCount={2}
+        scope="loaded"
+        totalLabel="已加载 100 条"
+        onClear={() => {}}
+        actions={[{ id: 'export', label: '导出所选', onRun: () => {} }]}
+      />
+      <ResourceGrid
+        label="资源集合"
+        items={resourceItems}
+        getItemId={(item) => item.id}
+        getItemTitle={(item) => item.title}
+        getItemSpec={(item) => ({
+          badge: item.badge,
+          description: item.note,
+          thumbnail: { src: item.src, alt: item.title, width: 320, height: 240 },
+        })}
+        getItemLabel={(item) => `选择 ${item.title}`}
+        selectedIds={new Set(['RES-2'])}
+        onSelectionChange={() => {}}
+        onOpen={() => {}}
+      />
     </div>
   );
 }
+
+const resourceItems = [
+  { id: 'RES-1', title: '浅层水体照片', note: 'ST-07 平台，能见度良好', badge: '已归档', src: '' },
+  { id: 'RES-2', title: '沉积物显微图像', note: '40× 物镜，偏光', badge: '审核中', src: '' },
+  { id: 'RES-3', title: '航拍底图切片', note: '2026-09 潮间带普查', src: '' },
+  { id: 'RES-4', title: '声呐剖面记录', note: '浅地层剖面仪', src: '' },
+];
 
 export function PatternsPage() {
   return (
