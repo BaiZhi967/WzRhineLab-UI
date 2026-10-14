@@ -1,0 +1,632 @@
+{
+  "date": "2026-10-14",
+  "scope": "reference SVG parsing and raster diagnostics only; not product acceptance",
+  "source_zip_sha256": "e1d9ee5a49740f21254a0c879815f13a53b6eacade83e68e36b56ac49c30f802",
+  "source_zip_entries": 94,
+  "reference_svg_count": 36,
+  "observed_public_icon_names_count": 35,
+  "observed_public_icon_names": [
+    "Settings",
+    "Settings2",
+    "SlidersHorizontal",
+    "Minus",
+    "Maximize",
+    "Maximize2",
+    "Minimize2",
+    "PanelTopClose",
+    "PanelTopOpen",
+    "Power",
+    "Square",
+    "FolderOpen",
+    "FolderPlus",
+    "FolderMinus",
+    "FileCode2",
+    "FoldVertical",
+    "Plug",
+    "Puzzle",
+    "Boxes",
+    "ShieldAlert",
+    "ShieldHalf",
+    "ChevronUp",
+    "Eye",
+    "ImagePlus",
+    "MessagesSquare",
+    "PinOff",
+    "RotateCcw",
+    "SquareChartGantt",
+    "Users",
+    "ChevronDown",
+    "ChevronLeft",
+    "ChevronRight",
+    "Plus",
+    "X",
+    "Check"
+  ],
+  "raster_method": {
+    "renderer": "CairoSVG 2.8.2",
+    "pixel_size": 960,
+    "scale_px_per_user_unit": 40,
+    "bbox_alpha_threshold": 128,
+    "bbox_method": "pixel-cell edge coordinates divided by 40",
+    "centroid_method": "pixel-center coordinates weighted by alpha divided by 40",
+    "limitations": "Bounding boxes have sampling/antialiasing error and ink centroid is not optical center. No browser, platform, accessibility or package test performed."
+  },
+  "icons": {
+    "arrow-right": {
+      "sha256": "1ae51c04658cd0c27d68fff0687078b208bfac5e7799fa777fa916c28f065c76",
+      "title": "继续前进 / CONTINUE",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        1.525,
+        4.125,
+        21.275,
+        19.875
+      ],
+      "alpha_centroid_u": [
+        13.78821812069827,
+        11.999987533373643
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "branch": {
+      "sha256": "401f4608c23c7ba8130158a5bfc109422e0daf17e42bd664c5d487d5e795543d",
+      "title": "版本分支 / BRANCH",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        3.55,
+        1.85,
+        21.3,
+        22.6
+      ],
+      "alpha_centroid_u": [
+        10.738731272462903,
+        11.313151208874311
+      ],
+      "outside_proposed_1_5u_safe_inset": true
+    },
+    "cabinet": {
+      "sha256": "fd14acba00eeb27c9031765859b1ed568c0025d91c964a68baa515bb68b2fd7e",
+      "title": "档案柜 / CABINET",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.125,
+        2.075,
+        21.875,
+        21.825
+      ],
+      "alpha_centroid_u": [
+        12.00005752295535,
+        12.160175106769623
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "caliper": {
+      "sha256": "dc0be6dbb619bd63b64103a5fd3765cf9ea41273ba8bfcc16bb3b933d3998473",
+      "title": "精密测量 / MEASUREMENT",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.35,
+        3.725,
+        22.1,
+        20.475
+      ],
+      "alpha_centroid_u": [
+        11.294730688987357,
+        11.674932987803851
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "check": {
+      "sha256": "32e4f47eab91a0ca04a3e8f07807ebc86718a5947d147dbe229b83f8c9c43ac9",
+      "title": "确认完成 / CONFIRM",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        3.125,
+        5.725,
+        20.875,
+        17.975
+      ],
+      "alpha_centroid_u": [
+        12.006968289821241,
+        12.478607649012483
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "close": {
+      "sha256": "90fb2ed6d138ccfb3d9b75e857c5fa31f2d47442da011224d57fe32a6dbf9906",
+      "title": "关闭 / CLOSE",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        4.125,
+        4.125,
+        19.875,
+        19.875
+      ],
+      "alpha_centroid_u": [
+        12.000249946352708,
+        11.999999529076833
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "collection": {
+      "sha256": "58177e2773a2192a53b790cc19cb6d2be08f250f1bd0cf192d5e5cff866098c1",
+      "title": "资料集合 / COLLECTION",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.75,
+        2.025,
+        21.5,
+        21.775
+      ],
+      "alpha_centroid_u": [
+        11.64703543430738,
+        12.335919328338424
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "components": {
+      "sha256": "22e6a7743d676f85534fc858841e1755feea640569c2f66a02837043b7dd8a8b",
+      "title": "组件模块 / COMPONENTS",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.125,
+        2.125,
+        21.875,
+        21.875
+      ],
+      "alpha_centroid_u": [
+        12.000004968473638,
+        11.99992822979238
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "download": {
+      "sha256": "2d7939067dc630de5c6e07ee18aaa331a5721785ed90a891098340281fd707d0",
+      "title": "下载归档 / DOWNLOAD",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.625,
+        1.275,
+        21.375,
+        21.025
+      ],
+      "alpha_centroid_u": [
+        12.000077590735483,
+        14.581969969124682
+      ],
+      "outside_proposed_1_5u_safe_inset": true
+    },
+    "filter": {
+      "sha256": "4cff41497e863cbbf965f0f6af017164a02c2598523436872d39818dbb6906f6",
+      "title": "条件筛选 / FILTER",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.125,
+        3.2,
+        21.875,
+        21.95
+      ],
+      "alpha_centroid_u": [
+        11.977733874552737,
+        10.267392470426623
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "flask": {
+      "sha256": "2a648ed0648f7787d5b1cde5d90459b432e9ab6ae66ecb4f4fe561b841646eb6",
+      "title": "实验研究 / RESEARCH",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        3.425,
+        2.0,
+        20.575,
+        21.25
+      ],
+      "alpha_centroid_u": [
+        12.000038797524017,
+        13.138617134726399
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "folder": {
+      "sha256": "5c7c5d422d0a2119bdcb596382289c307725b10395d777e7ec86700544df2c02",
+      "title": "资料文件夹 / FOLDER",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.25,
+        3.05,
+        22.0,
+        20.8
+      ],
+      "alpha_centroid_u": [
+        11.643106569352634,
+        12.19544031455478
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "history": {
+      "sha256": "b0cf2ec5678528b8baba060f27516947a77250cac80eaa86aaa4c8e6095f1bf2",
+      "title": "版本历史 / HISTORY",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.775,
+        2.825,
+        21.25,
+        21.575
+      ],
+      "alpha_centroid_u": [
+        11.93159839210224,
+        11.483592496707127
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "home": {
+      "sha256": "0c1fa4f91af4f81e49b01e8344c9eb41dca721f378ca05d8513fd41b0d134a41",
+      "title": "总览 / OVERVIEW",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.125,
+        1.675,
+        21.875,
+        21.425
+      ],
+      "alpha_centroid_u": [
+        12.000177226428322,
+        13.375564865043065
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "index": {
+      "sha256": "3fcb1e96268f73f73af590ea2fa5928aea30fb1caa9e4a283d9f2de83e497d50",
+      "title": "索引目录 / INDEX",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.625,
+        2.15,
+        21.375,
+        21.9
+      ],
+      "alpha_centroid_u": [
+        11.999998622978826,
+        11.948906385373284
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "layers": {
+      "sha256": "d438044867bc0cd3a250d30ff810327ab84cc8d4916734d5044753a37616eb89",
+      "title": "结构分层 / LAYERS",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.125,
+        2.1,
+        21.875,
+        21.85
+      ],
+      "alpha_centroid_u": [
+        12.000649241640101,
+        12.088366860792913
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "lock": {
+      "sha256": "5bbca107716a57ee59235570a3e361138b677e6da55ddfbaae2e8128b4811d23",
+      "title": "权限控制 / ACCESS",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        3.625,
+        1.85,
+        20.375,
+        21.6
+      ],
+      "alpha_centroid_u": [
+        11.999972076623092,
+        12.8296456887765
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "message": {
+      "sha256": "34ef9ea95da524a353b6cc6d6529c228fc555d667e5b461ea2a74c8bde21bd30",
+      "title": "会话 / CONVERSATION",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.3,
+        2.725,
+        22.05,
+        21.975
+      ],
+      "alpha_centroid_u": [
+        11.475052894064168,
+        10.96921683065965
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "microscope": {
+      "sha256": "de7b836a1e35307a55254e94c09277ad0b29a5cf8b0e09ff994f27536e9a75a7",
+      "title": "显微观察 / MICROSCOPY",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.925,
+        2.0,
+        20.675,
+        21.25
+      ],
+      "alpha_centroid_u": [
+        12.569943764076813,
+        13.104076482439172
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "network": {
+      "sha256": "915f8d7a2f9d6ca1d495f4b7b0e06a33f1bfbcb92e662b7696c756b818ea4616",
+      "title": "研究网络 / NETWORK",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        0.825,
+        0.825,
+        23.175,
+        23.175
+      ],
+      "alpha_centroid_u": [
+        11.999988160531043,
+        11.999850834513357
+      ],
+      "outside_proposed_1_5u_safe_inset": true
+    },
+    "optical-core": {
+      "sha256": "412861747b9cbc3d5d6f50f8e9f1a7e973070a721cf1832bf806297c281f40ae",
+      "title": "光学核心 / OPTICAL CORE",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        1.625,
+        2.625,
+        22.375,
+        21.375
+      ],
+      "alpha_centroid_u": [
+        12.000038838572241,
+        11.999944589362842
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "orbit": {
+      "sha256": "924d8e98aa72ba2848fc61bc44c5191e8c271558d0290ac09c540f95f4240726",
+      "title": "轨道追踪 / ORBIT",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.925,
+        1.625,
+        21.075,
+        22.375
+      ],
+      "alpha_centroid_u": [
+        11.999943464734208,
+        11.999913624207776
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "panels": {
+      "sha256": "152405b65acb89a03a3d545792df19cd551b5ac0d96cb7efb5c4ed3dd413a018",
+      "title": "分栏布局 / SPLIT VIEW",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.25,
+        3.125,
+        22.0,
+        20.875
+      ],
+      "alpha_centroid_u": [
+        11.601867894283233,
+        11.999947030457438
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "pause": {
+      "sha256": "158492b3e41f93b25ccf540cb9390a5e975a79ea9f1305be5bebdec24a4dcc49",
+      "title": "暂停 / PAUSE",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        4.625,
+        3.125,
+        19.375,
+        20.875
+      ],
+      "alpha_centroid_u": [
+        11.999989028463801,
+        11.999925434969114
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "play": {
+      "sha256": "634c48165ccb20ddede40592a759a0714eddb7dd81aaf468994f5df86d9b931a",
+      "title": "运行 / RUN",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        5.175,
+        3.125,
+        19.925,
+        20.875
+      ],
+      "alpha_centroid_u": [
+        10.329697400271217,
+        11.999999202675596
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "record": {
+      "sha256": "3893d0140196ba39cfbe419dadba5e4f6f6e45412bf84cd3b20b688f632195b6",
+      "title": "研究档案 / RECORD",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        4.15,
+        2.075,
+        19.9,
+        21.825
+      ],
+      "alpha_centroid_u": [
+        11.952457280590448,
+        12.124006462804829
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "satellite": {
+      "sha256": "c6c0d1f61d1cf3efedfe86137501df93cb3a399e99bd49ed9a1c11f0f9ad3913",
+      "title": "空间通信 / SATELLITE",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        1.725,
+        3.275,
+        22.5,
+        20.75
+      ],
+      "alpha_centroid_u": [
+        11.656972144722044,
+        11.967428260723775
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "scan": {
+      "sha256": "e2449204428d210d6258b8ccc27cfb9dd2638f6ff7558497b8c8fc890b30e006",
+      "title": "区域扫描 / SCAN",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.125,
+        2.125,
+        21.875,
+        21.875
+      ],
+      "alpha_centroid_u": [
+        12.000022055765733,
+        11.999943549445849
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "search": {
+      "sha256": "8a0043774129cab8525ce7337350f5bf42cb54bd1af68cd65d90d70eec512857",
+      "title": "搜索 / SEARCH",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.775,
+        2.775,
+        21.525,
+        21.525
+      ],
+      "alpha_centroid_u": [
+        11.5128198636239,
+        11.512600440406397
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "settings": {
+      "sha256": "bbdb1618bdcc920c56dbb8684caaaea4d7cf61abae3853ee58e900fc8504e429",
+      "title": "设置 / SETTINGS",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.125,
+        2.125,
+        21.875,
+        21.875
+      ],
+      "alpha_centroid_u": [
+        12.000028887327815,
+        11.999957307503436
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "specimen": {
+      "sha256": "a8157aa094fa1e04a7b5f34c930badf164450bf797c509364c7961688ea5c66d",
+      "title": "样本容器 / SPECIMEN",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.625,
+        2.625,
+        21.375,
+        21.375
+      ],
+      "alpha_centroid_u": [
+        12.000162775668107,
+        11.999992735385934
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "spectrum": {
+      "sha256": "38055983d24241c0e85af32221fcb078d482b0a3194d54b634158b8c1909f2dc",
+      "title": "频谱分析 / SPECTRUM",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.1,
+        3.05,
+        21.85,
+        20.8
+      ],
+      "alpha_centroid_u": [
+        12.060293641833372,
+        12.218729462392307
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "tag": {
+      "sha256": "726de333b1d8950492395393650ddf9ea24fbbc60d2d24efb1c7aaa4867e9352",
+      "title": "分类标签 / TAG",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.475,
+        3.025,
+        22.225,
+        21.775
+      ],
+      "alpha_centroid_u": [
+        10.985788240012916,
+        10.796584697624706
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "terminal": {
+      "sha256": "d95cf3f053d4ccdb292730a534c83027ecb94e8737ea491bd5c787071fafeee1",
+      "title": "终端 / TERMINAL",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.2,
+        3.025,
+        21.95,
+        20.775
+      ],
+      "alpha_centroid_u": [
+        11.802056246093324,
+        12.302129035187093
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "upload": {
+      "sha256": "20a6c619946b200f45f4284190dea24bfa3ff3ab170e634c38889cb1ac5a1fe4",
+      "title": "上传资料 / UPLOAD",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        2.625,
+        1.6,
+        21.375,
+        21.35
+      ],
+      "alpha_centroid_u": [
+        12.00007485841741,
+        13.559076221890624
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    },
+    "waveform": {
+      "sha256": "e32532263d0f849b2eb317dc58bb9b6c584d9b2c2021c885bd37b133198d973f",
+      "title": "信号监测 / SIGNAL",
+      "standard_root_attributes": true,
+      "raster_bbox_u": [
+        1.625,
+        3.625,
+        22.375,
+        20.375
+      ],
+      "alpha_centroid_u": [
+        12.00004910850915,
+        11.999993875631619
+      ],
+      "outside_proposed_1_5u_safe_inset": false
+    }
+  }
+}
