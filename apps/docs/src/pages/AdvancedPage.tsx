@@ -232,9 +232,15 @@ export function AdvancedPage() {
         <Specimen id="advanced-accordion-multiple" index="02" title="Accordion · multiple" span="half" align="start" note="multiple：可同时展开多项；meta 是按钮名称的一部分。">
           <MultipleAccordionDemo />
         </Specimen>
+        <Specimen id="advanced-slider-states" index="03" title="Slider · states" span="half" align="start" note="format 使用 RhineProvider locale；区间滑块每个滑块有独立名称。">
+          <SliderStates />
+        </Specimen>
+        <Specimen id="advanced-number-states" index="04" title="NumberField · states" span="half" align="start" note="Intl 格式、invalid、sm、readOnly、disabled。">
+          <NumberFieldStates />
+        </Specimen>
         <Specimen
           id="advanced-effort"
-          index="03"
+          index="05"
           title="Slider · discrete marks"
           span="half"
           align="start"
@@ -242,21 +248,15 @@ export function AdvancedPage() {
         >
           <EffortDemo />
         </Specimen>
-        <Specimen id="advanced-slider-states" index="04" title="Slider · states" span="half" align="start" note="format 使用 RhineProvider locale；区间滑块每个滑块有独立名称。">
-          <SliderStates />
-        </Specimen>
         <Specimen
           id="advanced-number"
-          index="05"
+          index="06"
           title="NumberField"
           span="half"
           align="start"
           note="步进按钮不在 Tab 顺序中（方向键等效），名称来自 numberField 文案；到达边界时禁用。"
         >
           <NumberFieldDemo />
-        </Specimen>
-        <Specimen id="advanced-number-states" index="06" title="NumberField · states" span="half" align="start" note="Intl 格式、invalid、sm、readOnly、disabled。">
-          <NumberFieldStates />
         </Specimen>
         <Specimen id="advanced-context" index="07" title="ContextMenu" span="two-thirds" align="start" note="复用 Menu 部件与 rl-menu 样式；Esc 关闭并把焦点还给行。">
           <ContextMenuDemo />
