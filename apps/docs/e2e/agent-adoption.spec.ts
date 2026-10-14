@@ -3,6 +3,7 @@ import { findHorizontalOverflow, setSettings, widths } from './helpers';
 
 test.describe('Wpi adoption readiness showcase', () => {
   test('renders the complete public-entry workbench and effect states', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 900 });
     await setSettings(page, { motion: 'reduce' });
     await page.goto('/#/agent/adoption');
     await expect(page.getByRole('heading', { name: 'Wpi adoption readiness' })).toBeVisible();

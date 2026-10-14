@@ -74,3 +74,36 @@ test.describe('Showcase specimen rhythm', () => {
     await expect(page.locator('.sc-specimen[aria-labelledby="button-icons-title"]')).toHaveAttribute('data-align', 'start');
   });
 });
+
+test.describe('Adoption workbench states', () => {
+  test('enters compact before squeezing the reading column', async ({ page }) => {
+    test.setTimeout(30_000);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await setSettings(page, { motion: 'reduce' });
+    await page.goto('/#/agent/adoption');
+    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('.rl-agent-shell')).toHaveAttribute('data-layout', 'compact');
+    const width = await page.locator('.rl-agent-shell__main').evaluate((element) => element.getBoundingClientRect().width);
+    expect(width).toBeGreaterThanOrEqual(320);
+  });
+
+  test('uses sheets for side columns on narrow screens', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 900 });
+    await setSettings(page, { motion: 'reduce' });
+    await page.goto('/#/agent/adoption');
+    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('.rl-agent-shell')).toHaveAttribute('data-layout', 'narrow');
+    await expect(page.locator('.rl-agent-shell__rail')).toHaveCount(0);
+    await expect(page.locator('.rl-agent-shell__index')).toHaveCount(0);
+    await expect(page.locator('.rl-agent-shell__context[data-open]')).toHaveCount(0);
+  });
+
+  test('keeps the context pane inline on wide screens', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 900 });
+    await setSettings(page, { motion: 'reduce' });
+    await page.goto('/#/agent/adoption');
+    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('.rl-agent-shell')).toHaveAttribute('data-layout', 'wide');
+    await expect(page.locator('.rl-agent-shell__context[data-open]')).toBeVisible();
+  });
+});

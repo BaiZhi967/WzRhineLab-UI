@@ -49,7 +49,7 @@ function AdoptionWorkbench() {
         viewKey="adoption"
         direction="forward"
         defaultContextOpen
-        breakpoints={{ context: 48, index: 32 }}
+        breakpoints={{ context: 60, index: 40 }}
         rail={<NavRail aria-label="Agent 模块" collapsed><NavItem label="Agent" icon={<Icon name="MessagesSquare" />} active /><NavItem label="设置" icon={<Icon name="Settings" />} /></NavRail>}
         index={<NavList aria-label="Agent 页面"><NavGroup label="运行"><NavItem label="当前运行" active badge={<span>2</span>} /><NavItem label="历史运行" /></NavGroup><NavGroup label="资源"><NavItem label="终端" /><NavItem label="产物" /></NavGroup></NavList>}
         header={<div className="sc-row"><strong>Wpi 接入验收工作台</strong><Button size="sm" variant="ghost" onClick={() => setIndexOpen((open) => !open)}>{indexOpen ? '收起索引' : '打开索引'}</Button></div>}
@@ -70,7 +70,7 @@ export function AdoptionPage() {
       </PageHeader>
       <SpecimenGrid>
         <Specimen id="agent-adoption-workbench" index="01" title="完整接入工作台" note="在 320–1920px 宽度下检查索引收起、焦点回退、滚动归属和受控面板状态。">
-          <div style={{ minHeight: '34rem' }}><AdoptionWorkbench /></div>
+          <div className="sc-agent-workbench"><AdoptionWorkbench /></div>
         </Specimen>
         <Specimen id="agent-adoption-motion" index="02" title="一次性动效与选中态" span="half" align="start" note="ArchiveReveal、ScanSurface 与 OrbitalDiagram 都先渲染真实内容；页面隐藏或减少动效时停止。">
           <div className="sc-card-list">
