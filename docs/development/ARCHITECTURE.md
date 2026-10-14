@@ -88,6 +88,6 @@ packages/react/src/
 ## 发布与版本
 - M0 阶段无自动 CI（避免不必要占用配额），本地运行检查是合并前必备门禁。
 - M3 起先配置 workflow_dispatch 手动触发，再根据资源与权限决定是否开放 PR 自动检查。
-  - 现状（2026-10-11，M10 后）：仍没有任何 CI，仓库没有 `.github/workflows`，`workflow_dispatch` 也未配置；启用 GitHub Actions 需维护者批准（AGENTS.md）。合并前门禁为本地 `pnpm release:check` 与三内核 E2E，结果写入验收记录。
+  - 现状（2026-10-14，M13 后）：有一个经维护者批准的 `.github/workflows/pages.yml`，只做 Showcase → GitHub Pages 部署（`apps/docs`、`packages` 或 lockfile 变化时触发，另有 `workflow_dispatch`），**不运行测试、也不发布 npm**。测试门禁仍是本地的 `pnpm release:check` 与三内核 E2E，结果写入验收记录；新增或改动任何 workflow 都需维护者批准（AGENTS.md）。
 - 首次推送不包含私有凭证、官方游戏截图、字体安装包、未授权素材。
-- License 待确认；未确定之前不发布 public npm，也不声称项目 MIT。
+- License：2026-10-12 定为 MIT（版权人 WhiteZhi）。仓库根与五个可发布包各有一份 `LICENSE`，六个 `package.json` 的 `license` 字段均为 `"MIT"`；五个包自 2026-10-12 起已发布到 public npm。
