@@ -106,4 +106,22 @@ test.describe('Adoption workbench states', () => {
     await expect(page.locator('.rl-agent-shell')).toHaveAttribute('data-layout', 'wide');
     await expect(page.locator('.rl-agent-shell__context[data-open]')).toBeVisible();
   });
+
+  for (const width of [390, 1280]) {
+    test('opens the run overview drawer at ' + width + 'px and restores focus', async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await setSettings(page, { motion: 'reduce' });
+      await page.goto('/#/agent/adoption');
+      const toggle = page.getByRole('button', { name: '切换运行概览' });
+      await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+      await toggle.click();
+      const drawer = page.getByRole('dialog', { name: '运行概览', exact: true });
+      await expect(drawer).toBeVisible();
+      await expect(drawer.getByRole('complementary', { name: '运行概览' })).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(drawer).not.toBeVisible();
+      await expect(toggle).toBeFocused();
+      await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    });
+  }
 });
