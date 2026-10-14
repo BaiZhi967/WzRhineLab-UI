@@ -97,8 +97,15 @@ body,
   gap: var(--rl-space-8);
   padding: var(--rl-space-6) var(--rl-space-4);
   overflow-y: auto;
+  /* The rail stays full-viewport tall; scrolling still works by wheel, touch and keyboard focus. */
+  scrollbar-width: none;
   background: var(--rl-bg-surface);
   border-right: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+/* Chromium/Safari legacy scrollbar styling; Firefox and Chromium 121+ use scrollbar-width above. */
+.sc-sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .sc-sidebar__top {
@@ -507,6 +514,11 @@ body,
   align-self: start;
 }
 
+/* Standalone control rows read as one centered composition instead of hugging the left edge. */
+.sc-specimen[data-center] .sc-specimen__body {
+  justify-items: center;
+}
+
 .sc-specimen[data-span='two-thirds'] {
   grid-column: span 8;
 }
@@ -587,6 +599,11 @@ body,
 
 .sc-row--baseline {
   align-items: flex-end;
+}
+
+/* Right-aligned action rows (e.g. the locale feedback group closes on the card's padding edge). */
+.sc-row--end {
+  justify-content: flex-end;
 }
 
 .sc-narrow {

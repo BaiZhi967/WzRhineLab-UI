@@ -221,7 +221,7 @@ function LocaleColumn({ lang }: { lang: Lang }) {
       <div className="sc-locale-group">
         <h3 className="sc-locale-group__title">{t.groupFeedback}</h3>
         <AlertDemo t={t} />
-        <div className="sc-row">
+        <div className="sc-row sc-row--end">
           <AlertDialog
             trigger={<Button size="sm" variant="ghost">{t.deleteTrigger}</Button>}
             title={t.deleteTitle}
