@@ -29,9 +29,11 @@ tokens ← react ← patterns
               ← effects / agent-core / agent（不依赖 patterns，也不被 patterns 依赖）
 ```
 
-- `dependencies`: `@wzrhine/react`、`@wzrhine/tokens`（`workspace:*`，随仓库现有惯例）
-- `peerDependencies`: `react` / `react-dom`（`^19.0.0`）、`motion`（`^14.0.0`），与 react 包一致
+- `dependencies`：`@wzrhine/tokens`（`workspace:*`）
+- `peerDependencies`：`@wzrhine/react`（`workspace:^`）、`react` / `react-dom`（`^19.0.0`）、`motion`（`^14.0.0`）
 - patterns 不依赖 `@wzrhine/agent` 系列；基础组件不反向依赖 patterns
+
+> 2026-10-15 实施修订：初稿把 `@wzrhine/react` 写入 dependencies；实施时改为 peer（`workspace:^`），与 effects／agent 的既有惯例一致——patterns 组件必须与宿主共享同一份 `@wzrhine/react`，否则 RhineProvider 上下文与类型身份会出现双实例。
 
 目录（实现任务中实际创建）：
 
@@ -40,7 +42,7 @@ packages/patterns/
   src/layout/        # ListDetail、InspectorPanel
   src/collection/    # QueryToolbar、AppliedFilters、ViewSwitcher、SelectionToolbar、ResourceGrid
   src/record/        # SectionIndex
-  src/messages.tsx   # PatternsMessages 表与 Provider（见 §3）
+  src/provider/     # PatternMessages.tsx：文案表与 Provider（见 §3）
   src/index.ts
   src/components.css # 聚合样式，经包导出 "./styles.css"
 ```
