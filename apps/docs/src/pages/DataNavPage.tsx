@@ -190,7 +190,7 @@ export function DataNavPage() {
           <ProgressDemo />
         </Specimen>
         <Specimen id="data-stat" index="06" title="Stat" note="变化的方向不预设好坏：tone 由调用方决定。无数据显示「—」，不显示 0。数值为示例。">
-          <div className="sc-stat-row">
+          <div className="sc-stat-row sc-stat-row--tight">
             <Stat label="示例 · 记录总数" value={bulkRecords.length} unit="条" />
             <Stat label="示例 · 待复核" value={128} unit="条" status="warning" delta={{ value: 12, label: '较上周', tone: 'warning' }} />
             <Stat label="示例 · 本周归档" value={46} unit="条" delta={{ value: -3, label: '较上周' }} />

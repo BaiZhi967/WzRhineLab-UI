@@ -1928,8 +1928,9 @@ body,
   color: var(--rl-fg-subtle);
 }
 
-/* The shared .sc-stat-row (10rem tracks) wraps 2+1 inside a half card (~410px at 1280). */
-.sc-locale-stats {
+/* The base .sc-stat-row (10rem tracks) wraps orphans inside cards at mid widths (e.g. 5 stats
+   wrap 4+1 at 1280). The tight variant keeps every stat on one track row down to tablet widths. */
+.sc-stat-row--tight {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
   gap: var(--rl-space-4);

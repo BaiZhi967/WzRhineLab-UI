@@ -53,6 +53,7 @@ export const publicTokens = {
     '--rl-warning',
     '--rl-warning-subtle',
     '--rl-danger',
+    '--rl-danger-hover',
     '--rl-danger-subtle',
     '--rl-category-1',
     '--rl-category-2',

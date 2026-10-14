@@ -200,7 +200,7 @@ function LocaleColumn({ lang }: { lang: Lang }) {
       </div>
       <div className="sc-locale-group">
         <h3 className="sc-locale-group__title">{t.groupMetrics}</h3>
-        <div className="sc-locale-stats">
+        <div className="sc-stat-row--tight">
           <Stat label={t.statTotal} value={12480} unit={t.unit} delta={{ value: -36, label: t.statDelta }} size="sm" />
           <Stat label={t.statMissing} value={null} size="sm" />
           <Stat label={t.statLoading} value={0} loading size="sm" />

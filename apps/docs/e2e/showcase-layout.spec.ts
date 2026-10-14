@@ -140,6 +140,22 @@ test.describe('Specimen composition alignment', () => {
     expect(gaps).toHaveLength(2);
     for (const gap of gaps) expect(gap).toBeLessThanOrEqual(1);
   });
+
+  // The base 10rem tracks wrapped 4+1 at 1280 and 3+2 at 768; the tight variant keeps one row.
+  for (const width of [768, 1280]) {
+    test(`data page stat row keeps all five stats on one row at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await setSettings(page, { motion: 'reduce' });
+      await page.goto('/#/archive/data');
+      await expect(page.locator('h1')).toBeVisible();
+
+      const rows = await page.locator('.sc-stat-row--tight').evaluate((grid) => {
+        const tops = new Set(Array.from(grid.children).map((child) => Math.round(child.getBoundingClientRect().top)));
+        return { items: grid.children.length, rows: tops.size };
+      });
+      expect(rows).toEqual({ items: 5, rows: 1 });
+    });
+  }
 });
 
 test.describe('Adoption workbench states', () => {
