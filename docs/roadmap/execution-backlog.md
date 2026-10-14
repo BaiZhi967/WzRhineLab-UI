@@ -12,7 +12,7 @@
 
 | ID | 任务 | 前置 | 主要输出 | 状态 |
 | --- | --- | --- | --- | --- |
-| P030-00 | 范围／包／状态合同 | 0.2.0 基线 | 架构决策、API 草案、状态与焦点合同 | Validating（待维护者评审 [ADR-0014](../development/adr/0014-patterns-package-and-p030-scope.md) 与 [0.3.0 合同](0.3.0-contracts.md)） |
+| P030-00 | 范围／包／状态合同 | 0.2.0 基线 | 架构决策、API 草案、状态与焦点合同 | Accepted（2026-10-15 维护者确认；证据 [ADR-0014](../development/adr/0014-patterns-package-and-p030-scope.md)、[0.3.0 合同](0.3.0-contracts.md)） |
 | P030-01 | 包或 recipe 基础 | P030-00 | 可构建入口、样式、文案、验证接入 | Planned |
 | P030-02 | ListDetail | P030-01 | 主从布局、窄宽切换、滚动与焦点 | Planned |
 | P030-03 | InspectorPanel | P030-01、02 的布局合同 | 属性检查区域及覆盖层组合示例 | Planned |
@@ -37,6 +37,8 @@
 - [x] 写出 API 草案、依赖闭包、非目标及逐组件测试矩阵。（同上 §2／§6／§8／§9）
 
 验收：决策之间无冲突；引用的现有能力真实存在；不因外部应用尚未验证而阻塞开工。公共 API 确认后才开始依赖其签名的实现。RecordDetail 降级为 recipe 属于允许的范围内裁决，待维护者评审确认后本任务转 Accepted。
+
+> 2026-10-15：维护者确认三项关键决策（RecordDetail 降 recipe、建立 patterns 包、独立 PatternsMessages 表），P030-00 转 Accepted。
 
 ### P030-01 基础接入
 
