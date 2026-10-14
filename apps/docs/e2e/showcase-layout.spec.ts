@@ -70,8 +70,14 @@ test.describe('Showcase specimen rhythm', () => {
 
     await page.goto('/#/components/button');
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('.sc-specimen[aria-labelledby="button-sizes-title"]')).toHaveAttribute('data-align', 'start');
-    await expect(page.locator('.sc-specimen[aria-labelledby="button-icons-title"]')).toHaveAttribute('data-align', 'start');
+    const sizes = page.locator('.sc-specimen[aria-labelledby="button-sizes-title"]');
+    const icons = page.locator('.sc-specimen[aria-labelledby="button-icons-title"]');
+    const matrix = page.locator('.sc-specimen[aria-labelledby="button-matrix-title"]');
+    await expect(sizes).toHaveAttribute('data-align', 'start');
+    await expect(icons).toHaveAttribute('data-align', 'start');
+    const matrixHeight = await matrix.evaluate((element) => element.getBoundingClientRect().height);
+    expect(await sizes.evaluate((element) => element.getBoundingClientRect().height)).toBeLessThan(matrixHeight);
+    expect(await icons.evaluate((element) => element.getBoundingClientRect().height)).toBeLessThan(matrixHeight);
   });
 });
 
