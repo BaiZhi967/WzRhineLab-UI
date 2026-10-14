@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 
-const cssFiles = ['../src/components.css', '../src/layout.css'];
+const cssFiles = ['../src/components.css', '../src/layout.css', '../src/collection.css'];
 const stripped = (path: string) =>
   read(path)
     .replace(/\/\*[\s\S]*?\*\//g, '')

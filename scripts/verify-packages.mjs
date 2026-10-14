@@ -253,9 +253,10 @@ export function Effects() {
 writeFileSync(
   join(app, 'src/Patterns.tsx'),
   `import '@wzrhine/patterns/styles.css';
-import { PatternsMessagesProvider, patternsEnUS, usePatternsMessages } from '@wzrhine/patterns';
-import type { PatternsMessages } from '@wzrhine/patterns';
+import { AppliedFilters, ListDetail, PatternsMessagesProvider, patternsEnUS, usePatternsMessages, ViewSwitcher } from '@wzrhine/patterns';
+import type { PatternsMessages, ViewSwitcherOption } from '@wzrhine/patterns';
 const table: PatternsMessages = patternsEnUS;
+const views: readonly ViewSwitcherOption[] = [{ value: 'list', label: 'List' }, { value: 'grid', label: 'Grid' }];
 function Probe() {
   const messages = usePatternsMessages();
   return <span>{messages.listDetail.back}</span>;
@@ -264,6 +265,9 @@ export function Patterns() {
   return (
     <PatternsMessagesProvider messages={table}>
       <Probe />
+      <AppliedFilters filters={[{ id: 'kind', label: 'Kind: sample' }]} />
+      <ViewSwitcher label="View" options={views} defaultValue="list" />
+      <ListDetail list={<ul><li>record</li></ul>} detail={<p>detail</p>} mode="split" />
     </PatternsMessagesProvider>
   );
 }

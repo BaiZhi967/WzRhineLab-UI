@@ -54,6 +54,7 @@ const entries = [
   // @wzrhine/react is a peer of patterns (external); tokens is a real dependency.
   { name: 'patterns-full', kind: 'js', code: "export * from '@wzrhine/patterns';", external: ['@wzrhine/react'] },
   { name: 'patterns-list-detail', kind: 'js', code: "export { ListDetail } from '@wzrhine/patterns';", external: ['@wzrhine/react'] },
+  { name: 'patterns-query-toolbar', kind: 'js', code: "export { QueryToolbar } from '@wzrhine/patterns';", external: ['@wzrhine/react'] },
   { name: 'patterns-css', kind: 'css', spec: '@wzrhine/patterns/styles.css' },
   // @wzrhine/react is a peer of effects: the consumer already pays for it, so it is external here.
   { name: 'effects-full', kind: 'js', code: "export * from '@wzrhine/effects';", external: ['@wzrhine/react'] },

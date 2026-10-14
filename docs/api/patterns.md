@@ -1,8 +1,24 @@
 # @wzrhine/patterns · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 13 个导出（3 components，2 functions & hooks，2 constants，4 interfaces，2 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 21 个导出（6 components，2 functions & hooks，2 constants，8 interfaces，3 types）。
 
 ## Components
+
+### `AppliedFilters`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` |  |
+| `clearAllLabel` | `string` |  |
+| `filters` * | `readonly AppliedFilterItem[]` |  |
+| `label` | `string` | Accessible name of the region. |
+| `onClearAll` | `(() => void)` | Provided (with items present) renders the clear-all entry. |
+| `onRemove` | `((id: string) => void)` |  |
+| `removeLabel` | `((filter: AppliedFilterItem) => string)` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
 ### `InspectorPanel`
 
@@ -55,6 +71,49 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `QueryToolbar`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `busy` | `boolean` | A commit is in flight: submit/reset disabled, the typed value stays. |
+| `children` | `React.ReactNode` | Filter control slots (Combobox, Select, custom). |
+| `className` | `string` |  |
+| `defaultQuery` | `string` |  |
+| `onPendingQueryChange` | `((value: string) => void)` |  |
+| `onQueryChange` | `((query: string) => void)` |  |
+| `onReset` | `(() => void)` | Reset clears query and filters and resets paging — executed by the caller. |
+| `pendingQuery` | `string` | Value being typed; kept internally when not provided. Synced when the caller changes `query`. |
+| `query` | `string` | Committed query (controlled); the caller decides when to accept a submission. |
+| `resetDisabled` | `boolean` |  |
+| `resetLabel` | `string` |  |
+| `resultSummary` | `React.ReactNode` | Result summary, announced politely (role="status"), e.g. "共 128 条结果". |
+| `searchLabel` | `string` |  |
+| `searchPlaceholder` | `string` |  |
+| `submitLabel` | `string` |  |
+| `toolbarLabel` | `string` | Accessible name of the search region; defaults to the built-in copy. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `ViewSwitcher`
+
+*component*
+
+泛型组件：`ViewSwitcher<V>`。
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` |  |
+| `defaultValue` | `V` |  |
+| `disabled` | `boolean` |  |
+| `label` * | `string` | Accessible name of the radiogroup, e.g. "视图". |
+| `onValueChange` | `((value: V) => void)` |  |
+| `options` * | `readonly ViewSwitcherOption<V>[]` |  |
+| `value` | `V` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ## Functions & hooks
 
 ### `mergePatternsMessages`
@@ -92,6 +151,16 @@ const patternsZhCN: PatternsMessages
 ```
 
 ## Interfaces
+
+### `AppliedFilterItem`
+
+*interface* — Applied filter conditions (0.3.0-contracts §4.2 / §6.4): stable ids, readable labels, single removal and clear-all. Focus contract: after a removal lands (the caller drops the item and focus falls off the unmounted button), focus moves to the next remaining remove button — or the previous one when the last item went — and to the clear-all entry when none remain. "No records" vs "no results" lives in the collection's empty state, not here.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `disabled` | `boolean` | Render the remove entry disabled instead of hiding it. |
+| `id` * | `string` | Stable condition id; the caller decides how duplicate labels merge. |
+| `label` * | `React.ReactNode` | Readable name and value, e.g. "类别：样本". |
 
 ### `InspectorPanelProps`
 
@@ -135,8 +204,10 @@ const patternsZhCN: PatternsMessages
 
 | Member | Type | Description |
 | --- | --- | --- |
+| `appliedFilters` * | `{ region: string; remove: (name: string) => string; clearAll: string; }` |  |
 | `inspectorPanel` * | `{ close: string; }` |  |
 | `listDetail` * | `{ back: string; list: string; detail: string; }` | ListDetail copy; overrides the `backLabel` / `listLabel` / `detailLabel` props' defaults. |
+| `queryToolbar` * | `{ region: string; search: string; placeholder: string; submit: string; reset: string; }` |  |
 
 ### `PatternsMessagesProviderProps`
 
@@ -147,7 +218,59 @@ const patternsZhCN: PatternsMessages
 | `children` * | `React.ReactNode` |  |
 | `messages` | `PatternsMessagesOverrides` | Partial table merged over the outer provider's (or `patternsZhCN`). |
 
+### `QueryToolbarProps`
+
+*interface* — Query toolbar (0.3.0-contracts §4.4 / §6.3): layout, control grouping, result summary and reset for a collection view. No filter DSL of its own — filter controls go into `children`.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `busy` | `boolean` | A commit is in flight: submit/reset disabled, the typed value stays. |
+| `children` | `React.ReactNode` | Filter control slots (Combobox, Select, custom). |
+| `className` | `string` |  |
+| `defaultQuery` | `string` |  |
+| `onPendingQueryChange` | `((value: string) => void)` |  |
+| `onQueryChange` | `((query: string) => void)` |  |
+| `onReset` | `(() => void)` | Reset clears query and filters and resets paging — executed by the caller. |
+| `pendingQuery` | `string` | Value being typed; kept internally when not provided. Synced when the caller changes `query`. |
+| `query` | `string` | Committed query (controlled); the caller decides when to accept a submission. |
+| `resetDisabled` | `boolean` |  |
+| `resetLabel` | `string` |  |
+| `resultSummary` | `React.ReactNode` | Result summary, announced politely (role="status"), e.g. "共 128 条结果". |
+| `searchLabel` | `string` |  |
+| `searchPlaceholder` | `string` |  |
+| `submitLabel` | `string` |  |
+| `toolbarLabel` | `string` | Accessible name of the search region; defaults to the built-in copy. |
+
+### `ViewSwitcherOption`
+
+*interface* — Toolbar-segmented view switcher (0.3.0-contracts §6.5): a radiogroup over the allowed view options. Switching reports the intent only — keeping query, selection and page intact is the caller's state, never a remount. Icons are never the only label. A `value` outside `options` renders nothing checked; providing a valid fallback is the caller's documented duty.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `disabled` | `boolean` |  |
+| `icon` | `React.ReactNode` |  |
+| `label` * | `React.ReactNode` | Text label, always rendered; icons are additional. |
+| `value` * | `V` |  |
+
+### `ViewSwitcherProps`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `className` | `string` |  |
+| `defaultValue` | `V` |  |
+| `disabled` | `boolean` |  |
+| `label` * | `string` | Accessible name of the radiogroup, e.g. "视图". |
+| `onValueChange` | `((value: V) => void)` |  |
+| `options` * | `readonly ViewSwitcherOption<V>[]` |  |
+| `value` | `V` |  |
+
 ## Types
+
+### `AppliedFiltersProps`
+
+*type*
 
 ### `ListDetailMode`
 

@@ -17,13 +17,16 @@
       "gzip": 3072
     },
     "patterns-full": {
-      "gzip": 3072
+      "gzip": 5120
     },
     "patterns-list-detail": {
       "gzip": 3072
     },
+    "patterns-query-toolbar": {
+      "gzip": 3072
+    },
     "patterns-css": {
-      "gzip": 2048
+      "gzip": 3072
     },
     "effects-full": {
       "gzip": 5120

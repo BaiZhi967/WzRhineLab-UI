@@ -25,6 +25,26 @@ export interface PatternsMessages {
     /** Accessible name of the header close button. */
     close: string;
   };
+  queryToolbar: {
+    /** Accessible name of the search region. */
+    region: string;
+    /** Accessible name of the search input. */
+    search: string;
+    /** Visible placeholder of the search input. */
+    placeholder: string;
+    /** Submit button text. */
+    submit: string;
+    /** Reset button text. */
+    reset: string;
+  };
+  appliedFilters: {
+    /** Accessible name of the region. */
+    region: string;
+    /** Accessible name of a condition's remove button. */
+    remove: (name: string) => string;
+    /** Clear-all entry text. */
+    clearAll: string;
+  };
 }
 
 /** Override shape: every namespace and entry is optional; `undefined` entries are ignored. */
@@ -35,12 +55,28 @@ export type PatternsMessagesOverrides = {
 export const patternsZhCN: PatternsMessages = {
   listDetail: { back: '返回列表', list: '记录列表', detail: '记录详情' },
   inspectorPanel: { close: '关闭' },
+  queryToolbar: {
+    region: '搜索与筛选',
+    search: '搜索记录',
+    placeholder: '输入关键词，回车提交',
+    submit: '搜索',
+    reset: '重置',
+  },
+  appliedFilters: { region: '已应用条件', remove: (name) => `移除 ${name}`, clearAll: '清空全部' },
 };
 
 /** Reference translation (ADR-0009 §1): wording is not guaranteed to be stable. */
 export const patternsEnUS: PatternsMessages = {
   listDetail: { back: 'Back to list', list: 'Records', detail: 'Record details' },
   inspectorPanel: { close: 'Close' },
+  queryToolbar: {
+    region: 'Search & filters',
+    search: 'Search records',
+    placeholder: 'Type keywords, press Enter to submit',
+    submit: 'Search',
+    reset: 'Reset',
+  },
+  appliedFilters: { region: 'Applied filters', remove: (name) => `Remove ${name}`, clearAll: 'Clear all' },
 };
 
 /** Shallow merge per namespace; `undefined` values in the override are ignored. */
