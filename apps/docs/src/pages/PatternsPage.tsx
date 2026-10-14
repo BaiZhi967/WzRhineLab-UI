@@ -2,7 +2,7 @@ import * as React from 'react';
 import '@wzrhine/patterns/styles.css';
 import { Button, MetadataList, RecordHeader, StatusBadge } from '@wzrhine/react';
 import type { MetadataItem } from '@wzrhine/react';
-import { InspectorPanel, ListDetail } from '@wzrhine/patterns';
+import { AppliedFilters, InspectorPanel, ListDetail, QueryToolbar, ViewSwitcher } from '@wzrhine/patterns';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
 
 /** Static specimen records: deterministic content for screenshots and e2e (no live data). */
@@ -105,6 +105,45 @@ function InspectorSpecimen() {
   );
 }
 
+function CollectionSpecimen() {
+  const [query, setQuery] = React.useState('');
+  const [view, setView] = React.useState<'list' | 'grid'>('list');
+  const [filters, setFilters] = React.useState([
+    { id: 'category', label: '类别：样本' },
+    { id: 'year', label: '年份：2026' },
+  ]);
+  return (
+    <div style={{ display: 'grid', gap: '12px' }}>
+      <QueryToolbar
+        query={query}
+        onQueryChange={setQuery}
+        onReset={() => {
+          setQuery('');
+          setFilters([]);
+        }}
+        resultSummary={<span>共 4 条结果</span>}
+      >
+        <Button variant="secondary" size="sm">类别</Button>
+        <Button variant="secondary" size="sm">年份</Button>
+      </QueryToolbar>
+      <AppliedFilters
+        filters={filters}
+        onRemove={(id) => setFilters((prev) => prev.filter((f) => f.id !== id))}
+        onClearAll={() => setFilters([])}
+      />
+      <ViewSwitcher
+        label="视图"
+        value={view}
+        onValueChange={setView}
+        options={[
+          { value: 'list', label: '列表' },
+          { value: 'grid', label: '网格' },
+        ]}
+      />
+    </div>
+  );
+}
+
 export function PatternsPage() {
   return (
     <>
@@ -124,6 +163,15 @@ export function PatternsPage() {
           note="auto 模式按容器宽度切换 split／overlay；详情打开时窄布局替换列表并保留滚动位置"
         >
           <ListDetailSpecimen />
+        </Specimen>
+        <Specimen
+          id="patterns-collection"
+          index="03"
+          title="集合工具区 · QueryToolbar / AppliedFilters / ViewSwitcher"
+          span="full"
+          note="显式提交（IME 组合期 Enter 不误提交）、稳定条件 ID 与移除焦点落位、radiogroup 视图切换"
+        >
+          <CollectionSpecimen />
         </Specimen>
         <Specimen
           id="patterns-inspector"
