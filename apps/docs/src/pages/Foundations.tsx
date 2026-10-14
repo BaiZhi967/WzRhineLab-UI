@@ -160,7 +160,7 @@ export function FoundationsPage({ themeKey }: { themeKey: string }) {
           </dl>
         </Specimen>
 
-        <Specimen id="space" index="04" title="Spacing" span="third" note="4px 基础刻度；常用 8 / 12 / 16 / 24 / 32 / 48。">
+        <Specimen id="space" index="04" title="Spacing" span="third" align="start" note="4px 基础刻度；常用 8 / 12 / 16 / 24 / 32 / 48。">
           <ul className="sc-space-list">
             {spaceScale.map((s) => (
               <li key={s.token}>
@@ -198,6 +198,7 @@ export function FoundationsPage({ themeKey }: { themeKey: string }) {
           index="06"
           title="Focus"
           span="half"
+          align="start"
           note="焦点色为独立的蓝墨色，不复用品牌橙或危险红。按 Tab 键查看实际焦点环。"
         >
           <div className="sc-focus-demo">

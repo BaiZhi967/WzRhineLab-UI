@@ -50,3 +50,27 @@ test.describe('Showcase rail geometry', () => {
     });
   }
 });
+
+test.describe('Showcase specimen rhythm', () => {
+  test.use({ viewport: { width: 1920, height: 1000 } });
+
+  test('keeps independent short specimens content-sized', async ({ page }) => {
+    await setSettings(page, { motion: 'reduce' });
+    await page.goto('/#/foundations');
+    await expect(page.locator('h1')).toBeVisible();
+
+    const spacing = page.locator('.sc-specimen[aria-labelledby="space-title"]');
+    const typography = page.locator('.sc-specimen[aria-labelledby="type-title"]');
+    const focus = page.locator('.sc-specimen[aria-labelledby="focus-title"]');
+    await expect(spacing).toHaveAttribute('data-align', 'start');
+    await expect(focus).toHaveAttribute('data-align', 'start');
+    expect(await spacing.evaluate((element) => element.getBoundingClientRect().height)).toBeLessThan(
+      await typography.evaluate((element) => element.getBoundingClientRect().height),
+    );
+
+    await page.goto('/#/components/button');
+    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('.sc-specimen[aria-labelledby="button-sizes-title"]')).toHaveAttribute('data-align', 'start');
+    await expect(page.locator('.sc-specimen[aria-labelledby="button-icons-title"]')).toHaveAttribute('data-align', 'start');
+  });
+});
