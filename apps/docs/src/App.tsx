@@ -27,6 +27,7 @@ import { ArchivePage } from './pages/ArchivePage';
 import { ScenariosPage } from './pages/ScenariosPage';
 import { DataNavPage } from './pages/DataNavPage';
 import { PatternsPage } from './pages/PatternsPage';
+import { RecipesPage } from './pages/RecipesPage';
 import { AlertDialogPage } from './pages/AlertDialogPage';
 import { DrawerPage } from './pages/DrawerPage';
 import { FeedbackPage } from './pages/FeedbackPage';
@@ -204,6 +205,8 @@ export default function App() {
         return <ScenariosPage />;
       case 'patterns':
         return <PatternsPage />;
+      case 'recipes':
+        return <RecipesPage />;
       case 'advanced':
         return <AdvancedPage />;
       case 'command':

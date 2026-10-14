@@ -23,6 +23,7 @@ const pages = [
   { name: 'locale', hash: '/#/foundations/locale' },
   { name: 'scenarios', hash: '/#/archive/scenarios' },
   { name: 'patterns', hash: '/#/patterns' },
+  { name: 'recipes', hash: '/#/recipes' },
   // M12: advanced interaction and the Agent UI pages (lazy chunk).
   { name: 'advanced', hash: '/#/components/advanced' },
   { name: 'command', hash: '/#/components/command' },
