@@ -96,6 +96,7 @@ test.describe('Adoption workbench states', () => {
     await expect(page.locator('.rl-agent-shell__rail')).toHaveCount(0);
     await expect(page.locator('.rl-agent-shell__index')).toHaveCount(0);
     await expect(page.locator('.rl-agent-shell__context[data-open]')).toHaveCount(0);
+    await expect(page.getByRole('dialog', { name: '运行概览', exact: true })).toHaveCount(0);
   });
 
   test('keeps the context pane inline on wide screens', async ({ page }) => {
@@ -108,7 +109,7 @@ test.describe('Adoption workbench states', () => {
   });
 
   for (const width of [390, 1280]) {
-    test('opens the run overview drawer at ' + width + 'px and restores focus', async ({ page, browserName }) => {
+    test('opens the run overview drawer at ' + width + 'px and restores focus', async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
       await setSettings(page, { motion: 'reduce' });
       await page.goto('/#/agent/adoption');
@@ -120,7 +121,7 @@ test.describe('Adoption workbench states', () => {
       await expect(drawer.getByRole('complementary', { name: '运行概览' })).toBeVisible();
       await page.keyboard.press('Escape');
       await expect(drawer).not.toBeVisible();
-      if (browserName !== 'webkit') await expect(toggle).toBeFocused();
+      await expect(toggle).toBeFocused();
       await expect(toggle).toHaveAttribute('aria-pressed', 'false');
     });
   }

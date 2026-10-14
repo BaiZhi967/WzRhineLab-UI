@@ -226,7 +226,12 @@ export const AgentHeader = React.forwardRef<HTMLElement, AgentHeaderProps>(funct
             icon={<AgentIcon name="panel" />}
             label={contextLabel ?? shell.contextToggle}
             pressed={contextOpen}
-            onClick={onToggleContext}
+            onClick={(event) => {
+              // WebKit pointer activation does not focus buttons automatically. Make this
+              // programmatic drawer's opener explicit before its focus scope mounts.
+              event.currentTarget.focus({ preventScroll: true });
+              onToggleContext();
+            }}
           />
         )}
       </div>
