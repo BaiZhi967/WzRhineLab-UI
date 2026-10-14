@@ -16,7 +16,7 @@
 | P030-01 | 包或 recipe 基础 | P030-00 | 可构建入口、样式、文案、验证接入 | Accepted（2026-10-15；证据 `packages/patterns`、`docs/api/patterns.md`、verify/size/license/docs 全绿） |
 | P030-02 | ListDetail | P030-01 | 主从布局、窄宽切换、滚动与焦点 | Accepted（2026-10-15；TDD 19 项失败测试先行，容器测量/焦点返回/滚动保持/SSR 结构均有断言） |
 | P030-03 | InspectorPanel | P030-01、02 的布局合同 | 属性检查区域及覆盖层组合示例 | Accepted（2026-10-15；9 项测试；覆盖层组合示例随 P030-07 recipe） |
-| P030-04 | 查询／条件／视图 | P030-01 | QueryToolbar、AppliedFilters、ViewSwitcher | Planned |
+| P030-04 | 查询／条件／视图 | P030-01 | QueryToolbar、AppliedFilters、ViewSwitcher | Accepted（2026-10-15；TDD 32 项测试先行，IME 双时序、移除焦点落位、roving tabindex 均有断言） |
 | P030-05 | 选择／资源网格 | P030-01、04 的集合合同 | SelectionToolbar、ResourceGrid | Planned |
 | P030-06 | 记录详情／章节 | P030-02、03 | SectionIndex；RecordDetail 按 ADR-0014 降为 recipe 随 P030-07 交付 | Planned |
 | P030-07 | 页面 recipes | P030-02–06 | 集合、详情、设置组合示例 | Planned |
