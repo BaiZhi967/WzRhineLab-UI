@@ -15,20 +15,10 @@ import {
   useToast,
 } from '@wzrhine/react';
 import type { MenuAlign } from '@wzrhine/react';
-import { Archive, Download, Grid, Plus } from '../icons';
+import { Archive, Download, Ellipsis, Grid, Plus } from '../icons';
 import { Playground } from '../ui/Playground';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
 import { Segmented } from '../ui/controls';
-
-function More(p: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" {...p}>
-      <circle cx="5.5" cy="12" r="1.6" />
-      <circle cx="12" cy="12" r="1.6" />
-      <circle cx="18.5" cy="12" r="1.6" />
-    </svg>
-  );
-}
 
 function MenuPlayground() {
   const [align, setAlign] = React.useState<MenuAlign>('start');
@@ -40,7 +30,7 @@ function MenuPlayground() {
       id="menu-playground"
       title="Menu"
       code={[
-        `<Menu trigger={<IconButton icon={<More />} label="记录操作" />}${align !== 'start' ? ` align="${align}"` : ''}>`,
+        `<Menu trigger={<IconButton icon={<Ellipsis />} label="记录操作" />}${align !== 'start' ? ` align="${align}"` : ''}>`,
         '  <MenuItem icon={<Download />} shortcut="Ctrl E" onSelect={exportRecord}>导出</MenuItem>',
         '  <MenuItem tone="danger" onSelect={confirmArchive}>归档…</MenuItem>',
         '  <MenuSeparator />',
@@ -77,7 +67,7 @@ function MenuPlayground() {
       }
     >
       <div className="sc-playground__demo">
-        <Menu trigger={<IconButton icon={<More />} label="记录操作" variant="secondary" />} align={align}>
+        <Menu trigger={<IconButton icon={<Ellipsis />} label="记录操作" variant="secondary" />} align={align}>
           <MenuGroup label="操作">
             <MenuItem icon={<Download />} shortcut="Ctrl E" onSelect={() => setLast('导出')}>
               导出
@@ -135,7 +125,7 @@ function RowActions() {
                   </StatusBadge>
                 </td>
                 <td className="sc-num">
-                  <Menu trigger={<IconButton icon={<More />} label={`${id} 的操作`} size="sm" />} align="end">
+                  <Menu trigger={<IconButton icon={<Ellipsis />} label={`${id} 的操作`} size="sm" />} align="end">
                     <MenuItem icon={<Download />} onSelect={() => toast.show({ title: `已导出 ${id}`, status: 'success' })}>
                       导出
                     </MenuItem>

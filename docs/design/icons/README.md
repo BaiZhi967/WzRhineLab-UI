@@ -14,7 +14,7 @@
 | [Agent 工作约束](AGENT-ICON-HANDOFF.md) | 防止自动开发随意修改风格或另建图标体系 |
 | [参考图与参数](reference/README.md) | 原始参考方向与诊断数据的可追溯来源 |
 | [概念源稿归档 2026-10-14](reference/concepts-2026-10-14/README.md) | 第二批 36 枚概念稿的来源记录与采用边界 |
-| [批次评审记录](icon-review/) | 各批次字形变更的范围、映射、归一化决策与证据（首批：[2026-10-14-batch-01](icon-review/2026-10-14-batch-01/scope.md)） |
+| [批次评审记录](icon-review/) | 各批次字形变更的范围、映射、归一化决策与证据：[2026-10-14-batch-01](icon-review/2026-10-14-batch-01/scope.md)（67 枚候选，已被方向调整取代）、[2026-10-14-batch-02](icon-review/2026-10-14-batch-02/scope.md)（Lucide 基础层决策与 4 枚定制收敛） |
 
 ## 状态说明
 

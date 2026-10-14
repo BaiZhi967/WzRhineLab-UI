@@ -22,7 +22,7 @@ import {
 } from '@wzrhine/react';
 import type { DataTableColumn, SortState } from '@wzrhine/react';
 import { useMediaQuery } from '../app/settings';
-import { Download, Grid, Search } from '../icons';
+import { Download, Grid, List, Search } from '../icons';
 import { categoryLabel, records, statusLabel, statusTone } from './data';
 import type { ArchiveRecord, RecordCategory, RecordStatus } from './data';
 
@@ -39,14 +39,6 @@ function matches(record: ArchiveRecord, query: string) {
   if (!query) return true;
   const q = query.trim().toLowerCase();
   return [record.id, record.title, record.discipline, ...record.tags].some((v) => v.toLowerCase().includes(q));
-}
-
-function List(p: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" aria-hidden="true" focusable="false" {...p}>
-      <path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />
-    </svg>
-  );
 }
 
 function sortRecords(rows: readonly ArchiveRecord[], sort: SortState | null) {
