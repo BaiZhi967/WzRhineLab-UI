@@ -22,6 +22,7 @@ const check = process.argv.includes('--check');
 const packages = [
   { dir: 'tokens', name: '@wzrhine/tokens' },
   { dir: 'react', name: '@wzrhine/react' },
+  { dir: 'patterns', name: '@wzrhine/patterns' },
   { dir: 'effects', name: '@wzrhine/effects' },
   { dir: 'agent-core', name: '@wzrhine/agent-core' },
   { dir: 'agent', name: '@wzrhine/agent' },

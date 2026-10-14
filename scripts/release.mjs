@@ -27,7 +27,7 @@ const publish = flags.includes('--publish');
 // Forwarded to every publish call; codes expire (~30s), so a long gate run may
 // consume the first code — retry the remaining packages with a fresh one.
 const otp = flags.find((f) => f.startsWith('--otp='));
-const packages = ['tokens', 'react', 'effects', 'agent-core', 'agent'];
+const packages = ['tokens', 'react', 'patterns', 'effects', 'agent-core', 'agent'];
 const problems = [];
 const isWin = process.platform === 'win32';
 const sh = (cmd, args, opts = {}) =>
