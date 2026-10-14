@@ -117,6 +117,9 @@ importers:
 
   examples/archive-desk:
     dependencies:
+      '@wzrhine/patterns':
+        specifier: workspace:*
+        version: link:../../packages/patterns
       '@wzrhine/react':
         specifier: workspace:*
         version: link:../../packages/react

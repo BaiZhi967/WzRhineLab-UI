@@ -17,8 +17,8 @@ test.beforeEach(async ({ page }) => {
 
 test('lists the sample records and labels them as samples', async ({ page }) => {
   const table = page.getByRole('table', { name: '档案记录' });
-  await expect(table.getByRole('rowheader')).toHaveText(['ARC-0001', 'ARC-0002', 'ARC-0003']);
-  await expect(page.getByText('3 / 3 条')).toBeVisible();
+  await expect(table.getByRole('rowheader')).toHaveText(['ARC-0001', 'ARC-0002', 'ARC-0003', 'ARC-0004', 'ARC-0005', 'ARC-0006', 'ARC-0007', 'ARC-0008']);
+  await expect(page.getByText('1000 / 1000 条')).toBeVisible();
   await expect(page.getByLabel('记录详情').getByText('示例数据', { exact: true })).toBeVisible();
 });
 
@@ -37,7 +37,7 @@ test('create → validate → save → advance → archive, persisted across rel
   await dialog.getByRole('textbox', { name: /学科/ }).fill('物理学');
   await dialog.getByRole('button', { name: '保存草稿' }).click();
   await expect(dialog).toBeHidden();
-  await expect(page.getByText('已创建 ARC-0004')).toBeVisible();
+  await expect(page.getByText('已创建 ARC-1001')).toBeVisible();
 
   const detail = page.getByLabel('记录详情');
   await expect(detail.getByRole('heading', { level: 2, name: '磁场屏蔽测试' })).toBeVisible();
@@ -51,27 +51,27 @@ test('create → validate → save → advance → archive, persisted across rel
   await expect(detail.getByRole('list', { name: '处理记录' }).getByRole('listitem')).toHaveCount(3);
 
   await page.reload();
-  await expect(page.getByRole('table', { name: '档案记录' }).getByRole('rowheader')).toHaveText(['ARC-0001', 'ARC-0002', 'ARC-0003', 'ARC-0004']);
-  await page.getByRole('button', { name: '查看 ARC-0004' }).click();
+  await page.getByRole('searchbox').fill('磁场屏蔽测试');
+  await page.getByRole('button', { name: '查看 ARC-1001' }).click();
   await expect(detail.getByRole('button', { name: '已归档' })).toBeDisabled();
 });
 
 test('search, status filter and sorting', async ({ page }) => {
   const table = page.getByRole('table', { name: '档案记录' });
-  await page.getByRole('searchbox').fill('光谱');
-  await expect(table.getByRole('rowheader')).toHaveText(['ARC-0002']);
-  await expect(page.getByText('1 / 3 条')).toBeVisible();
+  await page.getByRole('searchbox').fill('外勤采样路线规划');
+  await expect(table.getByRole('rowheader')).toHaveText(['ARC-0003']);
   await page.getByRole('searchbox').fill('');
 
   await page.getByRole('combobox', { name: '状态' }).click();
   await page.getByRole('option', { name: '草稿' }).click();
-  await expect(table.getByRole('rowheader')).toHaveText(['ARC-0003']);
+  await expect(table.getByRole('rowheader').first()).toHaveText('ARC-0003');
+  await expect(page.getByText(/条$/).first()).toContainText('/ 1000 条');
 
   await page.getByRole('combobox', { name: '状态' }).click();
   await page.getByRole('option', { name: '全部状态' }).click();
   await table.getByRole('button', { name: '编号' }).click();
   await expect(table.getByRole('columnheader', { name: '编号' })).toHaveAttribute('aria-sort', 'descending');
-  await expect(table.getByRole('rowheader')).toHaveText(['ARC-0003', 'ARC-0002', 'ARC-0001']);
+  await expect(table.getByRole('rowheader').first()).toHaveText('ARC-1000');
 });
 
 test('delete goes through a confirmation, then restore brings samples back', async ({ page }) => {
@@ -88,10 +88,10 @@ test('delete goes through a confirmation, then restore brings samples back', asy
   await page.getByRole('menuitem', { name: '删除记录' }).click();
   await page.getByRole('alertdialog', { name: '删除 ARC-0001？' }).getByRole('button', { name: '删除' }).click();
   await expect(page.getByRole('rowheader', { name: 'ARC-0001' })).toHaveCount(0);
-  await expect(page.getByText('2 / 2 条')).toBeVisible();
+  await expect(page.getByText('999 / 999 条')).toBeVisible();
 
   await page.getByRole('button', { name: '恢复示例数据' }).click();
-  await expect(page.getByText('3 / 3 条')).toBeVisible();
+  await expect(page.getByText('1000 / 1000 条')).toBeVisible();
 });
 
 test('keyboard only: open the create dialog, Escape returns focus', async ({ page }) => {
@@ -122,7 +122,7 @@ test('pagination: 8 rows per page, filters reset to page 1, selection of a recor
       sample: false,
       history: [],
     }));
-    localStorage.setItem('wzrhine-example:archive-desk', JSON.stringify(rows));
+    localStorage.setItem('wzrhine-example:archive-desk:records:v2', JSON.stringify({ version: 2, items: rows }));
   });
   await page.reload();
   const table = page.getByRole('table', { name: '档案记录' });
@@ -185,3 +185,45 @@ for (const width of [320, 390, 768, 1280, 1920] as const) {
     await page.screenshot({ path: `test-results/screens/archive-desk-${width}.png`, fullPage: true });
   });
 }
+
+
+// ---------------------------------------------------------------------------
+// P030-08: resources page (second data shape) and settings / fault injection.
+// ---------------------------------------------------------------------------
+
+test('resources: grid loads the sample dataset, filters, selects and opens the inspector', async ({ page }) => {
+  await page.getByRole('tab', { name: '资源' }).click();
+  const grid = page.getByRole('list', { name: '资源集合' });
+  await expect(grid.getByRole('checkbox')).toHaveCount(24);
+  await expect(page.getByText('共 240 条资源 · 示例数据')).toBeVisible();
+
+  // Category condition: cycle to 图像 (60 items), applied chip appears and can be removed.
+  await page.getByRole('button', { name: /类别：/ }).click();
+  await expect(page.getByText('共 60 条资源 · 示例数据')).toBeVisible();
+  await page.getByRole('button', { name: '移除 类别：图像' }).click();
+  await expect(page.getByText('共 240 条资源 · 示例数据')).toBeVisible();
+
+  // Selection is explicit and scoped; opening is a separate control.
+  await grid.getByRole('checkbox', { name: /选择 潮间带照片/ }).first().check();
+  await expect(page.getByRole('toolbar', { name: '批量操作' })).toContainText('已选 1 条');
+  await grid.getByRole('button', { name: /潮间带照片/ }).first().click();
+  const inspector = page.getByRole('region', { name: '资源属性' });
+  await expect(inspector).toContainText('RES-');
+  await page.getByRole('region', { name: '资源属性' }).getByRole('button', { name: /返回/ }).click();
+  await expect(grid.getByRole('checkbox', { name: /选择 潮间带照片/ }).first()).toBeChecked();
+});
+
+test('resources: error injection surfaces a retryable failure, reset restores the demo data', async ({ page }) => {
+  await page.getByRole('tab', { name: '设置' }).click();
+  await page.getByRole('radio', { name: '错误（读取/保存失败）' }).check();
+  await page.getByRole('tab', { name: '资源' }).click();
+  await expect(page.getByText('注入的读取失败（演示错误恢复）。')).toBeVisible();
+  await page.getByRole('tab', { name: '设置' }).click();
+  await page.getByRole('radio', { name: '无（正常）' }).check();
+  await page.getByRole('tab', { name: '资源' }).click();
+  await expect(page.getByRole('list', { name: '资源集合' }).getByRole('checkbox').first()).toBeVisible();
+  await page.getByRole('tab', { name: '设置' }).click();
+  await page.getByRole('button', { name: '恢复演示数据' }).click();
+  await page.getByRole('tab', { name: '档案' }).click();
+  await expect(page.getByText('1000 / 1000 条')).toBeVisible();
+});
