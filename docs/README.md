@@ -7,7 +7,8 @@
 | [design/MOTION.md](design/MOTION.md) | Motion 设计原则、时长、缓动、生命周期、减动 |
 | [design/MOTION-PATTERNS.md](design/MOTION-PATTERNS.md) | 动效模式目录：每个模式的语义、触发、时长、生命周期、中断、减动、隐藏页、fallback、预算 |
 | [design/COMPONENTS.md](design/COMPONENTS.md) | 分类、命名、组件 API、验收矩阵 |
-| [design/ICONS.md](design/ICONS.md) | 图标语法、尺寸、对齐与许可 |
+| [design/ICONS.md](design/ICONS.md) | 图标设计系统与开发规范（1.0 提案版）：家族规则、网格、光学居中、验收 |
+| [design/icons/](design/icons/README.md) | 图标配套资料：验收清单、基线审查、Agent 工作约束、单枚规格模板、参考资产 |
 | [design/ACCESSIBILITY.md](design/ACCESSIBILITY.md) | WCAG 2.2 AA 目标与测试方案 |
 | [development/ARCHITECTURE.md](development/ARCHITECTURE.md) | workspace、包结构、依赖边界与发布约束 |
 | [development/CONTRIBUTING.md](development/CONTRIBUTING.md) | 开发约束、commit、分支、评审与测试 |

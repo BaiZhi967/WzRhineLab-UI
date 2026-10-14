@@ -1,0 +1,15 @@
+{
+  "reference_type": "original-vector-study",
+  "boards": [
+    "01_RESEARCH_INSTRUMENTS",
+    "02_ARCHIVE_SYSTEM",
+    "03_TERMINAL_NAVIGATION",
+    "04_OPTICAL_ALIGNMENT_AND_USAGE"
+  ],
+  "glyph_count": 36,
+  "viewBox": "0 0 24 24",
+  "stroke_width": 1.75,
+  "cap": "round",
+  "join": "round",
+  "production_ready": false
+}
