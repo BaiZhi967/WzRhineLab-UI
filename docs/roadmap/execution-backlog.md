@@ -17,8 +17,8 @@
 | P030-02 | ListDetail | P030-01 | 主从布局、窄宽切换、滚动与焦点 | Accepted（2026-10-15；TDD 19 项失败测试先行，容器测量/焦点返回/滚动保持/SSR 结构均有断言） |
 | P030-03 | InspectorPanel | P030-01、02 的布局合同 | 属性检查区域及覆盖层组合示例 | Accepted（2026-10-15；9 项测试；覆盖层组合示例随 P030-07 recipe） |
 | P030-04 | 查询／条件／视图 | P030-01 | QueryToolbar、AppliedFilters、ViewSwitcher | Accepted（2026-10-15；TDD 32 项测试先行，IME 双时序、移除焦点落位、roving tabindex 均有断言） |
-| P030-05 | 选择／资源网格 | P030-01、04 的集合合同 | SelectionToolbar、ResourceGrid | Planned |
-| P030-06 | 记录详情／章节 | P030-02、03 | SectionIndex；RecordDetail 按 ADR-0014 降为 recipe 随 P030-07 交付 | Planned |
+| P030-05 | 选择／资源网格 | P030-01、04 的集合合同 | SelectionToolbar、ResourceGrid | Accepted（2026-10-15；TDD 22 项测试，选择/打开分离、图片单项降级与恢复、防重复提交断言） |
+| P030-06 | 记录详情／章节 | P030-02、03 | SectionIndex；RecordDetail 按 ADR-0014 降为 recipe 随 P030-07 交付 | Accepted（2026-10-15；TDD 11 项测试，观察器清理/重定向、减动、无 JS 锚点断言） |
 | P030-07 | 页面 recipes | P030-02–06 | 集合、详情、设置组合示例 | Planned |
 | P030-08 | 独立参考应用 | P030-07 | archive-desk 两种数据形态与故障注入 | Planned |
 | P030-09 | 文档与 API 整理 | 各组件完成 | 组件文档、API、迁移说明、导航与检索评估 | Planned |
