@@ -1,67 +1,55 @@
 # 文档导航
 
+## 当前开发路线
+
+WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基线；下一主线是 0.3.0 的页面、集合浏览与档案详情。开发自主推进，消费反馈经过评估进入版本，不以其他应用的接入节奏作为等待条件。
+
+| 文档 | 用途 |
+| --- | --- |
+| [ROADMAP.md](ROADMAP.md) | 当前版本、阶段摘要与历史映射 |
+| [roadmap/README.md](roadmap/README.md) | 完整后续路线、阶段目标、依赖、产物与非目标 |
+| [roadmap/architecture.md](roadmap/architecture.md) | 包边界、数据／状态所有权、组件与 recipe 分工 |
+| [roadmap/0.3.0-plan.md](roadmap/0.3.0-plan.md) | 九个候选能力、行为合同、参考应用与版本验收 |
+| [roadmap/execution-backlog.md](roadmap/execution-backlog.md) | P030 的 12 项任务、依赖、证据与后续阶段任务卡 |
+| [roadmap/demand-workflow.md](roadmap/demand-workflow.md) | 反馈受理、分类、排期、范围变更与消费结果 |
+| [roadmap/quality-and-release.md](roadmap/quality-and-release.md) | 质量门禁、版本、发布和回滚 |
+| [planning/templates/component-demand.md](planning/templates/component-demand.md) | 单条需求记录模板，所有消费项目共用 |
+
+新能力均为规划状态，不能仅凭计划在业务代码中调用。源码与发布包证明已有 API，验收记录证明实际执行结果。
+
+## 设计与开发规范
+
 | 文档 | 目的 |
 | --- | --- |
-| [../DESIGN.md](../DESIGN.md) | 设计总纲：产品目标、审美逻辑与设计决策 |
-| [design/STYLE.md](design/STYLE.md) | 配色 / 字体 / 布局 / 状态 / 密度与主题 |
-| [design/MOTION.md](design/MOTION.md) | Motion 设计原则、时长、缓动、生命周期、减动 |
-| [design/MOTION-PATTERNS.md](design/MOTION-PATTERNS.md) | 动效模式目录：每个模式的语义、触发、时长、生命周期、中断、减动、隐藏页、fallback、预算 |
-| [design/COMPONENTS.md](design/COMPONENTS.md) | 分类、命名、组件 API、验收矩阵 |
-| [design/ICONS.md](design/ICONS.md) | 图标设计系统与开发规范（1.0 提案版）：家族规则、网格、光学居中、验收 |
-| [design/icons/](design/icons/README.md) | 图标配套资料：验收清单、基线审查、Agent 工作约束、单枚规格模板、参考资产 |
-| [design/ACCESSIBILITY.md](design/ACCESSIBILITY.md) | WCAG 2.2 AA 目标与测试方案 |
-| [development/ARCHITECTURE.md](development/ARCHITECTURE.md) | workspace、包结构、依赖边界与发布约束 |
-| [development/CONTRIBUTING.md](development/CONTRIBUTING.md) | 开发约束、commit、分支、评审与测试 |
-| [development/QUALITY-GATES.md](development/QUALITY-GATES.md) | 可执行质量门槛 |
-| [ROADMAP.md](ROADMAP.md) | M0–M10、M9.5、M12 与 M13 里程碑摘要、状态与验收链接 |
-| [planning/README.md](planning/README.md) | 长期规划中心：M8–M18 路线、组件、动效、质量和执行计划（文件列表见下） |
-| [planning/roadmap.md](planning/roadmap.md) | 长期路线图：每个阶段的目标、产物、依赖、门禁与状态 |
-| [planning/execution-backlog.md](planning/execution-backlog.md) | 可勾选的执行清单（当前：M12 已完成，下一步 Wpi 接入 / M11） |
-| [concepts/README.md](concepts/README.md) | 概念图索引、用途与局限 |
-| [research/REFERENCES.md](research/REFERENCES.md) | 官方 / 社区 / 技术参考资料及授权提醒 |
+| [../AGENTS.md](../AGENTS.md) | Agent 开工、范围、worktree、提交与验证约束 |
+| [../DESIGN.md](../DESIGN.md) | 设计总纲与平台边界 |
+| [design/STYLE.md](design/STYLE.md) | 配色、字体、布局、状态、密度与主题 |
+| [design/MOTION.md](design/MOTION.md) | 动效原则、生命周期与减动 |
+| [design/MOTION-PATTERNS.md](design/MOTION-PATTERNS.md) | 动效模式与中断、隐藏、fallback 规则 |
+| [design/COMPONENTS.md](design/COMPONENTS.md) | 组件分类、命名、API 与验收 |
+| [design/ICONS.md](design/ICONS.md) | 图标语法、视觉居中、基础层与定制层 |
+| [design/icons/README.md](design/icons/README.md) | 图标评审、规格与资产资料 |
+| [design/ACCESSIBILITY.md](design/ACCESSIBILITY.md) | 可访问性目标和测试策略 |
+| [development/ARCHITECTURE.md](development/ARCHITECTURE.md) | 已有 workspace 与包工程 |
+| [development/CONTRIBUTING.md](development/CONTRIBUTING.md) | 开发与评审要求 |
+| [development/QUALITY-GATES.md](development/QUALITY-GATES.md) | 已有可执行质量门禁 |
 
-**真值优先顺序**：生产代码和可执行测试 > 规范化 tokens > 本文指定规范 > 人工审定稿 > 生成的概念图。冲突需提 Issue/ADR，不允许单靠截图覆盖规范。
-
+规范冲突需记录 ADR。生成概念图不能覆盖已采用的规范、tokens、批准资产和可执行合同；计划不代替实现与验收。
 
 ## 额外资料与导入
-- [研究摘要](research/RESEARCH-SUMMARY.md)
-- [长期规划中心](planning/README.md)：[长期路线图](planning/roadmap.md) · [执行清单](planning/execution-backlog.md) · [组件平台规划](planning/component-platform-plan.md) · [动效与渲染规划](planning/motion-and-rendering-plan.md) · [质量、发布与生态规划](planning/quality-release-and-ecosystem-plan.md) · [真实需求插入流程](planning/demand-insertion-workflow.md)（[需求模板](planning/templates/component-demand.md)） · Agent UI：[平台规划](planning/agent-ui-platform-plan.md) · [契约](planning/agent-ui-contracts.md) · [接入](planning/agent-ui-adoption.md)
-- [研究参考链接](research/REFERENCES.md)
-- [视觉原件清单](research/ASSET-MANIFEST.md)
-- [ADR-0001 交互底座 · Base UI（Accepted）](development/adr/0001-headless-primitives.md)
-- [ADR-0002 源码直出导出与样式入口](development/adr/0002-source-exports-and-style-entry.md)
-- [ADR-0003 Token 对比度校准与 Button variant](development/adr/0003-token-tuning-and-button-variants.md)
-- [ADR-0004 展示动效独立为可选包](development/adr/0004-optional-effects-package.md)
-- [ADR-0005 M8 数据与导航组件契约](development/adr/0005-data-navigation-contracts.md)
-- [ADR-0006 M9 覆盖层与反馈组件契约](development/adr/0006-overlays-feedback-contracts.md)
-- [ADR-0007 M10 动效属性所有权与 Motion Core 契约](development/adr/0007-motion-ownership.md)
-- [ADR-0008 M9.5 包的消费边界（React 19、'use client'、体积预算、npm scope）](development/adr/0008-consumption-boundary.md)
-- [ADR-0009 M9.5 默认文案与 locale](development/adr/0009-locale-default-copy.md)
-- [ADR-0010 M12 高级交互与 Agent UI：范围、拆包与顺序](development/adr/0010-m12-agent-ui-plan.md)
-- [ADR-0011 Agent UI 契约](development/adr/0011-agent-contracts.md)
-- [ADR-0012 Agent 动效设计](development/adr/0012-agent-motion.md)
-- [ADR-0013 开放分类法：展示性枚举开放，状态机枚举封闭](development/adr/0013-open-taxonomies.md)
-- [Sprint 01 验收记录](development/acceptance/2026-10-09-sprint-01.md)
-- [M1-B 验收记录](development/acceptance/2026-10-09-m1b.md)
-- [M2-A 验收记录](development/acceptance/2026-10-09-m2a.md)
-- [M2-B 验收记录](development/acceptance/2026-10-09-m2b.md)
-- [M3 验收记录](development/acceptance/2026-10-09-m3.md)
-- [M4 验收记录](development/acceptance/2026-10-09-m4.md)
-- [M5 验收记录](development/acceptance/2026-10-09-m5.md)
-- [M6 验收记录](development/acceptance/2026-10-10-m6.md) · [示例应用](../examples/README.md)
-- [Base UI 1.8.0 → 1.9.0 升级验收记录](development/acceptance/2026-10-10-base-ui-1.9.0.md)
-- [M7 验收记录](development/acceptance/2026-10-10-m7.md)
-- [M8 验收记录](development/acceptance/2026-10-10-m8.md)
-- [M9 验收记录](development/acceptance/2026-10-10-m9.md)
-- [M10 验收记录](development/acceptance/2026-10-10-m10.md)
-- [M9.5 验收记录](development/acceptance/2026-10-11-m9.5.md)
-- [M12 验收记录](development/acceptance/2026-10-11-m12.md)
-- [M13 Wpi 接入补齐验收记录（库侧 B0–B9，0.2.0）](development/acceptance/2026-10-13-m13-wpi-ui.md) · [范围卡](planning/range-cards/2026-10-13-wpi-b0-b9.md) · [实施计划](superpowers/plans/2026-10-13-wzrhine-ui-0.2.0-plan.md)
-- [安装、导出与样式导入 INSTALL](development/INSTALL.md) · [发布流程 RELEASING](development/RELEASING.md) · [升级指南 UPGRADING](development/UPGRADING.md) · [包体积 SIZE](development/SIZE.md) · [第三方许可证](development/THIRD-PARTY-LICENSES.md)
-- API 参考（自动生成）：[tokens](api/tokens.md) · [react](api/react.md) · [effects](api/effects.md) · [agent-core](api/agent-core.md) · [agent](api/agent.md)
-- 组件文档：[Field & Input](components/field.md) · [Choice · Textarea · Fieldset · Form](components/forms.md) · [Data & navigation](components/data-navigation.md) · [AlertDialog](components/alert-dialog.md) · [Drawer](components/drawer.md) · [Alert & feedback](components/feedback.md) · [IconButton · Text](components/icon-button-text.md) · [Provider · Tabs · Tooltip · Dialog · Select](components/overlays.md) · [Popover · Menu · Toast](components/popover-menu-toast.md) · [Archive patterns](components/archive.md) · [Showcase effects](components/effects.md) · [Locale & messages](components/locale.md) · [Advanced interaction](components/advanced.md) · [Combobox · CommandPalette · FileDropZone · SplitButton · ScrollArea](components/command.md)
-- Agent 组件文档：[Shell & conversations](components/agent-shell.md) · [Messages & process](components/agent-message.md) · [Tools](components/agent-tools.md) · [Composer](components/agent-composer.md) · [Approval & questions](components/agent-intervention.md) · [Workspace & artifacts](components/agent-workspace.md) · 概念图册 [concepts/agent](concepts/agent/README.md)
-- [Windows 资源导入脚本](../scripts/import-visual-assets.ps1)
-- [Showcase 源码](../apps/docs/src/App.tsx)
 
-**视觉基线**：八张高保真 PNG 已入库于 `concepts/images/`（另有 WebP 预览与研究 PDF）。先前不符合视觉规范的 SVG 草图已删除，不再恢复。
+[INSTALL](development/INSTALL.md) · [RELEASING](development/RELEASING.md) · [UPGRADING](development/UPGRADING.md) · [SIZE](development/SIZE.md) · [第三方许可证](development/THIRD-PARTY-LICENSES.md) · [示例应用](../examples/README.md)。
+
+API 参考（自动生成）：[tokens](api/tokens.md) · [react](api/react.md) · [effects](api/effects.md) · [agent-core](api/agent-core.md) · [agent](api/agent.md)。
+
+组件文档：[表单](components/forms.md) · [字段](components/field.md) · [数据与导航](components/data-navigation.md) · [基础操作](components/icon-button-text.md) · [覆盖层](components/overlays.md) · [菜单与通知](components/popover-menu-toast.md) · [确认框](components/alert-dialog.md) · [抽屉](components/drawer.md) · [反馈](components/feedback.md) · [档案](components/archive.md) · [动效](components/effects.md) · [文案](components/locale.md) · [高级交互](components/advanced.md) · [命令与选择](components/command.md)。
+
+领域 UI 文档：[外壳](components/agent-shell.md) · [消息](components/agent-message.md) · [工具](components/agent-tools.md) · [输入](components/agent-composer.md) · [干预](components/agent-intervention.md) · [工作空间](components/agent-workspace.md)。
+
+## 历史与设计资料
+
+[历史规划入口](planning/README.md) · [ADR 目录](development/adr/) · [验收记录](development/acceptance/) · [概念图](concepts/README.md) · [研究资料](research/REFERENCES.md) · [研究摘要](research/RESEARCH-SUMMARY.md) · [视觉资产清单](research/ASSET-MANIFEST.md)。
+
+旧 M 系列规划、已完成范围卡和实施记录保留追溯，不再决定当前开工顺序。新增规划在 `roadmap/`，旧设计契约没有因目录迁移而失效。
+
+视觉基线与已批准资产保持现状；不恢复先前已淘汰的图稿，不用概念图替代真实组件验收。

@@ -1,131 +1,79 @@
 # WzRhineLab-UI 长期规划中心
 
-> 状态：Working plan  
-> 基线：M0–M10、M9.5 与 M12 已完成（Base UI 1.9.0，只支持 React 19；M11 延期为独立实验，M12 交付高级交互与 `@wzrhine/agent-core` / `@wzrhine/agent`）；当前主线：Wpi-Agent 真实接入与 Rhine 领域模式（M13 门禁）  
-> 维护方式：规划文档描述目标和门禁，验收记录描述已经真实执行的结果。
+> 更新：2026-10-14。当前路线已迁至 [docs/roadmap](../roadmap/README.md)，以个人 React 前端基础平台、自主版本开发和需求反馈为核心。本目录保留旧 M 系列与专题文档的追溯入口，不再以其历史状态安排新版本。
 
-本目录是 WzRhineLab-UI 后续规划的统一入口。现有的 design、development 和 acceptance 文档继续作为规范、实现约束和事实记录；本目录负责回答三个问题：
-
-1. 接下来应该做什么；
-2. 为什么按这个顺序做；
-3. 什么证据出现后才可以认为一个阶段完成。
-
-本目录不替代生产代码、测试、tokens、ADR 或验收记录。计划中的内容没有经过实现和检查时，不得在 README、变更日志或对外文档中写成已支持能力。
+当前规划的阅读顺序是总路线、架构、0.3.0 计划、执行清单、需求流程和质量规则。旧阶段中的首次发布准备、消费验收顺序、组件数量和测试计数均属于历史语境，不能沿用为今天的状态。
 
 ## 当前基线
 
-当前 main 已经完成：
+0.2.0 为发布基线。当前五包为 tokens、react、effects、agent-core、agent；后续拟议新包与组件没有因本文件更新而实现。已有 API、依赖与质量结果以源码、发布产物和验收记录为准。
 
-- React + TypeScript + Motion 的 pnpm workspace；
-- 五个 workspace 包：`@wzrhine/tokens`、`@wzrhine/react`、`@wzrhine/effects`、`@wzrhine/agent-core`、`@wzrhine/agent`；
-- Base UI 1.9.0 作为唯一 headless 交互底座；
-- 基础原语、Fields、Navigation / Overlay、Data、Rhine archive patterns；
-- M12 Agent UI 公共包已实现：`@wzrhine/agent-core` 提供框架无关契约与纯函数，`@wzrhine/agent` 提供 React 组件、文案与动效；真实 Wpi-Agent 消费页面仍是 M13 门禁；
-- M7 表单层：Textarea、Checkbox、CheckboxGroup、RadioGroup、Radio、Switch、Fieldset、Form、Separator、VisuallyHidden；
-- M8 数据与导航：Pagination、Breadcrumb、Progress、Meter、Stat，DataTable 加载 / 错误 / 空状态与分页（[验收记录](../development/acceptance/2026-10-10-m8.md)）；
-- M9 覆盖层与反馈：AlertDialog、Drawer、Alert / Callout、EmptyState、Skeleton、Spinner，Toast 操作 / 撤销 / 更新与 Dialog 关闭保护（[验收记录](../development/acceptance/2026-10-10-m9.md)）；
-- M10 Motion Core 2.0：MotionPresence、RhineMotionGroup、按属性类型的减动、可见性暂停与生命周期、[动效模式目录](../design/MOTION-PATTERNS.md)（[验收记录](../development/acceptance/2026-10-10-m10.md)）；
-- `@wzrhine/react` API report 有 265 个导出，其中 73 个组件导出；[COMPONENTS.md](../design/COMPONENTS.md) 按设计族归并为 52 个主组件族。`@wzrhine/agent` API report 另有 377 个导出，其中 84 个组件导出；
-- 3 个示例应用：archive-desk、host-embed、ssr-hydrate；
-- 三内核自动化验收（Showcase E2E 每个内核 385 项）、axe 检查、74 张视觉回归基线（Windows Chromium）、package verification；
-- effects 包与 react 核心包之间的依赖边界；
-- API report 当前规模：tokens 34、react 265、effects 24、agent-core 128、agent 377 个导出；
-- 语义 token、主题作用域、Motion 时长与减动规范。
-
-当前明确未完成：
-
-- 屏幕阅读器人工验收；
-- 200% 缩放人工验收；
-- 真实设备触摸、滚动和焦点验收；
-- 根目录许可证、npm scope、公开版本号；
-- 公开发布前的版本号确认与 npm scope 创建（M9.5 已决定保留 `@wzrhine`，暂不发布）；
-- 公开的 RhineMotionProvider（M10 有意延后，见 [ADR-0007](../development/adr/0007-motion-ownership.md)）；
-- Canvas/WebGL 可选渲染实验（M11）；
-- 自动 CI（需维护者批准后才配置）。
+下一主线为 0.3.0：页面组织、集合浏览、档案详情及独立参考应用。消费反馈进入需求队列，经过评估再纳入版本；没有新反馈时继续主线。
 
 ## 规划文件
 
-| 文件 | 内容 |
+| 当前文档 | 职责 |
 | --- | --- |
-| [roadmap.md](roadmap.md) | 从 M8 到公共生态的阶段路线、依赖关系和每个阶段的状态 |
-| [component-platform-plan.md](component-platform-plan.md) | 组件分层、优先级、API、验收矩阵和领域模式 |
-| [motion-and-rendering-plan.md](motion-and-rendering-plan.md) | CSS、Motion、SVG、Canvas、WebGL 和第三方适配器的长期边界 |
-| [quality-release-and-ecosystem-plan.md](quality-release-and-ecosystem-plan.md) | 质量门禁、兼容性、许可、发布、文档与生态计划 |
-| [execution-backlog.md](execution-backlog.md) | 当前及后续阶段的可执行任务清单 |
-| [demand-insertion-workflow.md](demand-insertion-workflow.md) | 真实需求插入、Agent 引导问询、消费项目验收和路线回填 |
-| [templates/component-demand.md](templates/component-demand.md) | 组件需求记录与范围确认模板 |
-| [agent-ui-platform-plan.md](agent-ui-platform-plan.md) | @wzrhine/agent 的组件分层、迁移顺序和质量门禁 |
-| [agent-ui-contracts.md](agent-ui-contracts.md) | Agent view-model、actions、状态、流式恢复和异步交互契约 |
-| [agent-ui-adoption.md](agent-ui-adoption.md) | Wpi-Agent 与其他 Agent 应用的接入方式和双层验收 |
+| [后续总路线](../roadmap/README.md) | 产品定位、阶段、版本边界和历史映射 |
+| [架构与能力边界](../roadmap/architecture.md) | 包、状态、数据、组件与 recipe |
+| [0.3.0 详细计划](../roadmap/0.3.0-plan.md) | 下一工作包的完整范围与行为合同 |
+| [执行清单](../roadmap/execution-backlog.md) | 任务 ID、依赖、证据与状态 |
+| [需求反馈流程](../roadmap/demand-workflow.md) | 缺陷／增强／新组件的评估与版本排期 |
+| [需求模板](templates/component-demand.md) | 单条请求的记录格式，继续沿用此稳定路径 |
+| [质量与发布](../roadmap/quality-and-release.md) | 库侧验收、版本、发布和回滚 |
+
+旧专题仅作历史背景：[原路线](roadmap.md)、[原执行清单](execution-backlog.md)、[原组件规划](component-platform-plan.md)、[原动效研究](motion-and-rendering-plan.md)、[原质量与生态规划](quality-release-and-ecosystem-plan.md)、[原需求插入流程](demand-insertion-workflow.md)、[领域 UI 规划](agent-ui-platform-plan.md)、[领域契约背景](agent-ui-contracts.md)、[原接入设计](agent-ui-adoption.md)。它们不能覆盖上表的当前版本顺序；已采用 ADR 与现有契约继续有效。
 
 ## 计划使用规则
 
 ### 1. 以里程碑而不是文件数量判断进度
 
-每个里程碑必须有：
+每个工作包必须有实现或明确的文档产物、对应验证、已知限制和交接记录。新增文件不等于新增能力，写完计划不等于组件完成。
 
-- 可运行的代码或可审阅的文档产物；
-- 对应的单元、E2E、视觉或人工验证；
-- 已知限制；
-- 回滚或延期说明；
-- 下一阶段的交接记录。
-
-新增一个组件文件不等于完成一个组件；加入一个动画库不等于完成动效能力。
+新阶段使用 R1–R6 和 P030 等任务 ID，不重编号历史 M 系列，不把历史未执行项改成通过。
 
 ### 2. 生产基座保持单一
 
-核心组件继续使用 Base UI 1.9.0、原生语义 HTML、Rhine tokens 和 motion/react。除非新增 ADR 证明现有基座无法满足一个真实需求，否则不混用 Radix、React Aria、Ark UI 或其他行为基座。
+继续使用现有 React、Base UI、tokens 和 motion/react 合同。升级和新底座另做评估；架构变化不能由一个临时需求隐式触发。
+
+公共模式不直接依赖业务接口、权限事实、凭据、原生文件系统或运行时。成熟引擎可以按需适配，但其重依赖不进入基础包。
 
 ### 3. 展示能力必须可选
 
-DOM/SVG 展示效果可以留在 @wzrhine/effects。Canvas、WebGL、Rive、Lottie、GSAP 和其他高成本能力必须通过独立入口、lazy loading、静态 fallback 和明确的性能门禁引入，不得进入 Button、Field、Dialog、DataTable 等基础组件的依赖链。
+已有 effects 边界保持。Canvas、WebGL 和其他引擎只有在明确场景和对照实验后立项；必须独立加载、提供 fallback、支持减动并记录性能与许可证。
+
+装饰研究不是下一主线的前置，普通页面不应承担不相关展示成本。
 
 ### 4. 先场景，后组件
 
-一个新组件进入排期前，至少需要一个真实页面场景：
+场景可以来自维护者确定的使用目的、库内参考应用或消费反馈。无需等待指定消费项目，也不要求两个外部项目证明后才能开工。
 
-- archive-desk；
-- creator / content workbench；
-- agent / evaluation console；
-- 或明确的文档、设置、数据分析场景。
-
-只有展示概念而没有使用场景的效果，放入 showcase backlog，不进入核心组件排期。
-
-Agent UI 采用独立的 @wzrhine/agent 包。一个真实的 Agent 消费项目就可以提出组件插入需求；第二个消费者用于验证公共契约，不是进入规划的前置条件。Agent UI 的运行时、传输、权限事实和宿主 API 必须留在消费项目。
+能由既有能力合理组合时优先 recipe；存在稳定交互与复用价值时再定义公共组件。只增加间距和背景不足以证明公共 API 的必要性。
 
 ### 5. 真实需求可以插入，但必须可回填
 
-当其他项目的真实页面被缺少的组件阻塞时，可以提前实现目标里程碑中的一个最小支持子集。Agent 必须先按 [真实需求插入与 Agent 引导流程](demand-insertion-workflow.md) 逐步询问，一次只确认一个关键问题，不要求用户一次填写完整表单。
+按 [当前反馈流程](../roadmap/demand-workflow.md) 受理、分类、确认最小范围和目标版本。普通新需求进入候选池；紧急缺陷可以进入维护修复；冻结后变更必须记录被替换任务和恢复点。
 
-插入前必须记录场景、归属、最小范围、必要依赖、组件库验收、消费项目验收、主线暂停点和恢复点。提前完成组件不等于完成整个目标里程碑；消费项目未真实接入时，不能写成已解决。
+库侧验收、实际发布与消费方验证分别记录。提前交付后续阶段子集时回填任务，不将整个阶段标成完成。
 
 ### 6. 评分用于排序，不是阻塞门槛
 
-组件优先级评分用于比较候选项。真实项目的明确阻塞可以提前进入插入队列，即使当前只有一个消费项目或一个页面。涉及第二套 headless 底座、渲染内核、公共 package 边界或许可证变化时，必须先做 ADR 或架构评估。
+按影响、替代方案、复用、依赖和维护成本比较需求，不用伪精确打分拒绝明确的个人需求。接受请求不等于立即排进当前版本；架构与安全边界不因优先级高而省略。
 
 ## 阶段状态约定
 
-- Proposed：已提出，尚未完成需求和风险评估；
-- Planned：已进入路线，但没有开始实现；
-- In progress：已有分支或明确实现任务；
-- Validating：代码已完成，等待自动化或人工门禁；
-- Accepted：有验收记录和可复现证据；
-- Deferred：有意延后并记录原因；
-- Rejected：经过评估不再进入路线。
+Proposed 表示候选；Planned 表示已安排但未实现；Implementing 表示已有实际工作；Validating 表示等待门禁；Accepted 表示定义范围的验收通过；Released 表示真实发布；Deferred／Rejected 需记录原因。
+
+消费结果使用独立的 NotRequested／Pending／Verified／Failed／NotApplicable，不与库侧阶段混用。
 
 ## 维护要求
 
-- 修改组件 API、token、行为底座、渲染边界或许可证策略时，先修改对应 ADR 或规划文档；
-- 每个里程碑结束时更新本目录和 docs/ROADMAP.md；
-- 任何“已通过”“已支持”“可发布”都必须链接到真实验收记录；
-- 不创建自动 GitHub Actions workflow，除非维护者明确批准并重新评估配额；
-- 规划文件使用中文，代码 API 和外部库名称保留原文；
-- commit message 使用中文，按小步、可回滚的范围提交。
+当前版本状态同步 `docs/ROADMAP.md` 和 `docs/roadmap/`；单条需求同步权威范围卡及目标版本。不要把本目录的旧计划重新当成未完成任务全量执行。
+
+规划和提交使用中文；在 `.worktree/` 隔离施工，中文小步提交，一个确认工作包最终一个 PR。未经授权不触发 Actions、不合并、不发布。
+
+本次保留本页既有标题结构，历史检索入口不变；新规划通过当前文档导航进入。Showcase 是否扩展扫描新目录，在实施文档任务中单独验证。
 
 ## 当前推荐起点
 
-M8、M9、M10、M9.5 与 M12 已完成。M12 按维护者决定跳过 M11，交付了高级交互组件与 Agent UI 两个新包（[M12 验收记录](../development/acceptance/2026-10-11-m12.md)、[ADR-0010](../development/adr/0010-m12-agent-ui-plan.md)）。
-
-下一步以 M13 为主线：按 [接入指南](agent-ui-adoption.md) 用 `@wzrhine/agent` 替换 Wpi 的视图层，完成双层验收（组件库 + 消费项目），并按真实科研 / 档案场景补齐 Rhine 领域模式。M11 Rendering Lab（[路线图](roadmap.md#m11rendering-lab)、[执行清单](execution-backlog.md#m11rendering-lab)）是独立的 Deferred / Planned 实验，可并行或稍后排期，用于决定是否需要 Canvas，而不是 M13 的前置条件。
-
-M9.5 已完成的范围见 [M9.5 验收记录](../development/acceptance/2026-10-11-m9.5.md)。Agent UI 后续新增组件按 [需求插入流程](demand-insertion-workflow.md) 进入。
+从 [P030-00](../roadmap/execution-backlog.md) 的范围、包边界和状态合同开始，随后进入布局与集合两条实现线。没有消费反馈时照常推进，收到新需求时通过版本规划吸收，不把整个主线改成等待状态。
