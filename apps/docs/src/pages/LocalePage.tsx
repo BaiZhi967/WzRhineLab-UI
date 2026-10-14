@@ -38,6 +38,11 @@ interface DemoRow {
 const copy = {
   zh: {
     region: 'zh-CN · 默认文案',
+    groupNav: '导航',
+    groupData: '数据表',
+    groupMetrics: '指标',
+    groupForms: '表单',
+    groupFeedback: '反馈与操作',
     caption: '样例记录',
     emptyCaption: '筛选结果（空）',
     colId: '编号',
@@ -79,6 +84,11 @@ const copy = {
   },
   en: {
     region: 'en-US · enUS',
+    groupNav: 'Navigation',
+    groupData: 'Tables',
+    groupMetrics: 'Metrics',
+    groupForms: 'Forms',
+    groupFeedback: 'Feedback & actions',
     caption: 'Sample records',
     emptyCaption: 'Filtered results (empty)',
     colId: 'ID',
@@ -169,52 +179,67 @@ function LocaleColumn({ lang }: { lang: Lang }) {
 
   return (
     <div className="sc-locale-column">
-      <Pagination page={page} totalItems={1000} pageSize={25} onPageChange={setPage} />
-      <Breadcrumb items={path} maxItems={3} />
-      <DataTable
-        caption={t.caption}
-        columns={columns}
-        rows={t.rows}
-        getRowId={(r) => r.id}
-        getRowLabel={(r) => r.id}
-        selectedIds={selected}
-        onSelectionChange={setSelected}
-        density="compact"
-      />
-      <DataTable caption={t.emptyCaption} columns={columns} rows={[]} getRowId={(r) => r.id} density="compact" />
-      <div className="sc-stat-row">
-        <Stat label={t.statTotal} value={12480} unit={t.unit} delta={{ value: -36, label: t.statDelta }} size="sm" />
-        <Stat label={t.statMissing} value={null} size="sm" />
-        <Stat label={t.statLoading} value={0} loading size="sm" />
+      <div className="sc-locale-group">
+        <h3 className="sc-locale-group__title">{t.groupNav}</h3>
+        <Pagination page={page} totalItems={1000} pageSize={25} onPageChange={setPage} />
+        <Breadcrumb items={path} maxItems={3} />
       </div>
-      <Progress label={t.progress} value={null} size="sm" />
-      <Progress label={t.progressSteps} value={42} size="sm" tone="accent" />
-      <Meter label={t.meter} value={86} high={80} optimum={20} stateLabels={{ suboptimum: t.meterHigh, critical: t.meterHigh }} size="sm" />
-      <Field label={t.kind} optional>
-        <Select options={t.kinds} />
-      </Field>
-      <Field label={t.note} optional>
-        <Textarea rows={2} maxLength={200} showCount defaultValue={t.noteValue} />
-      </Field>
-      <AlertDemo t={t} />
-      <div className="sc-row">
-        <AlertDialog
-          trigger={<Button size="sm" variant="ghost">{t.deleteTrigger}</Button>}
-          title={t.deleteTitle}
-          description={t.deleteBody}
-          confirmLabel={t.deleteConfirm}
-          onConfirm={() => new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error('demo')), 300))}
+      <div className="sc-locale-group">
+        <h3 className="sc-locale-group__title">{t.groupData}</h3>
+        <DataTable
+          caption={t.caption}
+          columns={columns}
+          rows={t.rows}
+          getRowId={(r) => r.id}
+          getRowLabel={(r) => r.id}
+          selectedIds={selected}
+          onSelectionChange={setSelected}
+          density="compact"
         />
-        <Drawer trigger={<Button size="sm" variant="secondary">{t.drawerTrigger}</Button>} title={t.drawerTitle} size="sm">
-          <MetadataList
-            empty="placeholder"
-            items={[
-              { label: t.created, value: '2026-10-01', dateTime: '2026-10-01', mono: true },
-              { label: t.owner, value: null },
-            ]}
+        <DataTable caption={t.emptyCaption} columns={columns} rows={[]} getRowId={(r) => r.id} density="compact" />
+      </div>
+      <div className="sc-locale-group">
+        <h3 className="sc-locale-group__title">{t.groupMetrics}</h3>
+        <div className="sc-locale-stats">
+          <Stat label={t.statTotal} value={12480} unit={t.unit} delta={{ value: -36, label: t.statDelta }} size="sm" />
+          <Stat label={t.statMissing} value={null} size="sm" />
+          <Stat label={t.statLoading} value={0} loading size="sm" />
+        </div>
+        <Progress label={t.progress} value={null} size="sm" />
+        <Progress label={t.progressSteps} value={42} size="sm" tone="accent" />
+        <Meter label={t.meter} value={86} high={80} optimum={20} stateLabels={{ suboptimum: t.meterHigh, critical: t.meterHigh }} size="sm" />
+      </div>
+      <div className="sc-locale-group">
+        <h3 className="sc-locale-group__title">{t.groupForms}</h3>
+        <Field label={t.kind} optional>
+          <Select options={t.kinds} />
+        </Field>
+        <Field label={t.note} optional>
+          <Textarea rows={2} maxLength={200} showCount defaultValue={t.noteValue} />
+        </Field>
+      </div>
+      <div className="sc-locale-group">
+        <h3 className="sc-locale-group__title">{t.groupFeedback}</h3>
+        <AlertDemo t={t} />
+        <div className="sc-row">
+          <AlertDialog
+            trigger={<Button size="sm" variant="ghost">{t.deleteTrigger}</Button>}
+            title={t.deleteTitle}
+            description={t.deleteBody}
+            confirmLabel={t.deleteConfirm}
+            onConfirm={() => new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error('demo')), 300))}
           />
-        </Drawer>
-        <ToastDemo t={t} />
+          <Drawer trigger={<Button size="sm" variant="secondary">{t.drawerTrigger}</Button>} title={t.drawerTitle} size="sm">
+            <MetadataList
+              empty="placeholder"
+              items={[
+                { label: t.created, value: '2026-10-01', dateTime: '2026-10-01', mono: true },
+                { label: t.owner, value: null },
+              ]}
+            />
+          </Drawer>
+          <ToastDemo t={t} />
+        </div>
       </div>
     </div>
   );
@@ -242,7 +267,7 @@ export function LocalePage() {
         </p>
       </PageHeader>
       <SpecimenGrid>
-        <Specimen id="locale-zh" index="01" title={copy.zh.region} span="half" align="start" note="不设置 messages：与 M9 之前逐字相同。">
+        <Specimen id="locale-zh" index="01" title={copy.zh.region} span="half" note="不设置 messages：与 M9 之前逐字相同。">
           <LocaleColumn lang="zh" />
         </Specimen>
         <Specimen
@@ -250,7 +275,6 @@ export function LocalePage() {
           index="02"
           title={copy.en.region}
           span="half"
-          align="start"
           note='嵌套 RhineProvider messages={enUS} locale="en-US" lang="en" toasts：通知由本区域自己的队列显示，关闭按钮用英文名称。'
         >
           <RhineProvider

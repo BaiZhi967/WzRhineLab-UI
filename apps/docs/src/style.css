@@ -1891,10 +1891,31 @@ body,
   background: transparent;
 }
 
+/* Two-level rhythm: 24px between groups, 12px between the demos inside one group. */
 .sc-locale-column {
   display: grid;
-  gap: var(--rl-space-5);
+  gap: var(--rl-space-6);
   min-width: 0;
+}
+
+.sc-locale-group {
+  display: grid;
+  gap: var(--rl-space-3);
+  min-width: 0;
+}
+
+/* Mono annotation in the card's index style; the same five titles line up across both columns. */
+.sc-locale-group__title {
+  font: var(--rl-type-mono);
+  letter-spacing: var(--rl-tracking-mono);
+  color: var(--rl-fg-subtle);
+}
+
+/* The shared .sc-stat-row (10rem tracks) wraps 2+1 inside a half card (~410px at 1280). */
+.sc-locale-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: var(--rl-space-4);
 }
 
 /* ---------- Docs search (M9.5) ---------- */
