@@ -18,7 +18,7 @@
 | P030-03 | InspectorPanel | P030-01、02 的布局合同 | 属性检查区域及覆盖层组合示例 | Planned |
 | P030-04 | 查询／条件／视图 | P030-01 | QueryToolbar、AppliedFilters、ViewSwitcher | Planned |
 | P030-05 | 选择／资源网格 | P030-01、04 的集合合同 | SelectionToolbar、ResourceGrid | Planned |
-| P030-06 | 记录详情／章节 | P030-02、03 | RecordDetail、SectionIndex | Planned |
+| P030-06 | 记录详情／章节 | P030-02、03 | SectionIndex；RecordDetail 按 ADR-0014 降为 recipe 随 P030-07 交付 | Planned |
 | P030-07 | 页面 recipes | P030-02–06 | 集合、详情、设置组合示例 | Planned |
 | P030-08 | 独立参考应用 | P030-07 | archive-desk 两种数据形态与故障注入 | Planned |
 | P030-09 | 文档与 API 整理 | 各组件完成 | 组件文档、API、迁移说明、导航与检索评估 | Planned |
@@ -67,7 +67,7 @@
 
 ### P030-06 详情
 
-组合已有 RecordHeader／MetadataList，交付通用分区与 SectionIndex。测试显式滚动根、重复标题稳定 ID、固定标题偏移、动态内容、减动、快速切换与观察器清理。
+交付 SectionIndex。测试显式滚动根、重复标题稳定 ID、固定标题偏移、动态内容、减动、快速切换与观察器清理。RecordDetail 已按 [ADR-0014](../development/adr/0014-patterns-package-and-p030-scope.md) 降为 recipe：RecordHeader／MetadataList／分区与状态槽的组合标准随 P030-07 的记录详情页 recipe 交付并在 archive-desk 验收。
 
 ### P030-07 页面 recipes
 
