@@ -45,6 +45,32 @@ export interface PatternsMessages {
     /** Clear-all entry text. */
     clearAll: string;
   };
+  selectionToolbar: {
+    /** Accessible name of the toolbar. */
+    region: string;
+    /** Selection count summary; receives the provider's number formatter. */
+    selected: (count: number, format: (value: number) => string) => string;
+    /** Clear-selection entry text. */
+    clear: string;
+  };
+  sectionIndex: {
+    /** Accessible name of the nav. */
+    region: string;
+  };
+  resourceGrid: {
+    /** Skeleton card label while loading. */
+    loading: string;
+    /** Announced when a thumbnail fails to load (per-item degradation). */
+    imageFailed: string;
+    /** Error state text. */
+    error: string;
+    /** Retry button text of the error state. */
+    retry: string;
+    /** Empty state text. */
+    empty: string;
+    /** Checkbox fallback name when no string title is available. */
+    item: string;
+  };
 }
 
 /** Override shape: every namespace and entry is optional; `undefined` entries are ignored. */
@@ -63,6 +89,20 @@ export const patternsZhCN: PatternsMessages = {
     reset: '重置',
   },
   appliedFilters: { region: '已应用条件', remove: (name) => `移除 ${name}`, clearAll: '清空全部' },
+  selectionToolbar: {
+    region: '批量操作',
+    selected: (count, format) => `已选 ${format(count)} 条`,
+    clear: '清除选择',
+  },
+  sectionIndex: { region: '章节目录' },
+  resourceGrid: {
+    loading: '正在加载…',
+    imageFailed: '图片加载失败',
+    error: '资源读取失败。',
+    retry: '重试',
+    empty: '暂无资源。',
+    item: '资源',
+  },
 };
 
 /** Reference translation (ADR-0009 §1): wording is not guaranteed to be stable. */
@@ -77,6 +117,20 @@ export const patternsEnUS: PatternsMessages = {
     reset: 'Reset',
   },
   appliedFilters: { region: 'Applied filters', remove: (name) => `Remove ${name}`, clearAll: 'Clear all' },
+  selectionToolbar: {
+    region: 'Batch actions',
+    selected: (count, format) => `${format(count)} selected`,
+    clear: 'Clear selection',
+  },
+  sectionIndex: { region: 'Sections' },
+  resourceGrid: {
+    loading: 'Loading…',
+    imageFailed: 'Image failed to load',
+    error: 'Failed to load resources.',
+    retry: 'Retry',
+    empty: 'No resources yet.',
+    item: 'Resource',
+  },
 };
 
 /** Shallow merge per namespace; `undefined` values in the override are ignored. */

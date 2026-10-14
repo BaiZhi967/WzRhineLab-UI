@@ -1,9 +1,3 @@
-/*
- * WzRhineLab UI · page pattern styles (@wzrhine/patterns)
- * Requires @wzrhine/tokens/styles.css, @wzrhine/react/styles.css and a `.rl-theme` ancestor.
- * Only `rl-` classes are targeted; host elements and :root stay untouched.
- * No literal colours, spacing or radii here: everything resolves to --rl-* tokens.
- */
-
 @import './layout.css';
 @import './collection.css';
+@import './record.css';

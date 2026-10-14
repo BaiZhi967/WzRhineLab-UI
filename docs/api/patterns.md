@@ -1,6 +1,6 @@
 # @wzrhine/patterns · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 21 个导出（6 components，2 functions & hooks，2 constants，8 interfaces，3 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 32 个导出（9 components，2 functions & hooks，2 constants，15 interfaces，4 types）。
 
 ## Components
 
@@ -93,6 +93,67 @@
 | `searchPlaceholder` | `string` |  |
 | `submitLabel` | `string` |  |
 | `toolbarLabel` | `string` | Accessible name of the search region; defaults to the built-in copy. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `ResourceGrid`
+
+*component*
+
+泛型组件：`ResourceGrid<Item>`。
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` |  |
+| `emptyAction` | `React.ReactNode` |  |
+| `emptyText` | `React.ReactNode` |  |
+| `getItemId` * | `(item: Item) => string` |  |
+| `getItemLabel` | `((item: Item) => string)` | Accessible name of a card's checkbox; defaults to the title text when it is a string. |
+| `getItemSpec` | `((item: Item) => ResourceGridItemSpec)` |  |
+| `getItemTitle` * | `(item: Item) => React.ReactNode` |  |
+| `items` * | `readonly Item[]` |  |
+| `label` | `string` | Accessible name of the list. |
+| `loadingRows` | `number` |  |
+| `onOpen` | `((id: string) => void)` | Open entry; selection and opening are distinct interactions. |
+| `onRetry` | `(() => void)` |  |
+| `onSelectionChange` | `((ids: Set<string>) => void)` |  |
+| `selectedIds` | `ReadonlySet<string>` |  |
+| `status` | `"ready" \| "loading" \| "error"` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `SectionIndex`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `activeId` | `string` | Current section; kept internally (observed) when not provided. |
+| `className` | `string` |  |
+| `label` | `string` | Accessible name of the nav. |
+| `offsetTop` | `number` | Fixed header offset (px) applied after scrolling a section into view. |
+| `onActiveChange` | `((id: string) => void)` |  |
+| `onNavigate` | `((id: string) => void)` | Active navigation by the user (distinct from passive observation). |
+| `scrollRoot` | `React.RefObject<HTMLElement \| null>` | Explicit scroll root; defaults to the nearest scrolling ancestor. |
+| `sections` * | `readonly SectionIndexSection[]` |  |
+| `smoothScroll` | `boolean` | Opt-in smooth scrolling; always off under reduced motion. |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `SelectionToolbar`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `actions` | `readonly SelectionToolbarAction[]` |  |
+| `className` | `string` |  |
+| `clearLabel` | `string` |  |
+| `label` | `string` | Accessible name of the toolbar. |
+| `onClear` | `(() => void)` |  |
+| `scope` | `SelectionScope` | Which range the count refers to; combined with `totalLabel` for an explainable scope. |
+| `selectedCount` * | `number` |  |
+| `totalLabel` | `React.ReactNode` | Range note, e.g. "当前页 25 条 / 已加载 100 条". |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -208,6 +269,9 @@ const patternsZhCN: PatternsMessages
 | `inspectorPanel` * | `{ close: string; }` |  |
 | `listDetail` * | `{ back: string; list: string; detail: string; }` | ListDetail copy; overrides the `backLabel` / `listLabel` / `detailLabel` props' defaults. |
 | `queryToolbar` * | `{ region: string; search: string; placeholder: string; submit: string; reset: string; }` |  |
+| `resourceGrid` * | `{ loading: string; imageFailed: string; error: string; retry: string; empty: string; item: string; }` |  |
+| `sectionIndex` * | `{ region: string; }` |  |
+| `selectionToolbar` * | `{ region: string; selected: (count: number, format: (value: number) => string) => string; clear: string; }` |  |
 
 ### `PatternsMessagesProviderProps`
 
@@ -240,6 +304,103 @@ const patternsZhCN: PatternsMessages
 | `searchPlaceholder` | `string` |  |
 | `submitLabel` | `string` |  |
 | `toolbarLabel` | `string` | Accessible name of the search region; defaults to the built-in copy. |
+
+### `ResourceGridItemSpec`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `badge` | `React.ReactNode` | Status slot on the card (StatusBadge etc.). |
+| `description` | `React.ReactNode` | Secondary line, truncated by CSS. |
+| `moreActions` | `React.ReactNode` | Actions outside the open entry (never nested inside it). |
+| `thumbnail` | `ResourceGridThumbnail` |  |
+
+### `ResourceGridProps`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `className` | `string` |  |
+| `emptyAction` | `React.ReactNode` |  |
+| `emptyText` | `React.ReactNode` |  |
+| `getItemId` * | `(item: Item) => string` |  |
+| `getItemLabel` | `((item: Item) => string)` | Accessible name of a card's checkbox; defaults to the title text when it is a string. |
+| `getItemSpec` | `((item: Item) => ResourceGridItemSpec)` |  |
+| `getItemTitle` * | `(item: Item) => React.ReactNode` |  |
+| `items` * | `readonly Item[]` |  |
+| `label` | `string` | Accessible name of the list. |
+| `loadingRows` | `number` |  |
+| `onOpen` | `((id: string) => void)` | Open entry; selection and opening are distinct interactions. |
+| `onRetry` | `(() => void)` |  |
+| `onSelectionChange` | `((ids: Set<string>) => void)` |  |
+| `selectedIds` | `ReadonlySet<string>` |  |
+| `status` | `"ready" \| "loading" \| "error"` |  |
+
+### `ResourceGridThumbnail`
+
+*interface* — Resource card grid (0.3.0-contracts §6.7): list semantics with named checkboxes and the title as the open entry — open, select and more actions are separately reachable, never nested. Thumbnails keep their intrinsic size (no layout shift), degrade per item on load failure and recover when the caller swaps the src; a card without a thumbnail stays fully operable. Selection is an explicit finite id set (ReadonlySet, same contract as DataTable). Object URLs and observers are released by whoever created them — the component only tracks img errors.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `alt` * | `string` |  |
+| `height` | `number` |  |
+| `src` * | `string` |  |
+| `width` | `number` | Reserved size to avoid layout shift; defaults to a 4:3 placeholder box. |
+
+### `SectionIndexProps`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `activeId` | `string` | Current section; kept internally (observed) when not provided. |
+| `className` | `string` |  |
+| `label` | `string` | Accessible name of the nav. |
+| `offsetTop` | `number` | Fixed header offset (px) applied after scrolling a section into view. |
+| `onActiveChange` | `((id: string) => void)` |  |
+| `onNavigate` | `((id: string) => void)` | Active navigation by the user (distinct from passive observation). |
+| `scrollRoot` | `React.RefObject<HTMLElement \| null>` | Explicit scroll root; defaults to the nearest scrolling ancestor. |
+| `sections` * | `readonly SectionIndexSection[]` |  |
+| `smoothScroll` | `boolean` | Opt-in smooth scrolling; always off under reduced motion. |
+
+### `SectionIndexSection`
+
+*interface* — Section index (0.3.0-contracts §4.3 / §6.8): named anchors for record detail sections with a passive current-section highlight. Anchors keep working without JS; with JS, navigation scrolls inside the explicit scroll root (nearest scrolling ancestor by default) honoring a fixed header offset, and smooth scrolling is opt-in and disabled under reduced motion. Observation never steals focus — active navigation is `aria-current`, user intent is a separate event. The observer disconnects on unmount and re-targets when the sections change; ids are caller-owned and stable (never generated here).
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `id` * | `string` | Anchor id; must match the content heading's id. Stable, not generated. |
+| `label` * | `React.ReactNode` |  |
+
+### `SelectionToolbarAction`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `busy` | `boolean` |  |
+| `disabled` | `boolean` |  |
+| `icon` | `React.ReactNode` |  |
+| `id` * | `string` |  |
+| `label` * | `React.ReactNode` |  |
+| `onRun` | `(() => void)` | Executed by the caller; component never runs business logic. |
+
+### `SelectionToolbarProps`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `actions` | `readonly SelectionToolbarAction[]` |  |
+| `className` | `string` |  |
+| `clearLabel` | `string` |  |
+| `label` | `string` | Accessible name of the toolbar. |
+| `onClear` | `(() => void)` |  |
+| `scope` | `SelectionScope` | Which range the count refers to; combined with `totalLabel` for an explainable scope. |
+| `selectedCount` * | `number` |  |
+| `totalLabel` | `React.ReactNode` | Range note, e.g. "当前页 25 条 / 已加载 100 条". |
 
 ### `ViewSwitcherOption`
 
@@ -286,5 +447,13 @@ type ListDetailMode = 'split' | 'overlay'
 
 ```ts
 type PatternsMessagesOverrides = { [K in keyof PatternsMessages]?: { [P in keyof PatternsMessages[K]]?: PatternsMessages[K][P]; }; }
+```
+
+### `SelectionScope`
+
+*type* — Selection action bar (0.3.0-contracts §5 / §6.6): selected count, range explanation, clear entry and batch actions. Batch execution belongs to the caller; a `busy` action disables its button so the same operation cannot be submitted twice, and a failed operation keeps the selection recoverable (the caller simply keeps reporting `selectedCount`). Zero selection renders nothing. First version covers explicit finite id sets only — the page / loaded / query scopes stay explainable, "all results selected" is not implied.
+
+```ts
+type SelectionScope = 'page' | 'loaded' | 'query'
 ```
 

@@ -1,0 +1,11 @@
+/*
+ * Record components (@wzrhine/patterns) — section index.
+ */
+
+.rl-section-index { display: block; }
+.rl-section-index__list { display: flex; flex-direction: column; gap: var(--rl-space-1); margin: 0; padding: 0; list-style: none; }
+.rl-section-index__item { min-width: 0; }
+.rl-section-index__link { display: inline-block; max-width: 100%; padding: var(--rl-space-1) var(--rl-space-2); border-inline-start: var(--rl-border-width) solid transparent; font: var(--rl-type-meta); color: var(--rl-fg-muted); text-decoration: none; overflow-wrap: anywhere; }
+.rl-section-index__link:hover { color: var(--rl-fg-primary); background: var(--rl-bg-hover); }
+.rl-section-index__link[aria-current] { border-inline-start-color: var(--rl-border-strong); color: var(--rl-fg-primary); font-weight: 600; }
+.rl-section-index__link:focus-visible { outline: var(--rl-focus-ring); outline-offset: var(--rl-focus-offset); }

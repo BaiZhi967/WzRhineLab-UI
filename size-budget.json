@@ -17,7 +17,7 @@
       "gzip": 3072
     },
     "patterns-full": {
-      "gzip": 5120
+      "gzip": 7168
     },
     "patterns-list-detail": {
       "gzip": 3072

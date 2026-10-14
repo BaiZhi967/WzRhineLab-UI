@@ -5,12 +5,14 @@ import { describe, expect, it } from 'vitest';
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 
-const cssFiles = ['../src/components.css', '../src/layout.css', '../src/collection.css'];
+const cssFiles = ['../src/components.css', '../src/layout.css', '../src/collection.css', '../src/record.css'];
 const stripped = (path: string) =>
   read(path)
     .replace(/\/\*[\s\S]*?\*\//g, '')
     .replace(/@import\s+['"][^'"]+['"];/g, '');
 const allCss = () => cssFiles.map(stripped).join('\n');
+/** CSS without @keyframes bodies, whose from / to / % steps are not element selectors. */
+const selectorCss = () => allCss().replace(/@keyframes[^{]+\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g, '');
 
 /** Source directories that exist so far; components arrive with P030-02 onwards. */
 const srcRoot = join(dirname(fileURLToPath(import.meta.url)), '..', 'src');
@@ -83,7 +85,7 @@ describe('package boundary', () => {
   });
 
   it('component CSS never targets :root, html, body or bare elements', () => {
-    const selectors = [...allCss().matchAll(/(^|})\s*([^{}@]+)\{/g)].map((m) => m[2]!.trim());
+    const selectors = [...selectorCss().matchAll(/(^|})\s*([^{}@]+)\{/g)].map((m) => m[2]!.trim());
     for (const selector of selectors) {
       expect(selector.trim(), selector).toMatch(/^(:where\(|:is\()?\.rl-/);
     }

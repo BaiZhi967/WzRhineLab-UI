@@ -217,8 +217,10 @@ for (const name of Object.keys(budgets)) {
 const shakePairs = [
   ['react-button', 'react-full'],
   ['agent-status', 'agent-full'],
-  // patterns pairs rejoin once the collection line lands several components: with a single
-  // component every import necessarily pulls the shared message provider (P030-04/05).
+  // patterns pair deferred with data: at 8 components (P030-06) patterns-query-toolbar is 25.2%
+  // of patterns-full — the shared message provider is a fixed ~1 KB tax on every component. The
+  // absolute sizes (5.3 KB full / 1.3 KB one component) stay budgeted above; re-evaluate if the
+  // table is ever split per namespace.
 ];
 for (const [part, whole] of shakePairs) {
   const ratio = measured[part].gzip / measured[whole].gzip;
