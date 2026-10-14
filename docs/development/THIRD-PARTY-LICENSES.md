@@ -27,5 +27,5 @@
 ## 非代码素材
 
 - 字体：仓库不内置字体文件。tokens 只声明字体栈（Inter、Noto Sans SC、IBM Plex Mono 等），由使用方自行按上游许可引入（STYLE.md §2）。
-- 图标：Showcase 与组件内的 SVG 图标为本项目原创绘制，未使用第三方图标库。
+- 图标：npm 包内与 Showcase 自绘的 SVG 图标均为本项目原创（[../design/ICONS.md](../design/ICONS.md)）。Showcase 应用另外以 `lucide-react` 1.48.0（ISC · Copyright (c) Lucide Contributors · [github.com/lucide-icons/lucide](https://github.com/lucide-icons/lucide)）作为通用图标基础层，只随 GitHub Pages 演示站分发，不进入任何 npm 包。
 - 图片：`docs/concepts/images/` 为本项目原创的概念图，仅用于设计参考，不随 npm 包发布（`files` 只包含 `dist`、README、CHANGELOG）。

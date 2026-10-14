@@ -17,7 +17,7 @@
 
 - **原创视觉语言**：科研机构 / 档案终端风格；明 / 暗 / system 三主题 × 双密度，全部由 `--rl-*` 语义 token 驱动，不污染 `:root`。
 - **可访问性优先**：语义 HTML、完整键盘路径；所有实际使用的前景 / 背景组合在三种主题下由测试验证满足 WCAG 2.2 AA；动效尊重系统减少动态且可中断。
-- **两组件体系**：`@wzrhine/react`（73 个组件，交互底座 Base UI）与 `@wzrhine/agent`（84 个 Agent UI 组件：工作台、会话流、composer、工具调用、审批干预、终端、产物预览）。
+- **两组件体系**：`@wzrhine/react`（83 个组件，交互底座 Base UI）与 `@wzrhine/agent`（87 个 Agent UI 组件：工作台、会话流、composer、工具调用、审批干预、终端、产物预览）。
 - **框架无关的 Agent 契约**：`@wzrhine/agent-core` 用 view-model 与纯函数描述会话 / 运行 / 工具 / 审批，不依赖 React，可在任意框架或 Node 中使用；UI 层只做渲染——view-model 进、actions 出。
 - **干净的包工程**：入口无 CSS 副作用、样式显式导入；支持 tree-shaking（只引 `Button` 的体积为全量入口的 1.4%）；三浏览器内核 E2E、视觉回归基线、体积预算与 tarball 真实安装验证构成发布门禁。
 
@@ -26,10 +26,10 @@
 | 包 | 定位 | 导出 |
 | --- | --- | ---: |
 | [`@wzrhine/tokens`](https://www.npmjs.com/package/@wzrhine/tokens) | 设计令牌：`--rl-*` CSS 变量、类型化清单、对比度工具 | 34 |
-| [`@wzrhine/react`](https://www.npmjs.com/package/@wzrhine/react) | React 组件库（73 个组件，Base UI 底座） | 265 |
+| [`@wzrhine/react`](https://www.npmjs.com/package/@wzrhine/react) | React 组件库（83 个组件，Base UI 底座） | 294 |
 | [`@wzrhine/effects`](https://www.npmjs.com/package/@wzrhine/effects) | 可选展示动效：解密 / 扫描 / 轨道 / 动效播放器 | 24 |
-| [`@wzrhine/agent-core`](https://www.npmjs.com/package/@wzrhine/agent-core) | 框架无关 Agent 契约：view-model 与纯函数 | 128 |
-| [`@wzrhine/agent`](https://www.npmjs.com/package/@wzrhine/agent) | Agent UI 组件（84 个组件） | 377 |
+| [`@wzrhine/agent-core`](https://www.npmjs.com/package/@wzrhine/agent-core) | 框架无关 Agent 契约：view-model 与纯函数 | 138 |
+| [`@wzrhine/agent`](https://www.npmjs.com/package/@wzrhine/agent) | Agent UI 组件（87 个组件） | 400 |
 
 导出数字来自自动生成的 [API reports](docs/README.md#额外资料与导入)，完整签名以 [docs/api/](docs/api) 为准。
 

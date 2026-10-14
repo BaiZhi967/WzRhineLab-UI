@@ -52,6 +52,37 @@
 
 首发 `0.1.0` 已于 2026-10-12 发布。因 npm 账号开启 2FA（auth-and-writes），实际流程为：脚本 dry run + `--publish` 阶段的 `pnpm release:check` 完成全部门禁校验，最终上传在交互终端手动逐包执行 `pnpm publish --access public --no-git-checks --registry https://registry.npmjs.org/`（每包输入一次 OTP）。后续版本如用脚本直发，可加 `--otp=<code>`（门禁耗时可能耗尽首码，剩余包用新码重试）。发布后提交版本号变更并打 tag `v<version>`。
 
+### 0.2.0 发布记录（2026-10-14）
+
+`0.1.0` 之后的全部变更（M13 的 Wpi 接入补齐 B0–B9、图标方向调整、ADR-0013 开放分类法）在五个包的 `[Unreleased]` 中累积，本次整体定版为 `## [0.2.0] - 2026-10-14`。版本号自 B0 批次起就是 0.2.0，所以 `release.mjs` 不会改写 `package.json`，只需提交定版文档并打 tag。
+
+- [x] 五个包的 CHANGELOG 均有 `## [0.2.0] - 2026-10-14` 段落；破坏性项（`react` / `effects` / `agent` 的 motion peer 收窄为 `^14.0.0`）与迁移步骤写在各自 CHANGELOG 与 [UPGRADING.md](UPGRADING.md)「升到 0.2.0」。
+- [x] 定版同时重新生成了派生产物：`pnpm api:report`（`@wzrhine/react` 265 → 294 个导出，`agent-core` 128 → 138，`agent` 377 → 400）、`pnpm docs:index`（2006 条）、`pnpm license:audit`（17 个运行时依赖 = MIT 16 + 0BSD 1，并补记 Showcase 的 Lucide 基础层）。
+- [x] 在 `main` 分支、工作区干净。
+- [x] `pnpm release:check` 通过（2026-10-14）：`typecheck` 11 个项目；单测 1329（tokens 247 / agent-core 24 / react 511 / effects 48 / agent 499）；`build` 与五个示例构建；`api:check`、`docs:check`（2006 条）、`license:audit`、`verify:packages`（tarball 安装 / SSR / Vite / `'use client'`）、`size:check`（11 个条目全部在预算内，未调整预算）。
+- [x] 相对 0.1.0 无删除或重命名的公开 API（`docs/api/*.md` 逐名比对）；新增 API 见各包 CHANGELOG。
+- [x] 定版前重跑了浏览器套件（2026-10-14，本机 Windows）：`pnpm test:e2e`（Chromium）**623/623 通过**；`pnpm test:visual` 11 通过 / 99 失败，**全部失败画面只差两处图标字形**——390px 的移动端菜单按钮、1280px 的搜索框前置图标，以及渲染了这些图标的页面内容（用逐像素聚类核对，差异全部落在 ~14×14 的图标盒内）。根因是 2026-10-14 的图标方向提交把 Showcase 基础图标切到 Lucide 基础层，而视觉基线停留在切换之前；这些图标与基线都在私有 Showcase（`apps/docs`）内，**不影响 npm 包内容**。跨内核结果仍见 [M13 验收记录](acceptance/2026-10-13-m13-wpi-ui.md)。
+- [ ] 重生成视觉基线：`pnpm test:visual:update`（99 张，逐张确认差异只在上述图标），评审后提交；此后 `pnpm test:visual` 应为全绿。
+- [ ] 上传后：`git tag v0.2.0` 并推送 tag；GitHub Pages 会因 `packages/**` 变更自动重新部署 Showcase。
+
+发布执行（维护者在仓库根、`main` 分支上，先确认 `npm whoami` 已是 `wzrhine` 组织的发布者）：
+
+```sh
+pnpm release:dry                            # 全部门禁 + 五包 pnpm publish --dry-run，不写 registry
+node scripts/release.mjs 0.2.0 --publish --otp=<新码>   # 逐包上传；首码若在门禁阶段过期，剩余包用新码重试
+git tag v0.2.0 && git push origin v0.2.0
+```
+
+逐包手动发布（与 0.1.0 相同的做法，每包一次 OTP）：
+
+```sh
+pnpm --filter @wzrhine/tokens publish --access public --no-git-checks --registry https://registry.npmjs.org/
+pnpm --filter @wzrhine/react publish --access public --no-git-checks --registry https://registry.npmjs.org/
+pnpm --filter @wzrhine/effects publish --access public --no-git-checks --registry https://registry.npmjs.org/
+pnpm --filter @wzrhine/agent-core publish --access public --no-git-checks --registry https://registry.npmjs.org/
+pnpm --filter @wzrhine/agent publish --access public --no-git-checks --registry https://registry.npmjs.org/
+```
+
 ## 文档站
 ROADMAP M5 写的是「Storybook 或自研 explorer」。本项目选择自研：`apps/docs` 就是 explorer，包括组件页、Playground、状态矩阵、动效对照和验收场景，并有三种浏览器内核的 E2E 覆盖。API 参考由 `api:report` 从类型声明自动生成，放在 `docs/api/`。目前不引入 Storybook，避免维护两套示例。
 

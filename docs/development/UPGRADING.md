@@ -159,10 +159,39 @@ Button 的加载指示、DataTable 的首次加载骨架与空状态、Stat 的�
 ## 以后的版本
 每次发布时在这里追加一节，格式与上面相同：标题写目标版本；每项写明是否破坏性、搜索关键字和改前 / 改后。未列出的版本表示无需动手。
 
-## 升到 0.2.0（Wpi 接入补齐，待发布）
+## 升到 0.2.0（Wpi 接入补齐，M13）
 
-- 五个包一起升级到 0.2.0。`react`、`effects`、`agent` 的 motion peer 为 `^14.0.0`，本仓验证使用 14.1.0；使用方应统一安装 motion 14.1.0，确保 React / motion 各一份。
-- `@wzrhine/react` 新增公共图标入口 `@wzrhine/react/icons`，原创线性 SVG 的 viewBox 为 24×24、描边 1.75；原 AgentIcon 继续兼容。
-- token 名称允许空格；历史草稿由 `reconcileTokens(value, bindings)` 与宿主绑定对账。
-- 复制失败提示持续保留，直到下一次复制成功；不要额外用自动消失的 Toast 代替该错误。
-- 新组件和 API 仍由现有 `styles.css` 包含，导入顺序保持 tokens → react → effects → agent。
+本版本相对 0.1.0 **没有删除或重命名任何公开 API**；需要动手的是 motion 的 peer 升级和两处行为变化。
+
+### 1. motion 升级到 14（破坏性，声明层面）
+`@wzrhine/react`、`@wzrhine/effects`、`@wzrhine/agent` 的 peer 由 `motion` `^12` 收窄为 `^14.0.0`，本仓开发与验证版本为 14.1.0。
+- 迁移：把 `motion`（`motion/react` 的来源包）升到 14.1.0，并确保应用内 React 与 motion 各只有一份——两份 motion 会让减动偏好与 `MotionConfig` 互相看不见。
+- 搜索关键字：`"motion": "^12`、`"motion": "^13`。
+
+### 2. 公共图标入口与图标方向（新增，无需改动）
+`@wzrhine/react/icons` 新增 `Icon` / `iconNames` / `IconName` / `IconProps`：24×24 网格、1.75 描边、圆端圆角、`currentColor`，本包保持零运行时图标依赖。
+- 方向（2026-10-14 batch-02）：搜索、箭头、文件、状态等通用字形不在本库范围内，请由消费方的 Lucide 层提供；本库只提供既有内置字形与 `Agent`、`Caliper`、`Sample`、`Index` 四枚定制字形。混排时把 Lucide 组件统一设为 `strokeWidth={1.75}` 对齐线宽。
+- `name` 接受任意字符串，配合新增的 `children` 渲染自定义 SVG；自定义 name 不带 `children` 时渲染空 SVG。
+- `@wzrhine/agent` 的 `AgentIcon` / `StatusGlyph` 同步支持 `children`，原用法不变。
+
+### 3. Composer token 保留名称中的空格（行为变化）
+token 编码不再把名称里的空格替换为连字符。
+- 迁移：用 `reconcileTokens(value, bindings)`（`@wzrhine/agent-core`）把宿主持久化的绑定对账到当前草稿；不匹配的绑定会被丢弃。不要自行拼接 token 文本。
+- 搜索关键字：历史草稿中的 token 名称、`reconcileTokens`。
+
+### 4. 复制失败提示保留到下一次成功（行为变化）
+MessageActions / CodeBlock 复制失败时，错误提示会一直保留，直到下一次复制成功。
+- 迁移：不要再额外用自动消失的 Toast 代替它；应用自己也在提示复制结果时，避免重复播报。
+- 搜索关键字：复制失败提示、`onCopyError`。
+
+### 5. 展示性枚举开放（ADR-0013，新增）
+`ModelEffort`、`AttachmentKind`、`ReferenceKind`、`CitationSourceType`、`ArtifactKind`、`ToolCategory`、`RecoveryKind`、`QuestionKind` 这些「只驱动标签 / 图标 / 色调」的字段放宽为「已知值联合 `| (string & {})`」；状态机枚举（`RunStatus` / `ToolStatus` / `SyncStatus` / `ActionStatus` …）保持封闭，仍由 ADR-0011 定义。
+- 自定义取值的标签回落顺序：组件属性 > 视图模型自带 > 最近 Provider 的文案表 > 原始 id；`data-kind` / `data-category` / `data-source` 照常输出自定义值，可用属性选择器自行加样式。
+- 自定义题型经由 QuestionnaireCard 的 `renderQuestion({ question, answer, editable, update, defaultBody })` 渲染；未提供渲染器时回落为自由文本回答。
+- 文案表中的分类标签 Record 现在允许补充自定义键；`AgentMessagesOverrides` 的纯字符串记录按键合并，新增一个自定义标签不再需要复制整表。
+
+### 6. 不用改、但值得知道
+- 新组件（react）：Workbench、NavRail / NavList / NavGroup / NavItem、Tree、CountBadge、Tag、ResizeHandle；（agent）SkillPicker、ReferencePicker、RunOverview。样式仍由各自的 `styles.css` 自动包含，导入顺序保持 tokens → react → effects → agent。
+- 新增属性：Button `tone`、Alert `size`、ScrollArea `reveal`、Dialog `finalFocus`、AlertDialog 第三按钮、Popover `anchor` / `sideOffset` / `initialFocus={false}`、RadioGroup `appearance`、Form `submitOnEnter`、Composer `allowEmptyText`、MessageList `followThreshold` / `jumpThreshold` / `nestedScrollSelector`、ModelPicker `effortLabels` / `effortState` / `onEffortReset`、OrbitalDiagram `size` / 节点 `tone` / `selected`、ScanSurface `duration` / `tone` / `containerType`、ArchiveReveal `paused`。不传时渲染结果与 0.1.0 相同。
+- 新增 token：`--rl-category-1` … `--rl-category-8`、`--rl-danger-hover`。
+- 体积：只在同时导入全部组件时整包 gzip 才会变化（按需导入不受影响），预算与度量见 [SIZE.md](SIZE.md)。

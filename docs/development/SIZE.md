@@ -36,7 +36,26 @@ esbuild 通过 Vite（`apps/docs` 的依赖）解析，没有新增依赖；当�
 - `pnpm build:packages` 失败：什么都不量，直接失败。
 
 ## 当前数值
-2026-10-11，M12 集成后用 `pnpm size:check --update` 生成；以 `size-budget.json` 和命令输出为准。
+2026-10-14，M13（0.2.0 定版）后的 `pnpm size:check` 输出；**预算未变**（沿用 M12 的 202 KB / 100 KB 等），全部条目在预算内，没有执行 `--update`。以 `size-budget.json` 和命令输出为准。
+
+| 条目 | minified | gzip | 预算（gzip） | 余量 |
+| --- | ---: | ---: | ---: | ---: |
+| `react-full` | 569.62 KB | 189.00 KB | 202 KB | 6.4% |
+| `react-button` | 7.24 KB | 2.66 KB | 4 KB | 33.5% |
+| `react-datatable` | 20.10 KB | 7.27 KB | 8 KB | 9.1% |
+| `react-css` | 113.07 KB | 16.10 KB | 18 KB | 10.5% |
+| `tokens-css` | 6.85 KB | 1.76 KB | 3 KB | 41.4% |
+| `effects-full` | 9.43 KB | 3.85 KB | 5 KB | 23.1% |
+| `effects-css` | 6.75 KB | 1.76 KB | 3 KB | 41.3% |
+| `agent-core` | 10.59 KB | 3.81 KB | 5 KB | 23.9% |
+| `agent-full` | 334.64 KB | 94.96 KB | 100 KB | 5.0% |
+| `agent-status` | 2.67 KB | 1.13 KB | 3 KB | 62.2% |
+| `agent-css` | 133.56 KB | 16.69 KB | 19 KB | 12.1% |
+
+**M13 变化（预算未调整）**：`react-full` 182.34 → 189.00 KB、`agent-full` 89.45 → 94.96 KB、`agent-css` 16.41 → 16.69 KB、`react-css` 15.17 → 16.10 KB；增长来自 B3–B5 的新组件（Workbench、Nav、Tree、CountBadge、Tag、ResizeHandle、选择器与覆盖层扩展）和公共图标入口，只在同时导入全部组件时计入，按需导入不受影响。tree-shaking 仍正常：`react-button` / `react-full` = 1.4%，`agent-status` / `agent-full` = 1.2%。
+
+<details>
+<summary>M12（2026-10-11）数值</summary>
 
 | 条目 | minified | gzip | 预算（gzip） | 余量 |
 | --- | ---: | ---: | ---: | ---: |
@@ -53,6 +72,8 @@ esbuild 通过 Vite（`apps/docs` 的依赖）解析，没有新增依赖；当�
 | `agent-css` | 131.06 KB | 16.41 KB | 19 KB | 13.6% |
 
 **M12 调整**：`react-full` 由 153 KB 调为 202 KB（+44 KB gzip），原因是新增 10 个组件，其中 Combobox、CommandPalette、Slider、NumberField、ScrollArea、Accordion、ContextMenu 各自引入对应的 Base UI 子路径（全部组件同时导入时才计入；按需导入不受影响）；`react-datatable` 增加约 0.4 KB（共享的文案表新增命名空间）；`react-css` 由 15 KB 调为 18 KB（四个新样式分片）。四个 agent 条目为新增。`react-button` / `react-full` = 1.4%，`agent-status` / `agent-full` = 1.3%，tree-shaking 正常。
+
+</details>
 
 M9.5 时 `react-full` 为 138.26 KB、`react-css` 为 12.07 KB；初版（文案表接入前）`react-datatable` 为 5.93 KB、`react-full` 为 137.14 KB。
 

@@ -4,12 +4,26 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-14
+
+Wpi-Agent 接入补齐（M13，B0–B9）。五个包同一版本线，公开 API 相对 0.1.0 只有新增，没有重命名或删除。
+
 ### Added
-- Wpi 接入：公共 `Icon` / `./icons` 入口；`Workbench`、`NavRail`、`NavList`、`Tree`、`CountBadge`、`Tag` 和公共 `ResizeHandle`。
-- Popover 外部锚点、`sideOffset`、`initialFocus={false}`；AlertDialog 禁用确认/强调方式/第三按钮；Dialog 关闭按钮与最终焦点；RadioGroup chip/card、隐藏标签与图标槽。
+- **B1 · 公共图标入口**：`@wzrhine/react/icons` 导出 `Icon`、`iconNames`、`IconName`、`IconProps`。家族语法为 24×24 网格、1.75 描边、圆端圆角、`currentColor`，本包保持零运行时图标依赖（[ICONS.md](../../docs/design/ICONS.md)）。
+  - 方向（2026-10-14 batch-02）：搜索、箭头、文件、状态等通用字形交给消费方（如 Wpi-Agent）的 Lucide 基础层；本库只保留既有内置字形与 4 枚承载科研 / 档案 / 智能体语义的定制字形 `Agent`、`Caliper`、`Sample`、`Index`。混排时把 Lucide 组件统一设为 `strokeWidth={1.75}`。
+- **B3、B4 · 壳层与导航**：`Workbench`（含 `WorkbenchIndex`、`useWorkbench`）、`NavRail`、`NavList`、`NavGroup`、`NavItem`、`Tree`（含 `TreeNode`：展开、选择、方向键、Home / End、typeahead、懒加载与重试）、`CountBadge`、`Tag`、公共 `ResizeHandle`（`@wzrhine/agent` 原有导出保留）。
+- **B5、B8 · 覆盖层与表单扩展**：Popover 外部 `anchor`（元素、ref 或虚拟矩形）、`sideOffset`、`initialFocus={false}`；AlertDialog 第三按钮（`AlertDialogAlternateAction`）、禁用确认与强调方式；Dialog 关闭按钮与 `finalFocus`；RadioGroup `appearance="chip" | "card"`、隐藏标签与图标槽；Form `submitOnEnter`；Button `tone="danger"`（`ButtonTone`）；Alert `size`（`AlertSize`）；ScrollArea `reveal`（`ScrollReveal`）。
+- **ADR-0013 · 开放分类法**：`Icon` 的 `name` 接受任意字符串，新增 `children` 覆盖内置路径；自定义图标必须搭配 `children`，否则渲染空 SVG。
 
 ### Changed
-- peer `motion` 从 `^12` 升到 `^14.0.0`，开发和验证版本为 14.1.0；0.x 破坏性变更，目标发行版本 0.2.0。
+- **破坏性（声明层面）**：peer `motion` 由 `^12` 升到 `^14.0.0`，本仓开发与验证版本为 14.1.0。
+  - 迁移：升级到 motion 14.1.0，并确保应用内 React 与 motion 各只有一份；其余不用改（见 UPGRADING「升到 0.2.0」）。
+- 体积（ADR-0008 §3）：`react-full` gzip 182.34 → 189.00 KB、`react-css` 15.17 → 16.10 KB；**预算未调整**（仍是 202 KB / 18 KB），`react-button` / `react-full` = 1.4%，tree-shaking 正常（[SIZE.md](../../docs/development/SIZE.md)）。
+
+### Fixed
+- Button `tone="danger"` 悬停背景此前透明（`--rl-danger-hover` 未定义），现在按 accent 的惯例在悬停时变亮；两种主题均有 E2E 断言。
+- Tree 选中行引用未定义的 `--rl-bg-selected`（选中态透明），改用 `--rl-bg-subtle`。
+- CountBadge 引用未定义的 `--rl-type-meta-size`，字号回落到 mono 12px。
 
 ## [0.1.0] - 2026-10-12
 

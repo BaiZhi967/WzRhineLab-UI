@@ -4,15 +4,24 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-14
+
 ### Added
-- Wpi 接入：`SkillPicker`、`ReferencePicker`、`RunOverview`；Composer 附件发送、持久化重试、slash 触发规则；ModelPicker 失效 effort 重置。
-- 工具材料分页与统计可靠性展示；权限错误/回执；终端和子任务列表加载/错误/分组；ContextUsage 受控打开、估算状态。
+- **B5 · 选择器与 composer 回执**：`SkillPicker`、`ReferencePicker`（异步加载、失败重试、IME 防护）；Composer 支持只发附件与引用（`allowEmptyText`）与持久化重试（`onRetryPersistence`、`retryBusy`），slash 触发规则与 `agent-core` 的 `options.slash` 对齐；ModelPicker 的失效 effort 重置（`effortState`、`onEffortReset`）与 `effortLabels`；PermissionPicker 的权限错误与回执（`receipt`）。
+- **B6 · 运行概览与会话结构**：`RunOverview`（含 `RunOverviewFact`、`RunOverviewSection`）；会话列表分组（`collapsibleGroups`、`collapsedGroups`、`onCollapsedGroupsChange`）；MessageList 的 `followThreshold`、`jumpThreshold` 与 `nestedScrollSelector`；ContextUsage 受控打开与估算状态；AgentShell 下钻与附件入场动效。
+- **B7 · 工具与工作区状态**：工具材料的计数、分页与可靠性展示（`counts`、`total`、`page`、`statsReliable`、`observedBytes`）；终端与子 Agent 列表的加载 / 错误 / 重试（`onRetry`、`retrying`）与按状态分组（`groupBy="state"`）；终端停止操作；问卷单选推进。
+- **ADR-0013 · 开放分类法**：`AgentIcon`、`StatusGlyph` 的 `name` 接受任意字符串并新增 `children` 覆盖；`CitationChip` 的 `icon`；文案表中分类标签改为「已知键必填 + 自定义键可选」，纯字符串记录按按键合并（新增一个自定义标签不再需要复制整表）；`renderQuestion` / `QuestionRenderContext`、`isChoiceQuestion`、`isKnownQuestionKind`、`normalizeEfforts`。
 
 ### Fixed
-- MessageActions / CodeBlock 复制失败保留可访问错误；MessageList 嵌套滚动可标记内部归属；历史阅读阈值可配置。
+- MessageActions / CodeBlock 复制失败保留可访问错误，直到下一次复制成功（不再自动消失）。
+- MessageList 嵌套滚动可以标记内部归属；历史阅读阈值可配置。
 
 ### Changed
-- peer `motion` 为 `^14.0.0`，目标发行版本 0.2.0。
+- peer `motion` 为 `^14.0.0`，本仓开发与验证版本为 14.1.0；与其余四个包同一版本线。
+  - 迁移：升级到 motion 14.1.0，并确保应用内 React 与 motion 各只有一份。
+- 标签解析优先级（ADR-0009）：组件属性 > 视图模型自带 > 最近 Provider 的文案表 > 原始 id；自定义取值一律回落到此顺序末尾，不渲染空白。
+- 工作区组件的 `messages` 属性类型由 `Partial<AgentWorkspaceMessages>` 放宽为 `WorkspaceMessagesProp`（嵌套文案表可以只传部分键）；原本的 `Partial<AgentWorkspaceMessages>` 仍然合法，无需改动。
+- 体积（ADR-0008 §3）：`agent-full` gzip 89.45 → 94.96 KB、`agent-css` 16.41 → 16.69 KB；**预算未调整**（仍是 100 KB / 19 KB），`agent-status` / `agent-full` = 1.2%（[SIZE.md](../../docs/development/SIZE.md)）。
 
 ## [0.1.0] - 2026-10-12
 

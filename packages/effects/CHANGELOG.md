@@ -4,11 +4,14 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-14
+
 ### Added
-- OrbitalDiagram 尺寸、节点色调与选中态；ScanSurface 色调、时长预设和容器副作用开关；ArchiveReveal 原生属性/ref、视口暂停与受控暂停。
+- **B9 · 展示动效接入补齐**：`OrbitalDiagram` 新增 `size`、节点 `tone`（accent / info / warning / success / neutral）与 `selected` / `selectedLabel`（选中态连同本地化读屏后缀）；`ScanSurface` 新增 `tone`、`duration`（毫秒或 `fast` / `base` / `panel` / `showcase` 预设）与 `containerType` / `overflow`（容器副作用开关）；`ArchiveReveal` 支持原生属性与 `ref` 透传、视口暂停与受控 `paused`。
 
 ### Changed
-- peer `motion` 为 `^14.0.0`，目标发行版本 0.2.0。
+- peer `motion` 为 `^14.0.0`，本仓开发与验证版本为 14.1.0；与其余四个包同一版本线。
+  - 迁移：升级到 motion 14.1.0，并确保应用内 React 与 motion 各只有一份。
 
 ## [0.1.0] - 2026-10-12
 
