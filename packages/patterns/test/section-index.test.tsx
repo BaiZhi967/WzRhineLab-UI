@@ -121,7 +121,7 @@ describe('SectionIndex observation', () => {
     for (const inst of instances) {
       const entry = { target, isIntersecting, intersectionRatio: isIntersecting ? 1 : 0 } as IntersectionObserverEntry;
       act(() => {
-        (inst.callback as (e: IntersectionObserverEntry[]) => void)([entry], inst as unknown as IntersectionObserver);
+        (inst.callback as (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => void)([entry], inst as unknown as IntersectionObserver);
       });
     }
   };

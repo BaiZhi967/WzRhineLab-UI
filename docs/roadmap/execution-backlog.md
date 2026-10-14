@@ -22,7 +22,7 @@
 | P030-07 | 页面 recipes | P030-02–06 | 集合、详情、设置组合示例 | Accepted（2026-10-15；showcase「Page recipes」页三组合，各附用途/适配点/状态所有者/键盘路径/错误取消/不适用说明） |
 | P030-08 | 独立参考应用 | P030-07 | archive-desk 两种数据形态与故障注入 | Accepted（2026-10-15；1,000 档案／240 资源确定性样例、资源页＋设置页、故障注入 error/delay/stale＋请求令牌防过期覆盖、版本化存储＋一键恢复；e2e 15/16 绿，1 项为 main 上同样失败的既有环境漂移（对话框初始焦点），已记录） |
 | P030-09 | 文档与 API 整理 | 各组件完成 | 组件文档、API、迁移说明、导航与检索评估 | Accepted（2026-10-15；docs/components/patterns.md、docs/api/patterns.md 32 导出、showcase 两页样张入检索、ADR-0014 与合同文档互链） |
-| P030-10 | 完整验收与性能基线 | P030-08、09 | 真实命令日志、场景证据、限制与缺陷关闭 | Planned |
+| P030-10 | 完整验收与性能基线 | P030-08、09 | 真实命令日志、场景证据、限制与缺陷关闭 | Accepted（2026-10-15，环境 Win11/Node 24/pnpm 10.17/Playwright 1.63 · commit 见 PR） |
 | P030-11 | 候选交付 | P030-10 | 汇总 PR、发布检查单、升级与回滚记录 | Planned |
 
 ## 3. 首批：P030-00 与 P030-01
@@ -94,6 +94,10 @@
 ### P030-10 验收
 
 执行 [质量门禁](quality-and-release.md) 中与本版对应的所有检查。性能样本固定，先记录 0.2.0 基础入口和新增模块的独立基准，再评估差异。记录命令、环境、commit 和日志，不能复制旧测试计数。
+
+> 2026-10-15 实测记录（本机 Win11 · Node 24.13 · pnpm 10.17.1 · Playwright 1.63 · chromium/firefox/webkit 均已安装）：
+> `pnpm check` 通过（全仓 typecheck + 五包+patterns 测试 + showcase/示例构建）；showcase e2e chromium 621 过 / firefox 621 过 1 跳过 / webkit 622 过；示例套件 agent-console 21、next-app-router 15、ssr-hydrate 18、host-embed 27 全过，archive-desk 45 过 / 3 失败（同一「keyboard only: create dialog 初始焦点」用例 ×3 浏览器——在未改动的 main 检出上同样失败，属提交基线后的环境漂移，已单独记录，不在本版修复）；视觉基线 121/121 过（基线因同一环境漂移整体重建，PR 需复核 PNG 差异：导航新条目、新增 patterns/recipes 页、文字渲染微差）；`pnpm release:check` exit 0（check + api:check + docs:check + license + verify:packages + size 全绿，patterns-full 5.32 KB gzip 在预算内）。
+> 未执行项：读屏（NVDA/VoiceOver）与真机触摸人工验证未声明为本版目标环境，未执行；tree-shaking 配对因文案 Provider 固定成本实测 25.2% 暂缓（已记录于 size-check 注释）。
 
 ### P030-11 候选交付
 
