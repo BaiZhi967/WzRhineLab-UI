@@ -31,7 +31,7 @@
 
 /* ---------- Public icon / navigation / workbench additions ---------- */
 .rl-icon { display: inline-block; flex: none; vertical-align: middle; }
-.rl-count-badge { display: inline-flex; min-width: var(--rl-control-height-xs, 1.25rem); min-height: var(--rl-control-height-xs, 1.25rem); align-items: center; justify-content: center; padding-inline: var(--rl-space-1); border-radius: var(--rl-radius-round); background: var(--rl-bg-inverse); color: var(--rl-fg-inverse); font: var(--rl-type-mono); font-size: var(--rl-type-meta-size); line-height: 1; }
+.rl-count-badge { display: inline-flex; min-width: var(--rl-control-height-xs, 1.25rem); min-height: var(--rl-control-height-xs, 1.25rem); align-items: center; justify-content: center; padding-inline: var(--rl-space-1); border-radius: var(--rl-radius-round); background: var(--rl-bg-inverse); color: var(--rl-fg-inverse); font: var(--rl-type-mono); line-height: 1; }
 .rl-tag { display: inline-flex; align-items: center; gap: var(--rl-space-1); max-width: 100%; min-height: var(--rl-control-height-sm); padding-inline-start: var(--rl-space-2); border: var(--rl-border-width) solid var(--rl-border-default); border-radius: var(--rl-radius-round); background: var(--rl-bg-subtle); color: var(--rl-fg-primary); font: var(--rl-type-label-sm); }
 .rl-tag[data-tone='invalid'] { border-color: var(--rl-danger); color: var(--rl-danger); }
 .rl-tag__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -58,7 +58,7 @@
 .rl-tree__root, .rl-tree__item > [role='group'] { margin: 0; padding: 0; list-style: none; }
 .rl-tree__item { min-width: 0; color: var(--rl-fg-primary); }
 .rl-tree__row { display: flex; align-items: center; gap: var(--rl-space-1); min-height: var(--rl-control-height-md); padding-inline: var(--rl-space-2); border-radius: var(--rl-radius-xs); cursor: pointer; }
-.rl-tree__row[data-selected] { background: var(--rl-bg-selected); }
+.rl-tree__row[data-selected] { background: var(--rl-bg-subtle); }
 .rl-tree__select { min-width: 0; flex: 1; padding: 0; border: 0; background: transparent; color: inherit; text-align: start; }
 .rl-tree__select:focus-visible { outline: var(--rl-focus-ring); outline-offset: var(--rl-focus-offset); }
 .rl-tree__item:focus-visible { outline: var(--rl-focus-ring); outline-offset: var(--rl-focus-offset); }

@@ -107,6 +107,12 @@ test.describe('wide rail evidence', () => {
     await open(page, '/#/');
     await expect(page).toHaveScreenshot('overview-light-1920.png');
   });
+
+  test('locale side-by-side columns · light', async ({ page }) => {
+    await setSettings(page, { motion: 'reduce' });
+    await open(page, '/#/foundations/locale');
+    await expect(page).toHaveScreenshot('locale-light-1920.png');
+  });
 });
 
 test.describe('component close-ups', () => {

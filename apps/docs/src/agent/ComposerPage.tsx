@@ -125,6 +125,7 @@ function noop() {}
 const layout = {
   states: { display: 'grid', gap: 'var(--rl-space-6)', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 22rem), 1fr))', alignItems: 'start' },
   state: { display: 'grid', gap: 'var(--rl-space-2)', minWidth: 0 },
+  menus: { display: 'grid', gap: 'var(--rl-space-6)', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 24rem), 1fr))', alignItems: 'start' },
   matrix: { display: 'flex', flexWrap: 'wrap', gap: 'var(--rl-space-4)', margin: 0, padding: 0, listStyle: 'none' },
   matrixItem: { display: 'grid', justifyItems: 'center', gap: 'var(--rl-space-1)', minWidth: '5.5rem' },
   pickers: { display: 'flex', flexWrap: 'wrap', gap: 'var(--rl-space-2)', alignItems: 'center', minWidth: 0 },
@@ -333,7 +334,7 @@ function MenuSpecimens() {
   const [commandIndex, setCommandIndex] = React.useState(0);
   const commands = orderCommandOptions(commandsBase).map((c) => (c.name === 'review' ? { ...c, selected: true } : c));
   return (
-    <div className="sc-card-list">
+    <div style={layout.menus}>
       <MentionMenu
         id="spec-mention"
         side="inline"
@@ -501,28 +502,16 @@ export function AgentComposerPage() {
           index="15–16"
           title="@ 引用 / 斜杠命令菜单"
           description="listbox + aria-activedescendant，焦点始终在 textarea；分组、匹配高亮、路径、可进入的文件夹、不可用原因、加载 / 空 / 错误。"
-          span="half"
-          align="start"
         >
           <MenuSpecimens />
         </Specimen>
 
-        <Specimen id="composer-attachments" index="17" title="附件与引用" description="固定卡片尺寸：上传进度变化不推动相邻卡片；长文件名截断，完整名在 title 与读屏文本中。" span="half" align="start">
+        <Specimen id="composer-attachments" index="17" title="附件与引用" description="固定卡片尺寸：上传进度变化不推动相邻卡片；长文件名截断，完整名在 title 与读屏文本中。">
           <AttachmentList attachments={sampleAttachments} references={sampleReferences} onRemove={noop} onRetry={noop} />
         </Specimen>
 
         <Specimen id="composer-send" index="18" title="发送 / 停止" description="同一个按钮元素：发送 ↔ 停止生成，焦点不丢失；停止待确认与回执未知不可重复触发。" span="half" align="start">
           <SendStopMatrix />
-        </Specimen>
-
-        <Specimen
-          id="composer-replacement"
-          index="14.2"
-          title="替换输入框 · ComposerNotice"
-          description="replacement 替代输入框（子代理、归档或继承的对话）；intervention 插槽仍在上方，审批与问卷照常停靠。草稿在切回后保留。"
-          note="无动效；语气用图标 + 读屏前缀，不只靠颜色。"
-        >
-          <ReplacementDemo />
         </Specimen>
 
         <Specimen
@@ -535,6 +524,16 @@ export function AgentComposerPage() {
           align="start"
         >
           <PickerSpecimens />
+        </Specimen>
+
+        <Specimen
+          id="composer-replacement"
+          index="14.2"
+          title="替换输入框 · ComposerNotice"
+          description="replacement 替代输入框（子代理、归档或继承的对话）；intervention 插槽仍在上方，审批与问卷照常停靠。草稿在切回后保留。"
+          note="无动效；语气用图标 + 读屏前缀，不只靠颜色。"
+        >
+          <ReplacementDemo />
         </Specimen>
       </SpecimenGrid>
     </>

@@ -174,23 +174,23 @@ export function DataNavPage() {
         >
           <ThousandRows />
         </Specimen>
-        <Specimen id="data-states" index="02" title="Table states" span="half" align="start" note="加载 / 空 / 错误互斥；加载与错误时排序和分页禁用。">
-          <TableStates />
-        </Specimen>
-        <Specimen id="data-pagination" index="03" title="Pagination" span="half" align="start" note="当前页 aria-current 且可聚焦；容器窄于 30rem 时切换为紧凑模式。">
-          <PagerDemo />
-        </Specimen>
-        <Specimen id="data-breadcrumb" index="04" title="Breadcrumb" span="half" align="start" note="超过 4 级折叠中间项，点击后原地展开；长标签单行截断，完整文字保留给读屏。">
+        <Specimen id="data-breadcrumb" index="02" title="Breadcrumb" span="half" align="start" note="超过 4 级折叠中间项，点击后原地展开；长标签单行截断，完整文字保留给读屏。">
           <div className="sc-stack sc-stack--wide">
             <Breadcrumb items={longPath} label="路径（折叠）" />
             <Breadcrumb items={longPath} label="路径（完整）" maxItems={0} />
           </div>
         </Specimen>
+        <Specimen id="data-pagination" index="03" title="Pagination" span="half" align="start" note="当前页 aria-current 且可聚焦；容器窄于 30rem 时切换为紧凑模式。">
+          <PagerDemo />
+        </Specimen>
+        <Specimen id="data-states" index="04" title="Table states" span="half" align="start" note="加载 / 空 / 错误互斥；加载与错误时排序和分页禁用。">
+          <TableStates />
+        </Specimen>
         <Specimen id="data-progress" index="05" title="Progress & Meter" span="half" align="start" note="Progress 表示随时间推进的任务；Meter 表示范围内的静态测量。阈值状态以文字表达。">
           <ProgressDemo />
         </Specimen>
         <Specimen id="data-stat" index="06" title="Stat" note="变化的方向不预设好坏：tone 由调用方决定。无数据显示「—」，不显示 0。数值为示例。">
-          <div className="sc-stat-row">
+          <div className="sc-stat-row sc-stat-row--tight">
             <Stat label="示例 · 记录总数" value={bulkRecords.length} unit="条" />
             <Stat label="示例 · 待复核" value={128} unit="条" status="warning" delta={{ value: 12, label: '较上周', tone: 'warning' }} />
             <Stat label="示例 · 本周归档" value={46} unit="条" delta={{ value: -3, label: '较上周' }} />

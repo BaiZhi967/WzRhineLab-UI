@@ -227,8 +227,6 @@ export function FeedbackPage() {
           id="feedback-tones"
           index="01"
           title="Alert tones"
-          span="half"
-          align="start"
           note="颜色之外必有图标与文字；正文始终为 fg-primary。默认 live=off：页面加载时已存在的提示不宣告。"
         >
           <ToneMatrix />
@@ -264,26 +262,24 @@ export function FeedbackPage() {
             <Callout tone="neutral">字段说明以档案规范为准。</Callout>
           </div>
         </Specimen>
-        <Specimen
-          id="feedback-empty"
-          index="05"
-          title="EmptyState"
-          note="kind 只影响默认图标（装饰性）；headingLevel 让标题成为 h2–h6，不传则为段落。无 live 角色：空结果由筛选计数宣告。"
-        >
-          <EmptyDemo />
+        <Specimen id="feedback-spinner" index="05" title="Spinner" span="half" align="start" note="sm 14 / md 16 / lg 20（icon-size）；线性旋转 --rl-motion-loop，减动时静止为较长弧线。">
+          <SpinnerDemo />
         </Specimen>
         <Specimen
           id="feedback-skeleton"
           index="06"
           title="Skeleton"
-          span="two-thirds"
-          align="start"
           note="Skeleton 始终 aria-hidden；容器设 aria-busy 并提供「正在加载」文字。呼吸动画 --rl-motion-loop，减动时为静态色块。"
         >
           <SkeletonDemo />
         </Specimen>
-        <Specimen id="feedback-spinner" index="07" title="Spinner" span="third" align="start" note="sm 14 / md 16 / lg 20（icon-size）；线性旋转 --rl-motion-loop，减动时静止为较长弧线。">
-          <SpinnerDemo />
+        <Specimen
+          id="feedback-empty"
+          index="07"
+          title="EmptyState"
+          note="kind 只影响默认图标（装饰性）；headingLevel 让标题成为 h2–h6，不传则为段落。无 live 角色：空结果由筛选计数宣告。"
+        >
+          <EmptyDemo />
         </Specimen>
       </SpecimenGrid>
     </div>

@@ -81,6 +81,83 @@ test.describe('Showcase specimen rhythm', () => {
   });
 });
 
+test.describe('Specimen composition alignment', () => {
+  test.use({ viewport: { width: 1280, height: 900 } });
+
+  test('sidebar rail spans the viewport without a scrollbar gutter', async ({ page }) => {
+    await setSettings(page, { motion: 'reduce' });
+    await page.goto('/#/foundations/locale');
+    await expect(page.locator('h1')).toBeVisible();
+
+    const metrics = await page.locator('.sc-sidebar').evaluate((el) => {
+      const rect = el.getBoundingClientRect();
+      return {
+        gutter: el.offsetWidth - el.clientWidth,
+        height: rect.height,
+        viewport: window.innerHeight,
+      };
+    });
+    // Hidden scrollbar: the only offsetWidth/clientWidth gap is the 1px right border.
+    expect(metrics.gutter).toBeLessThanOrEqual(2);
+    expect(Math.round(metrics.height)).toBe(metrics.viewport);
+  });
+
+  test('centers the standalone Button specimen rows', async ({ page }) => {
+    await setSettings(page, { motion: 'reduce' });
+    await page.goto('/#/components/button');
+    await expect(page.locator('h1')).toBeVisible();
+
+    const margins = await page.evaluate(() => {
+      return ['button-sizes', 'button-icons', 'button-loading', 'button-long'].map((id) => {
+        const card = document.querySelector<HTMLElement>(`[aria-labelledby="${id}-title"]`);
+        if (!card) throw new Error('Missing card ' + id);
+        const body = card.querySelector<HTMLElement>('.sc-specimen__body');
+        const cardRect = card.getBoundingClientRect();
+        const demo = body.firstElementChild.getBoundingClientRect();
+        return { id, left: demo.left - cardRect.left, right: cardRect.right - demo.right };
+      });
+    });
+    for (const m of margins) {
+      expect(Math.abs(m.left - m.right), m.id + ' row is centered').toBeLessThanOrEqual(1);
+    }
+  });
+
+  test('right-aligns the locale feedback actions with the card padding', async ({ page }) => {
+    await setSettings(page, { motion: 'reduce' });
+    await page.goto('/#/foundations/locale');
+    await expect(page.locator('h1')).toBeVisible();
+
+    const gaps = await page.evaluate(() => {
+      return Array.from(document.querySelectorAll('.sc-locale-column .sc-row--end')).map((row) => {
+        const card = row.closest<HTMLElement>('.sc-specimen');
+        if (!card) throw new Error('Action row outside a specimen card');
+        const cardRect = card.getBoundingClientRect();
+        const rowRect = row.getBoundingClientRect();
+        const padding = parseFloat(getComputedStyle(card).paddingRight);
+        return cardRect.right - padding - rowRect.right;
+      });
+    });
+    expect(gaps).toHaveLength(2);
+    for (const gap of gaps) expect(gap).toBeLessThanOrEqual(1);
+  });
+
+  // The base 10rem tracks wrapped 4+1 at 1280 and 3+2 at 768; the tight variant keeps one row.
+  for (const width of [768, 1280]) {
+    test(`data page stat row keeps all five stats on one row at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await setSettings(page, { motion: 'reduce' });
+      await page.goto('/#/archive/data');
+      await expect(page.locator('h1')).toBeVisible();
+
+      const rows = await page.locator('.sc-stat-row--tight').evaluate((grid) => {
+        const tops = new Set(Array.from(grid.children).map((child) => Math.round(child.getBoundingClientRect().top)));
+        return { items: grid.children.length, rows: tops.size };
+      });
+      expect(rows).toEqual({ items: 5, rows: 1 });
+    });
+  }
+});
+
 test.describe('Adoption workbench states', () => {
   test('enters compact before squeezing the reading column', async ({ page }) => {
     test.setTimeout(30_000);

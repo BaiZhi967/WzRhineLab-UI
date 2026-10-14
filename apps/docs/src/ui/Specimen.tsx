@@ -37,14 +37,16 @@ interface SpecimenProps {
   span?: 'full' | 'half' | 'third' | 'two-thirds';
   /** `start`: don't stretch to the row's tallest card (for rows of unrelated short demos). */
   align?: 'stretch' | 'start';
+  /** Center the demo content in the card body (rows of standalone controls). */
+  center?: boolean;
   children: React.ReactNode;
 }
 
 /** Labelled showcase panel modelled on the concept-board specimen cards: index, title, body, technical note. */
-export function Specimen({ id, index, title, description, note, span = 'full', align = 'stretch', children }: SpecimenProps) {
+export function Specimen({ id, index, title, description, note, span = 'full', align = 'stretch', center, children }: SpecimenProps) {
   const headingId = `${id}-title`;
   return (
-    <section className="sc-specimen" data-span={span} data-align={align} aria-labelledby={headingId}>
+    <section className="sc-specimen" data-span={span} data-align={align} data-center={center || undefined} aria-labelledby={headingId}>
       <header className="sc-specimen__header">
         <h2 id={headingId} className="sc-specimen__title">
           {title}

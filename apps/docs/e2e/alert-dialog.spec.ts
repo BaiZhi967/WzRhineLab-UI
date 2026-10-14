@@ -291,4 +291,22 @@ test.describe('Dialog close guard', () => {
     await expect(page.getByRole('alertdialog')).toHaveCount(0);
     await expect(page.getByRole('status').filter({ hasText: '已保存备注：样本已入库' })).toBeVisible();
   });
+
+  // --rl-danger-hover used to be an undefined token, which made the hover background transparent.
+  for (const theme of ['light', 'dark'] as const) {
+    test(`danger confirm keeps its fill on hover · ${theme}`, async ({ page }) => {
+      await setSettings(page, { theme, motion: 'reduce' });
+      await page.goto(route);
+      await page.getByRole('button', { name: '删除记录…' }).click();
+      const confirm = page.getByRole('alertdialog', { name: '删除 REC-0101？' }).getByRole('button', { name: '删除' });
+      await expect(confirm).toBeVisible();
+      const before = await confirm.evaluate((el) => getComputedStyle(el).backgroundColor);
+      await confirm.hover();
+      await expect
+        .poll(() => confirm.evaluate((el) => getComputedStyle(el).backgroundColor))
+        .not.toBe(before);
+      const hovered = await confirm.evaluate((el) => getComputedStyle(el).backgroundColor);
+      expect(hovered.endsWith(', 0)')).toBe(false);
+    });
+  }
 });

@@ -165,7 +165,7 @@ export function ButtonPage() {
           <StateMatrix />
         </Specimen>
 
-        <Specimen id="button-sizes" index="02" title="Sizes" span="half" align="start" note="高度来自 --rl-control-height-*，随密度变化。">
+        <Specimen id="button-sizes" index="02" title="Sizes" span="half" align="start" center note="高度来自 --rl-control-height-*，随密度变化。">
           <div className="sc-row sc-row--baseline">
             {sizes.map((s) => (
               <Button key={s} size={s} variant="secondary">
@@ -175,7 +175,7 @@ export function ButtonPage() {
           </div>
         </Specimen>
 
-        <Specimen id="button-icons" index="03" title="With icons" span="half" align="start" note="图标为装饰（aria-hidden），名称来自文字。">
+        <Specimen id="button-icons" index="03" title="With icons" span="half" align="start" center note="图标为装饰（aria-hidden），名称来自文字。">
           <div className="sc-row">
             <Button iconStart={<Plus />}>新建记录</Button>
             <Button variant="secondary" iconStart={<Download />}>
@@ -192,6 +192,7 @@ export function ButtonPage() {
           index="04"
           title="Loading flow"
           span="half"
+          center
           note="点击后 1.6s 内重复点击不会触发第二次提交；完成后焦点仍在按钮上。"
         >
           <div className="sc-row">
@@ -209,6 +210,7 @@ export function ButtonPage() {
           index="05"
           title="Long content"
           span="half"
+          center
           note="长中文与长英文词在容器内换行，不撑破网格。"
         >
           <div className="sc-narrow">
