@@ -165,7 +165,7 @@ export function ButtonPage() {
           <StateMatrix />
         </Specimen>
 
-        <Specimen id="button-sizes" index="02" title="Sizes" span="half" note="高度来自 --rl-control-height-*，随密度变化。">
+        <Specimen id="button-sizes" index="02" title="Sizes" span="half" align="start" note="高度来自 --rl-control-height-*，随密度变化。">
           <div className="sc-row sc-row--baseline">
             {sizes.map((s) => (
               <Button key={s} size={s} variant="secondary">
@@ -175,7 +175,7 @@ export function ButtonPage() {
           </div>
         </Specimen>
 
-        <Specimen id="button-icons" index="03" title="With icons" span="half" note="图标为装饰（aria-hidden），名称来自文字。">
+        <Specimen id="button-icons" index="03" title="With icons" span="half" align="start" note="图标为装饰（aria-hidden），名称来自文字。">
           <div className="sc-row">
             <Button iconStart={<Plus />}>新建记录</Button>
             <Button variant="secondary" iconStart={<Download />}>

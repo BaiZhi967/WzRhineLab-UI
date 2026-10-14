@@ -13,7 +13,7 @@ import {
   ToolRecord,
 } from '@wzrhine/agent';
 import type { SkillOption } from '@wzrhine/agent';
-import { AgentShell } from '@wzrhine/agent';
+import { AgentHeader, AgentShell } from '@wzrhine/agent';
 import { ArchiveReveal, OrbitalDiagram, ScanSurface } from '@wzrhine/effects';
 import { Button, Icon, NavGroup, NavItem, NavList, NavRail, Tree, Workbench } from '@wzrhine/react';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
@@ -38,6 +38,7 @@ const demoTool = {
 
 function AdoptionWorkbench() {
   const [indexOpen, setIndexOpen] = React.useState(true);
+  const [contextOpen, setContextOpen] = React.useState(true);
   const [skillsSelected, setSkillsSelected] = React.useState<SkillOption[]>([]);
   const [referenceOpen, setReferenceOpen] = React.useState(false);
   const [overviewOpen, setOverviewOpen] = React.useState(true);
@@ -48,11 +49,19 @@ function AdoptionWorkbench() {
         onIndexOpenChange={setIndexOpen}
         viewKey="adoption"
         direction="forward"
-        defaultContextOpen
-        breakpoints={{ context: 48, index: 32 }}
+        contextOpen={contextOpen}
+        onContextOpenChange={setContextOpen}
+        contextLabel="运行概览"
+        breakpoints={{ context: 60, index: 40 }}
         rail={<NavRail aria-label="Agent 模块" collapsed><NavItem label="Agent" icon={<Icon name="MessagesSquare" />} active /><NavItem label="设置" icon={<Icon name="Settings" />} /></NavRail>}
         index={<NavList aria-label="Agent 页面"><NavGroup label="运行"><NavItem label="当前运行" active badge={<span>2</span>} /><NavItem label="历史运行" /></NavGroup><NavGroup label="资源"><NavItem label="终端" /><NavItem label="产物" /></NavGroup></NavList>}
-        header={<div className="sc-row"><strong>Wpi 接入验收工作台</strong><Button size="sm" variant="ghost" onClick={() => setIndexOpen((open) => !open)}>{indexOpen ? '收起索引' : '打开索引'}</Button></div>}
+        header={
+          <AgentHeader
+            title="Wpi 接入验收工作台"
+            contextLabel="切换运行概览"
+            actions={<Button size="sm" variant="ghost" onClick={() => setIndexOpen((open) => !open)}>{indexOpen ? '收起索引' : '打开索引'}</Button>}
+          />
+        }
         conversation={<div className="sc-card-list"><p>组件只接收 adapter 提供的快照，流式内容可以在阅读区独立滚动。</p><ScanSurface scanKey={skillsSelected.length}><div className="sc-effect-card"><ArchiveReveal text="RUN-0.2.0" revealed duration={480} /></div></ScanSurface><Tree label="工作区" nodes={[{ id: 'src', label: 'src', hasChildren: true, children: [{ id: 'agent', label: 'agent.tsx' }] }, { id: 'docs', label: 'docs' }]} defaultExpandedIds={['src']} /><ContextUsage usage={{ used: 12400, max: 32000, unit: 'tokens', completeness: 'estimated', estimated: true, segments: [{ id: 'input', label: '输入', value: 8200, tone: 'info' }, { id: 'output', label: '输出', value: 4200, tone: 'accent' }] }} variant="full" segmentScale="fit-used" /></div>}
         composer={<Composer allowEmptyText attachments={[{ id: 'a', name: 'screen.png', kind: 'image', status: 'ready' }]} onSubmit={() => undefined} toolbarEnd={<><SkillPicker skills={skills} selected={skillsSelected} onChange={setSkillsSelected} max={4} /><ReferencePicker open={referenceOpen} onOpenChange={setReferenceOpen} value="src/agent.tsx" items={[{ path: 'src/agent.tsx', name: 'agent.tsx', kind: 'file' }]} onAdd={async () => true} /></>} />}
         context={<RunOverview open={overviewOpen} onOpenChange={setOverviewOpen} facts={[{ label: '模型', value: 'Atlas 14 · 极深' }, { label: '上下文', value: '12.4K / 32K' }]} subagents={subagents} terminals={<TerminalList terminals={terminals} total={1} />} sections={[{ id: 'notes', title: '运行事实', content: <p>权限、消息与用量均来自当前快照。</p> }]} />}
@@ -70,7 +79,7 @@ export function AdoptionPage() {
       </PageHeader>
       <SpecimenGrid>
         <Specimen id="agent-adoption-workbench" index="01" title="完整接入工作台" note="在 320–1920px 宽度下检查索引收起、焦点回退、滚动归属和受控面板状态。">
-          <div style={{ minHeight: '34rem' }}><AdoptionWorkbench /></div>
+          <div className="sc-agent-workbench"><AdoptionWorkbench /></div>
         </Specimen>
         <Specimen id="agent-adoption-motion" index="02" title="一次性动效与选中态" span="half" align="start" note="ArchiveReveal、ScanSurface 与 OrbitalDiagram 都先渲染真实内容；页面隐藏或减少动效时停止。">
           <div className="sc-card-list">

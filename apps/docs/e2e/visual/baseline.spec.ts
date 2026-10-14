@@ -26,6 +26,7 @@ const pages = [
   { name: 'advanced', hash: '/#/components/advanced' },
   { name: 'command', hash: '/#/components/command' },
   { name: 'agent-overview', hash: '/#/agent' },
+  { name: 'agent-adoption', hash: '/#/agent/adoption' },
   { name: 'agent-shell', hash: '/#/agent/shell' },
   { name: 'agent-message', hash: '/#/agent/messages' },
   { name: 'agent-tools', hash: '/#/agent/tools' },
@@ -97,6 +98,16 @@ for (const theme of ['light', 'dark'] as const) {
     });
   }
 }
+
+test.describe('wide rail evidence', () => {
+  test.use({ viewport: { width: 1920, height: 1000 } });
+
+  test('overview content rail · light', async ({ page }) => {
+    await setSettings(page, { motion: 'reduce' });
+    await open(page, '/#/');
+    await expect(page).toHaveScreenshot('overview-light-1920.png');
+  });
+});
 
 test.describe('component close-ups', () => {
   test.use({ viewport: { width: 1280, height: 900 } });
