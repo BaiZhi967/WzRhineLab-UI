@@ -2,7 +2,7 @@
 
 > 本文件是里程碑摘要，「状态」列以验收记录为准；每一里程碑均以验收结果关闭，不以文档标记代替执行证据。M11–M18 的详细规划见 [planning/roadmap.md](planning/roadmap.md)，可执行任务见 [planning/execution-backlog.md](planning/execution-backlog.md)。
 >
-> **当前状态**：M0–M10、M9.5 与 M12 已完成；当前主线是 M13 的 Wpi-Agent 真实接入与 Rhine 领域模式门禁。M11 Rendering Lab 已延期为独立 Planned 实验，不是 M13 的前置条件，可按真实需求单独排期。之后依次进入 M14 人工可访问性 / 国际化验收与 M15 公开发布门禁。仍未完成：读屏软件 / 200% 缩放 / 真机的人工验收、自动 CI（需维护者批准）；许可证已定为 MIT，首个 npm 版本 `0.1.0` 已于 2026-10-12 发布（五包）。
+> **当前状态**：M0–M10、M9.5 与 M12 已完成；M13 的库侧补齐（Wpi 接入 B0–B9）已随 `0.2.0` 定版于 2026-10-14，消费方真实接入与 Rhine 领域模式仍是 M13 的余下门禁。M11 Rendering Lab 已延期为独立 Planned 实验，不是 M13 的前置条件，可按真实需求单独排期。之后依次进入 M14 人工可访问性 / 国际化验收与 M15 公开发布门禁。仍未完成：读屏软件 / 200% 缩放 / 真机的人工验收、自动 CI（需维护者批准）；许可证已定为 MIT，npm 版本 `0.1.0` 已于 2026-10-12 发布，`0.2.0` 定版于 2026-10-14（五包，发布由维护者按 [RELEASING](development/RELEASING.md) 手动执行）。
 >
 > **进度（M0–M6）**：M0–M5 已合并（PR #1–#7）：基础组件、导航与浮层、档案组件、可选包 `@wzrhine/effects`（可选 3D 有意延后）、dist 构建与发布流程。M6 已实现并有测试：三个示例应用（独立 SPA / 宿主嵌入 / SSR 水合）、冻结的主题 token 契约、31 张视觉回归基线（M6 时的数量；M9 之后为 74 张）、升级指南；试用中发现的 3 个库缺陷已修复（[M6 验收记录](development/acceptance/2026-10-10-m6.md)）。三内核自动化验收通过。**仍未完成**：发布审批（维护者需选定许可证、创建 npm scope、确认版本号），以及读屏软件、200% 缩放与真机的人工验收。
 >
@@ -39,12 +39,13 @@ M10 与 M9 并行完成，因此表中 M10 排在 M9.5 之前；编号保持不�
 | **M10 Motion Core 2.0** | 统一动效契约 | MotionPresence、RhineMotionGroup、按属性类型的减动、可见性暂停与生命周期、属性所有权 ADR、[动效模式目录](design/MOTION-PATTERNS.md) | Dialog / Popover / Toast / Tabs / ArchiveCard 中断测试；全路由减动扫描；隐藏页暂停 | ✅ [M10](development/acceptance/2026-10-10-m10.md)（公开 `RhineMotionProvider` 延后，见 ADR-0007） |
 | **M9.5 Ecosystem hardening** | 生态与工程化 | React 18 / 19 支持策略 ADR；locale 与默认文案 ADR；`'use client'` 产物指令与 App Router 示例；SSR hydration 回归；包体积基线与预算（超标时 `release:check` 失败）；文档搜索索引；packages 安装 / 导出 / CSS 导入文档；升级指南与 CHANGELOG；决定 npm scope（暂不发布）；第三方许可证来源 | 两份 ADR 已定案；示例构建与三内核 E2E；hydration 回归通过；预算超标时 `release:check` 失败（反向验证）；验收记录 | ✅ [M9.5](development/acceptance/2026-10-11-m9.5.md)（ADR-0008、ADR-0009） |
 
-## 高级交互与 Agent UI（M12）
-M12 已完成。维护者决定先交付 M12，并把原 M13 的 Agent UI 提前；M11 Rendering Lab 保留为独立 Planned 实验，M13 承接真实消费和领域模式门禁（[ADR-0010](development/adr/0010-m12-agent-ui-plan.md)）。
+## 高级交互与 Agent UI（M12）与 Wpi 接入补齐（M13）
+M12 已完成。维护者决定先交付 M12，并把原 M13 的 Agent UI 提前；M11 Rendering Lab 保留为独立 Planned 实验，M13 承接真实消费和领域模式门禁（[ADR-0010](development/adr/0010-m12-agent-ui-plan.md)）。M13 的库侧补齐（B0–B9）已完成并定版为 `0.2.0`；范围卡见 [planning/range-cards/2026-10-13-wpi-b0-b9.md](planning/range-cards/2026-10-13-wpi-b0-b9.md)，计划见 [superpowers/plans/2026-10-13-wzrhine-ui-0.2.0-plan.md](superpowers/plans/2026-10-13-wzrhine-ui-0.2.0-plan.md)。
 
 | 里程碑 | 目标 | 核心产物 | 退出门禁 | 状态 |
 | --- | --- | --- | --- | --- |
 | **M12 Advanced interaction + Agent UI** | 高级交互与可复用的 Agent 界面 | `@wzrhine/react`：Collapsible、Accordion、Slider、NumberField、ContextMenu、Combobox、CommandPalette、FileDropZone、SplitButton、ScrollArea；新包 `@wzrhine/agent-core`（view-model、状态轴、纯函数，[ADR-0011](development/adr/0011-agent-contracts.md)）与 `@wzrhine/agent`（概念图册 46 个组件 + Wpi 缺口补充、Agent 动效 [ADR-0012](development/adr/0012-agent-motion.md)）；Showcase 集成工作台；示例 `agent-console` | 单测、三内核 E2E、axe、视觉基线、减动、size 预算、`release:check`；agent 边界测试 | ✅ [M12](development/acceptance/2026-10-11-m12.md)（Wpi-Agent 真实接入与人工读屏 / IME 验收待维护者） |
+| **M13 Wpi 接入补齐（库侧 B0–B9）** | 在消费方接入前冻结公共能力 | `@wzrhine/react`：Workbench / NavRail / NavList / Tree / CountBadge / Tag / ResizeHandle、公共 `./icons` 入口、Popover 与 AlertDialog / Dialog / RadioGroup 扩展；`@wzrhine/agent-core`：材料与运行事实、`reconcileTokens`、开放分类法（[ADR-0013](development/adr/0013-open-taxonomies.md)）；`@wzrhine/agent`：SkillPicker / ReferencePicker / RunOverview、工具与终端状态；`@wzrhine/effects`：三种动效的尺寸 / 色调 / 生命周期开关 | 单测、三内核 E2E（Chromium 597 / Firefox 597 / WebKit 596 + 1 跳过）、Showcase 五宽度无溢出、`release:check` 全绿；0.2.0 定版 | ✅ 库侧完成 [M13 验收记录](development/acceptance/2026-10-13-m13-wpi-ui.md)；消费方 adapter / DTO 接入与人工读屏 / IME / 真机验收待维护者 |
 
 M11 Rendering Lab、M13 领域模式到 M18 治理的目标、依赖与门禁见 [planning/roadmap.md](planning/roadmap.md)。M12 已完成；M13 是当前主线门禁，M11 是可独立插入的实验，不是 M13 的前置条件。
 
