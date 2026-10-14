@@ -37,7 +37,7 @@ describe('patterns message tables (ADR-0014 §3, ADR-0009 mechanism)', () => {
       notANamespace: { anything: 'x' },
     } as never);
     expect(merged.listDetail.back).toBe('返回档案');
-    expect(merged.listDetail.close).toBe(patternsZhCN.listDetail.close);
+    expect(merged.listDetail.list).toBe(patternsZhCN.listDetail.list);
   });
 
   it('undefined override entries keep the base value', () => {
@@ -48,7 +48,7 @@ describe('patterns message tables (ADR-0014 §3, ADR-0009 mechanism)', () => {
   it('nested providers merge per namespace, outer entries survive', () => {
     render(
       <PatternsMessagesProvider messages={{ listDetail: { back: 'A' } }}>
-        <PatternsMessagesProvider messages={{ listDetail: { close: 'B' } }}>
+        <PatternsMessagesProvider messages={{ listDetail: { detail: 'B' } }}>
           <ProbeAndClose />
         </PatternsMessagesProvider>
       </PatternsMessagesProvider>,
@@ -95,7 +95,7 @@ function ProbeAndClose() {
   return (
     <>
       <span data-testid="probe">{messages.listDetail.back}</span>
-      <span data-testid="probe-close">{messages.listDetail.close}</span>
+      <span data-testid="probe-close">{messages.listDetail.detail}</span>
     </>
   );
 }

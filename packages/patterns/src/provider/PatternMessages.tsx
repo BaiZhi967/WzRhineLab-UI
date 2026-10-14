@@ -14,10 +14,8 @@ import * as React from 'react';
 export interface PatternsMessages {
   /** ListDetail copy; overrides the `backLabel` / `listLabel` / `detailLabel` props' defaults. */
   listDetail: {
-    /** Overlay-mode back entry. */
+    /** Back (overlay) / close (split) entry of the detail bar. */
     back: string;
-    /** Accessible name of the split-mode close control. */
-    close: string;
     /** Accessible name of the collection region. */
     list: string;
     /** Accessible name of the detail region. */
@@ -31,12 +29,12 @@ export type PatternsMessagesOverrides = {
 };
 
 export const patternsZhCN: PatternsMessages = {
-  listDetail: { back: '返回列表', close: '关闭详情', list: '记录列表', detail: '记录详情' },
+  listDetail: { back: '返回列表', list: '记录列表', detail: '记录详情' },
 };
 
 /** Reference translation (ADR-0009 §1): wording is not guaranteed to be stable. */
 export const patternsEnUS: PatternsMessages = {
-  listDetail: { back: 'Back to list', close: 'Close details', list: 'Records', detail: 'Record details' },
+  listDetail: { back: 'Back to list', list: 'Records', detail: 'Record details' },
 };
 
 /** Shallow merge per namespace; `undefined` values in the override are ignored. */

@@ -12,3 +12,5 @@ export type {
   PatternsMessagesOverrides,
   PatternsMessagesProviderProps,
 } from './provider/PatternMessages.js';
+export { ListDetail } from './layout/ListDetail.js';
+export type { ListDetailMode, ListDetailProps } from './layout/ListDetail.js';

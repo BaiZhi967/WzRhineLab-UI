@@ -53,6 +53,7 @@ const entries = [
   { name: 'tokens-css', kind: 'css', spec: '@wzrhine/tokens/styles.css' },
   // @wzrhine/react is a peer of patterns (external); tokens is a real dependency.
   { name: 'patterns-full', kind: 'js', code: "export * from '@wzrhine/patterns';", external: ['@wzrhine/react'] },
+  { name: 'patterns-list-detail', kind: 'js', code: "export { ListDetail } from '@wzrhine/patterns';", external: ['@wzrhine/react'] },
   { name: 'patterns-css', kind: 'css', spec: '@wzrhine/patterns/styles.css' },
   // @wzrhine/react is a peer of effects: the consumer already pays for it, so it is external here.
   { name: 'effects-full', kind: 'js', code: "export * from '@wzrhine/effects';", external: ['@wzrhine/react'] },
@@ -215,6 +216,8 @@ for (const name of Object.keys(budgets)) {
 const shakePairs = [
   ['react-button', 'react-full'],
   ['agent-status', 'agent-full'],
+  // patterns pairs rejoin once the collection line lands several components: with a single
+  // component every import necessarily pulls the shared message provider (P030-04/05).
 ];
 for (const [part, whole] of shakePairs) {
   const ratio = measured[part].gzip / measured[whole].gzip;

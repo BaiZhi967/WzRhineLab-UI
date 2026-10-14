@@ -3,5 +3,6 @@
  * Requires @wzrhine/tokens/styles.css, @wzrhine/react/styles.css and a `.rl-theme` ancestor.
  * Only `rl-` classes are targeted; host elements and :root stay untouched.
  * No literal colours, spacing or radii here: everything resolves to --rl-* tokens.
- * Component rules arrive with P030-02 onwards (docs/roadmap/0.3.0-contracts.md §2).
  */
+
+@import './layout.css';

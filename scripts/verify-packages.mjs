@@ -115,7 +115,7 @@ function usesReactAtRuntime(file, code) {
 // Modules that must stay importable from React Server Components (no directive).
 const pureModules = {
   '@wzrhine/react': ['index', 'utils/cx', 'motion/presets', 'components/pagination-utils', 'components/meter-utils'],
-  '@wzrhine/patterns': ['index'],
+  '@wzrhine/patterns': ['index', 'utils/cx'],
   '@wzrhine/effects': ['index', 'scramble', 'usePageVisible'],
   '@wzrhine/agent': ['index', 'utils/cx', 'provider/messages/status'],
 };
@@ -361,6 +361,7 @@ const cssChecks = {
   'status.css': '.rl-callout',
   'disclosure.css': '.rl-collapsible__panel',
   'agent.css': '.rl-agent-spark__dot',
+  'patterns/layout.css': '.rl-list-detail__detail-bar',
 };
 for (const [file, needle] of Object.entries(cssChecks)) {
   if (!css.includes(needle)) fail(`bundled CSS missing ${needle} from ${file} (style entry or @import chain broken)`);
