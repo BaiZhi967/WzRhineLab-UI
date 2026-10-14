@@ -2,6 +2,8 @@
 
 依据：[ICONS.md](../../../ICONS.md)（1.0 提案版）｜[REVIEW-CHECKLIST.md](../../REVIEW-CHECKLIST.md)｜日期：2026-10-14
 
+> **状态更新（2026-10-15）：本批 67 枚候选经维护者评审整体未获认可，方向调整为"基础图标用 Lucide、本库只做定制"。仅 Agent／Caliper／Sample／Index 保留并经重绘后进入公共集（见 [2026-10-15-batch-02](../2026-10-15-batch-02/scope.md)），其余 63 枚已移除；Wpi 的 66 项 lucide 映射随之作废（Wpi 直接沿用 Lucide）。本文保留为过程记录。**
+
 ## 1. 变更范围
 
 | 字段 | 内容 |
