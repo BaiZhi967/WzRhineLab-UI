@@ -26,6 +26,7 @@ const pages = [
   { name: 'advanced', hash: '/#/components/advanced' },
   { name: 'command', hash: '/#/components/command' },
   { name: 'agent-overview', hash: '/#/agent' },
+  { name: 'agent-adoption', hash: '/#/agent/adoption' },
   { name: 'agent-shell', hash: '/#/agent/shell' },
   { name: 'agent-message', hash: '/#/agent/messages' },
   { name: 'agent-tools', hash: '/#/agent/tools' },
