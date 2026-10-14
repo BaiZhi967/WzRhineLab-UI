@@ -1,10 +1,17 @@
 import * as React from 'react';
-import { IconButton } from '@wzrhine/react';
-import type { ButtonSize, IconButtonVariant } from '@wzrhine/react';
+import { Icon, IconButton } from '@wzrhine/react';
+import type { ButtonSize, IconButtonVariant, IconName } from '@wzrhine/react';
 import { Archive, Close, Download, Grid, Pin, Plus, Refresh } from '../icons';
 import { Playground } from '../ui/Playground';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
 import { Segmented, TextField, Toggle } from '../ui/controls';
+
+const customs: Array<{ name: IconName; label: string; note: string }> = [
+  { name: 'Agent', label: '智能体', note: '品牌与子智能体角标' },
+  { name: 'Caliper', label: '精密测量', note: '游标卡尺' },
+  { name: 'Sample', label: '样本容器', note: '宽口样本瓶' },
+  { name: 'Index', label: '索引卡', note: '档案索引' },
+];
 
 const variants: Array<{ value: IconButtonVariant; label: string; note: string }> = [
   { value: 'ghost', label: 'ghost', note: '默认：工具栏、表格行内' },
@@ -134,6 +141,13 @@ export function IconButtonPage() {
           <div className="sc-dismiss">
             <span className="sc-body">样本 REC-EXAMPLE 已同步。</span>
             <IconButton icon={<Close />} label="关闭通知" size="sm" />
+          </div>
+        </Specimen>
+        <Specimen id="ib-custom" index="04" title="Custom icons" span="half" note="WzRhineLab 定制字形（公共 Icon 注册表，approved 2026-10-14）；基础图标来自 Lucide 基础层，统一 1.75 线宽。">
+          <div className="sc-toolbar" role="toolbar" aria-label="WzRhineLab 定制图标">
+            {customs.map((c) => (
+              <IconButton key={c.name} icon={<Icon name={c.name} size={16} />} label={`${c.label}（${c.note}）`} />
+            ))}
           </div>
         </Specimen>
       </SpecimenGrid>

@@ -1,20 +1,10 @@
 import * as React from 'react';
 import { AlertDialog, Button, Dialog, DialogClose, Field, IconButton, Input, Menu, MenuItem, StatusBadge } from '@wzrhine/react';
 import type { AlertDialogTone } from '@wzrhine/react';
-import { Download } from '../icons';
+import { Download, Ellipsis } from '../icons';
 import { Playground } from '../ui/Playground';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
 import { Segmented, Toggle } from '../ui/controls';
-
-function More(p: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" {...p}>
-      <circle cx="5.5" cy="12" r="1.6" />
-      <circle cx="12" cy="12" r="1.6" />
-      <circle cx="18.5" cy="12" r="1.6" />
-    </svg>
-  );
-}
 
 function AlertDialogPlayground() {
   const [tone, setTone] = React.useState<AlertDialogTone>('danger');
@@ -129,7 +119,7 @@ function FromMenu() {
         <StatusBadge size="sm" status={archived.includes(id) ? 'success' : 'info'}>
           {archived.includes(id) ? '已归档' : '审核中'}
         </StatusBadge>
-        <Menu trigger={<IconButton icon={<More />} label={`${id} 的操作`} variant="secondary" size="sm" />} align="end">
+        <Menu trigger={<IconButton icon={<Ellipsis />} label={`${id} 的操作`} variant="secondary" size="sm" />} align="end">
           <MenuItem icon={<Download />}>导出</MenuItem>
           <MenuItem tone="danger" onSelect={() => setTarget(id)}>
             归档…

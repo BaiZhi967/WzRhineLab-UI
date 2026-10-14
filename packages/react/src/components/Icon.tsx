@@ -6,7 +6,7 @@ import { cx } from '../utils/cx.js';
 /**
  * Public, dependency-free line icon entry used by consumers that need a stable icon grid.
  * Family grammar (docs/design/ICONS.md): 24×24 master, 1.75 stroke, round cap/join, currentColor.
- * Direction (2026-10-15, icon-review/2026-10-15-batch-02): basic icons are supplied by the
+ * Direction (2026-10-14, icon-review/2026-10-14-batch-02): basic icons are supplied by the
  * consumer's Lucide layer; this registry keeps the pre-existing built-ins plus custom
  * WzRhineLab identity glyphs that Lucide does not cover (Agent / Caliper / Sample / Index).
  */

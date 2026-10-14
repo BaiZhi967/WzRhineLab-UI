@@ -16,12 +16,13 @@
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",
+    "@wzrhine/agent": "workspace:*",
     "@wzrhine/react": "workspace:*",
     "@wzrhine/tokens": "workspace:*",
+    "lucide-react": "1.48.0",
     "motion": "^14.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@wzrhine/agent": "workspace:*"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

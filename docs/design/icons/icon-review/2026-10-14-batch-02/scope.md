@@ -1,10 +1,10 @@
-# 图标批次 2026-10-15-batch-02 · 方向变更与定制集收敛
+# 图标批次 2026-10-14-batch-02 · 方向变更与定制集收敛
 
-依据：[ICONS.md](../../../ICONS.md)（1.0 提案版）｜[REVIEW-CHECKLIST.md](../../REVIEW-CHECKLIST.md)｜日期：2026-10-15
+依据：[ICONS.md](../../../ICONS.md)（1.0 提案版）｜[REVIEW-CHECKLIST.md](../../REVIEW-CHECKLIST.md)｜日期：2026-10-14
 
 > 本批取代 [2026-10-14-batch-01](../2026-10-14-batch-01/scope.md) 的扩展路线。batch-01 的 67 枚候选经维护者评审整体不满意，除本文保留的 4 枚外全部移除；batch-01 文档保留为过程记录。
 
-## 1. 方向决策（维护者，2026-10-15）
+## 1. 方向决策（维护者，2026-10-14）
 
 1. **基础图标移交 Lucide**：消费项目（Wpi-Agent）以 `lucide-react` 为基础图标层，本库不再自建搜索、箭头、文件、状态等通用字形。
 2. **本库只做定制图标**：`@wzrhine/react` 的公共 `Icon` 仅新增 Lucide 未覆盖、且承载 WzRhineLab 科研／档案／智能体语义的字形；本库保持零运行时图标依赖（Draft 0.1 契约不变）。
@@ -21,7 +21,7 @@
 | 公共 API | `iconNames` 由 102 收敛为 39；删除的名称为 batch-01 候选（从未发布），无破坏性变更 |
 | 支持尺寸 | 16／20／24px |
 | 环境 | Windows 11、Chromium（IAB）、DPR 1 |
-| 当前状态 | 4 枚定制字形为 **candidate**，待维护者批准 |
+| 当前状态 | 4 枚定制字形 **approved**（维护者 WhiteZhi，2026-10-14 批准进入正式基线；macOS 实机证据仍为遗留 blocked 项，不阻断候选基线使用） |
 
 ## 3. 保留的定制集与重绘记录
 
@@ -70,11 +70,24 @@ batch-01 的其余 63 枚候选全部移除，基础语义由 Lucide 承担：�
 | 构建 `pnpm --filter @wzrhine/react build` | 同上 | 通过 | 同上 |
 | 4 枚定制字形结构放大（216px 含网格与安全框）＋16/20/24px 实尺寸 | Chromium DPR1 | 维护者评审交互完成，确认 v5/v3/v3/v2 方案 | [optical/](optical/) |
 | Lucide 等价物核对 | lucide-static icon-nodes.json（1890 枚） | Agent／Caliper／Sample／Index 无等价物 | §3 |
+| showcase 类型检查 `pnpm --filter @wzrhine/showcase typecheck` | Windows / Node 24 | 通过 | 本节命令记录 |
+| showcase 构建 `pnpm --filter @wzrhine/showcase build`＋预览人工检查 | 同上，Chromium DPR1 | 通过；Lucide 层与定制层混排视觉一致 | [contexts/](contexts/) |
 | macOS 实机、屏幕阅读器 | — | 未执行（blocked） | 后续批次 |
 
-## 6. 待决事项
+## 6. Showcase 迁移（2026-10-14）
+
+展示站（`apps/docs`）按本决策接入 Lucide 基础层：
+
+- `apps/docs/package.json` 新增 `lucide-react@1.48.0`（showcase 为消费演示应用；`@wzrhine/react` 库本体仍零图标依赖）。
+- `apps/docs/src/icons.tsx` 由 11 枚自绘基础图标改为 Lucide 适配层：统一 `width/height=1em`、`strokeWidth=1.75`、`currentColor` 的薄封装，调用方签名不变；`BrandMark`（定制品牌字形）保留为唯一定绘。
+- 页面内联图标清理：`AlertDialogPage`／`MenuPage` 的重复 `More`（fill 风格三点）→ `Ellipsis`；`CommandPage` 的 16×16 `DocIcon` → `FileText`；`ArchiveSearch` 的自绘 `List` → `List`（Lucide）。非图标内联 SVG（动效曲线、占位图）未动。
+- `IconButtonPage` 新增 "Custom icons" 区块，用公共 `Icon` 展示 4 枚 approved 定制字形（[contexts/showcase-custom-icons.png](contexts/showcase-custom-icons.png)）。
+- **视觉基线影响**：多页图标字形更换（Button／Menu／IconButton／Overview／ArchiveSearch 等），`apps/docs/e2e` 视觉基线预期产生差异；按 AGENTS 规则未静默更新基线，待维护者确认视觉变化后执行 `pnpm --filter @wzrhine/showcase test:visual:update`。
+
+## 7. 待决事项
 
 1. 规范 §1.4"不混用图标库"条款已按本决策加注（见 ICONS.md 附记）；规范下一次修订时并入正文。
 2. 存量 35 枚内置图标的去留（废弃／保留兼容）需单独 ADR。
 3. `packages/agent` 的 16×16 AgentIcon 与 Lucide 层的收敛（规范阶段 E）未执行。
 4. Wpi 侧接入动作：`AppIcon` 增加 `strokeWidth={1.75}` 统一线宽；品牌位 `Bot` 换用 `Agent`。
+5. 组件库内联控件图标（Select chevron、Dialog close 等 16×16 内联 SVG）属库内实现，随阶段 E 一并核对。

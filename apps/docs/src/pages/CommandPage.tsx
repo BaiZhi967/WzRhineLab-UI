@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Combobox, CommandPalette, FileDropZone, MenuItem, MenuSeparator, ScrollArea, SplitButton } from '@wzrhine/react';
 import type { CommandItem, ComboboxOption, FileRejection } from '@wzrhine/react';
+import { FileText } from '../icons';
 import { PageHeader, Specimen, SpecimenGrid } from '../ui/Specimen';
 
 /** Sample archive categories (示例), grouped, with one disabled option. */
@@ -125,16 +126,8 @@ const remoteCommands: CommandItem[] = Array.from({ length: 10 }, (_, i) => ({
   description: `示例记录 ${i + 1}`,
   group: '远程结果（示例）',
   meta: `${i + 2} 天前`,
-  icon: <DocIcon />,
+  icon: <FileText />,
 }));
-
-function DocIcon() {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-      <path d="M4 2.5h5.5L12 5v8.5H4zM9.5 2.5V5H12M6 8h4M6 10.5h4" />
-    </svg>
-  );
-}
 
 function AsyncPaletteDemo() {
   const [query, setQuery] = React.useState('');
