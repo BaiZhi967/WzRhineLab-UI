@@ -21,6 +21,10 @@ export interface PatternsMessages {
     /** Accessible name of the detail region. */
     detail: string;
   };
+  inspectorPanel: {
+    /** Accessible name of the header close button. */
+    close: string;
+  };
 }
 
 /** Override shape: every namespace and entry is optional; `undefined` entries are ignored. */
@@ -30,11 +34,13 @@ export type PatternsMessagesOverrides = {
 
 export const patternsZhCN: PatternsMessages = {
   listDetail: { back: '返回列表', list: '记录列表', detail: '记录详情' },
+  inspectorPanel: { close: '关闭' },
 };
 
 /** Reference translation (ADR-0009 §1): wording is not guaranteed to be stable. */
 export const patternsEnUS: PatternsMessages = {
   listDetail: { back: 'Back to list', list: 'Records', detail: 'Record details' },
+  inspectorPanel: { close: 'Close' },
 };
 
 /** Shallow merge per namespace; `undefined` values in the override are ignored. */

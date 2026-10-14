@@ -29,3 +29,26 @@
 .rl-list-detail__back-icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
 
 .rl-list-detail__detail-body { min-height: 0; overflow: auto; padding: var(--rl-space-4); }
+
+/* InspectorPanel — semantic region with header, meta, actions and a scrolling body. */
+
+.rl-inspector { display: flex; flex-direction: column; min-width: 0; min-height: 0; height: 100%; overflow: hidden; background: var(--rl-bg-surface); border: var(--rl-border-width) solid var(--rl-border-default); border-radius: var(--rl-radius-md); }
+/* display:flex above overrides the UA rule for [hidden]; re-assert it so a closed panel
+   keeps no focusable controls. */
+.rl-inspector[hidden] { display: none; }
+
+.rl-inspector__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--rl-space-2); padding: var(--rl-space-3) var(--rl-space-4); border-block-end: var(--rl-border-width) solid var(--rl-border-subtle); }
+.rl-inspector__eyebrow { margin: 0 0 var(--rl-space-1); font: var(--rl-type-meta); font-family: var(--rl-font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--rl-fg-subtle); }
+.rl-inspector__title { font: var(--rl-type-heading-3); color: var(--rl-fg-primary); overflow-wrap: anywhere; }
+
+.rl-inspector__close { display: inline-flex; align-items: center; justify-content: center; padding: var(--rl-space-1); border: none; border-radius: var(--rl-radius-sm); background: transparent; color: var(--rl-fg-muted); cursor: pointer; }
+.rl-inspector__close:hover { background: var(--rl-bg-hover); color: var(--rl-fg-primary); }
+.rl-inspector__close:active { background: var(--rl-bg-pressed); }
+.rl-inspector__close:focus-visible { outline: var(--rl-focus-ring); outline-offset: var(--rl-focus-offset); }
+.rl-inspector__close-icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; }
+
+.rl-inspector__meta { padding: var(--rl-space-2) var(--rl-space-4); border-block-end: var(--rl-border-width) solid var(--rl-border-subtle); overflow: auto; }
+
+.rl-inspector__actions { display: flex; flex-wrap: wrap; gap: var(--rl-space-2); padding: var(--rl-space-2) var(--rl-space-4); border-block-end: var(--rl-border-width) solid var(--rl-border-subtle); }
+
+.rl-inspector__body { flex: 1; min-height: 0; overflow: auto; padding: var(--rl-space-4); }

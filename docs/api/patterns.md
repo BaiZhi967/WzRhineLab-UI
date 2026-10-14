@@ -1,8 +1,27 @@
 # @wzrhine/patterns · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 11 个导出（2 components，2 functions & hooks，2 constants，3 interfaces，2 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 13 个导出（3 components，2 functions & hooks，2 constants，4 interfaces，2 types）。
 
 ## Components
+
+### `InspectorPanel`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `actions` | `React.ReactNode` | Action bar; buttons are composed by the caller from |
+| `children` | `React.ReactNode` |  |
+| `className` | `string` |  |
+| `closeLabel` | `string` |  |
+| `eyebrow` | `React.ReactNode` | Small archive-style label above the title, e.g. "INSPECTOR". |
+| `label` | `string` | Accessible name of the region; defaults to a string `title`. |
+| `meta` | `readonly MetadataItem[]` | Metadata rows, rendered with MetadataList (stacked, compact). |
+| `onClose` | `(() => void)` | Rendered when provided; reports the intent only. |
+| `open` | `boolean` | Controlled visibility; false hides the region entirely. Defaults to true. |
+| `title` * | `React.ReactNode` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
 ### `ListDetail`
 
@@ -74,6 +93,23 @@ const patternsZhCN: PatternsMessages
 
 ## Interfaces
 
+### `InspectorPanelProps`
+
+*interface* — Semantic inspector region (0.3.0-contracts §6.2): title, close, metadata, actions and content slots with an accessible name. A region component — it runs no business actions; overlay use composes the existing Drawer in a recipe. `open={false}` hides the whole region via the native `hidden` attribute, so no invisible focusable controls remain. Null metadata values follow MetadataList's own empty handling (hidden by default,「未记录」with `empty="placeholder"`).
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `actions` | `React.ReactNode` | Action bar; buttons are composed by the caller from |
+| `children` | `React.ReactNode` |  |
+| `className` | `string` |  |
+| `closeLabel` | `string` |  |
+| `eyebrow` | `React.ReactNode` | Small archive-style label above the title, e.g. "INSPECTOR". |
+| `label` | `string` | Accessible name of the region; defaults to a string `title`. |
+| `meta` | `readonly MetadataItem[]` | Metadata rows, rendered with MetadataList (stacked, compact). |
+| `onClose` | `(() => void)` | Rendered when provided; reports the intent only. |
+| `open` | `boolean` | Controlled visibility; false hides the region entirely. Defaults to true. |
+| `title` * | `React.ReactNode` |  |
+
 ### `ListDetailProps`
 
 *interface*
@@ -99,6 +135,7 @@ const patternsZhCN: PatternsMessages
 
 | Member | Type | Description |
 | --- | --- | --- |
+| `inspectorPanel` * | `{ close: string; }` |  |
 | `listDetail` * | `{ back: string; list: string; detail: string; }` | ListDetail copy; overrides the `backLabel` / `listLabel` / `detailLabel` props' defaults. |
 
 ### `PatternsMessagesProviderProps`

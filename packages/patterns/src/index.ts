@@ -14,3 +14,5 @@ export type {
 } from './provider/PatternMessages.js';
 export { ListDetail } from './layout/ListDetail.js';
 export type { ListDetailMode, ListDetailProps } from './layout/ListDetail.js';
+export { InspectorPanel } from './layout/InspectorPanel.js';
+export type { InspectorPanelProps } from './layout/InspectorPanel.js';
