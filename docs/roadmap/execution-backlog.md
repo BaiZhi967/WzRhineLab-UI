@@ -14,8 +14,8 @@
 | --- | --- | --- | --- | --- |
 | P030-00 | 范围／包／状态合同 | 0.2.0 基线 | 架构决策、API 草案、状态与焦点合同 | Accepted（2026-10-15 维护者确认；证据 [ADR-0014](../development/adr/0014-patterns-package-and-p030-scope.md)、[0.3.0 合同](0.3.0-contracts.md)） |
 | P030-01 | 包或 recipe 基础 | P030-00 | 可构建入口、样式、文案、验证接入 | Accepted（2026-10-15；证据 `packages/patterns`、`docs/api/patterns.md`、verify/size/license/docs 全绿） |
-| P030-02 | ListDetail | P030-01 | 主从布局、窄宽切换、滚动与焦点 | Planned |
-| P030-03 | InspectorPanel | P030-01、02 的布局合同 | 属性检查区域及覆盖层组合示例 | Planned |
+| P030-02 | ListDetail | P030-01 | 主从布局、窄宽切换、滚动与焦点 | Accepted（2026-10-15；TDD 19 项失败测试先行，容器测量/焦点返回/滚动保持/SSR 结构均有断言） |
+| P030-03 | InspectorPanel | P030-01、02 的布局合同 | 属性检查区域及覆盖层组合示例 | Accepted（2026-10-15；9 项测试；覆盖层组合示例随 P030-07 recipe） |
 | P030-04 | 查询／条件／视图 | P030-01 | QueryToolbar、AppliedFilters、ViewSwitcher | Planned |
 | P030-05 | 选择／资源网格 | P030-01、04 的集合合同 | SelectionToolbar、ResourceGrid | Planned |
 | P030-06 | 记录详情／章节 | P030-02、03 | SectionIndex；RecordDetail 按 ADR-0014 降为 recipe 随 P030-07 交付 | Planned |
@@ -56,6 +56,8 @@
 交付 ListDetail 和 InspectorPanel；覆盖两栏与替换式详情、返回入口、受控开关、同页多实例、关闭 fallback、长路径、加载失败与嵌入式语义。Overlay 只组合已有底座。
 
 先写焦点与状态的失败测试，再实现布局；截图验证五种宽度。不得用只显示／隐藏面板的静态演示代替焦点和滚动测试。
+
+> 2026-10-15 完成记录：两组件按 TDD 交付（ListDetail 19 测试、InspectorPanel 9 测试，含焦点往返、触发控件移除 fallback、双实例隔离、滚动保持、SSR 确定结构、IME 无关项外的合同断言）。五宽度证据：showcase「页面模式」页进入标准视觉基线（390/1280 × 双主题）并新增 320/768/1920 记录块，共 7 张新基线覆盖 overlay 与 split 两种模式。注意：本次 `test:visual:update` 同时刷新了全部既有基线——在未改动的 main 检出上视觉套件本就失败（24 项/光 390 组，字体渲染级环境漂移，与本次变更无关），重建基线属于环境校正；PR 评审时需重点核对 PNG 差异仅为导航新条目、新页面与文字渲染微差。
 
 ### P030-04 / P030-05 集合线
 
