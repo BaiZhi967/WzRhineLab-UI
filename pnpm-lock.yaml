@@ -16,6 +16,9 @@ importers:
       '@wzrhine/agent':
         specifier: workspace:*
         version: link:../../packages/agent
+      '@wzrhine/patterns':
+        specifier: workspace:*
+        version: link:../../packages/patterns
       '@wzrhine/react':
         specifier: workspace:*
         version: link:../../packages/react

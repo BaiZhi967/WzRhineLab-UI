@@ -22,6 +22,7 @@ const pages = [
   { name: 'feedback', hash: '/#/components/feedback' },
   { name: 'locale', hash: '/#/foundations/locale' },
   { name: 'scenarios', hash: '/#/archive/scenarios' },
+  { name: 'patterns', hash: '/#/patterns' },
   // M12: advanced interaction and the Agent UI pages (lazy chunk).
   { name: 'advanced', hash: '/#/components/advanced' },
   { name: 'command', hash: '/#/components/command' },
@@ -200,4 +201,21 @@ test.describe('component close-ups', () => {
     await specimen.scrollIntoViewIfNeeded();
     await expect(specimen).toHaveScreenshot('choice-states-forced-colors.png');
   });
+});
+
+// P030-02/03 layout line: the new Page-patterns interface records all five regulatory widths
+// (320/390/768/1280/1920). 390 and 1280 in both themes come from the standard loop above; this
+// block covers the remaining widths so overlay (320/390) and split (768+) modes are all baselined.
+test.describe('patterns five-width record', () => {
+  for (const width of [320, 768, 1920] as const) {
+    test.describe(`light ${width}`, () => {
+      test.use({ viewport: { width, height: width < 768 ? 844 : 900 } });
+
+      test('patterns page', async ({ page }) => {
+        await setSettings(page, { motion: 'reduce' });
+        await open(page, '/#/patterns');
+        await expect(page).toHaveScreenshot(`patterns-record-light-${width}.png`);
+      });
+    });
+  }
 });

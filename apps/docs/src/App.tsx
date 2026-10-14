@@ -26,6 +26,7 @@ import { ToastPage } from './pages/ToastPage';
 import { ArchivePage } from './pages/ArchivePage';
 import { ScenariosPage } from './pages/ScenariosPage';
 import { DataNavPage } from './pages/DataNavPage';
+import { PatternsPage } from './pages/PatternsPage';
 import { AlertDialogPage } from './pages/AlertDialogPage';
 import { DrawerPage } from './pages/DrawerPage';
 import { FeedbackPage } from './pages/FeedbackPage';
@@ -201,6 +202,8 @@ export default function App() {
         return <DataNavPage />;
       case 'scenarios':
         return <ScenariosPage />;
+      case 'patterns':
+        return <PatternsPage />;
       case 'advanced':
         return <AdvancedPage />;
       case 'command':
