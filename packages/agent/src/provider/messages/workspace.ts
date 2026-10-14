@@ -99,7 +99,8 @@ export interface AgentWorkspaceMessages {
   summaryTags: string;
   summaryUpdatedAt: (time: string) => string;
   // ---------- ArtifactCard / ArtifactList ----------
-  artifactKind: Record<ArtifactKind, string>;
+  /** Known kinds are required; custom kinds may add entries (missing ones render the raw id). */
+  artifactKind: Record<ArtifactKind, string> & Record<string, string>;
   artifactStatus: Record<ArtifactStatusKey, string>;
   artifactChange: Record<ArtifactChangeKey, string>;
   artifactVersion: (version: string) => string;

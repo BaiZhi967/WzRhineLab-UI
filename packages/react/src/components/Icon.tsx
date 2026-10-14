@@ -23,8 +23,14 @@ const PATHS: Record<IconName, React.ReactNode> = {
   ChevronUp: <path d="m5 14 7-7 7 7" />, ChevronDown: <path d="m5 10 7 7 7-7" />, ChevronLeft: <path d="m14 5-7 7 7 7" />, ChevronRight: <path d="m10 5 7 7-7 7" />, Eye: <><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" /><circle cx="12" cy="12" r="2.5" /></>, ImagePlus: <><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8" cy="9" r="1" /><path d="m4 17 5-5 3 3 2-2 5 5M17 3v6M14 6h6" /></>, MessagesSquare: <><path d="M3 5h14v10H8l-5 4z" /><path d="M8 19h9l4-3V7h-2" /></>, PinOff: <><path d="m3 3 18 18M15 4l5 5-3 1-4 4v4l-2-2H7l3-3V9L7 7l1-3z" /></>, RotateCcw: <path d="M4 12a8 8 0 1 0 3-6.2M4 4v5h5" />, SquareChartGantt: <><rect x="4" y="4" width="16" height="16" rx="1" /><path d="M8 8h8M8 12h5M8 16h8" /></>, Users: <><circle cx="9" cy="8" r="3" /><path d="M3 20c0-3 2.5-5 6-5s6 2 6 5M16 11a3 3 0 1 0 0-6M17 15c2.5.2 4 1.8 4 4" /></>, Plus: <path d="M12 5v14M5 12h14" />, X: <path d="M5 5l14 14M19 5 5 19" />, Check: <path d="m5 12 4 4L19 6" />,
 };
 
-export type IconProps = Omit<React.SVGAttributes<SVGSVGElement>, 'name'> & { name: IconName; size?: number | string };
+export type IconProps = Omit<React.SVGAttributes<SVGSVGElement>, 'name'> & {
+  /** Built-in icon name. Any other string is accepted together with `children` (custom SVG content). */
+  name: IconName | (string & {});
+  size?: number | string;
+  /** Custom SVG inner nodes; win over the built-in path for `name`. */
+  children?: React.ReactNode;
+};
 
-export const Icon = React.forwardRef<SVGSVGElement, IconProps>(function Icon({ name, size = 24, className, strokeWidth = 1.75, ...rest }, ref) {
-  return <svg {...rest} ref={ref} className={cx('rl-icon', className)} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" data-icon={name} role={rest['aria-label'] ? 'img' : undefined} aria-hidden={rest['aria-label'] ? undefined : true} focusable="false">{PATHS[name]}</svg>;
+export const Icon = React.forwardRef<SVGSVGElement, IconProps>(function Icon({ name, size = 24, className, strokeWidth = 1.75, children, ...rest }, ref) {
+  return <svg {...rest} ref={ref} className={cx('rl-icon', className)} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" data-icon={name} role={rest['aria-label'] ? 'img' : undefined} aria-hidden={rest['aria-label'] ? undefined : true} focusable="false">{children ?? PATHS[name as IconName] ?? null}</svg>;
 });

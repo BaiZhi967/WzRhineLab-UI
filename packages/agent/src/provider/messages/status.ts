@@ -20,7 +20,8 @@ export interface AgentStatusMessages {
   terminal: Record<TerminalSessionStatus, string>;
   subagent: Record<SubagentStatus, string>;
   completeness: Record<Completeness, string>;
-  category: Record<ToolCategory, string>;
+  /** Known categories are required; custom categories may add entries (missing ones render the raw id). */
+  category: Record<ToolCategory, string> & Record<string, string>;
   /** "已用 12.4s" style elapsed label; receives the formatted duration. */
   elapsed: (duration: string) => string;
   /** Prefix for the screen-reader-only run announcement. */

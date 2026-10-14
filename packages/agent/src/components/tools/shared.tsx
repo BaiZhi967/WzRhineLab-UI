@@ -28,13 +28,14 @@ export const categoryMeta: Record<ToolCategory, { icon: AgentIconName; tone: Age
   other: { icon: 'tool', tone: 'neutral' },
 };
 
-export function ToolCategoryChip({ category = 'other', className }: { category?: ToolCategory; className?: string }) {
+export function ToolCategoryChip({ category = 'other', className }: { category?: ToolCategory | (string & {}); className?: string }) {
   const m = useAgentMessages();
-  const meta = categoryMeta[category] ?? categoryMeta.other;
+  const meta = categoryMeta[category as ToolCategory] ?? categoryMeta.other;
   return (
     <span className={cx('rl-agent-tool-chip', className)} data-category={category} data-tone={meta.tone}>
       <AgentIcon name={meta.icon} />
-      <span className="rl-agent-tool-chip__label">{m.status.category[category] ?? m.status.category.other}</span>
+      {/* Custom categories without copy show their raw id rather than a misleading "其他". */}
+      <span className="rl-agent-tool-chip__label">{m.status.category[category] ?? category}</span>
     </span>
   );
 }

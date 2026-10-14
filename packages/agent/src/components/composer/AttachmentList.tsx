@@ -2,14 +2,15 @@
 
 import * as React from 'react';
 import { IconButton, Progress, Spinner } from '@wzrhine/react';
-import type { AttachmentView, ReferenceView } from '@wzrhine/agent-core';
+import type { AttachmentKind, AttachmentView, ReferenceKind, ReferenceView } from '@wzrhine/agent-core';
 import { AgentIcon } from '../../primitives/icons.js';
 import type { AgentIconName } from '../../primitives/icons.js';
 import { useAgentFormat, useAgentMessages } from '../../provider/AgentMessages.js';
 import { cx } from '../../utils/cx.js';
 import { isSafeThumbnail } from './composer-utils.js';
 
-const attachmentIcon: Record<AttachmentView['kind'], AgentIconName> = {
+/** Icon per built-in kind; kinds outside the list fall back to `file` (ADR-0013 §2). */
+const attachmentIcon: Record<AttachmentKind, AgentIconName> = {
   image: 'image',
   file: 'file',
   pdf: 'file',
@@ -18,7 +19,8 @@ const attachmentIcon: Record<AttachmentView['kind'], AgentIconName> = {
   unknown: 'file',
 };
 
-const referenceIcon: Record<ReferenceView['kind'], AgentIconName> = {
+/** Icon per built-in kind; kinds outside the list fall back to the `custom` icon (ADR-0013 §2). */
+const referenceIcon: Record<ReferenceKind, AgentIconName> = {
   file: 'file',
   folder: 'folder',
   skill: 'spark',
@@ -27,6 +29,9 @@ const referenceIcon: Record<ReferenceView['kind'], AgentIconName> = {
   symbol: 'code',
   custom: 'at',
 };
+
+const attachmentIconFor = (kind: AttachmentView['kind']): AgentIconName => attachmentIcon[kind as AttachmentKind] ?? 'file';
+const referenceIconFor = (kind: ReferenceView['kind']): AgentIconName => referenceIcon[kind as ReferenceKind] ?? referenceIcon.custom;
 
 export interface AttachmentListProps {
   attachments?: readonly AttachmentView[];
@@ -81,7 +86,7 @@ export function AttachmentList({
         return (
           <li key={`r-${reference.id}`} className="rl-agent-attachment" data-type="reference" data-kind={reference.kind} data-status={status}>
             <span className="rl-agent-attachment__media" aria-hidden="true">
-              {status === 'loading' ? <Spinner size="sm" /> : <AgentIcon name={referenceIcon[reference.kind]} />}
+              {status === 'loading' ? <Spinner size="sm" /> : <AgentIcon name={referenceIconFor(reference.kind)} />}
             </span>
             <span className="rl-agent-attachment__body">
               <span className="rl-agent-attachment__name" title={reference.detail ?? name}>
@@ -95,7 +100,7 @@ export function AttachmentList({
                   </span>
                 ) : (
                   <>
-                    {messages.referenceKind[reference.kind]}
+                    {messages.referenceKind[reference.kind] ?? reference.kind}
                     {reference.external && ` · ${messages.external}`}
                   </>
                 )}
@@ -119,7 +124,7 @@ export function AttachmentList({
       {attachments.map((attachment) => {
         const { status, name } = attachment;
         const thumb = attachment.kind === 'image' && isSafeThumbnail(attachment.thumbnail, origin) ? attachment.thumbnail : undefined;
-        const meta = [messages.kind[attachment.kind], attachment.size !== undefined ? format.bytes(attachment.size) : undefined].filter(Boolean).join(' · ');
+        const meta = [messages.kind[attachment.kind] ?? attachment.kind, attachment.size !== undefined ? format.bytes(attachment.size) : undefined].filter(Boolean).join(' · ');
         const known = typeof attachment.progress === 'number' && Number.isFinite(attachment.progress);
         return (
           <li key={`a-${attachment.id}`} className="rl-agent-attachment" data-type="attachment" data-kind={attachment.kind} data-status={status}>
@@ -129,7 +134,7 @@ export function AttachmentList({
               ) : thumb ? (
                 <img className="rl-agent-attachment__thumb" src={thumb} alt={attachment.alt ?? name} loading="lazy" decoding="async" />
               ) : (
-                <AgentIcon name={attachmentIcon[attachment.kind]} />
+                <AgentIcon name={attachmentIconFor(attachment.kind)} />
               )}
             </span>
             <span className="rl-agent-attachment__body">

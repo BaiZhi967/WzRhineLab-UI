@@ -60,7 +60,7 @@
 | PinnedSummary | `expanded` / `defaultExpanded` / `onExpandedChange` | 正文折叠（默认展开） |
 | PinnedSummary | `pinned` / `onPinChange` | 固定开关（`aria-pressed`），无回调不绘制 |
 | PinnedSummary | `onOpenSource(citation)` / `renderMarkdown` | 来源按钮；失效来源禁用并显示原因 |
-| ArtifactCard | `artifact` / `onOpen` / `onDownload` / `onReveal` / `onRetry` / `renderPreview` | 动作只随回调出现；`failed` 只出现重试；`unavailable` / `deleted` 不可打开 |
+| ArtifactCard | `artifact` / `onOpen` / `onDownload` / `onReveal` / `onRetry` / `renderPreview` | 动作只随回调出现；`failed` 只出现重试；`unavailable` / `deleted` 不可打开。`artifact.kind` 开放（ADR-0013 §2）：自定义类别回落到 `file` 图标并显示原始 id，可经 `messages.artifactKind`（组件 prop 或 Provider）按键增补；预览区可用 `renderPreview` 整体替换 |
 | ArtifactList | `truncated` / `onShowAll` | 「部分产物未列出」说明（不编造数量）+ 可选「查看全部产物」；列表为空但被截断时不显示「暂无产物」 |
 | FilePreview | `mode` / `defaultMode` / `onModeChange` | `preview` / `raw` / `metadata`；图片与二进制无 `raw` |
 | FilePreview | `renderMarkdown` / `renderCode` | 注入渲染器；默认纯文本 + 装饰性行号 |

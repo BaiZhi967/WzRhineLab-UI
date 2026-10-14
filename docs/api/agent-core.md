@@ -1,6 +1,6 @@
 # @wzrhine/agent-core · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.2.0，共 131 个导出（32 functions & hooks，9 constants，57 interfaces，33 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.2.0，共 138 个导出（32 functions & hooks，9 constants，58 interfaces，39 types）。
 
 ## Functions & hooks
 
@@ -412,7 +412,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `alt` | `string` |  |
 | `change` | `"created" \| "modified" \| "moved" \| "deleted"` | Change against the workspace, for file artifacts. |
 | `id` * | `string` |  |
-| `kind` * | `ArtifactKind` |  |
+| `kind` * | `ArtifactKind \| (string & {})` |  |
 | `mimeType` | `string` |  |
 | `path` | `string` |  |
 | `preview` | `string` | Short text preview or thumbnail URL (for `image`). |
@@ -430,7 +430,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | --- | --- | --- |
 | `alt` | `string` | Alternative text for image thumbnails. |
 | `id` * | `string` |  |
-| `kind` * | `"unknown" \| "text" \| "code" \| "image" \| "file" \| "pdf"` |  |
+| `kind` * | `(string & {}) \| AttachmentKind` |  |
 | `mimeType` | `string` |  |
 | `name` * | `string` |  |
 | `progress` | `number` | 0–1 when known; omit for indeterminate uploads. |
@@ -459,7 +459,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `index` * | `number` | Visible index, e.g. 1 → "[1]". |
 | `locator` | `string` | Path, URL or locator shown in the hover card. |
 | `reason` | `string` |  |
-| `sourceType` * | `"code" \| "file" \| "web" \| "dataset" \| "message" \| "other"` |  |
+| `sourceType` * | `(string & {}) \| CitationSourceType` |  |
 | `title` * | `string` |  |
 | `unavailable` | `boolean` | Source is no longer reachable; the chip stays but cannot be opened. |
 
@@ -713,7 +713,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `drillable` | `boolean` | Folders can be drilled into instead of inserted. |
 | `group` | `string` |  |
 | `id` * | `string` |  |
-| `kind` * | `"symbol" \| "file" \| "command" \| "skill" \| "folder" \| "url" \| "custom"` |  |
+| `kind` * | `(string & {}) \| ReferenceKind` |  |
 | `label` * | `string` |  |
 
 ### `MessageView`
@@ -738,16 +738,26 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `status` * | `MessageStatus` |  |
 | `usage` | `TokenUsageView` | Run-level usage footer for assistant messages. |
 
+### `ModelEffortOption`
+
+*interface* — An effort choice carrying its own copy; beats the message table.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `description` | `string` | Longer hint shown under the label (Radio description). |
+| `id` * | `ModelEffort` |  |
+| `label` | `string` |  |
+
 ### `ModelOptionView`
 
 *interface*
 
 | Member | Type | Description |
 | --- | --- | --- |
-| `capabilities` | `("image" \| "video" \| "tools" \| "reasoning" \| "long-context")[]` |  |
+| `capabilities` | `((string & {}) \| ModelCapability)[]` |  |
 | `description` | `string` |  |
 | `disabled` | `boolean` |  |
-| `efforts` | `ModelEffort[]` |  |
+| `efforts` | `(ModelEffortOption \| ModelEffort)[]` | Effort levels this model accepts: bare ids (copy from the message table) or labelled options. |
 | `id` * | `string` |  |
 | `label` * | `string` |  |
 | `providerId` * | `string` |  |
@@ -847,7 +857,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | --- | --- | --- |
 | `allowCustom` | `boolean` | Offer a free-text "other" answer for choice questions. |
 | `id` * | `string` |  |
-| `kind` * | `QuestionKind` |  |
+| `kind` * | `(string & {}) \| QuestionKind` |  |
 | `maxLength` | `number` | Max characters (code points) for text answers. |
 | `optional` | `boolean` | May be skipped. Default true. |
 | `options` | `QuestionOptionView[]` |  |
@@ -873,7 +883,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `actions` | `{ id: string; label: string; tone?: "primary" \| "secondary" \| "danger"; }[]` | Safe actions; `id` is passed back to the handler. Labels must say what they act on. |
 | `code` | `string` |  |
 | `id` * | `string` |  |
-| `kind` * | `"unknown" \| "retryable" \| "save-pending" \| "cancel-unconfirmed" \| "tool-side-effects" \| "timeout" \| "offline" \| "resolved"` |  |
+| `kind` * | `(string & {}) \| RecoveryKind` |  |
 | `message` | `string` |  |
 | `preserved` | `string[]` | What is still safe: output kept, draft kept… |
 | `title` * | `string` |  |
@@ -888,7 +898,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `detail` | `string` | Full path / URL / description used for the accessible name and tooltip. |
 | `external` | `boolean` | Outside the workspace. |
 | `id` * | `string` |  |
-| `kind` * | `"symbol" \| "file" \| "command" \| "skill" \| "folder" \| "url" \| "custom"` |  |
+| `kind` * | `(string & {}) \| ReferenceKind` |  |
 | `label` * | `string` |  |
 | `reason` | `string` |  |
 | `status` | `"failed" \| "stale" \| "ready" \| "loading"` |  |
@@ -1094,7 +1104,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | Member | Type | Description |
 | --- | --- | --- |
 | `authorization` | `ToolAuthorizationView` |  |
-| `category` | `ToolCategory` |  |
+| `category` | `(string & {}) \| ToolCategory` |  |
 | `children` | `ToolCallView[]` |  |
 | `detail` | `ToolDetailView` |  |
 | `detailsLoaded` | `boolean` | Full record not loaded; expanding calls `onLoadDetails`. |
@@ -1221,10 +1231,18 @@ type ApprovalStatus = 'waiting' | 'material-loading' | 'unavailable' | 'submitti
 
 ### `ArtifactKind`
 
-*type*
+*type* — Artifact kinds the library ships copy and icons for; any other string falls back to the `file` icon and the raw id as its label (ADR-0013 §2).
 
 ```ts
 type ArtifactKind = 'text' | 'markdown' | 'code' | 'image' | 'file' | 'diff' | 'data' | 'unknown'
+```
+
+### `AttachmentKind`
+
+*type* — Attachment kinds the library ships copy and icons for. Any other string is accepted and falls back to the `file` icon and the raw id as its label (ADR-0013 §2).
+
+```ts
+type AttachmentKind = 'image' | 'file' | 'pdf' | 'text' | 'code' | 'unknown'
 ```
 
 ### `CapabilityInput`
@@ -1233,6 +1251,14 @@ type ArtifactKind = 'text' | 'markdown' | 'code' | 'image' | 'file' | 'diff' | '
 
 ```ts
 type CapabilityInput = boolean | Capability
+```
+
+### `CitationSourceType`
+
+*type* — Citation source types the library ships copy and icons for; any other string falls back to the `other` presentation (ADR-0013 §2).
+
+```ts
+type CitationSourceType = 'file' | 'web' | 'code' | 'dataset' | 'message' | 'other'
 ```
 
 ### `Completeness`
@@ -1257,6 +1283,14 @@ type DraftStatus = 'clean' | 'dirty' | 'saving' | 'saved' | 'error'
 
 ```ts
 type FilePreviewMode = 'preview' | 'raw' | 'metadata'
+```
+
+### `KnownModelEffort`
+
+*type* — The effort levels `@wzrhine/agent` ships copy for.
+
+```ts
+type KnownModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh'
 ```
 
 ### `LedgerActor`
@@ -1295,12 +1329,20 @@ type MessageRole = 'user' | 'assistant' | 'system' | 'tool'
 type MessageStatus = 'pending' | 'streaming' | 'complete' | 'partial' | 'failed' | 'cancelled' | 'interrupted'
 ```
 
-### `ModelEffort`
+### `ModelCapability`
 
-*type*
+*type* — Model capabilities the library ships copy for; any other string renders as-is (ADR-0013 §2).
 
 ```ts
-type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh'
+type ModelCapability = 'image' | 'video' | 'tools' | 'reasoning' | 'long-context'
+```
+
+### `ModelEffort`
+
+*type* — Reasoning-effort level of a model. The six built-in levels have localised copy in `@wzrhine/agent`; adapters may use any other string (vendor tiers, numeric levels) and supply labels through `ModelEffortOption.label`, the ModelPicker `effortLabels` prop or the `composer.effort` message table (ADR-0013 §1).
+
+```ts
+type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh' | (string & {})
 ```
 
 ### `ProcessBlockView`
@@ -1309,7 +1351,7 @@ type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh'
 
 ### `QuestionKind`
 
-*type*
+*type* — Question kinds with built-in controls. Any other string is a custom kind: QuestionnaireCard renders it through `renderQuestion` (falling back to a free-text answer) and treats its answer as text-like (ADR-0013 §4).
 
 ```ts
 type QuestionKind = 'single' | 'multiple' | 'text'
@@ -1321,6 +1363,22 @@ type QuestionKind = 'single' | 'multiple' | 'text'
 
 ```ts
 type QuestionnaireStatus = 'waiting' | 'drafting' | 'saving' | 'submit-pending' | 'unknown' | 'completed' | 'expired' | 'interrupted'
+```
+
+### `RecoveryKind`
+
+*type* — Recovery kinds the library ships copy and tones for; any other string falls back to the `unknown` presentation (warning tone + question glyph) and renders its raw id (ADR-0013 §2).
+
+```ts
+type RecoveryKind = 'retryable' | 'save-pending' | 'cancel-unconfirmed' | 'tool-side-effects' | 'timeout' | 'offline' | 'unknown' | 'resolved'
+```
+
+### `ReferenceKind`
+
+*type* — Reference kinds the library ships copy and icons for; any other string is accepted and falls back to the `custom` presentation (ADR-0013 §2).
+
+```ts
+type ReferenceKind = 'file' | 'folder' | 'skill' | 'command' | 'url' | 'symbol' | 'custom'
 ```
 
 ### `RunPhase`
@@ -1381,7 +1439,7 @@ type TerminalSessionStatus = 'opening' | 'running' | 'waiting-input' | 'idle' | 
 
 ### `ToolCategory`
 
-*type* — Read / write / execute / network / model: drives the category chip and icon.
+*type* — Read / write / execute / network / model: drives the category chip and icon. The listed values have built-in copy + icon; any other string falls back to the `other` icon and renders its raw id as the chip label (ADR-0013 §2).
 
 ```ts
 type ToolCategory = 'read' | 'write' | 'execute' | 'network' | 'model' | 'agent' | 'question' | 'other'

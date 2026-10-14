@@ -10,15 +10,24 @@ import type { AgentWorkspaceMessages } from '../../provider/messages/workspace.j
  * entry: every component re-exposes what it needs through its own props.
  */
 
-/** Per-instance copy override (prop) merged over the nearest `AgentMessagesProvider`. */
-export type WorkspaceMessagesProp = Partial<AgentWorkspaceMessages>;
+/** Per-instance copy override (prop) merged over the nearest `AgentMessagesProvider`. Plain label
+ * records (e.g. `artifactKind`) merge key by key, so a single custom label can be added without
+ * repeating the built-ins (ADR-0013 §5). */
+export type WorkspaceMessagesProp = { [K in keyof AgentWorkspaceMessages]?: AgentWorkspaceMessages[K] extends Record<string, string> ? Partial<AgentWorkspaceMessages[K]> : AgentWorkspaceMessages[K] };
+
+/** Plain (non-array) object check for the key-by-key label merge. */
+const isPlainRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
 
 export function useWorkspaceMessages(override?: WorkspaceMessagesProp): AgentWorkspaceMessages {
   const base = useAgentMessages().workspace;
   return React.useMemo(() => {
     if (!override) return base;
     const merged = { ...base } as Record<string, unknown>;
-    for (const [key, value] of Object.entries(override)) if (value !== undefined) merged[key] = value;
+    for (const [key, value] of Object.entries(override)) {
+      if (value === undefined) continue;
+      const current = merged[key];
+      merged[key] = isPlainRecord(current) && isPlainRecord(value) ? { ...current, ...value } : value;
+    }
     return merged as unknown as AgentWorkspaceMessages;
   }, [base, override]);
 }

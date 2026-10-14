@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button } from '@wzrhine/react';
 import { toolStatusMeta } from '@wzrhine/agent-core';
-import type { ArtifactView, AttachmentView, CitationView, MessagePartView, RecoveryView, ReferenceView, ToolCallView } from '@wzrhine/agent-core';
+import type { ArtifactView, AttachmentKind, AttachmentView, CitationView, MessagePartView, RecoveryKind, RecoveryView, ReferenceKind, ReferenceView, ToolCallView } from '@wzrhine/agent-core';
 import { AgentStatus, statusProps } from '../../primitives/AgentStatus.js';
 import { AgentIcon } from '../../primitives/icons.js';
 import type { AgentIconName } from '../../primitives/icons.js';
@@ -39,7 +39,8 @@ export interface MessagePartProps {
   onCopy?: CopyHandler;
 }
 
-const attachmentIcon: Record<AttachmentView['kind'], AgentIconName> = {
+/** Icon per built-in kind; kinds outside the list fall back (ADR-0013 §2). */
+const attachmentIcon: Record<AttachmentKind, AgentIconName> = {
   image: 'image',
   file: 'file',
   pdf: 'file',
@@ -48,7 +49,7 @@ const attachmentIcon: Record<AttachmentView['kind'], AgentIconName> = {
   unknown: 'file',
 };
 
-const referenceIcon: Record<ReferenceView['kind'], AgentIconName> = {
+const referenceIcon: Record<ReferenceKind, AgentIconName> = {
   file: 'file',
   folder: 'folder',
   skill: 'spark',
@@ -57,6 +58,9 @@ const referenceIcon: Record<ReferenceView['kind'], AgentIconName> = {
   symbol: 'code',
   custom: 'link',
 };
+
+const attachmentIconFor = (kind: AttachmentView['kind']): AgentIconName => attachmentIcon[kind as AttachmentKind] ?? 'file';
+const referenceIconFor = (kind: ReferenceView['kind']): AgentIconName => referenceIcon[kind as ReferenceKind] ?? referenceIcon.custom;
 
 const artifactTone: Record<ArtifactView['status'], { glyph: 'pending' | 'unknown' | 'done' | 'failed'; tone: 'info' | 'warning' | 'success' | 'danger' | 'neutral'; active?: boolean }> = {
   generating: { glyph: 'pending', tone: 'info', active: true },
@@ -104,7 +108,7 @@ function Attachment({ attachment }: { attachment: AttachmentView }) {
       {attachment.kind === 'image' && attachment.thumbnail ? (
         <img className="rl-agent-chip__thumb" src={attachment.thumbnail} alt={attachment.alt ?? ''} width={20} height={20} loading="lazy" />
       ) : (
-        <AgentIcon name={attachmentIcon[attachment.kind]} className="rl-agent-chip__icon" />
+        <AgentIcon name={attachmentIconFor(attachment.kind)} className="rl-agent-chip__icon" />
       )}
       <span className="rl-agent-chip__label">{attachment.name}</span>
       {attachment.size !== undefined && <span className="rl-agent-chip__meta">{fmt.bytes(attachment.size)}</span>}
@@ -119,8 +123,8 @@ function Reference({ reference }: { reference: ReferenceView }) {
   const status = reference.status ? t.referenceStatus[reference.status] : '';
   return (
     <span className="rl-agent-chip" data-kind="reference" data-status={reference.status} title={reference.detail}>
-      <AgentIcon name={referenceIcon[reference.kind]} className="rl-agent-chip__icon" />
-      <span className="rl-agent-sr">{t.referenceKind[reference.kind]}</span>
+      <AgentIcon name={referenceIconFor(reference.kind)} className="rl-agent-chip__icon" />
+      <span className="rl-agent-sr">{t.referenceKind[reference.kind] ?? reference.kind}</span>
       <span className="rl-agent-chip__label">{reference.label}</span>
       {reference.detail && reference.detail !== reference.label && <span className="rl-agent-sr">{reference.detail}</span>}
       {reference.external && <span className="rl-agent-chip__status">{t.external}</span>}
@@ -130,7 +134,8 @@ function Reference({ reference }: { reference: ReferenceView }) {
   );
 }
 
-const recoveryTone: Record<RecoveryView['kind'], 'warning' | 'danger' | 'info' | 'success'> = {
+/** Tone per built-in recovery kind; custom kinds fall back to `warning` (ADR-0013 §2). */
+const recoveryTone: Record<RecoveryKind, 'warning' | 'danger' | 'info' | 'success'> = {
   retryable: 'danger',
   'save-pending': 'warning',
   'cancel-unconfirmed': 'warning',
@@ -144,7 +149,7 @@ const recoveryTone: Record<RecoveryView['kind'], 'warning' | 'danger' | 'info' |
 /** Error part: a static callout-style notice (not a live region; the message status announces). */
 export function MessageErrorNotice({ error, onAction }: { error: RecoveryView; onAction?: (errorId: string, actionId: string) => void }) {
   const t = useAgentMessages().message;
-  const tone = recoveryTone[error.kind];
+  const tone = recoveryTone[error.kind as RecoveryKind] ?? 'warning';
   const titleId = React.useId();
   return (
     <div className="rl-agent-recovery" role="group" aria-labelledby={titleId} data-tone={tone} data-kind={error.kind}>
@@ -152,7 +157,7 @@ export function MessageErrorNotice({ error, onAction }: { error: RecoveryView; o
       <div className="rl-agent-recovery__text">
         <p id={titleId} className="rl-agent-recovery__title">
           {error.title}
-          <span className="rl-agent-recovery__kind">{t.recoveryKind[error.kind]}</span>
+          <span className="rl-agent-recovery__kind">{t.recoveryKind[error.kind] ?? error.kind}</span>
         </p>
         {error.message && <p className="rl-agent-recovery__message">{error.message}</p>}
         {error.preserved && error.preserved.length > 0 && (

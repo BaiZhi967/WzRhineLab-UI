@@ -11,8 +11,21 @@ import { useAgentMessages } from '../../provider/AgentMessages.js';
 import type { AgentInterventionMessages } from '../../provider/messages/intervention.js';
 import { cx } from '../../utils/cx.js';
 import { useActionLock } from './action-lock.js';
-import { answerState, answerText, isOverLimit, isQuestionOptional, normalizeAnswers } from './questionnaire-answers.js';
+import { answerState, answerText, isChoiceQuestion, isKnownQuestionKind, isOverLimit, isQuestionOptional, normalizeAnswers } from './questionnaire-answers.js';
 import type { QuestionAnswerState } from './questionnaire-answers.js';
+
+/** Everything a `renderQuestion` override needs: the question, its answer, and the same update
+ * channel the built-in controls use (ADR-0013 §4). */
+export interface QuestionRenderContext {
+  question: QuestionView;
+  answer: QuestionAnswer | undefined;
+  /** False while the questionnaire is busy / ended / disabled; custom controls should follow it. */
+  editable: boolean;
+  /** Replace this question's answer (reports `onAnswerChange`, like the built-in controls). */
+  update: (next: QuestionAnswer) => void;
+  /** The built-in body for this question; return or wrap it to keep the default rendering. */
+  defaultBody: React.ReactNode;
+}
 
 /**
  * Agent → user questionnaire (atlas 21, ADR-0011 §6). Collects information only: it never grants
@@ -68,6 +81,12 @@ export interface QuestionnaireCardProps extends Omit<React.FormHTMLAttributes<HT
   onDiscardDraft?: () => void | Promise<unknown>;
   /** Header title override (default: `questionnaire.title` or 「需要你的回答」). */
   title?: React.ReactNode;
+  /**
+   * Custom question body (ADR-0013 §4). Called for every question; return `null` / `undefined`
+   * to keep the built-in body. Required for custom `kind`s beyond single / multiple / text —
+   * without it they fall back to a free-text answer.
+   */
+  renderQuestion?: (context: QuestionRenderContext) => React.ReactNode;
   /** Start on this page instead of the first unanswered question. */
   initialPage?: number;
   advanceOnSingleChoice?: boolean;
@@ -190,7 +209,7 @@ function firstControl(root: HTMLElement | null): HTMLElement | null {
 }
 
 export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, QuestionnaireCardProps>(function QuestionnaireCard(
-  { questionnaire, onAnswerChange, onSubmit, onRetrySave, onFlush, onCopyAnswers, onDiscardDraft, title, initialPage, advanceOnSingleChoice = false, draftError, disabled = false, className, ...rest },
+  { questionnaire, onAnswerChange, onSubmit, onRetrySave, onFlush, onCopyAnswers, onDiscardDraft, title, renderQuestion, initialPage, advanceOnSingleChoice = false, draftError, disabled = false, className, ...rest },
   ref,
 ) {
   const m = useAgentMessages().intervention;
@@ -343,7 +362,8 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
   // ----- question body -----
   const answer = question ? answers.get(question.id) : undefined;
   const skipped = answer?.skipped === true;
-  const customOn = question?.kind !== 'text' && question?.allowCustom === true && typeof answer?.text === 'string';
+  // The custom "other" text answer exists only on choice questions.
+  const customOn = question !== undefined && isChoiceQuestion(question) && question.allowCustom === true && typeof answer?.text === 'string';
   const options = question?.options ?? [];
 
   const choose = (optionId: string) => {
@@ -362,7 +382,7 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
   };
   const setText = (text: string) => {
     if (!question) return;
-    if (question.kind === 'text') update(question, { questionId: question.id, text });
+    if (!isChoiceQuestion(question)) update(question, { questionId: question.id, text });
     else update(question, { questionId: question.id, optionIds: question.kind === 'single' ? [] : (answer?.optionIds ?? []), text });
   };
   const toggleSkip = () => {
@@ -404,7 +424,7 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
       else go(index + 1);
       return;
     }
-    if (!editable || skipped || question.kind === 'text' || !/^[1-9]$/.test(event.key)) return;
+    if (!editable || skipped || !question || !isChoiceQuestion(question) || !/^[1-9]$/.test(event.key)) return;
     const digit = Number(event.key);
     if (digit <= options.length) {
       event.preventDefault();
@@ -431,7 +451,7 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
     </kbd>
   );
 
-  const textInput = question && (question.kind === 'text' || customOn) && !skipped && (
+  const textInput = question && (!isChoiceQuestion(question) || customOn) && !skipped && (
     <div className="rl-agent-question__text">
       <Textarea
         rows={question.kind === 'text' ? 3 : 2}
@@ -441,8 +461,8 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
         disabled={!editable}
         placeholder={m.questionPlaceholder}
         invalid={over}
-        aria-label={question.kind === 'text' ? question.title : m.questionOtherInput(question.title)}
-        aria-describedby={[question.kind === 'text' && question.prompt ? promptId : undefined, question.maxLength != null ? countId : undefined].filter(Boolean).join(' ') || undefined}
+        aria-label={!isChoiceQuestion(question) ? question.title : m.questionOtherInput(question.title)}
+        aria-describedby={[!isChoiceQuestion(question) && question.prompt ? promptId : undefined, question.maxLength != null ? countId : undefined].filter(Boolean).join(' ') || undefined}
         onValueChange={(value) => setText(value)}
       />
       {question.maxLength != null && (
@@ -463,7 +483,8 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
           <p className="rl-agent-question__skipped">{m.questionSkipped}</p>
         </fieldset>
       );
-    } else if (question.kind === 'text') {
+    } else if (!isChoiceQuestion(question)) {
+      // Text questions and custom kinds without a `renderQuestion` share the free-text body.
       body = (
         <fieldset className="rl-agent-question__fieldset">
           <legend className="rl-agent-question__legend">
@@ -527,6 +548,11 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
           {textInput}
         </>
       );
+    }
+    // Custom renderers win over any built-in body; returning null keeps the default (ADR-0013 §4).
+    if (renderQuestion) {
+      const rendered = renderQuestion({ question, answer, editable, update: (next) => update(question, next), defaultBody: body });
+      if (rendered != null) body = rendered;
     }
   }
 
@@ -649,7 +675,7 @@ export const QuestionnaireCard = React.forwardRef<QuestionnaireCardHandle, Quest
         ) : (
           <>
             <span id={hintId} className="rl-agent-question__hint">
-              {question?.kind === 'text' ? m.questionHintText : m.questionHintChoice(last)}
+              {question && isChoiceQuestion(question) ? m.questionHintChoice(last) : m.questionHintText}
             </span>
             <div className="rl-agent-question__actions">
               {question && isQuestionOptional(question) && onAnswerChange && !unknown && (

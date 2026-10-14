@@ -67,13 +67,19 @@ const glyphs: Record<StatusGlyphName, React.ReactNode> = {
 };
 
 export type StatusGlyphProps = Omit<React.SVGProps<SVGSVGElement>, 'children'> & {
-  name: StatusGlyphName;
+  /**
+   * Built-in glyph name. Any other string is accepted together with `children` (ADR-0013 §3):
+   * the children become the glyph content and `data-glyph` carries the custom name.
+   */
+  name: StatusGlyphName | (string & {});
   tone?: AgentTone;
   /** Ongoing activity: CSS adds a slow breathing halo (`data-loop` from the caller). */
   active?: boolean;
+  /** Custom SVG inner nodes; win over the built-in glyph for `name`. */
+  children?: React.ReactNode;
 };
 
-export function StatusGlyph({ name, tone = 'neutral', active, className, ...rest }: StatusGlyphProps) {
+export function StatusGlyph({ name, tone = 'neutral', active, className, children, ...rest }: StatusGlyphProps) {
   return (
     <svg
       {...rest}
@@ -85,7 +91,7 @@ export function StatusGlyph({ name, tone = 'neutral', active, className, ...rest
       data-tone={tone}
       data-active={active || undefined}
     >
-      {glyphs[name]}
+      {children ?? glyphs[name as StatusGlyphName] ?? null}
     </svg>
   );
 }

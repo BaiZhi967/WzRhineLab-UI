@@ -64,6 +64,9 @@ export interface GrantView {
   receipt?: ActionReceipt;
 }
 
+/** Question kinds with built-in controls. Any other string is a custom kind: QuestionnaireCard
+ * renders it through `renderQuestion` (falling back to a free-text answer) and treats its answer
+ * as text-like (ADR-0013 §4). */
 export type QuestionKind = 'single' | 'multiple' | 'text';
 
 export interface QuestionOptionView {
@@ -74,7 +77,7 @@ export interface QuestionOptionView {
 
 export interface QuestionView {
   id: string;
-  kind: QuestionKind;
+  kind: QuestionKind | (string & {});
   title: string;
   prompt?: string;
   options?: QuestionOptionView[];

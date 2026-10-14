@@ -46,10 +46,25 @@
 | ComposerInput | `onTriggerChange` / `onMenuKey` / `onTokenRemoved` / `tokenKind` / `submitOn` | 见源码 JSDoc；ref 句柄 `focus / insertToken / replaceRange / getSelection / element` |
 | AttachmentList | `onRemove` / `onRetry` | 无回调不画按钮；移除只是 UI 引用动作 |
 | SendStopButton | `canSend` `mode` `runStatus` `sendReceipt` `stopReceipt` `onSend` `onStop` `onRetry(kind, actionId)` `onRetrySave` `disabledReason` | 状态由 `resolveSendStop` 决定（导出，可单测） |
-| ModelPicker | `providers` `selectedModel` `onModelChange` `effort` `onEffortChange` `loading` `error` `disabled` | 受控；不触碰草稿 |
+| ModelPicker | `providers` `selectedModel` `onModelChange` `effort` `onEffortChange` `effortLabels` `loading` `error` `disabled` | 受控；不触碰草稿；思考强度档位开放扩展（见下） |
 | PermissionPicker | `modes` `value` `onChange` | `risk: 'elevated'` 先确认；`onChange` 可返回 Promise（确认按钮 loading，失败停留并提示） |
 
-辅助纯函数（包入口导出）：`filterMentionOptions`、`filterCommandOptions`、`orderCommandOptions`、`splitMentionQuery`、`drillQuery`、`defaultMentionTokenName`、`moveActiveIndex`、`removeTokens`、`resolveSendStop`。
+辅助纯函数（包入口导出）：`filterMentionOptions`、`filterCommandOptions`、`orderCommandOptions`、`splitMentionQuery`、`drillQuery`、`defaultMentionTokenName`、`moveActiveIndex`、`removeTokens`、`resolveSendStop`、`normalizeEfforts`。
+
+### 自定义思考强度与能力标签（ADR-0013 §1）
+
+`ModelOptionView.efforts` 接受两种元素：字符串 id（标签查文案表）或 `{ id, label, description }`（自带文案，含 Radio 描述行）。档位 id 不限于内置六档（off / low / medium / high / max / xhigh），厂商档位、数值档位均可。标签解析优先级：`effortLabels` 属性 > 选项自带 `label` > `composer.effort` 文案表 > id 原文（保证永不空白）。文案表支持按键增补：
+
+```tsx
+// 方式一：选项自带文案
+efforts: ['low', { id: 'adaptive', label: '自适应', description: '按输入长度自动调整' }]
+// 方式二：组件属性
+<ModelPicker effortLabels={{ 'deep-research': '深度研究' }} … />
+// 方式三：Provider 文案表（与内置键按键合并，内置标签不丢）
+<AgentMessagesProvider messages={{ composer: { effort: { 'deep-research': '深度研究' } } }}>
+```
+
+`capabilities` 同理：内置五种（image / video / tools / reasoning / long-context）有文案，自定义能力（如 `audio-native`）显示原始 id，可经 `composer.capability` 文案表增补。`AttachmentList` 的 `kind` / `referenceKind` 同样开放：未知类别回落到 `file` / `custom` 图标与原始 id 文案，可经 `composer.kind` / `composer.referenceKind` 增补。
 
 ## 受控
 - `Composer` / `ComposerInput`：`value` + `onValueChange` 受控，或 `defaultValue` 非受控。宿主外部改值（发送后清空、恢复草稿）会重新检测触发符，菜单不会残留。

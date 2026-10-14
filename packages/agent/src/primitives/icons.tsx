@@ -182,10 +182,16 @@ const paths: Record<AgentIconName, React.ReactNode> = {
 };
 
 export type AgentIconProps = Omit<React.SVGProps<SVGSVGElement>, 'children'> & {
-  name: AgentIconName;
+  /**
+   * Built-in icon name. Any other string is accepted together with `children` (ADR-0013 §3):
+   * the children become the icon content and `data-icon` carries the custom name.
+   */
+  name: AgentIconName | (string & {});
+  /** Custom SVG inner nodes; win over the built-in path for `name`. */
+  children?: React.ReactNode;
 };
 
-export function AgentIcon({ name, className, ...rest }: AgentIconProps) {
+export function AgentIcon({ name, className, children, ...rest }: AgentIconProps) {
   return (
     <svg
       {...rest}
@@ -195,7 +201,7 @@ export function AgentIcon({ name, className, ...rest }: AgentIconProps) {
       focusable="false"
       data-icon={name}
     >
-      {paths[name]}
+      {children ?? paths[name as AgentIconName] ?? null}
     </svg>
   );
 }

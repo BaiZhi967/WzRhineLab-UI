@@ -57,10 +57,14 @@ export type MessageRole = 'user' | 'assistant' | 'system' | 'tool';
 /** Message delivery state; streaming is not a status of its own but `status: 'streaming'`. */
 export type MessageStatus = 'pending' | 'streaming' | 'complete' | 'partial' | 'failed' | 'cancelled' | 'interrupted';
 
+/** Attachment kinds the library ships copy and icons for. Any other string is accepted and falls
+ * back to the `file` icon and the raw id as its label (ADR-0013 §2). */
+export type AttachmentKind = 'image' | 'file' | 'pdf' | 'text' | 'code' | 'unknown';
+
 export interface AttachmentView {
   id: string;
   name: string;
-  kind: 'image' | 'file' | 'pdf' | 'text' | 'code' | 'unknown';
+  kind: AttachmentKind | (string & {});
   mimeType?: string;
   /** Bytes. */
   size?: number;
@@ -75,10 +79,14 @@ export interface AttachmentView {
   reason?: string;
 }
 
+/** Reference kinds the library ships copy and icons for; any other string is accepted and falls
+ * back to the `custom` presentation (ADR-0013 §2). */
+export type ReferenceKind = 'file' | 'folder' | 'skill' | 'command' | 'url' | 'symbol' | 'custom';
+
 /** A context reference attached to a message or the composer (file, folder, skill, URL…). */
 export interface ReferenceView {
   id: string;
-  kind: 'file' | 'folder' | 'skill' | 'command' | 'url' | 'symbol' | 'custom';
+  kind: ReferenceKind | (string & {});
   label: string;
   /** Full path / URL / description used for the accessible name and tooltip. */
   detail?: string;
@@ -89,12 +97,16 @@ export interface ReferenceView {
   delivered?: boolean;
 }
 
+/** Citation source types the library ships copy and icons for; any other string falls back to
+ * the `other` presentation (ADR-0013 §2). */
+export type CitationSourceType = 'file' | 'web' | 'code' | 'dataset' | 'message' | 'other';
+
 export interface CitationView {
   id: string;
   /** Visible index, e.g. 1 → "[1]". */
   index: number;
   title: string;
-  sourceType: 'file' | 'web' | 'code' | 'dataset' | 'message' | 'other';
+  sourceType: CitationSourceType | (string & {});
   /** Path, URL or locator shown in the hover card. */
   locator?: string;
   excerpt?: string;
@@ -103,12 +115,14 @@ export interface CitationView {
   reason?: string;
 }
 
+/** Artifact kinds the library ships copy and icons for; any other string falls back to the
+ * `file` icon and the raw id as its label (ADR-0013 §2). */
 export type ArtifactKind = 'text' | 'markdown' | 'code' | 'image' | 'file' | 'diff' | 'data' | 'unknown';
 
 export interface ArtifactView {
   id: string;
   title: string;
-  kind: ArtifactKind;
+  kind: ArtifactKind | (string & {});
   mimeType?: string;
   size?: number;
   /** Version or revision label. */
@@ -226,18 +240,22 @@ export interface MessageView {
   details?: RunDetailsView;
 }
 
+/** Recovery kinds the library ships copy and tones for; any other string falls back to the
+ * `unknown` presentation (warning tone + question glyph) and renders its raw id (ADR-0013 §2). */
+export type RecoveryKind =
+  | 'retryable'
+  | 'save-pending'
+  | 'cancel-unconfirmed'
+  | 'tool-side-effects'
+  | 'timeout'
+  | 'offline'
+  | 'unknown'
+  | 'resolved';
+
 /** Recoverable error state (ErrorRecoveryNotice). */
 export interface RecoveryView {
   id: string;
-  kind:
-    | 'retryable'
-    | 'save-pending'
-    | 'cancel-unconfirmed'
-    | 'tool-side-effects'
-    | 'timeout'
-    | 'offline'
-    | 'unknown'
-    | 'resolved';
+  kind: RecoveryKind | (string & {});
   title: string;
   message?: string;
   code?: string;

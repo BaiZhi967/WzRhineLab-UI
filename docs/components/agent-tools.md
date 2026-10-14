@@ -85,6 +85,7 @@
 - 工具行整行是 `<button>`（Collapsible 触发器，`aria-expanded` / `aria-controls`），可访问名称 = 分类 + 名称 + 对象 + 摘要 + 状态 + 用时；行外的控件（`actions`）不嵌套在按钮里。
 - 详情面板关闭时卸载，打开后是命名的 `group`（「读取文件 详情」）；延迟加载时容器 `aria-busy` + `role="status"`「正在读取完整记录…」。
 - 状态始终是字形 + 文字（`AgentStatus`），`unknown` 为警示色菱形问号，不显示为成功；分类芯片同样有文字。
+- 分类（`ToolCategory`）开放扩展（ADR-0013 §2）：内置 8 类有图标与文案；自定义类别回落到 `other` 的图标与 tone，标签显示原始 id（不会误标为「其他」），可经 `status.category` 文案表按键增补。
 - 所有可能过宽的内容（代码、diff、命令、操作表、输出）在自己的 `role="region"` + `tabIndex=0` + `aria-label` 滚动容器里，键盘可聚焦后用方向键滚动，页面不会横向溢出。
 - Diff：符号列可见（`+` / `−`），读屏额外读「新增」/「删除」；行号 `aria-hidden` 且不可选中，复制只得到代码。增删底色之外始终有符号。
 - 层级：CodeModeToolTree 用嵌套 `<ul>`，每层列表命名为「X 的子操作」。

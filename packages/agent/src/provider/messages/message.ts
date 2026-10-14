@@ -1,12 +1,13 @@
 import type {
   ArtifactView,
   AttachmentView,
-  CitationView,
+  CitationSourceType,
   Completeness,
   MessageRole,
   MessageStatus,
   ProcessCallView,
-  RecoveryView,
+  RecoveryKind,
+  ReferenceKind,
   ReferenceView,
   SkillUseView,
   ThinkingView,
@@ -113,7 +114,8 @@ export interface AgentMessageMessages {
   /** Attachment status; `ready` is not shown. */
   attachmentStatus: Record<AttachmentView['status'], string>;
   attachmentUploading: (percent: number) => string;
-  referenceKind: Record<ReferenceView['kind'], string>;
+  /** Known keys are required; custom kinds may add entries (missing ones render the raw id). */
+  referenceKind: Record<ReferenceKind, string> & Record<string, string>;
   referenceStatus: Record<NonNullable<ReferenceView['status']>, string>;
   external: string;
   unsupportedTitle: string;
@@ -121,12 +123,12 @@ export interface AgentMessageMessages {
   artifactStatus: Record<ArtifactView['status'], string>;
   recoveryPreserved: (items: string) => string;
   recoveryCode: (code: string) => string;
-  recoveryKind: Record<RecoveryView['kind'], string>;
+  recoveryKind: Record<RecoveryKind, string> & Record<string, string>;
 
   // ---------- CitationChip ----------
   citationName: (index: number, title: string) => string;
   citationUnavailable: string;
-  sourceType: Record<CitationView['sourceType'], string>;
+  sourceType: Record<CitationSourceType, string> & Record<string, string>;
 
   // ---------- ThinkingBlock ----------
   thinking: string;

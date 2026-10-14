@@ -35,7 +35,15 @@ export interface AgentMessages {
   workspace: AgentWorkspaceMessages;
 }
 
-export type AgentMessagesOverrides = { [K in keyof AgentMessages]?: Partial<AgentMessages[K]> };
+/**
+ * Override shape: every namespace and entry is optional. Entries that are plain string records
+ * (label tables like `composer.effort` or `workspace.artifactKind`) may be given partially —
+ * they merge key by key, so a host adds one custom label without repeating the built-ins
+ * (ADR-0013 §5). Entries with functions replace wholesale, as before.
+ */
+type OverrideEntry<T> = T extends Record<string, string> ? Partial<T> : T;
+
+export type AgentMessagesOverrides = { [K in keyof AgentMessages]?: { [P in keyof AgentMessages[K]]?: OverrideEntry<AgentMessages[K][P]> } };
 
 export const agentZhCN: AgentMessages = {
   status: zhStatus,
@@ -57,6 +65,9 @@ export const agentEnUS: AgentMessages = {
   workspace: enWorkspace,
 };
 
+/** Plain (non-array) object check for the key-by-key label merge. */
+const isPlainRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
+
 export function mergeAgentMessages(base: AgentMessages, overrides: AgentMessagesOverrides | undefined): AgentMessages {
   if (!overrides) return base;
   const result = { ...base } as unknown as Record<string, Record<string, unknown>>;
@@ -64,7 +75,9 @@ export function mergeAgentMessages(base: AgentMessages, overrides: AgentMessages
     if (!entries || !(namespace in base)) continue;
     const merged = { ...result[namespace] };
     for (const [key, value] of Object.entries(entries)) {
-      if (value !== undefined) merged[key] = value;
+      if (value === undefined) continue;
+      const current = merged[key];
+      merged[key] = isPlainRecord(current) && isPlainRecord(value) ? { ...current, ...value } : value;
     }
     result[namespace] = merged;
   }

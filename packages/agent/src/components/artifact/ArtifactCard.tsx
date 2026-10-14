@@ -12,6 +12,7 @@ import { cx } from '../../utils/cx.js';
 import { Heading, useIsNewId, useWorkspaceMessages } from '../workspace/shared.js';
 import type { HeadingLevel, WorkspaceMessagesProp } from '../workspace/shared.js';
 
+/** Icon per built-in kind; custom kinds fall back to `file` (ADR-0013 §2). */
 export const artifactKindIcon: Record<ArtifactKind, AgentIconName> = {
   text: 'file',
   markdown: 'file',
@@ -84,7 +85,7 @@ export const ArtifactCard = React.forwardRef<HTMLElement, ArtifactCardProps>(fun
       {artifact.preview}
     </span>
   ) : (
-    <AgentIcon name={artifactKindIcon[artifact.kind]} className="rl-agent-artifact__kind-icon" />
+    <AgentIcon name={artifactKindIcon[artifact.kind as ArtifactKind] ?? 'file'} className="rl-agent-artifact__kind-icon" />
   );
 
   return (
@@ -105,7 +106,7 @@ export const ArtifactCard = React.forwardRef<HTMLElement, ArtifactCardProps>(fun
           {artifact.title}
         </Heading>
         <p className="rl-agent-artifact__meta">
-          <span>{m.artifactKind[artifact.kind]}</span>
+          <span>{m.artifactKind[artifact.kind] ?? artifact.kind}</span>
           {artifact.size !== undefined && <span>{format.bytes(artifact.size)}</span>}
           {artifact.version && <span>{m.artifactVersion(artifact.version)}</span>}
           {artifact.change && (

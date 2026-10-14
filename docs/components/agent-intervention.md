@@ -53,10 +53,11 @@
 | QuestionnaireCard | `onSubmit(answers, ctx)` | 规范化答案（未答可选题 → `skipped: true`）；`ctx.baseRevision = revision` |
 | QuestionnaireCard | `ref.flush()` / `onFlush` | 宿主关闭页面前调用 `flush()`，组件把当前镜像答案交给 `onFlush` |
 | QuestionnaireCard | `title` / `initialPage` | 标题覆盖；起始页（默认第一道未答题） |
-| ErrorRecoveryNotice | `recovery` | `kind` 8 种、`title`、`message`、`code`、`preserved[]`、`actions[]`（`tone`） |
+| QuestionnaireCard | `renderQuestion(ctx)` | 自定义题型渲染（ADR-0013 §4）：`ctx` 含 `question` / `answer` / `editable` / `update(next)` / `defaultBody`；返回非空即替换内置题目体（可包裹 `defaultBody`）。`kind` 开放：single / multiple / text 之外的自定义题型无渲染器时回落为自由文本；`answerState` / `normalizeAnswers` 对自定义题型不过滤 `optionIds`，答案原样提交 |
+| ErrorRecoveryNotice | `recovery` | `kind` 内置 8 种（自定义类型回落到 `unknown` 的 warning 呈现并显示原始 id，ADR-0013 §2）、`title`、`message`、`code`、`preserved[]`、`actions[]`（`tone`） |
 | ErrorRecoveryNotice | `onAction(id)` / `busyActionIds` / `announce` / `onDismiss` | 动作回传 id；忙碌按钮；危险类是否 `role=alert`（默认 true）；仅 `resolved` 可关闭 |
 | InterventionDock | `children` / `moreCount` / `animateInitial` / `label` | 卡片（需稳定 `key`）；「还有 N 个待处理」；首屏已有卡片是否入场；区域名称 |
-| 纯函数 | `normalizeAnswers` / `answerState` / `answerText` / `isOverLimit` / `isQuestionOptional` | 与组件同一套规则，adapter 可复用 |
+| 纯函数 | `normalizeAnswers` / `answerState` / `answerText` / `isOverLimit` / `isQuestionOptional` / `isChoiceQuestion` / `isKnownQuestionKind` | 与组件同一套规则，adapter 可复用 |
 
 「其他」答案编码（契约无额外字段）：选择题中 `text` 为字符串即表示选中「其他」，`undefined` 表示未选；单选选中「其他」时 `optionIds` 为空。
 

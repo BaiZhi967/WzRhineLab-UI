@@ -16,6 +16,13 @@ export type QuestionAnswerState = 'answered' | 'skipped' | 'unanswered';
 /** Questions are optional unless `optional === false`. */
 export const isQuestionOptional = (question: QuestionView) => question.optional !== false;
 
+/** `single` / `multiple` are the built-in choice kinds; anything else (incl. `text` and custom
+ * kinds, ADR-0013 §4) answers through free text and/or renderer-owned option ids. */
+export const isChoiceQuestion = (question: QuestionView) => question.kind === 'single' || question.kind === 'multiple';
+
+/** Built-in kinds with their own controls; any other string is a custom kind. */
+export const isKnownQuestionKind = (question: QuestionView) => isChoiceQuestion(question) || question.kind === 'text';
+
 /** Code-point length of the free text is over `maxLength`. */
 export function isOverLimit(question: QuestionView, answer: QuestionAnswer | undefined): boolean {
   if (question.maxLength == null || answer?.text == null) return false;
@@ -27,6 +34,10 @@ export function answerState(question: QuestionView, answer: QuestionAnswer | und
   if (answer.skipped) return 'skipped';
   const hasText = typeof answer.text === 'string' && answer.text.trim() !== '';
   if (question.kind === 'text') return hasText ? 'answered' : 'unanswered';
+  if (!isKnownQuestionKind(question)) {
+    // Custom kinds own their answer shape: any option id or text counts (nothing is filtered out).
+    return hasText || (answer.optionIds ?? []).length > 0 ? 'answered' : 'unanswered';
+  }
   const known = new Set((question.options ?? []).map((o) => o.id));
   const hasOption = (answer.optionIds ?? []).some((id) => known.has(id));
   return hasOption || (question.allowCustom === true && hasText) ? 'answered' : 'unanswered';
@@ -53,6 +64,10 @@ export function normalizeAnswers(
       const next: QuestionAnswer = { questionId: question.id };
       if (question.kind === 'text') {
         next.text = answer!.text;
+      } else if (!isKnownQuestionKind(question)) {
+        // Custom kinds keep their answer verbatim; the custom renderer owns the shape.
+        if (answer!.optionIds !== undefined) next.optionIds = [...answer!.optionIds];
+        if (typeof answer!.text === 'string') next.text = answer!.text;
       } else {
         const known = new Set((question.options ?? []).map((o) => o.id));
         const ids = (answer!.optionIds ?? []).filter((id: string) => known.has(id));

@@ -519,7 +519,8 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `name` * | `"Settings" \| "Settings2" \| "SlidersHorizontal" \| "Minus" \| "Maximize" \| "Maximize2" \| "Minimize2" \| "PanelTopClose" \| "PanelTopOpen" \| "Power" \| "Square" \| "FolderOpen" \| "FolderPlus" \| "FolderMinus" \| "FileCode2" \| "FoldVertical" \| "Plug" \| "Puzzle" \| "Boxes" \| "ShieldAlert" \| "ShieldHalf" \| "ChevronUp" \| "Eye" \| "ImagePlus" \| "MessagesSquare" \| "PinOff" \| "RotateCcw" \| "SquareChartGantt" \| "Users" \| "ChevronDown" \| "ChevronLeft" \| "ChevronRight" \| "Plus" \| "X" \| "Check"` |  |
+| `children` | `React.ReactNode` | Custom SVG inner nodes; win over the built-in path for `name`. |
+| `name` * | `(string & {}) \| "Settings" \| "Settings2" \| "SlidersHorizontal" \| "Minus" \| "Maximize" \| "Maximize2" \| "Minimize2" \| "PanelTopClose" \| "PanelTopOpen" \| "Power" \| "Square" \| "FolderOpen" \| "FolderPlus" \| "FolderMinus" \| "FileCode2" \| "FoldVertical" \| "Plug" \| "Puzzle" \| "Boxes" \| "ShieldAlert" \| "ShieldHalf" \| "ChevronUp" \| "Eye" \| "ImagePlus" \| "MessagesSquare" \| "PinOff" \| "RotateCcw" \| "SquareChartGantt" \| "Users" \| "ChevronDown" \| "ChevronLeft" \| "ChevronRight" \| "Plus" \| "X" \| "Check"` | Built-in icon name. Any other string is accepted together with `children` (custom SVG content). |
 | `size` | `string \| number` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
@@ -2355,10 +2356,6 @@ type IconName = (typeof iconNames)[number]
 ### `IconProps`
 
 *type*
-
-```ts
-type IconProps = Omit<React.SVGAttributes<SVGSVGElement>, 'name'> & { name: IconName; size?: number | string; }
-```
 
 ### `InputProps`
 

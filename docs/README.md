@@ -39,6 +39,7 @@
 - [ADR-0010 M12 高级交互与 Agent UI：范围、拆包与顺序](development/adr/0010-m12-agent-ui-plan.md)
 - [ADR-0011 Agent UI 契约](development/adr/0011-agent-contracts.md)
 - [ADR-0012 Agent 动效设计](development/adr/0012-agent-motion.md)
+- [ADR-0013 开放分类法：展示性枚举开放，状态机枚举封闭](development/adr/0013-open-taxonomies.md)
 - [Sprint 01 验收记录](development/acceptance/2026-10-09-sprint-01.md)
 - [M1-B 验收记录](development/acceptance/2026-10-09-m1b.md)
 - [M2-A 验收记录](development/acceptance/2026-10-09-m2a.md)

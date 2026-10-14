@@ -7,7 +7,9 @@ import type { ToolStatus } from './status.js';
  * Summaries never pose as full results: anything cut carries `truncated` and a way to load more.
  */
 
-/** Read / write / execute / network / model: drives the category chip and icon. */
+/** Read / write / execute / network / model: drives the category chip and icon. The listed values
+ * have built-in copy + icon; any other string falls back to the `other` icon and renders its raw
+ * id as the chip label (ADR-0013 §2). */
 export type ToolCategory = 'read' | 'write' | 'execute' | 'network' | 'model' | 'agent' | 'question' | 'other';
 
 /** Where the permission for this call came from. Shown as text, never inferred. */
@@ -252,7 +254,7 @@ export interface ToolCallView {
   displayName?: string;
   /** Main argument shown in the row: path, command, pattern… */
   subject?: string;
-  category?: ToolCategory;
+  category?: ToolCategory | (string & {});
   status: ToolStatus;
   /** One-line result summary. */
   summary?: string;

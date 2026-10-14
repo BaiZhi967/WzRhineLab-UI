@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Tooltip } from '@wzrhine/react';
-import type { CitationView } from '@wzrhine/agent-core';
+import type { CitationSourceType, CitationView } from '@wzrhine/agent-core';
 import { AgentIcon } from '../../primitives/icons.js';
 import type { AgentIconName } from '../../primitives/icons.js';
 import { useAgentMessages } from '../../provider/AgentMessages.js';
@@ -28,10 +28,13 @@ export type CitationChipProps = Omit<React.ButtonHTMLAttributes<HTMLButtonElemen
   label?: React.ReactNode;
   /** Show the source-type icon before the index. */
   showIcon?: boolean;
+  /** Custom icon content (SVG inner nodes); wins over the built-in source-type icon. */
+  icon?: React.ReactNode;
   selected?: boolean;
 };
 
-const sourceIcon: Record<CitationView['sourceType'], AgentIconName> = {
+/** Icon per built-in source type; custom types fall back to the `other` icon (ADR-0013 §2). */
+const sourceIcon: Record<CitationSourceType, AgentIconName> = {
   file: 'file',
   web: 'globe',
   code: 'code',
@@ -41,7 +44,7 @@ const sourceIcon: Record<CitationView['sourceType'], AgentIconName> = {
 };
 
 export const CitationChip = React.forwardRef<HTMLButtonElement, CitationChipProps>(function CitationChip(
-  { citation, onOpen, label, showIcon = false, selected, className, ...rest },
+  { citation, onOpen, label, showIcon = false, icon, selected, className, ...rest },
   ref,
 ) {
   const t = useAgentMessages().message;
@@ -50,13 +53,14 @@ export const CitationChip = React.forwardRef<HTMLButtonElement, CitationChipProp
   const openable = !unavailable && onOpen !== undefined;
   const name = t.citationName(citation.index, citation.title) + (unavailable ? ` (${t.citationUnavailable})` : '');
   const reason = unavailable ? (citation.reason ?? t.citationUnavailable) : undefined;
-  const description = [t.sourceType[citation.sourceType], citation.locator, reason, citation.excerpt].filter(Boolean).join(' · ');
+  const sourceLabel = t.sourceType[citation.sourceType] ?? citation.sourceType;
+  const description = [sourceLabel, citation.locator, reason, citation.excerpt].filter(Boolean).join(' · ');
 
   const card = (
     <span className="rl-agent-cite__card">
       <span className="rl-agent-cite__card-title">{citation.title}</span>
       <span className="rl-agent-cite__card-meta">
-        {t.sourceType[citation.sourceType]}
+        {sourceLabel}
         {citation.locator && <span className="rl-agent-cite__card-locator">{citation.locator}</span>}
       </span>
       {reason && <span className="rl-agent-cite__card-reason">{reason}</span>}
@@ -83,7 +87,11 @@ export const CitationChip = React.forwardRef<HTMLButtonElement, CitationChipProp
             if (openable) onOpen(citation);
           }}
         >
-          {showIcon && <AgentIcon name={sourceIcon[citation.sourceType]} className="rl-agent-cite__icon" />}
+          {showIcon && (
+            <AgentIcon name={sourceIcon[citation.sourceType as CitationSourceType] ?? 'link'} className="rl-agent-cite__icon">
+              {icon}
+            </AgentIcon>
+          )}
           <span className="rl-agent-cite__text">{label ?? `[${citation.index}]`}</span>
         </button>
       </Tooltip>

@@ -2,14 +2,15 @@
 
 import * as React from 'react';
 import { Button, Spinner } from '@wzrhine/react';
-import type { MentionOption } from '@wzrhine/agent-core';
+import type { MentionOption, ReferenceKind } from '@wzrhine/agent-core';
 import { AgentIcon } from '../../primitives/icons.js';
 import type { AgentIconName } from '../../primitives/icons.js';
 import { useAgentMessages } from '../../provider/AgentMessages.js';
 import { groupOptions, splitMentionQuery } from './composer-utils.js';
 import { Highlight, MenuGroup, MenuOption, MenuPanel } from './MenuPanel.js';
 
-const kindIcon: Record<MentionOption['kind'], AgentIconName> = {
+/** Icon per built-in reference kind; custom kinds fall back to the `custom` icon (ADR-0013 §2). */
+const kindIcon: Record<ReferenceKind, AgentIconName> = {
   file: 'file',
   folder: 'folder',
   skill: 'spark',
@@ -142,7 +143,7 @@ export function MentionMenu({
               onChoose={choose}
               data-kind={option.kind}
             >
-              <AgentIcon name={option.drillable ? 'folder' : kindIcon[option.kind]} className="rl-agent-menu__icon" />
+              <AgentIcon name={option.drillable ? 'folder' : (kindIcon[option.kind as ReferenceKind] ?? kindIcon.custom)} className="rl-agent-menu__icon" />
               <span className="rl-agent-menu__body">
                 <span className="rl-agent-menu__label">
                   <span>

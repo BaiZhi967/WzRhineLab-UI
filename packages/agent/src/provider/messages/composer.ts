@@ -1,4 +1,4 @@
-import type { ModelEffort, ModelOptionView } from '@wzrhine/agent-core';
+import type { AttachmentKind, KnownModelEffort, ModelCapability, ReferenceKind } from '@wzrhine/agent-core';
 
 /** Copy for the composer family (ADR-0011 §10): Composer, ComposerInput, menus, attachments, pickers. */
 export interface AgentComposerMessages {
@@ -41,8 +41,8 @@ export interface AgentComposerMessages {
   referenceLoading: string;
   referenceFailed: string;
   external: string;
-  kind: Record<'image' | 'file' | 'pdf' | 'text' | 'code' | 'unknown', string>;
-  referenceKind: Record<'file' | 'folder' | 'skill' | 'command' | 'url' | 'symbol' | 'custom', string>;
+  kind: Record<AttachmentKind, string> & Record<string, string>;
+  referenceKind: Record<ReferenceKind, string> & Record<string, string>;
   // ---------- send / stop ----------
   send: string;
   sending: string;
@@ -82,12 +82,13 @@ export interface AgentComposerMessages {
   modelsLoading: string;
   modelsError: string;
   modelsEmpty: string;
-  effort: Record<ModelEffort, string>;
+  /** Built-in effort levels are required; custom levels may add entries (missing ones render the raw id). */
+  effort: Record<KnownModelEffort, string> & Record<string, string>;
   effortInvalid: string;
   resetEffort: string;
   skillPicker: { label: string; add: string; limit: (max: string) => string; loading: string; error: string; empty: string };
   referencePicker: { label: string; add: string; up: string; search: string; loading: string; error: string; empty: string; truncated: string };
-  capability: Record<NonNullable<ModelOptionView['capabilities']>[number], string>;
+  capability: Record<ModelCapability, string> & Record<string, string>;
   // ---------- permission picker ----------
   permissionTriggerLabel: (label: string) => string;
   permissionMenu: string;

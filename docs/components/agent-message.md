@@ -68,7 +68,7 @@ list.current?.scrollToLatest();
 | ThinkingBlock | `thinking` `label` `expanded` `defaultExpanded` `onExpandedChange` `renderers` `onOpenFull` | 默认折叠 |
 | AgentProcess | `run` `renderTool` `renderers` `expanded` `defaultExpanded` `onExpandedChange` `onLoadRecord` `onOpenFull` `onOpenThinking` `headingLevel` | 运行中默认展开、结束后折叠；用户切换后以用户为准 |
 | RunStatus | `run` 或 `status` `phase` `elapsedMs` `syncStatus` `actionStatus` `labelOverride` `hint` `appearance` `size` `announce` `announceInterval` | `appearance`：`pill`（默认）/ `inline` / `line`（spark + 阶段 + 耗时） |
-| CitationChip | `citation` `onOpen` `label` `showIcon` `selected` | 不可用来源永不调用 `onOpen` |
+| CitationChip | `citation` `onOpen` `label` `showIcon` `icon` `selected` | 不可用来源永不调用 `onOpen`；`sourceType` 开放（ADR-0013 §2）：自定义类型回落到 `link` 图标并显示原始 id，`icon` 属性可换成自定义 SVG 内容，文案可经 `message.sourceType` 文案表增补 |
 | JumpToLatest | `atLatest` `unreadCount` `onJump` `loading` `label` | |
 | MessageActions | `copyText` `onCopy` `onRegenerate` `onEdit` `onRestoreInput` `onFork` `feedback` `onFeedback` `capabilities` `label` `children` | 无任何能力时不渲染 |
 | MessageActions | `capabilities: Partial<Record<'copy' \| 'regenerate' \| 'edit' \| 'fork' \| 'restore' \| 'feedback', CapabilityInput>>` | 缺省 = 可用；`false` / `{ enabled: false, reason }` = 显示但 `aria-disabled`，从不调用回调 |
@@ -78,6 +78,8 @@ list.current?.scrollToLatest();
 `CopyHandler = (text) => void | boolean | Promise<void | boolean>`：返回 `false`、抛错或 reject 视为失败。没有 `onCopy` 时使用 `navigator.clipboard.writeText`；两者都没有就不渲染复制按钮。
 
 `RunStatus` 组件与 agent-core 的 `RunStatus` 类型同名：入口同时导出两者（`import type { RunStatus }` 仍是状态联合类型）。
+
+附件与引用片段的 `kind` 同样开放（ADR-0013 §2）：内置类别有图标与文案，自定义类别回落到 `file` / `custom` 图标与原始 id，可经 `composer.kind` / `composer.referenceKind`、`message.referenceKind` 文案表增补。错误片段（`RecoveryView.kind`）的自定义类型回落到 `unknown` 的 warning 呈现并显示原始 id。
 
 ## 受控
 - ThinkingBlock：`expanded` + `onExpandedChange`；不传为非受控（`defaultExpanded`）。流式更新只替换内容，不折叠面板、不重挂载、不清除选区。

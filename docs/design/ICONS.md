@@ -29,3 +29,5 @@ default currentColor；hover 继承按钮/链接；active/selected 与 focus-vis
 ## 0.2.0 公共入口
 
 R01 采用库内原创 SVG 路线：`Icon` 可从 `@wzrhine/react` 或 `@wzrhine/react/icons` 导入。公共集合统一 24×24 viewBox、1.75 stroke、round cap/join、currentColor。`AgentIcon` 的 16×16 网格保留为已有内部/兼容图标体系；新消费界面优先使用公共入口。本仓不新增 lucide-react 运行时依赖。
+
+三个图标组件（`Icon`、`AgentIcon`、`StatusGlyph`）的 `name` 均为开放集合（ADR-0013 §3）：内置名之外的取值必须同时传 `children`（自定义 SVG 内容，`data-icon` / `data-glyph` 携带自定义名）；对内置名传 `children` 则覆盖内置路径。这样宿主的产品图标可以进入任何接受图标的组件属性，而无需 fork 图标库。

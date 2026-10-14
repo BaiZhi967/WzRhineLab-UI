@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { motion } from 'motion/react';
 import { Button, IconButton, Popover, Radio, RadioGroup, Spinner, useRhineMotion } from '@wzrhine/react';
-import type { ModelEffort, ModelOptionView, ModelProviderView } from '@wzrhine/agent-core';
+import type { ModelEffort, ModelEffortOption, ModelOptionView, ModelProviderView } from '@wzrhine/agent-core';
 import { AgentIcon } from '../../primitives/icons.js';
 import { useAgentMessages } from '../../provider/AgentMessages.js';
 import { cx } from '../../utils/cx.js';
@@ -18,6 +18,11 @@ export interface ModelPickerProps {
   onEffortChange?: (effort: ModelEffort) => void;
   onEffortReset?: () => void;
   effortState?: 'unset' | 'invalid' | 'default';
+  /**
+   * Component-level effort labels (ADR-0009 priority: prop > option label > `composer.effort`
+   * message table > raw id). Add labels here for effort ids outside the built-in set.
+   */
+  effortLabels?: Record<string, string>;
   loading?: boolean;
   /** Error text for the model list (`true` → default copy). */
   error?: React.ReactNode;
@@ -41,6 +46,11 @@ function findModel(providers: readonly ModelProviderView[], id: string | null | 
   return undefined;
 }
 
+/** Bare ids become options; labelled options pass through. */
+export function normalizeEfforts(efforts: readonly (ModelEffort | ModelEffortOption)[] | undefined): ModelEffortOption[] {
+  return (efforts ?? []).map((entry) => (typeof entry === 'string' ? { id: entry } : entry));
+}
+
 /**
  * Model and reasoning-effort picker (atlas 19). A trigger button (model label + effort, truncated)
  * opens a Popover with two layers:
@@ -49,6 +59,10 @@ function findModel(providers: readonly ModelProviderView[], id: string | null | 
  * - model layer: providers as labelled groups (a disabled provider shows its reason), model
  *   buttons with capability tags; unavailable models are `aria-disabled` with the reason as
  *   their description; the selected one has `aria-current` and a check. ↑ / ↓ move between models.
+ *
+ * Efforts are open-ended (ADR-0013 §1): `efforts` entries are bare ids (labelled via the
+ * `composer.effort` message table) or `{ id, label, description }` options carrying their own
+ * copy; the `effortLabels` prop overrides both, and an id with no copy renders as-is.
  *
  * Selection is controlled: the picker emits `onModelChange` / `onEffortChange` and the host
  * updates `selectedModel` / `effort`. It never touches the composer draft. Focus moves to the
@@ -64,6 +78,7 @@ export function ModelPicker({
   onEffortChange,
   onEffortReset,
   effortState,
+  effortLabels,
   loading = false,
   error,
   disabled = false,
@@ -85,9 +100,11 @@ export function ModelPicker({
   const backRef = React.useRef<HTMLButtonElement>(null);
   const moved = React.useRef(false);
   const model = findModel(providers, selectedModel);
-  const efforts = model?.efforts ?? [];
-  const invalidEffort = effortState === 'invalid' || (effort != null && efforts.length > 0 && !efforts.includes(effort));
-  const effortLabel = !invalidEffort && effort && efforts.includes(effort) ? messages.effort[effort] : undefined;
+  const effortOptions = normalizeEfforts(model?.efforts);
+  const effortIds = effortOptions.map((option) => option.id);
+  const invalidEffort = effortState === 'invalid' || (effort != null && effortIds.length > 0 && !effortIds.includes(effort));
+  const labelFor = (id: ModelEffort) => effortLabels?.[id] ?? effortOptions.find((option) => option.id === id)?.label ?? messages.effort[id] ?? id;
+  const effortLabel = !invalidEffort && effort && effortIds.includes(effort) ? labelFor(effort) : undefined;
   const modelLabel = model?.label ?? messages.modelPlaceholder;
 
   const setOpen = (next: boolean) => {
@@ -151,8 +168,8 @@ export function ModelPicker({
           <AgentIcon name="chevron-right" />
         </button>
       </div>
-      {effortState === 'invalid' && efforts.length === 0 && <div className="rl-agent-model__invalid" role="alert"><span>{messages.effortInvalid}</span>{onEffortReset && <Button size="sm" variant="secondary" onClick={onEffortReset}>{messages.resetEffort}</Button>}</div>}
-      {model && efforts.length > 0 ? (
+      {effortState === 'invalid' && effortOptions.length === 0 && <div className="rl-agent-model__invalid" role="alert"><span>{messages.effortInvalid}</span>{onEffortReset && <Button size="sm" variant="secondary" onClick={onEffortReset}>{messages.resetEffort}</Button>}</div>}
+      {model && effortOptions.length > 0 ? (
         <>
           {invalidEffort && <div className="rl-agent-model__invalid" role="alert"><span>{messages.effortInvalid}</span>{onEffortReset && <Button size="sm" variant="secondary" onClick={onEffortReset}>{messages.resetEffort}</Button>}</div>}
         <RadioGroup
@@ -160,14 +177,14 @@ export function ModelPicker({
           className="rl-agent-model__efforts"
           value={effortLabel ? effort! : ''}
           onValueChange={(next) => {
-            if (typeof next === 'string' && (efforts as string[]).includes(next)) onEffortChange?.(next as ModelEffort);
+            if (typeof next === 'string' && effortIds.includes(next)) onEffortChange?.(next);
           }}
           readOnly={!onEffortChange}
           description={messages.effortNote}
           orientation="vertical"
         >
-          {efforts.map((value) => (
-            <Radio key={value} value={value} label={messages.effort[value]} />
+          {effortOptions.map((option) => (
+            <Radio key={option.id} value={option.id} label={labelFor(option.id)} description={option.description} />
           ))}
         </RadioGroup>
         </>
@@ -312,7 +329,7 @@ function ModelRow({
                   <React.Fragment key={cap}>
                     {/* Spoken separator: tags otherwise run together in the description. */}
                     {i > 0 && <span className="rl-agent-sr">, </span>}
-                    <span className="rl-agent-model__cap">{messages.capability[cap]}</span>
+                    <span className="rl-agent-model__cap">{messages.capability[cap] ?? cap}</span>
                   </React.Fragment>
                 ))}
               </span>

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Button, IconButton } from '@wzrhine/react';
-import type { AgentTone, RecoveryView, StatusGlyphName } from '@wzrhine/agent-core';
+import type { AgentTone, RecoveryKind, RecoveryView, StatusGlyphName } from '@wzrhine/agent-core';
 import { AgentStatus } from '../../primitives/AgentStatus.js';
 import { AgentIcon } from '../../primitives/icons.js';
 import { useAgentMessages } from '../../provider/AgentMessages.js';
@@ -33,7 +33,8 @@ export interface ErrorRecoveryNoticeProps extends Omit<React.HTMLAttributes<HTML
   busyActionIds?: readonly string[];
 }
 
-const kindMeta: Record<RecoveryView['kind'], { tone: AgentTone; glyph: StatusGlyphName }> = {
+/** Tone + glyph per built-in kind; custom kinds fall back to the `unknown` presentation (ADR-0013 §2). */
+const kindMeta: Record<RecoveryKind, { tone: AgentTone; glyph: StatusGlyphName }> = {
   retryable: { tone: 'info', glyph: 'reconnecting' },
   'save-pending': { tone: 'warning', glyph: 'saving' },
   'cancel-unconfirmed': { tone: 'warning', glyph: 'stopping' },
@@ -54,7 +55,7 @@ export const ErrorRecoveryNotice = React.forwardRef<HTMLElement, ErrorRecoveryNo
   const id = React.useId();
   const titleId = `${id}-title`;
   const { kind } = recovery;
-  const meta = kindMeta[kind];
+  const meta = kindMeta[kind as RecoveryKind] ?? kindMeta.unknown;
   const alert = meta.tone === 'danger' && announce;
   const note = m.recoveryNote[kind];
 
@@ -62,7 +63,7 @@ export const ErrorRecoveryNotice = React.forwardRef<HTMLElement, ErrorRecoveryNo
     <section {...rest} ref={ref} className={cx('rl-agent-recovery', className)} aria-labelledby={titleId} data-kind={kind} data-tone={meta.tone}>
       <div className="rl-agent-recovery__message" role={alert ? 'alert' : undefined}>
         <div className="rl-agent-recovery__head">
-          <AgentStatus glyph={meta.glyph} tone={meta.tone} label={m.recoveryKind[kind]} className="rl-agent-recovery__kind" />
+          <AgentStatus glyph={meta.glyph} tone={meta.tone} label={m.recoveryKind[kind] ?? kind} className="rl-agent-recovery__kind" />
           {recovery.code && (
             <span className="rl-agent-recovery__code">
               <span className="rl-agent-sr">{m.recoveryCode} </span>

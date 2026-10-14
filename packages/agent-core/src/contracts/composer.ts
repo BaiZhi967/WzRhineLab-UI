@@ -53,15 +53,36 @@ export interface CommandOption {
   group?: string;
 }
 
-export type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh';
+/**
+ * Reasoning-effort level of a model. The six built-in levels have localised copy in
+ * `@wzrhine/agent`; adapters may use any other string (vendor tiers, numeric levels) and supply
+ * labels through `ModelEffortOption.label`, the ModelPicker `effortLabels` prop or the
+ * `composer.effort` message table (ADR-0013 §1).
+ */
+export type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh' | (string & {});
+
+/** The effort levels `@wzrhine/agent` ships copy for. */
+export type KnownModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh';
+
+/** An effort choice carrying its own copy; beats the message table. */
+export interface ModelEffortOption {
+  id: ModelEffort;
+  label?: string;
+  /** Longer hint shown under the label (Radio description). */
+  description?: string;
+}
+
+/** Model capabilities the library ships copy for; any other string renders as-is (ADR-0013 §2). */
+export type ModelCapability = 'image' | 'video' | 'tools' | 'reasoning' | 'long-context';
 
 export interface ModelOptionView {
   id: string;
   label: string;
   providerId: string;
   description?: string;
-  capabilities?: ('image' | 'video' | 'tools' | 'reasoning' | 'long-context')[];
-  efforts?: ModelEffort[];
+  capabilities?: (ModelCapability | (string & {}))[];
+  /** Effort levels this model accepts: bare ids (copy from the message table) or labelled options. */
+  efforts?: (ModelEffort | ModelEffortOption)[];
   disabled?: boolean;
   unavailableReason?: string;
 }

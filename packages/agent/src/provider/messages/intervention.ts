@@ -1,4 +1,4 @@
-import type { ApprovalRisk, ApprovalStatus, DraftStatus, FileDiffView, QuestionnaireStatus, RecoveryView } from '@wzrhine/agent-core';
+import type { ApprovalRisk, ApprovalStatus, DraftStatus, FileDiffView, QuestionnaireStatus, RecoveryKind } from '@wzrhine/agent-core';
 
 /**
  * Copy for the intervention family (ADR-0011 §6, §10): ApprovalPanel, QuestionnaireCard,
@@ -131,9 +131,10 @@ export interface AgentInterventionMessages {
   grantEmpty: string;
 
   // ---------- ErrorRecoveryNotice ----------
-  recoveryKind: Record<RecoveryView['kind'], string>;
-  /** Fixed consequence sentence per kind; empty string = none. */
-  recoveryNote: Record<RecoveryView['kind'], string>;
+  /** Known kinds are required; custom kinds may add entries (missing ones render the raw id). */
+  recoveryKind: Record<RecoveryKind, string> & Record<string, string>;
+  /** Fixed consequence sentence per kind; empty string = none. Custom kinds have no note. */
+  recoveryNote: Record<RecoveryKind, string> & Record<string, string>;
   recoveryPreserved: string;
   recoveryCode: string;
   recoveryDismiss: string;

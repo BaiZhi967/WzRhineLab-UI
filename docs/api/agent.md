@@ -1,6 +1,6 @@
 # @wzrhine/agent · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.2.0，共 389 个导出（87 components，65 functions & hooks，18 constants，97 interfaces，122 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.2.0，共 400 个导出（87 components，66 functions & hooks，20 constants，99 interfaces，128 types）。
 
 ## Components
 
@@ -14,7 +14,7 @@
 | `events` * | `LedgerEventView[]` |  |
 | `filter` | `LedgerFilterKey` | Actor filter (controlled). |
 | `loading` | `boolean` | First load in progress (Skeleton rows, `aria-busy`). |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onFilterChange` | `((filter: LedgerFilterKey) => void)` |  |
 | `onOpenEvent` | `((event: LedgerEventView) => void)` | Opens one event; each row title becomes a button. |
 | `showFilters` | `boolean` | Show the filter tabs (default true). |
@@ -86,7 +86,8 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `name` * | `"agent" \| "tool" \| "retry" \| "image" \| "file" \| "code" \| "folder" \| "info" \| "warning" \| "chevron-down" \| "chevron-right" \| "chevron-left" \| "arrow-down" \| "arrow-up" \| "arrow-left" \| "close" \| "plus" \| "search" \| "more" \| "pin" \| "archive" \| "unarchive" \| "trash" \| "edit" \| "fork" \| "copy" \| "check" \| "send" \| "stop" \| "attach" \| "at" \| "slash" \| "terminal" \| "shield" \| "question" \| "spark" \| "panel" \| "link" \| "external" \| "download" \| "history" \| "clock" \| "model" \| "globe" \| "database" \| "layers" \| "list"` |  |
+| `children` | `React.ReactNode` | Custom SVG inner nodes; win over the built-in path for `name`. |
+| `name` * | `string` | Built-in icon name. Any other string is accepted together with `children` (ADR-0013 §3): the children become the icon content and `data-icon` carries the custom name. |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -302,7 +303,7 @@
 | `artifact` * | `ArtifactView` |  |
 | `compact` | `boolean` |  |
 | `headingLevel` | `HeadingLevel` |  |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onDownload` | `((artifact: ArtifactView) => void)` |  |
 | `onOpen` | `((artifact: ArtifactView) => void)` |  |
 | `onRetry` | `((artifact: ArtifactView) => void)` | Retries a failed artifact. |
@@ -329,7 +330,7 @@
 | --- | --- | --- |
 | `artifacts` * | `ArtifactView[]` |  |
 | `headingLevel` | `HeadingLevel` |  |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onDownload` | `((artifact: ArtifactView) => void)` |  |
 | `onOpen` | `((artifact: ArtifactView) => void)` |  |
 | `onRetry` | `((artifact: ArtifactView) => void)` | Retries a failed artifact. |
@@ -383,6 +384,7 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `citation` * | `CitationView` |  |
+| `icon` | `React.ReactNode` | Custom icon content (SVG inner nodes); wins over the built-in source-type icon. |
 | `label` | `React.ReactNode` | Visible text instead of "[n]" (e.g. a short file name). |
 | `onOpen` | `((citation: CitationView) => void)` |  |
 | `selected` | `boolean` |  |
@@ -437,7 +439,7 @@
 | --- | --- | --- |
 | `busy` | `boolean` | Busy flag for the buttons while an action is being submitted. |
 | `elapsedMs` | `number` | Elapsed time of a running compaction (the host updates it; nothing polls here). |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onCancel` | `AgentActionHandler` | Cancels a running compaction. |
 | `onRetrySave` | `AgentActionHandler` | Retries saving the result (`save-pending`). |
 | `onSummaryOpenChange` | `((open: boolean) => void)` |  |
@@ -564,7 +566,7 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `align` | `PopoverAlign` |  |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onOpenChange` | `((open: boolean) => void)` |  |
 | `openOnHover` | `boolean` | `ring`: also open the Popover on hover (focus and click still open it). |
 | `open` | `boolean` |  |
@@ -702,7 +704,7 @@
 | `defaultZoom` | `FilePreviewZoom` | Initial image zoom; default `fit`. |
 | `file` * | `FilePreviewView` |  |
 | `headingLevel` | `HeadingLevel` |  |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `mode` | `FilePreviewMode` | Active tab (controlled). |
 | `onClose` | `(() => void)` |  |
 | `onCopyPath` | `((path: string, file: FilePreviewView) => void \| Promise<void>)` | Copies `file.path` (menu item 「复制路径」); default writes it to the clipboard. |
@@ -729,7 +731,7 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `activeId` * | `string` | The open tab (controlled). |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onActivate` * | `(id: string) => void` |  |
 | `onCloseAll` | `(() => void)` | Closes every file; Escape inside the strip and the trailing close button call it. |
 | `onCloseTab` * | `(id: string) => void` |  |
@@ -956,6 +958,7 @@
 | `defaultLayer` | `"effort" \| "models"` | Initial layer when the popover opens. |
 | `defaultOpen` | `boolean` |  |
 | `disabled` | `boolean` |  |
+| `effortLabels` | `Record<string, string>` | Component-level effort labels (ADR-0009 priority: prop > option label > `composer.effort` message table > raw id). Add labels here for effort ids outside the built-in set. |
 | `effortState` | `"default" \| "unset" \| "invalid"` |  |
 | `effort` | `ModelEffort \| null` | Selected effort (controlled); must be one of the model's `efforts`. |
 | `error` | `React.ReactNode` | Error text for the model list (`true` → default copy). |
@@ -1031,7 +1034,7 @@
 | --- | --- | --- |
 | `headingLevel` | `HeadingLevel` |  |
 | `hideName` | `boolean` | Hide the name heading (e.g. inside `TerminalTabs`, where the tab already names it). |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onInput` | `AgentActionHandler<[text: string, terminal: TerminalView]>` | Sends one line to the session. Without it (or when read-only) no input line is drawn. |
 | `onLoadEarlier` | `AgentActionHandler<[terminal: TerminalView]>` | Loads older output (`terminal.outputTruncated`). The scroll position is kept. |
 | `onLoadMoreHistory` | `AgentActionHandler<[terminal: TerminalView]>` | Loads earlier entries of `terminal.history`. |
@@ -1052,7 +1055,7 @@
 | `defaultExpanded` | `boolean` |  |
 | `expanded` | `boolean` | Body expanded (controlled). |
 | `headingLevel` | `HeadingLevel` |  |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onExpandedChange` | `((expanded: boolean) => void)` |  |
 | `onOpenSource` | `((citation: CitationView) => void)` | Opens a source. Without it sources are listed as text. |
 | `onPinChange` | `((pinned: boolean) => void)` |  |
@@ -1079,6 +1082,7 @@
 | `onRetrySave` | `(() => void)` | Shown with a failed draft save. |
 | `onSubmit` | `AgentActionHandler<[QuestionAnswer[], AgentActionContext]>` |  |
 | `questionnaire` * | `QuestionnaireView` |  |
+| `renderQuestion` | `((context: QuestionRenderContext) => React.ReactNode)` | Custom question body (ADR-0013 §4). Called for every question; return `null` / `undefined` to keep the built-in body. Required for custom `kind`s beyond single / multiple / text — without it they fall back to a free-text answer. |
 | `title` | `React.ReactNode` | Header title override (default: `questionnaire.title` or 「需要你的回答」). |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
@@ -1175,7 +1179,7 @@
 | --- | --- | --- |
 | `defaultOpen` | `boolean` |  |
 | `facts` | `readonly RunOverviewFact[]` |  |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onClose` | `(() => void)` |  |
 | `onOpenChange` | `((open: boolean) => void)` |  |
 | `onReopen` | `(() => void)` |  |
@@ -1216,7 +1220,7 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `headingLevel` | `HeadingLevel` |  |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onOpenArtifact` | `((id: string) => void)` | Opens one artifact from the mini list. |
 | `onOpenDetails` | `(() => void)` |  |
 | `onOpenTrace` | `(() => void)` |  |
@@ -1322,7 +1326,8 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `active` | `boolean` | Ongoing activity: CSS adds a slow breathing halo (`data-loop` from the caller). |
-| `name` * | `"idle" \| "unknown" \| "children" \| "tool" \| "failed" \| "thinking" \| "waiting-user" \| "compacting" \| "saving" \| "reconnecting" \| "offline" \| "terminal" \| "approval" \| "done" \| "pending" \| "stopping" \| "stopped" \| "active"` |  |
+| `children` | `React.ReactNode` | Custom SVG inner nodes; win over the built-in glyph for `name`. |
+| `name` * | `string` | Built-in glyph name. Any other string is accepted together with `children` (ADR-0013 §3): the children become the glyph content and `data-glyph` carries the custom name. |
 | `tone` | `AgentTone` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
@@ -1336,7 +1341,7 @@
 | `agent` * | `SubagentView` |  |
 | `animate` | `boolean` | Animate the spark (default). `false` forces the static frame, e.g. in long lists. |
 | `headingLevel` | `HeadingLevel` |  |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onOpenSnapshot` | `((id: string) => void)` | Opens the read-only snapshot of an inherited record; draws 「查看快照」. |
 | `onOpen` | `((id: string) => void)` | Opens the sub-task; draws 「查看子任务」. Not drawn for inherited records. |
 
@@ -1355,7 +1360,7 @@
 | `groupBy` | `"none" \| "state"` |  |
 | `groupInherited` | `boolean` | Put inherited records under their own 「继承的子任务记录」 heading after the live ones. |
 | `headingLevel` | `HeadingLevel` | Level of each card heading; the list heading (`title`) is one level above. |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onOpenSnapshot` | `((id: string) => void)` |  |
 | `onOpen` | `((id: string) => void)` |  |
 | `title` | `string \| (string & React.ReactElement<unknown, string \| React.JSXElementConstructor<any>>) \| (string & Iterable<React.ReactNode>) \| (string & React.ReactPortal) \| (string & Promise<AwaitedReactNode>)` | Visible list heading; omitted → the list is named by `aria-label` only. |
@@ -1387,7 +1392,7 @@
 | `hasMore` | `boolean` | `false` hides the 「加载更多终端」 button even when `onLoadMore` is given. |
 | `loadingMore` | `boolean` |  |
 | `loading` | `boolean` |  |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onLoadMore` | `(() => void)` |  |
 | `onOpen` | `((terminal: TerminalView) => void)` |  |
 | `onRetry` | `(() => void)` |  |
@@ -1404,7 +1409,7 @@
 | Prop | Type | Description |
 | --- | --- | --- |
 | `current` | `boolean` | Marks the open terminal (`aria-current`). |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onOpen` | `((terminal: TerminalView) => void)` | Opens the terminal (row button). Without it the row is plain text. |
 | `onStop` | `AgentActionHandler<[terminal: TerminalView, context: { actionId: string; }]>` | Stop action; a separate button, drawn only when the terminal is stoppable. |
 | `terminal` * | `TerminalView` |  |
@@ -1419,7 +1424,7 @@
 | --- | --- | --- |
 | `defaultValue` | `string` |  |
 | `headingLevel` | `HeadingLevel` |  |
-| `messages` | `Partial<AgentWorkspaceMessages>` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
 | `onInput` | `AgentActionHandler<[text: string, terminal: TerminalView]>` |  |
 | `onLoadEarlier` | `AgentActionHandler<[terminal: TerminalView]>` |  |
 | `onLoadMoreHistory` | `AgentActionHandler<[terminal: TerminalView]>` |  |
@@ -1477,7 +1482,7 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `category` | `ToolCategory` |  |
+| `category` | `(string & {}) \| ToolCategory` |  |
 | `className` | `string` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
@@ -1896,6 +1901,14 @@ function moveActiveIndex: (count: number, index: number, delta: number) => numbe
 function normalizeAnswers: (questions: readonly QuestionView[], answers: ReadonlyMap<string, QuestionAnswer> | readonly QuestionAnswer[]) => { answers: QuestionAnswer[]; missing: string[]; overLimit: string[]; }
 ```
 
+### `normalizeEfforts`
+
+*function* — Bare ids become options; labelled options pass through.
+
+```ts
+function normalizeEfforts: (efforts: readonly (ModelEffort | ModelEffortOption)[] | undefined) => ModelEffortOption[]
+```
+
 ### `orderCommandOptions`
 
 *function* — Commands (and actions) first, then skills, keeping the host order inside each kind.
@@ -2172,7 +2185,7 @@ const agentZhCN: AgentMessages
 
 ### `artifactKindIcon`
 
-*const*
+*const* — Icon per built-in kind; custom kinds fall back to `file` (ADR-0013 §2).
 
 ```ts
 const artifactKindIcon: Record<ArtifactKind, AgentIconName>
@@ -2200,6 +2213,22 @@ const DIGEST_LENGTH: 8
 
 ```ts
 const FOLLOW_THRESHOLD_PX: 4
+```
+
+### `isChoiceQuestion`
+
+*const* — `single` / `multiple` are the built-in choice kinds; anything else (incl. `text` and custom kinds, ADR-0013 §4) answers through free text and/or renderer-owned option ids.
+
+```ts
+const isChoiceQuestion: (question: QuestionView) => boolean
+```
+
+### `isKnownQuestionKind`
+
+*const* — Built-in kinds with their own controls; any other string is a custom kind.
+
+```ts
+const isKnownQuestionKind: (question: QuestionView) => boolean
 ```
 
 ### `isQuestionOptional`
@@ -2307,7 +2336,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `attachmentsLabel` * | `string` |  |
 | `back` * | `string` |  |
 | `blockedPlaceholder` * | `string` |  |
-| `capability` * | `Record<"image" \| "video" \| "tools" \| "reasoning" \| "long-context", string>` |  |
+| `capability` * | `Record<ModelCapability, string> & Record<string, string>` |  |
 | `characters` * | `(count: string, max: string \| undefined) => string` | Character counter; receives formatted numbers. |
 | `commandEmpty` * | `string` |  |
 | `commandGroup` * | `string` |  |
@@ -2322,13 +2351,13 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `effortInvalid` * | `string` |  |
 | `effortNone` * | `string` |  |
 | `effortNote` * | `string` |  |
-| `effort` * | `Record<ModelEffort, string>` |  |
+| `effort` * | `Record<KnownModelEffort, string> & Record<string, string>` | Built-in effort levels are required; custom levels may add entries (missing ones render the raw id). |
 | `emptyReason` * | `string` |  |
 | `external` * | `string` |  |
 | `inputHintModEnter` * | `string` | Hint when `submitOn="mod-enter"`. |
 | `inputHint` * | `string` | Screen-reader hint linked to the textarea with aria-describedby. |
 | `inputLabel` * | `string` | Accessible name of the message textarea. |
-| `kind` * | `Record<"unknown" \| "image" \| "file" \| "pdf" \| "text" \| "code", string>` |  |
+| `kind` * | `Record<AttachmentKind, string> & Record<string, string>` |  |
 | `loadMore` * | `string` |  |
 | `mentionDrill` * | `string` | Spoken suffix for drillable folder options. |
 | `mentionEmpty` * | `string` |  |
@@ -2355,7 +2384,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `permissionTriggerLabel` * | `(label: string) => string` |  |
 | `placeholder` * | `string` |  |
 | `referenceFailed` * | `string` |  |
-| `referenceKind` * | `Record<"symbol" \| "file" \| "folder" \| "skill" \| "command" \| "url" \| "custom", string>` |  |
+| `referenceKind` * | `Record<ReferenceKind, string> & Record<string, string>` |  |
 | `referenceLoading` * | `string` |  |
 | `referencePicker` * | `{ label: string; add: string; up: string; search: string; loading: string; error: string; empty: string; truncated: string; }` |  |
 | `remove` * | `(name: string) => string` |  |
@@ -2541,8 +2570,8 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `questionUnknownTitle` * | `string` |  |
 | `recoveryCode` * | `string` |  |
 | `recoveryDismiss` * | `string` |  |
-| `recoveryKind` * | `Record<"unknown" \| "offline" \| "retryable" \| "save-pending" \| "cancel-unconfirmed" \| "tool-side-effects" \| "timeout" \| "resolved", string>` |  |
-| `recoveryNote` * | `Record<"unknown" \| "offline" \| "retryable" \| "save-pending" \| "cancel-unconfirmed" \| "tool-side-effects" \| "timeout" \| "resolved", string>` | Fixed consequence sentence per kind; empty string = none. |
+| `recoveryKind` * | `Record<RecoveryKind, string> & Record<string, string>` | Known kinds are required; custom kinds may add entries (missing ones render the raw id). |
+| `recoveryNote` * | `Record<RecoveryKind, string> & Record<string, string>` | Fixed consequence sentence per kind; empty string = none. Custom kinds have no note. |
 | `recoveryPreserved` * | `string` |  |
 
 ### `AgentMessagePartHandlers`
@@ -2671,7 +2700,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `artifactChange` * | `Record<ArtifactChangeKey, string>` |  |
 | `artifactDownload` * | `(title: string) => string` |  |
 | `artifactEmpty` * | `string` |  |
-| `artifactKind` * | `Record<ArtifactKind, string>` |  |
+| `artifactKind` * | `Record<ArtifactKind, string> & Record<string, string>` | Known kinds are required; custom kinds may add entries (missing ones render the raw id). |
 | `artifactList` * | `string` |  |
 | `artifactOpenNamed` * | `(title: string) => string` |  |
 | `artifactOpen` * | `string` |  |
@@ -2890,7 +2919,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `alt` | `string` |  |
 | `change` | `"created" \| "modified" \| "moved" \| "deleted"` | Change against the workspace, for file artifacts. |
 | `id` * | `string` |  |
-| `kind` * | `ArtifactKind` |  |
+| `kind` * | `(string & {}) \| ArtifactKind` |  |
 | `mimeType` | `string` |  |
 | `path` | `string` |  |
 | `preview` | `string` | Short text preview or thumbnail URL (for `image`). |
@@ -2923,7 +2952,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | --- | --- | --- |
 | `alt` | `string` | Alternative text for image thumbnails. |
 | `id` * | `string` |  |
-| `kind` * | `"unknown" \| "image" \| "file" \| "pdf" \| "text" \| "code"` |  |
+| `kind` * | `AttachmentKind \| (string & {})` |  |
 | `mimeType` | `string` |  |
 | `name` * | `string` |  |
 | `progress` | `number` | 0–1 when known; omit for indeterminate uploads. |
@@ -2966,7 +2995,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `index` * | `number` | Visible index, e.g. 1 → "[1]". |
 | `locator` | `string` | Path, URL or locator shown in the hover card. |
 | `reason` | `string` |  |
-| `sourceType` * | `"file" \| "code" \| "message" \| "web" \| "dataset" \| "other"` |  |
+| `sourceType` * | `(string & {}) \| CitationSourceType` |  |
 | `title` * | `string` |  |
 | `unavailable` | `boolean` | Source is no longer reachable; the chip stays but cannot be opened. |
 
@@ -3355,7 +3384,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `drillable` | `boolean` | Folders can be drilled into instead of inserted. |
 | `group` | `string` |  |
 | `id` * | `string` |  |
-| `kind` * | `"symbol" \| "file" \| "folder" \| "skill" \| "command" \| "url" \| "custom"` |  |
+| `kind` * | `ReferenceKind \| (string & {})` |  |
 | `label` * | `string` |  |
 
 ### `MessageListHandle`
@@ -3415,16 +3444,26 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `status` * | `MessageStatus` |  |
 | `usage` | `TokenUsageView` | Run-level usage footer for assistant messages. |
 
+### `ModelEffortOption`
+
+*interface* — An effort choice carrying its own copy; beats the message table.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `description` | `string` | Longer hint shown under the label (Radio description). |
+| `id` * | `ModelEffort` |  |
+| `label` | `string` |  |
+
 ### `ModelOptionView`
 
 *interface*
 
 | Member | Type | Description |
 | --- | --- | --- |
-| `capabilities` | `("image" \| "video" \| "tools" \| "reasoning" \| "long-context")[]` |  |
+| `capabilities` | `(ModelCapability \| (string & {}))[]` |  |
 | `description` | `string` |  |
 | `disabled` | `boolean` |  |
-| `efforts` | `ModelEffort[]` |  |
+| `efforts` | `(ModelEffortOption \| ModelEffort)[]` | Effort levels this model accepts: bare ids (copy from the message table) or labelled options. |
 | `id` * | `string` |  |
 | `label` * | `string` |  |
 | `providerId` * | `string` |  |
@@ -3441,6 +3480,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `defaultLayer` | `"effort" \| "models"` | Initial layer when the popover opens. |
 | `defaultOpen` | `boolean` |  |
 | `disabled` | `boolean` |  |
+| `effortLabels` | `Record<string, string>` | Component-level effort labels (ADR-0009 priority: prop > option label > `composer.effort` message table > raw id). Add labels here for effort ids outside the built-in set. |
 | `effortState` | `"default" \| "unset" \| "invalid"` |  |
 | `effort` | `ModelEffort \| null` | Selected effort (controlled); must be one of the model's `efforts`. |
 | `error` | `React.ReactNode` | Error text for the model list (`true` → default copy). |
@@ -3561,6 +3601,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `onRetrySave` | `(() => void)` | Shown with a failed draft save. |
 | `onSubmit` | `AgentActionHandler<[QuestionAnswer[], AgentActionContext]>` |  |
 | `questionnaire` * | `QuestionnaireView` |  |
+| `renderQuestion` | `((context: QuestionRenderContext) => React.ReactNode)` | Custom question body (ADR-0013 §4). Called for every question; return `null` / `undefined` to keep the built-in body. Required for custom `kind`s beyond single / multiple / text — without it they fall back to a free-text answer. |
 | `title` | `React.ReactNode` | Header title override (default: `questionnaire.title` or 「需要你的回答」). |
 
 ### `QuestionnaireView`
@@ -3589,6 +3630,18 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `id` * | `string` |  |
 | `label` * | `string` |  |
 
+### `QuestionRenderContext`
+
+*interface* — Everything a `renderQuestion` override needs: the question, its answer, and the same update channel the built-in controls use (ADR-0013 §4).
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `answer` * | `QuestionAnswer` |  |
+| `defaultBody` * | `React.ReactNode` | The built-in body for this question; return or wrap it to keep the default rendering. |
+| `editable` * | `boolean` | False while the questionnaire is busy / ended / disabled; custom controls should follow it. |
+| `question` * | `QuestionView` |  |
+| `update` * | `(next: QuestionAnswer) => void` | Replace this question's answer (reports `onAnswerChange`, like the built-in controls). |
+
 ### `QuestionView`
 
 *interface*
@@ -3597,7 +3650,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | --- | --- | --- |
 | `allowCustom` | `boolean` | Offer a free-text "other" answer for choice questions. |
 | `id` * | `string` |  |
-| `kind` * | `QuestionKind` |  |
+| `kind` * | `(string & {}) \| QuestionKind` |  |
 | `maxLength` | `number` | Max characters (code points) for text answers. |
 | `optional` | `boolean` | May be skipped. Default true. |
 | `options` | `QuestionOptionView[]` |  |
@@ -3623,7 +3676,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `actions` | `{ id: string; label: string; tone?: "primary" \| "secondary" \| "danger"; }[]` | Safe actions; `id` is passed back to the handler. Labels must say what they act on. |
 | `code` | `string` |  |
 | `id` * | `string` |  |
-| `kind` * | `"unknown" \| "offline" \| "retryable" \| "save-pending" \| "cancel-unconfirmed" \| "tool-side-effects" \| "timeout" \| "resolved"` |  |
+| `kind` * | `(string & {}) \| RecoveryKind` |  |
 | `message` | `string` |  |
 | `preserved` | `string[]` | What is still safe: output kept, draft kept… |
 | `title` * | `string` |  |
@@ -3649,7 +3702,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | `detail` | `string` | Full path / URL / description used for the accessible name and tooltip. |
 | `external` | `boolean` | Outside the workspace. |
 | `id` * | `string` |  |
-| `kind` * | `"symbol" \| "file" \| "folder" \| "skill" \| "command" \| "url" \| "custom"` |  |
+| `kind` * | `ReferenceKind \| (string & {})` |  |
 | `label` * | `string` |  |
 | `reason` | `string` |  |
 | `status` | `"failed" \| "stale" \| "ready" \| "loading"` |  |
@@ -3935,7 +3988,7 @@ const toolStatusMeta: Record<ToolStatus, StatusMeta>
 | Member | Type | Description |
 | --- | --- | --- |
 | `authorization` | `ToolAuthorizationView` |  |
-| `category` | `ToolCategory` |  |
+| `category` | `(string & {}) \| ToolCategory` |  |
 | `children` | `ToolCallView[]` |  |
 | `detail` | `ToolDetailView` |  |
 | `detailsLoaded` | `boolean` | Full record not loaded; expanding calls `onLoadDetails`. |
@@ -4091,10 +4144,6 @@ type AgentEntranceKind = 'message' | 'row' | 'card'
 
 *type*
 
-```ts
-type AgentIconProps = Omit<React.SVGProps<SVGSVGElement>, 'children'> & { name: AgentIconName; }
-```
-
 ### `AgentMessageProps`
 
 *type*
@@ -4104,7 +4153,7 @@ type AgentIconProps = Omit<React.SVGProps<SVGSVGElement>, 'children'> & { name: 
 *type*
 
 ```ts
-type AgentMessagesOverrides = { [K in keyof AgentMessages]?: Partial<AgentMessages[K]>; }
+type AgentMessagesOverrides = { [K in keyof AgentMessages]?: { [P in keyof AgentMessages[K]]?: OverrideEntry<AgentMessages[K][P]>; }; }
 ```
 
 ### `AgentProcessProps`
@@ -4193,7 +4242,7 @@ type ApprovalStatus = 'waiting' | 'material-loading' | 'unavailable' | 'submitti
 
 ### `ArtifactKind`
 
-*type*
+*type* — Artifact kinds the library ships copy and icons for; any other string falls back to the `file` icon and the raw id as its label (ADR-0013 §2).
 
 ```ts
 type ArtifactKind = 'text' | 'markdown' | 'code' | 'image' | 'file' | 'diff' | 'data' | 'unknown'
@@ -4211,6 +4260,14 @@ type ArtifactKind = 'text' | 'markdown' | 'code' | 'image' | 'file' | 'diff' | '
 type ArtifactRenderer = (artifact: ArtifactView) => React.ReactNode
 ```
 
+### `AttachmentKind`
+
+*type* — Attachment kinds the library ships copy and icons for. Any other string is accepted and falls back to the `file` icon and the raw id as its label (ADR-0013 §2).
+
+```ts
+type AttachmentKind = 'image' | 'file' | 'pdf' | 'text' | 'code' | 'unknown'
+```
+
 ### `CapabilityInput`
 
 *type* — Normalised capability: `true` / `false` / `{ enabled, reason }`.
@@ -4226,6 +4283,14 @@ type CapabilityInput = boolean | Capability
 ### `CitationChipProps`
 
 *type* — CitationChip (atlas 32): an inline `<button>` showing "[n]" (or a short label) inside running text. Hover / focus shows a card with title, source type, locator and excerpt; the same text is the button's description (`aria-describedby` → a `hidden` node), so it is never hover-only.
+
+### `CitationSourceType`
+
+*type* — Citation source types the library ships copy and icons for; any other string falls back to the `other` presentation (ADR-0013 §2).
+
+```ts
+type CitationSourceType = 'file' | 'web' | 'code' | 'dataset' | 'message' | 'other'
+```
 
 ### `CodeBlockProps`
 
@@ -4415,6 +4480,14 @@ type GenericToolDetailProps = DetailBase & { detail: DetailOf<'generic'>; output
 type JumpToLatestProps = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'onClick' | 'type'> & { /** At the newest content: the button is hidden. */ atLatest: boolean; unreadCount?: number; onJump: () => void; loading?: boolean; label?: string; }
 ```
 
+### `KnownModelEffort`
+
+*type* — The effort levels `@wzrhine/agent` ships copy for.
+
+```ts
+type KnownModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh'
+```
+
 ### `LedgerActor`
 
 *type*
@@ -4503,12 +4576,20 @@ type MessageRole = 'user' | 'assistant' | 'system' | 'tool'
 type MessageStatus = 'pending' | 'streaming' | 'complete' | 'partial' | 'failed' | 'cancelled' | 'interrupted'
 ```
 
-### `ModelEffort`
+### `ModelCapability`
 
-*type*
+*type* — Model capabilities the library ships copy for; any other string renders as-is (ADR-0013 §2).
 
 ```ts
-type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh'
+type ModelCapability = 'image' | 'video' | 'tools' | 'reasoning' | 'long-context'
+```
+
+### `ModelEffort`
+
+*type* — Reasoning-effort level of a model. The six built-in levels have localised copy in `@wzrhine/agent`; adapters may use any other string (vendor tiers, numeric levels) and supply labels through `ModelEffortOption.label`, the ModelPicker `effortLabels` prop or the `composer.effort` message table (ADR-0013 §1).
+
+```ts
+type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh' | (string & {})
 ```
 
 ### `MultiFileDiffProps`
@@ -4541,7 +4622,7 @@ type QuestionAnswerState = 'answered' | 'skipped' | 'unanswered'
 
 ### `QuestionKind`
 
-*type*
+*type* — Question kinds with built-in controls. Any other string is a custom kind: QuestionnaireCard renders it through `renderQuestion` (falling back to a free-text answer) and treats its answer as text-like (ADR-0013 §4).
 
 ```ts
 type QuestionKind = 'single' | 'multiple' | 'text'
@@ -4561,6 +4642,22 @@ type QuestionnaireStatus = 'waiting' | 'drafting' | 'saving' | 'submit-pending' 
 
 ```ts
 type QuestionToolDetailProps = DetailBase & { detail: DetailOf<'question'>; }
+```
+
+### `RecoveryKind`
+
+*type* — Recovery kinds the library ships copy and tones for; any other string falls back to the `unknown` presentation (warning tone + question glyph) and renders its raw id (ADR-0013 §2).
+
+```ts
+type RecoveryKind = | 'retryable' | 'save-pending' | 'cancel-unconfirmed' | 'tool-side-effects' | 'timeout' | 'offline' | 'unknown' | 'resolved'
+```
+
+### `ReferenceKind`
+
+*type* — Reference kinds the library ships copy and icons for; any other string is accepted and falls back to the `custom` presentation (ADR-0013 §2).
+
+```ts
+type ReferenceKind = 'file' | 'folder' | 'skill' | 'command' | 'url' | 'symbol' | 'custom'
 ```
 
 ### `ReferencePickerProps`
@@ -4647,10 +4744,6 @@ type StatusGlyphName = | 'idle' | 'pending' | 'thinking' | 'tool' | 'waiting-use
 
 *type*
 
-```ts
-type StatusGlyphProps = Omit<React.SVGProps<SVGSVGElement>, 'children'> & { name: StatusGlyphName; tone?: AgentTone; /** Ongoing activity: CSS adds a slow breathing halo (`data-loop` from the caller). */ active?: boolean; }
-```
-
 ### `SubAgentCardProps`
 
 *type*
@@ -4721,7 +4814,7 @@ type TerminalSessionStatus = | 'opening' | 'running' | 'waiting-input' | 'idle' 
 
 ### `ToolCategory`
 
-*type* — Read / write / execute / network / model: drives the category chip and icon.
+*type* — Read / write / execute / network / model: drives the category chip and icon. The listed values have built-in copy + icon; any other string falls back to the `other` icon and renders its raw id as the chip label (ADR-0013 §2).
 
 ```ts
 type ToolCategory = 'read' | 'write' | 'execute' | 'network' | 'model' | 'agent' | 'question' | 'other'
