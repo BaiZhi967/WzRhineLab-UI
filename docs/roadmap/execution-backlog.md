@@ -13,7 +13,7 @@
 | ID | 任务 | 前置 | 主要输出 | 状态 |
 | --- | --- | --- | --- | --- |
 | P030-00 | 范围／包／状态合同 | 0.2.0 基线 | 架构决策、API 草案、状态与焦点合同 | Accepted（2026-10-15 维护者确认；证据 [ADR-0014](../development/adr/0014-patterns-package-and-p030-scope.md)、[0.3.0 合同](0.3.0-contracts.md)） |
-| P030-01 | 包或 recipe 基础 | P030-00 | 可构建入口、样式、文案、验证接入 | Planned |
+| P030-01 | 包或 recipe 基础 | P030-00 | 可构建入口、样式、文案、验证接入 | Accepted（2026-10-15；证据 `packages/patterns`、`docs/api/patterns.md`、verify/size/license/docs 全绿） |
 | P030-02 | ListDetail | P030-01 | 主从布局、窄宽切换、滚动与焦点 | Planned |
 | P030-03 | InspectorPanel | P030-01、02 的布局合同 | 属性检查区域及覆盖层组合示例 | Planned |
 | P030-04 | 查询／条件／视图 | P030-01 | QueryToolbar、AppliedFilters、ViewSwitcher | Planned |
@@ -42,12 +42,12 @@
 
 ### P030-01 基础接入
 
-- [ ] 按 P030-00 决策创建必要目录、公开入口、文案与作用域样式；不创建空包占位。
-- [ ] 若有新包，接入 workspace 构建、dist/types、显式样式、API、license、size 和真实安装验证。
-- [ ] 若选择 recipes，确定唯一示例位置和 imports，不复制组件库实现。
-- [ ] 建立最小可运行 fixture，覆盖 Provider、双主题／密度与实例隔离。
+- [x] 按 P030-00 决策创建必要目录、公开入口、文案与作用域样式；不创建空包占位。（`packages/patterns`：`PatternsMessagesProvider` 机制 + `listDetail` 首个文案命名空间 + `styles.css` 入口；组件自 P030-02 起加入，同一工作包内不出现空包状态）
+- [x] 若有新包，接入 workspace 构建、dist/types、显式样式、API、license、size 和真实安装验证。（六个脚本接入 + `docs/api/patterns.md` 8 导出 + size 预算 + license 审计 + `pnpm verify:packages` 全绿：tarball 检查、'use client' 边界、干净消费者安装、严格类型检查、SSR、Vite 构建）
+- [ ] 若选择 recipes，确定唯一示例位置和 imports，不复制组件库实现。（三个页面 recipes 属 P030-07，届时确定唯一位置）
+- [x] 建立最小可运行 fixture，覆盖 Provider、双主题／密度与实例隔离。（`test/pattern-messages.test.tsx` 13 测试：双表键一致、默认回落、覆盖优先、嵌套合并、兄弟隔离、RhineProvider 双主题×双密度组合；另有包边界测试 6 项）
 
-验收：最小消费者能通过公开入口运行和构建；未载入页面模式的基础入口不引入重型新依赖。
+验收：最小消费者能通过公开入口运行和构建；未载入页面模式的基础入口不引入重型新依赖。（通过：patterns-full 0.46 KB gzip，仅依赖 tokens；`@wzrhine/react` 为 peer）
 
 ## 4. 布局与集合实施
 
