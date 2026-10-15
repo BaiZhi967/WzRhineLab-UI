@@ -8,6 +8,8 @@
 
 当前已发布能力继续以源码、公开 API 和实际验收为准。规划中的组件、包和能力均未因文档合并自动变成已支持。
 
+独立动效增强 [MFX-01](roadmap/requests/WZUI-REQ-20261015-001.md) 已在 0.3.0 开发线上实现，状态为 LibraryValidating，尚未发布；包含真实锚点、受控进度与三个可选效果，不代表 R6 重渲染能力已经交付。范围与检查见 [ADR-0015](development/adr/0015-effect-geometry-and-progress.md) 和[验收记录](development/acceptance/2026-10-15-mfx-01.md)。
+
 ## 当前基线
 
 0.2.0 已完成既定版本开发与发布，是 npm 上的发布基线。当前仓库整体处于 0.3.0 开发线：六包（tokens、react、patterns、effects、agent-core、agent）的 `package.json` 均为 `0.3.0`，其中 patterns 为本版新增、尚未发布；基础原语、复杂交互、工作台、数据呈现、领域 UI、样式与发布工程作为后续起点。

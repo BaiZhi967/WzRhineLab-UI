@@ -9,7 +9,7 @@ API report 是导出符号的机器生成真值；本目录是按设计族整理
 | --- | ---: | ---: | ---: |
 | `@wzrhine/react` | 294 | 83 | 52 |
 | `@wzrhine/patterns` | 32 | 9 | 8（页面模式，见第 11 层） |
-| `@wzrhine/effects` | 24 | 5 | 5（独立效果包） |
+| `@wzrhine/effects` | 48 | 8 | 6 个视觉效果 + 2 个展示／计时工具 |
 | `@wzrhine/agent-core` | 138 | — | —（框架无关契约与纯函数） |
 | `@wzrhine/agent` | 400 | 87 | 46 个概念图册条目对应的实际实现族 |
 
@@ -25,7 +25,7 @@ API report 是导出符号的机器生成真值；本目录是按设计族整理
 5. **Feedback**：Alert、Callout、EmptyState、Skeleton、Spinner。文档：[Alert · Callout · EmptyState · Skeleton · Spinner](../components/feedback.md)。
 6. **Rhine Patterns（原创科研/档案语法）**：RecordHeader、ArchiveCard（`motion="identity"` 与 ArchiveIdentity）。文档：[Archive patterns](../components/archive.md)。SectionIndex 已在 0.3.0 实现于 `@wzrhine/patterns`（见第 11 层）。InstrumentPanel、ExperimentTimeline **未实现**，仍是 Rhine domain patterns 的候选（[总路线](../roadmap/README.md)）。
 7. **Provider 与 Motion**：RhineProvider、`usePortalContainer`；预设 `duration` / `ease` / `transition` / `pressScale` / `fadePresence`；`useRhineMotion`、`resolveMotion`、MotionSpeed / `useMotionSpeed`、MotionPresence、RhineMotionGroup / RhineMotionItem、`useMotionLifecycle`、`useLatestGuard`、`usePageVisible`、`useInViewport`。文档：[RhineProvider](../components/overlays.md)、[MOTION.md](MOTION.md)、[MOTION-PATTERNS.md](MOTION-PATTERNS.md)、[ADR-0007](../development/adr/0007-motion-ownership.md)。
-8. **Optional showcase（`@wzrhine/effects`，ADR-0004）**：ArchiveReveal、ScanSurface、OrbitalDiagram、MotionPlayer、EffectClock。文档：[Showcase effects](../components/effects.md)。不得让普通组件依赖 WebGL。
+8. **Optional showcase（`@wzrhine/effects`，ADR-0004／ADR-0015）**：视觉效果 ArchiveReveal、ScanSurface、OrbitalDiagram、CalibrationReticle、SignalPath、AnnotationTrace；工具 MotionPlayer、EffectClock。共享能力包括 useElementAnchors、createEffectPath、effectAnchorPoint、toEffectPoint、useEffectProgress。后三个视觉效果及共享底座为 MFX-01 开发线增量，已实现、尚未发布。文档：[Showcase effects](../components/effects.md)、[效果底座与扩展](../components/effect-foundations.md)。不得让普通组件依赖 WebGL。
 
 9. **Advanced interaction（M12，[ADR-0010](../development/adr/0010-m12-agent-ui-plan.md)）**：Collapsible、Accordion / AccordionItem、Slider、NumberField、ContextMenu、Combobox、CommandPalette、FileDropZone、SplitButton、ScrollArea。文档：[Advanced interaction](../components/advanced.md)、[Combobox · CommandPalette · FileDropZone](../components/command.md)。
 10. **Agent UI（独立包 `@wzrhine/agent` + `@wzrhine/agent-core`，M12；`@wzrhine/agent` API report 有 84 个组件导出）**：工作台（AgentShell、AgentHeader、ConversationList、AgentSidePane…）、消息与过程（MessageList、AgentMessage、MessagePart、ThinkingBlock、AgentProcess、RunStatus…）、工具（ToolActivity、ToolRecord、CodeModeToolTree、DiffPreview、11 类工具专项详情…）、Composer（Composer、MentionMenu、SlashCommandMenu、ModelPicker、PermissionPicker…）、人工干预（ApprovalPanel、QuestionnaireCard、ErrorRecoveryNotice、GrantList）、工作区与产物（PersistentTerminal、SubAgentCard、ContextUsage、ArtifactCard、FilePreview…）。文档：[Shell](../components/agent-shell.md)、[Message](../components/agent-message.md)、[Tools](../components/agent-tools.md)、[Composer](../components/agent-composer.md)、[Intervention](../components/agent-intervention.md)、[Workspace](../components/agent-workspace.md)；契约 [ADR-0011](../development/adr/0011-agent-contracts.md)，动效 [ADR-0012](../development/adr/0012-agent-motion.md)。

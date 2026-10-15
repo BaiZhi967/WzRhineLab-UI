@@ -24,7 +24,8 @@
 | [agent-entrance](#agent-entrance) | 已实现（M12） | motion/react `opacity` / `y` / `scale` | AgentEntrance（消息、工具行、干预卡） |
 | [agent-spark / agent-breathe](#agent-spark--agent-breathe) | 已实现（M12） | CSS `@keyframes`（`[data-loop='running']`） | AgentSpark、运行中状态字形 |
 | [icon-swap](#icon-swap) | 已实现（M12） | motion/react `opacity` | SendStopButton |
-| beam | **未实现（M11）** | — | — |
+| anchored signal / annotation / calibration | 已实现（MFX-01，未发布） | motion/react MotionValue + 实际元素测量 | SignalPath、AnnotationTrace、CalibrationReticle；见 [底座合同](../development/adr/0015-effect-geometry-and-progress.md) |
+| beam | MFX-01 提前实现轻量路径子集；完整渲染实验仍延期 | — | 不含粒子或图布局 |
 | particle-field | **未实现（M11）** | Canvas 2D | — |
 | shader-surface | **未实现（M11）** | WebGL | — |
 
@@ -157,7 +158,9 @@
 - 许可证和来源：原创。M9 的 Skeleton / Spinner 组件合入后已按 ADR-0006 §7 与本条复核（ADR-0007 §1 所有权表同步更新）；Button、DataTable、Stat 改由它们渲染后，既有视觉基线组件区域零差异（M9 验收记录）。
 
 ## beam
-未实现（M11）。规划用途：表达两个节点之间的数据流。进入条件见规划 §8。
+MFX-01 已实现轻量 DOM/SVG 子集（尚未发布）：SignalPath 连接真实元素锚点，提供静态关系线与受控的单次进度；AnnotationTrace 复用相同底座。内容与任务状态由宿主提供，动画不代表执行成功。减动直接目标，隐藏／离屏暂停，反向从当前值接续；详细合同、触发、清理与几何验证见 [效果底座](../components/effect-foundations.md) 和 [ADR-0015](../development/adr/0015-effect-geometry-and-progress.md)。
+
+高成本 renderer、粒子、shader 与图布局不属于该子集，仍按 R6 独立评估，不因轻量连线完成而视为整个 Rendering Lab 已交付。
 
 ## particle-field
 未实现（M11）。Canvas 2D，需满足规划 §8 的全部 12 条（DOM fallback、减动、可见性暂停、DPR、context loss、独立 bundle 等）。

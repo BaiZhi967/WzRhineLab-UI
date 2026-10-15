@@ -20,7 +20,7 @@
 - **两组件体系**：`@wzrhine/react`（83 个组件，交互底座 Base UI）与 `@wzrhine/agent`（87 个 Agent UI 组件：工作台、会话流、composer、工具调用、审批干预、终端、产物预览）。
 - **可组合的页面模式**：`@wzrhine/patterns`（8 个组件）把主从布局、查询工具区、批量选择、资源网格与章节索引做成受控模式——查询、选择与详情状态全部留在宿主，宽窄形态按容器可用空间决定而非全局窗口宽度。
 - **框架无关的 Agent 契约**：`@wzrhine/agent-core` 用 view-model 与纯函数描述会话 / 运行 / 工具 / 审批，不依赖 React，可在任意框架或 Node 中使用；UI 层只做渲染——view-model 进、actions 出。
-- **干净的包工程**：入口无 CSS 副作用、样式显式导入；支持 tree-shaking（只引 `Button` 的体积为全量入口的 1.4%）；三浏览器内核 E2E、视觉回归基线、体积预算与 tarball 真实安装验证构成发布门禁。
+- **干净的包工程**：入口无 CSS 副作用、样式显式导入；支持 tree-shaking（只引 `Button` 的体积约为全量入口的 1.5%）；三浏览器内核 E2E、视觉回归基线、体积预算与 tarball 真实安装验证构成发布门禁。
 
 ## 包
 
@@ -29,12 +29,12 @@
 | [`@wzrhine/tokens`](https://www.npmjs.com/package/@wzrhine/tokens) | 设计令牌：`--rl-*` CSS 变量、类型化清单、对比度工具 | 34 |
 | [`@wzrhine/react`](https://www.npmjs.com/package/@wzrhine/react) | React 组件库（83 个组件，Base UI 底座） | 294 |
 | [`@wzrhine/patterns`](docs/components/patterns.md) | 页面模式（8 个组件）：主从布局、属性检查、查询工具区、已应用条件、视图切换、批量选择、资源网格、章节索引 | 32 |
-| [`@wzrhine/effects`](https://www.npmjs.com/package/@wzrhine/effects) | 可选展示动效：解密 / 扫描 / 轨道 / 动效播放器 | 24 |
+| [`@wzrhine/effects`](docs/components/effects.md) | 可选展示动效：解密 / 扫描 / 轨道 / 仪器对准 / 关系传导 / 标注线；共享几何与进度、动效播放器 | 48 |
 | [`@wzrhine/agent-core`](https://www.npmjs.com/package/@wzrhine/agent-core) | 框架无关 Agent 契约：view-model 与纯函数 | 138 |
 | [`@wzrhine/agent`](https://www.npmjs.com/package/@wzrhine/agent) | Agent UI 组件（87 个组件） | 400 |
 
 导出数字来自自动生成的 [API reports](docs/README.md#额外资料与导入)，完整签名以 [docs/api/](docs/api) 为准。
-六个包同属 0.3.0 开发版本线。npm 上的发布基线是 0.2.0（tokens / react / effects / agent-core / agent 自 0.2.0 起已发布）；`@wzrhine/patterns` 是 0.3.0 新增包，库侧已实现并通过门禁，**尚未发布**。0.3.0 定版后六包一起发布。
+六个包同属 0.3.0 开发版本线。npm 上的发布基线是 0.2.0（tokens / react / effects / agent-core / agent 自 0.2.0 起已发布）；`@wzrhine/patterns` 是 0.3.0 新增包，库侧已实现并通过门禁，**尚未发布**。MFX-01 的三个新效果及共享底座也属于本开发线，**尚未发布**，不能据本表从 npm 0.2.0 调用；使用与支持边界见[效果底座](docs/components/effect-foundations.md)。0.3.0 定版后六包一起发布。
 
 ## 快速开始
 
