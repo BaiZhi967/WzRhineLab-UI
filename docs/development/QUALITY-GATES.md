@@ -23,10 +23,16 @@
 - [x] 有自动化测试证明回归范围；未运行不得填「通过」（M13 / 0.2.0 定版：tokens 247 / agent-core 24 / react 511 / effects 48 / agent 499 单测，共 1329；Showcase E2E 与视觉基线见 [M13 验收记录](acceptance/2026-10-13-m13-wpi-ui.md)的跨内核结果；验收记录只列真实执行过的命令）
 
 ## G3 — Release
-- [x] 公开许可证确认（MIT，2026-10-12 由维护者选定；仓库根与六个可发布包各一份 `LICENSE`，`license` 字段与 `pnpm license:audit` 白名单一致：17 个运行时依赖 = MIT 16 + 0BSD 1），第三方字体/图片/图标权利核对（✅ 无内置字体文件；图标为原创 SVG，Showcase 的 Lucide 基础层只在 [THIRD-PARTY-LICENSES.md](THIRD-PARTY-LICENSES.md) 登记、不进入 npm 包）
+- [x] 公开许可证确认（MIT，2026-10-12 由维护者选定；仓库根与当时五个可发布包各一份 `LICENSE`，`license` 字段与 `pnpm license:audit` 白名单一致：17 个运行时依赖 = MIT 16 + 0BSD 1），第三方字体/图片/图标权利核对（✅ 无内置字体文件；图标为原创 SVG，Showcase 的 Lucide 基础层只在 [THIRD-PARTY-LICENSES.md](THIRD-PARTY-LICENSES.md) 登记、不进入 npm 包）
 - [x] npm exports/CSS sideEffects/ESM 类型声明测试（`pnpm verify:packages`，M5）
 - [x] 示例与包版本匹配、changelog 更新（五个包同一版本线，各自 CHANGELOG 已定版 0.2.0；示例应用以 `workspace:*` 引用，`pnpm check` 构建它们）
 - [x] 视觉回归基线（`pnpm test:visual`；M6 建立 31 张，M9 后 74 张，M13 后 `apps/docs/e2e/visual/__screenshots__/win32` 共 124 张，110 个对照用例，Chromium on Windows）与升级指南（[UPGRADING.md](UPGRADING.md)）
+
+0.3.0 开发线上的增量（2026-10-15 实测，不改写上面按 0.2.0 定版核对的记录）：
+- 六个可发布包各一份 `LICENSE`（新增 `packages/patterns/LICENSE`），并由 `pnpm verify:packages` 断言包目录与 tarball 内都存在。
+- 六包 `package.json` 与根 `release:dry` 均为 `0.3.0`；各包 CHANGELOG 仍为 `## [Unreleased]`，定版时改标题。0.2.0 定版后 `packages/` 下只有 patterns 有改动，故其余五包的 `[Unreleased]` 为空是事实而非遗漏。
+- 视觉回归基线 121 项对照用例全部通过（基线在 P030 期间因环境漂移整体重建）。
+- showcase e2e chromium 639 过 / 0 失败（patterns、recipes 两页已纳入 axe、五宽度溢出与减动门禁）；firefox / webkit 的全量并发跑在本机间歇失败且失败用例每次不同，均落在既有页面、单独重跑通过，未取得全绿全量记录。
 - [x] 主题契约冻结（`@wzrhine/tokens` 的 `publicTokens`，测试保证与 CSS 一致，M6）
 - [x] 手动 CI（如获授权）与本地验收记录（未启用 CI；本地 `pnpm release:check` 与验收记录）
 - [x] semver 破坏性变更和迁移说明（CHANGELOG「破坏性」条目附迁移步骤；`pnpm api:check` 暴露 API 变化）

@@ -1,6 +1,6 @@
 # @wzrhine/react · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.2.0，共 294 个导出（83 components，19 functions & hooks，8 constants，31 interfaces，153 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 294 个导出（83 components，19 functions & hooks，8 constants，31 interfaces，153 types）。
 
 ## Components
 

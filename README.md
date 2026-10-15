@@ -34,7 +34,7 @@
 | [`@wzrhine/agent`](https://www.npmjs.com/package/@wzrhine/agent) | Agent UI 组件（87 个组件） | 400 |
 
 导出数字来自自动生成的 [API reports](docs/README.md#额外资料与导入)，完整签名以 [docs/api/](docs/api) 为准。
-`@wzrhine/patterns` 是 0.3.0 新增包，库侧已实现并通过门禁，**尚未发布到 npm**；其余五个包自 0.2.0 起已发布。
+六个包同属 0.3.0 开发版本线。npm 上的发布基线是 0.2.0（tokens / react / effects / agent-core / agent 自 0.2.0 起已发布）；`@wzrhine/patterns` 是 0.3.0 新增包，库侧已实现并通过门禁，**尚未发布**。0.3.0 定版后六包一起发布。
 
 ## 快速开始
 

@@ -1,6 +1,6 @@
 # @wzrhine/agent-core · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.2.0，共 138 个导出（32 functions & hooks，9 constants，58 interfaces，39 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 138 个导出（32 functions & hooks，9 constants，58 interfaces，39 types）。
 
 ## Functions & hooks
 

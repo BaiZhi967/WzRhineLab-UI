@@ -1,6 +1,6 @@
 # @wzrhine/effects · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.2.0，共 24 个导出（5 components，9 functions & hooks，5 interfaces，5 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 24 个导出（5 components，9 functions & hooks，5 interfaces，5 types）。
 
 ## Components
 

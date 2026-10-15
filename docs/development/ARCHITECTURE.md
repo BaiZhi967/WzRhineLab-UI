@@ -93,4 +93,4 @@ packages/react/src/
 - M3 起先配置 workflow_dispatch 手动触发，再根据资源与权限决定是否开放 PR 自动检查。
   - 现状（2026-10-14，M13 后）：有一个经维护者批准的 `.github/workflows/pages.yml`，只做 Showcase → GitHub Pages 部署（`apps/docs`、`packages` 或 lockfile 变化时触发，另有 `workflow_dispatch`），**不运行测试、也不发布 npm**。测试门禁仍是本地的 `pnpm release:check` 与三内核 E2E，结果写入验收记录；新增或改动任何 workflow 都需维护者批准（AGENTS.md）。
 - 首次推送不包含私有凭证、官方游戏截图、字体安装包、未授权素材。
-- License：2026-10-12 定为 MIT（版权人 WhiteZhi）。仓库根与六个可发布包各有一份 `LICENSE`，七个 `package.json` 的 `license` 字段均为 `"MIT"`；其中五个包自 2026-10-12 起已发布到 public npm，`patterns` 随 0.3.0 发布。
+- License：2026-10-12 定为 MIT（版权人 WhiteZhi），当时的五个可发布包各有一份 `LICENSE` 并自同日发布到 public npm（最新发布版本 0.2.0）。0.3.0 新增 `@wzrhine/patterns` 后为六份，七个 `package.json` 的 `license` 字段均为 `"MIT"`；patterns 随 0.3.0 一同发布。

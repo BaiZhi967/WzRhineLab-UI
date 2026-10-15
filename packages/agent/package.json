@@ -1,6 +1,6 @@
 {
   "name": "@wzrhine/agent",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "license": "MIT",
   "description": "Agent UI components for WzRhineLab UI: workbench shell, conversations, messages, composer, tools, approvals, questionnaires, terminals, artifacts and agent motion. View-models in, actions out; no runtime, transport or SDK dependency.",
   "type": "module",

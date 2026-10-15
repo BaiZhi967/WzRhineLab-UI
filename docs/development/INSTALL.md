@@ -1,6 +1,6 @@
 # INSTALL · 安装、导出与样式导入
 
-`tokens`、`react`、`effects`、`agent-core`、`agent` 自 2026-10-12 起已发布到 public npm；`@wzrhine/patterns` 是 0.3.0 新增包，库侧已完成但**尚未发布**。在本仓库内通过 `workspace:*` 引用即可试用，示例应用就是这样接入的。
+`tokens`、`react`、`effects`、`agent-core`、`agent` 自 2026-10-12 起已发布到 public npm，最新发布版本为 0.2.0；`@wzrhine/patterns` 是 0.3.0 新增包，库侧已完成但**尚未发布**。六个包同属 0.3.0 开发线，定版后一起发布。在本仓库内通过 `workspace:*` 引用即可试用，示例应用就是这样接入的。
 
 ## 1. 安装
 | 包 | 用途 | 依赖（随包安装） | peer（由使用方安装） |
@@ -19,7 +19,7 @@ pnpm add @wzrhine/effects           # 可选，展示动效
 pnpm add @wzrhine/agent @wzrhine/agent-core   # 可选，Agent UI
 ```
 
-只支持 React 19（ADR-0008 §1）。各包同一版本线，请一起升级（[UPGRADING.md](UPGRADING.md)）；`patterns` 自 0.3.0 起加入该版本线。
+只支持 React 19（ADR-0008 §1）。六个包同一版本线，请一起升级（[UPGRADING.md](UPGRADING.md)）；`patterns` 自 0.3.0 起进入该版本线。
 
 ## 2. 导出
 发布产物只提供 ESM（`dist/*.js` + `.d.ts` + source map），`sideEffects` 只声明 CSS。
