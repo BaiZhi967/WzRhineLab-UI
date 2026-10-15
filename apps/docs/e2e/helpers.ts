@@ -37,6 +37,8 @@ export const routes = [
   { name: 'archive', hash: '/#/archive' },
   { name: 'data', hash: '/#/archive/data' },
   { name: 'scenarios', hash: '/#/archive/scenarios' },
+  { name: 'patterns', hash: '/#/patterns' },
+  { name: 'recipes', hash: '/#/recipes' },
 ] as const;
 
 export const widths = [320, 390, 768, 1280, 1920] as const;
