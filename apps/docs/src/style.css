@@ -2099,3 +2099,147 @@ body,
 .recipes-notes dt { font-weight: 600; font-size: 0.85em; color: var(--rl-fg-muted); }
 .recipes-notes dd { margin: 0; font-size: 0.9em; }
 .recipes-hint { color: var(--rl-fg-muted); font-size: 0.85em; }
+
+.rl-demo-detail-marker-slot { position: relative; height: var(--rl-border-width-strong); min-width: 0; pointer-events: none; }
+.rl-demo-detail-marker { position: absolute; inset: 0; }
+.rl-demo-detail-marker > span { display: block; width: var(--rl-space-12); max-width: 100%; height: 100%; background: var(--rl-accent); }
+
+/* MFX-01 recipes: optional instrument and real-node examples, never global chrome. */
+.rl-demo-instrument {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+  align-items: center;
+  gap: var(--rl-space-8);
+  min-width: 0;
+  padding: var(--rl-space-6);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-surface);
+}
+
+.rl-demo-instrument__copy {
+  display: grid;
+  align-content: start;
+  gap: var(--rl-space-4);
+  min-width: 0;
+}
+
+.rl-demo-instrument__copy .sc-eyebrow { margin: 0; flex-wrap: wrap; }
+.rl-demo-instrument__title { font: var(--rl-type-heading-2); overflow-wrap: anywhere; }
+.rl-demo-instrument__description { max-width: 52ch; font: var(--rl-type-body-sm); color: var(--rl-fg-muted); }
+.rl-demo-instrument__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--rl-space-3); }
+.rl-demo-instrument__figure { display: grid; justify-items: center; gap: var(--rl-space-3); min-width: 0; }
+.rl-demo-instrument__drawing {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: 22rem;
+  aspect-ratio: 1;
+  background: var(--rl-bg-canvas);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-sm);
+}
+
+.rl-demo-instrument__reticle { display: block; width: 100%; height: auto; }
+.rl-demo-instrument__caption { font: var(--rl-type-mono); color: var(--rl-fg-muted); text-align: center; overflow-wrap: anywhere; }
+
+.rl-demo-signature-stage { display: grid; min-width: 0; gap: var(--rl-space-3); }
+.rl-demo-signature-stage--reticle { position: relative; place-items: center; }
+.rl-demo-signature-reticle { display: block; width: 100%; max-width: 16rem; height: auto; }
+.rl-demo-signature-target { position: absolute; display: grid; justify-items: center; gap: var(--rl-space-2); pointer-events: none; }
+.rl-demo-signature-target__cross { width: var(--rl-space-6); height: var(--rl-space-6); border: var(--rl-border-width) solid var(--rl-border-strong); transform: rotate(45deg); }
+.rl-demo-signature-target__label { font: var(--rl-type-meta); color: var(--rl-fg-muted); }
+.rl-demo-signature-path-host {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr);
+  align-items: end;
+  gap: var(--rl-space-4);
+  min-width: 0;
+  padding-block-end: var(--rl-space-16);
+}
+
+.rl-demo-signature-path-node,
+.rl-demo-signature-trace-node,
+.rl-demo-signature-trace-note {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: start;
+  gap: var(--rl-space-2);
+  min-width: 0;
+  padding: var(--rl-space-2);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-bg-surface);
+  font: var(--rl-type-body-sm);
+  overflow-wrap: anywhere;
+}
+
+.rl-demo-signature-trace-host {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: var(--rl-space-8);
+  min-width: 0;
+  padding-block: var(--rl-space-6);
+}
+
+.rl-demo-signature-trace-note { margin-block-start: var(--rl-space-8); }
+.rl-demo-signal-geometry-shell { display: grid; gap: var(--rl-space-4); min-width: 0; }
+.rl-demo-signal-geometry-controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--rl-space-3); min-width: 0; }
+.rl-demo-signal-geometry-range { display: grid; gap: var(--rl-space-2); flex: 1 1 12rem; min-width: 0; }
+.rl-demo-signal-geometry-range input { display: block; width: 100%; min-width: 0; height: var(--rl-control-height-sm); margin: 0; accent-color: var(--rl-accent-text); }
+.rl-demo-signal-geometry-toggle { display: flex; align-items: center; gap: var(--rl-space-2); font: var(--rl-type-body-sm); }
+.rl-demo-signal-geometry-toggle input { accent-color: var(--rl-accent-text); }
+.rl-demo-signal-geometry-frame { min-width: 0; width: 100%; }
+.rl-demo-signal-geometry {
+  position: relative;
+  container: rl-demo-signal-geometry / inline-size;
+  min-width: 0;
+  max-width: 100%;
+  padding: var(--rl-space-3) var(--rl-space-2) var(--rl-space-12);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-canvas);
+}
+
+/* Keep all bottom anchors on the same rail at wide widths; content controls card height. */
+.rl-demo-signal-geometry__nodes {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.5fr) minmax(0, 0.8fr);
+  align-items: end;
+  gap: var(--rl-space-6);
+  min-width: 0;
+}
+
+.rl-demo-signal-node {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--rl-space-2);
+  min-width: 0;
+  padding: var(--rl-space-3);
+  border: var(--rl-border-width) solid var(--rl-border-strong);
+  border-radius: var(--rl-radius-xs);
+  background: var(--rl-bg-surface);
+  font: var(--rl-type-body-sm);
+  overflow-wrap: anywhere;
+}
+
+.rl-demo-signal-node strong { font-weight: 600; }
+.rl-demo-signal-node > span:last-child { color: var(--rl-fg-muted); }
+.rl-demo-signal-overlay { position: absolute; inset: 0; pointer-events: none; }
+
+/* Two rows keep text readable without a page-level horizontal scroller. The lower card sits
+   left of the right-hand endpoint, leaving a clear vertical corridor for the second rail. */
+@container rl-demo-signal-geometry (max-width: 30rem) {
+  .rl-demo-signal-geometry__nodes { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--rl-space-12) var(--rl-space-3); }
+  .rl-demo-signal-node { padding: var(--rl-space-1); }
+}
+
+@media (max-width: 719px) {
+  .rl-demo-instrument { grid-template-columns: minmax(0, 1fr); gap: var(--rl-space-6); padding: var(--rl-space-4); }
+}

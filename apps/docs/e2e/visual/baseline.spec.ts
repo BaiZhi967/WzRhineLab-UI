@@ -40,6 +40,7 @@ const pages = [
 async function open(page: Page, hash: string) {
   await page.goto(hash);
   await expect(page.locator('h1')).toBeVisible();
+  if (hash === '/#/') await expect(page.getByRole('region', { name: 'Research instrument', exact: true })).toBeVisible();
   // Web fonts are not bundled; wait for the system stack to settle before capturing.
   await page.evaluate(() => document.fonts.ready);
 }

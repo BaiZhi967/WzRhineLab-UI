@@ -10,6 +10,7 @@ import {
   Form,
   Input,
   MetadataList,
+  MotionPresence,
   Pagination,
   RecordHeader,
   Select,
@@ -205,6 +206,13 @@ function DetailRecipe() {
             </Alert>
           ) : row ? (
             <div className="recipes-stack">
+              {/* Only this aria-hidden marker remounts. Record identity, links and focus are never
+                  kept in an exit layer or gated on animation completion. */}
+              <div className="rl-demo-detail-marker-slot" aria-hidden="true">
+                <MotionPresence key={row.id} show initial preset="fade" className="rl-demo-detail-marker">
+                  <span />
+                </MotionPresence>
+              </div>
               <RecordHeader
                 recordId={row.id}
                 title={row.title}
@@ -343,6 +351,7 @@ export function RecipesPage() {
               ['状态所有者', 'detailId 与 phase 由页面持有；窄宽模式由 ListDetail 容器测量。'],
               ['键盘路径', '列表条目打开 → 焦点进详情返回入口 → 章节锚点导航 → 返回回到触发条目。'],
               ['错误与取消', 'loading 用 Skeleton + aria-busy；错误用 Alert + 重试；不把旧内容伪装成新记录。'],
+              ['局部动效', 'MotionPresence 只作用于 aria-hidden 的视觉标记；标题、章节链接即时更新，不保留旧控件、不延迟焦点。'],
               ['不适用场景', '需要拖拽分栏、多窗格停靠或第二个应用外壳时不适用。'],
             ]}
           />

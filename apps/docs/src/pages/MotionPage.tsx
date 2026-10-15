@@ -267,7 +267,7 @@ export function MotionPage() {
             </table>
           </div>
           <p className="sc-small">
-            beam、particle-field、shader-surface 尚未实现（M11 Rendering Lab 评估）。{' '}
+            MFX-01 已实现轻量关系传导、标注线与仪器对准（开发线，尚未发布）；particle-field、shader-surface 仍属 R6 渲染实验。{' '}
             <a className="sc-doc-link" href={patternCatalogue}>阅读完整模式目录（docs/design/MOTION-PATTERNS.md）</a>
           </p>
         </Specimen>

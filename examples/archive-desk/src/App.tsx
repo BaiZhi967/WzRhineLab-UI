@@ -13,6 +13,7 @@ import {
   MenuItem,
   MenuSeparator,
   MetadataList,
+  MotionPresence,
   RecordHeader,
   RhineProvider,
   Select,
@@ -234,6 +235,13 @@ function Desk({ theme, onThemeChange }: { theme: RhineTheme; onThemeChange: (t: 
         </section>
 
         <section className="desk__detail" aria-label="记录详情">
+          {/* Purely visual feedback: replacing the marker never retains the old record's
+              actions, waits for an exit, shares a layoutId, or moves the keyboard focus. */}
+          <div className="rl-desk-detail-marker-slot" aria-hidden="true">
+            <MotionPresence key={active?.id ?? 'empty'} show={active !== null} initial preset="fade" className="rl-desk-detail-marker">
+              <span />
+            </MotionPresence>
+          </div>
           {active ? (
             <>
               <RecordHeader
