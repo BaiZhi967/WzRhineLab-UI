@@ -27,11 +27,12 @@ import {
   useToast,
 } from '@wzrhine/react';
 import type { DataTableColumn, RhineTheme, SortState } from '@wzrhine/react';
-import { statusLabel, statusTone, useRecords } from './store';
+import { statusLabel, statusTone } from './store';
+import { DeskStoreProvider, useRecords, useResetAll } from './DeskStore';
 import type { DeskRecord, NewRecord, RecordStatus } from './store';
 import { ResourcesPage } from './ResourcesPage';
 import { SettingsPage } from './SettingsPage';
-import { defaultFaults, useResources } from './resources';
+import { defaultFaults } from './resources';
 import type { Faults } from './resources';
 
 /**
@@ -67,6 +68,10 @@ function CreateDialog({ onCreate }: { onCreate: (input: NewRecord) => void }) {
   const titleError = submitted && !draft.title.trim() ? '请填写标题。' : undefined;
   const disciplineError = submitted && !draft.discipline.trim() ? '请填写学科。' : undefined;
   const set = (key: keyof NewRecord) => (value: string) => setDraft((d) => ({ ...d, [key]: value }));
+  // Without this the dialog's own close button is the first tabbable element, so a keyboard user
+  // opening the form lands on 「关闭」 instead of the first field (the showcase form dialog does
+  // the same — see DialogPage's initialFocus).
+  const titleRef = React.useRef<HTMLInputElement | null>(null);
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -90,10 +95,11 @@ function CreateDialog({ onCreate }: { onCreate: (input: NewRecord) => void }) {
       eyebrow="ARCHIVE / NEW"
       title="新建档案记录"
       description="编号由系统按顺序分配，新记录以草稿状态保存。"
+      initialFocus={titleRef}
     >
       <form id="create-form" className="desk-form" onSubmit={submit} noValidate>
         <Field label="标题" required error={titleError} invalid={!!titleError}>
-          <Input value={draft.title} onValueChange={set('title')} maxLength={40} required />
+          <Input ref={titleRef} value={draft.title} onValueChange={set('title')} maxLength={40} required />
         </Field>
         <Field label="学科" required error={disciplineError} invalid={!!disciplineError}>
           <Input value={draft.discipline} onValueChange={set('discipline')} maxLength={20} required />
@@ -338,6 +344,15 @@ function Desk({ theme, onThemeChange }: { theme: RhineTheme; onThemeChange: (t: 
 const THEME_KEY = 'wzrhine-example:archive-desk:theme';
 
 export function App() {
+  // The provider owns the data; `DeskPages` consumes it, so the hooks below run inside it.
+  return (
+    <DeskStoreProvider>
+      <DeskPages />
+    </DeskStoreProvider>
+  );
+}
+
+function DeskPages() {
   const [page, setPage] = React.useState<'archives' | 'resources' | 'settings'>('archives');
   const [theme, setTheme] = React.useState<RhineTheme>(() => {
     const saved = window.localStorage.getItem(THEME_KEY);
@@ -346,8 +361,7 @@ export function App() {
   React.useEffect(() => window.localStorage.setItem(THEME_KEY, theme), [theme]);
 
   const [faults, setFaults] = React.useState<Faults>(defaultFaults);
-  const resetResources = useResources().reset;
-  const resetRecords = useRecords().reset;
+  const resetAll = useResetAll();
 
   return (
     <RhineProvider theme={theme} className="desk-root">
@@ -364,14 +378,7 @@ export function App() {
           <ResourcesPage faults={faults} />
         </TabPanel>
         <TabPanel value="settings">
-          <SettingsPage
-            faults={faults}
-            onFaultsChange={setFaults}
-            onResetAll={() => {
-              resetRecords();
-              resetResources();
-            }}
-          />
+          <SettingsPage faults={faults} onFaultsChange={setFaults} onResetAll={resetAll} />
         </TabPanel>
       </Tabs>
     </RhineProvider>

@@ -8,7 +8,7 @@ React + TypeScript + Motion 的原创科研机构／档案风格前端基础平�
 ## 开工前
 - 阅读 `DESIGN.md` 和 `docs/README.md`；根据触及的领域读取 STYLE/MOTION/COMPONENTS/ICONS/ACCESSIBILITY。
 - 当前开发顺序以 `docs/ROADMAP.md` 和 `docs/roadmap/README.md` 为准；任务见 `docs/roadmap/execution-backlog.md`。`docs/planning/` 中旧 M 系列文件保留为历史背景，不继承其过时的开工依赖。
-- 0.2.0 是本次后续规划基线；0.3.0 和新包／组件属于 Planned，未实现前不能声称已支持。
+- 0.2.0 是 npm 发布基线；0.3.0（`@wzrhine/patterns` 与八个页面模式组件）库侧已实现、处于返修验证中，**尚未发布**，当前状态以 `docs/roadmap/execution-backlog.md` 为准。0.4.0 及以后的新包／组件属于 Planned，未实现前不能声称已支持。
 - 在提交之前检查 git diff；不得覆盖别人未提交的修改。
 - 如规范冲突，先提出有据可查的 ADR，不得只按生成概念图覆盖规范。
 

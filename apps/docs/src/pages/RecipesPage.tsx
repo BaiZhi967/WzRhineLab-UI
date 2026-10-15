@@ -15,6 +15,7 @@ import {
   RecordHeader,
   Select,
   Skeleton,
+  StatusBadge,
   Switch,
 } from '@wzrhine/react';
 import type { DataTableColumn } from '@wzrhine/react';
@@ -22,6 +23,7 @@ import {
   AppliedFilters,
   ListDetail,
   QueryToolbar,
+  ResourceGrid,
   SectionIndex,
   SelectionToolbar,
   ViewSwitcher,
@@ -52,28 +54,42 @@ const allRows: ArchiveRow[] = [
   { id: 'ARC-1031', title: '大气沉降物采样记录', category: '样本', year: 2025 },
 ];
 
-const columns: Array<DataTableColumn<ArchiveRow>> = [
-  { key: 'id', header: '编号', rowHeader: true, mono: true },
-  { key: 'title', header: '题名' },
-  { key: 'category', header: '类别' },
-  { key: 'year', header: '年份', align: 'end' },
-];
+/** Categories present in the sample rows; drives the condition chips. */
+const CATEGORIES = [...new Set(allRows.map((row) => row.category))];
+
+function buildColumns(marked: ReadonlySet<string>): Array<DataTableColumn<ArchiveRow>> {
+  return [
+    { key: 'id', header: '编号', rowHeader: true, mono: true },
+    { key: 'title', header: '题名' },
+    { key: 'category', header: '类别' },
+    { key: 'year', header: '年份', align: 'end' },
+    {
+      key: 'marked',
+      header: '标记',
+      cell: (row) => (marked.has(row.id) ? <StatusBadge status="success">已标记</StatusBadge> : null),
+    },
+  ];
+}
 
 /** Recipe 1 · collection page: the caller owns query / filters / view / selection / paging. */
 function CollectionRecipe() {
   const [query, setQuery] = React.useState('');
   const [pending, setPending] = React.useState('');
-  const [filters, setFilters] = React.useState<Array<{ id: string; label: string }>>([]);
+  const [filters, setFilters] = React.useState<Array<{ id: string; label: string; category: string }>>([]);
   const [view, setView] = React.useState<'list' | 'grid'>('list');
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
+  // Result of the batch action, so it is observable in both views.
+  const [marked, setMarked] = React.useState<ReadonlySet<string>>(new Set());
   const [page, setPage] = React.useState(1);
   const pageSize = 5;
 
+  // Conditions carry the field they filter on, so the adapter matches `category` instead of
+  // substring-matching the chip's own label.
   const filtered = React.useMemo(() => {
     const keyword = query.trim();
     return allRows.filter((row) => {
       const hitKeyword = !keyword || row.title.includes(keyword) || row.id.includes(keyword.toUpperCase());
-      const hitFilters = filters.every((filter) => filter.label === '' || row.title.includes(filter.label.split('：')[1] ?? ''));
+      const hitFilters = filters.every((filter) => row.category === filter.category);
       return hitKeyword && hitFilters;
     });
   }, [query, filters]);
@@ -83,11 +99,24 @@ function CollectionRecipe() {
     setQuery(next);
     setPage(1);
   };
+
+  const toolbarRef = React.useRef<HTMLDivElement | null>(null);
+  // Removing the last condition unmounts the region, so the page lands focus on the search box.
+  const returnFocusToSearch = () => {
+    window.requestAnimationFrame(() => {
+      toolbarRef.current?.querySelector<HTMLInputElement>('input[type="search"]')?.focus();
+    });
+  };
+  const removeFilter = (id: string) => {
+    setFilters((prev) => prev.filter((f) => f.id !== id));
+    setPage(1);
+    if (filters.length === 1) returnFocusToSearch();
+  };
   const pageRows = filtered.slice((page - 1) * pageSize, page * pageSize);
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
 
   return (
-    <div className="recipes-stack">
+    <div className="recipes-stack" ref={toolbarRef}>
       <QueryToolbar
         query={query}
         pendingQuery={pending}
@@ -101,12 +130,37 @@ function CollectionRecipe() {
         }}
         resultSummary={<span>共 {filtered.length} 条结果</span>}
       >
-        <Button variant="secondary" size="sm" onClick={() => setFilters((prev) => [...prev, { id: `f${prev.length}`, label: '类别：样本' }])}>
-          加一个类别条件
-        </Button>
+        {/* One chip per category, keyed by the category itself: ids stay stable and unique no
+            matter which chips were removed in between (an index-based id could collide). */}
+        {CATEGORIES.map((category) => (
+          <Button
+            key={category}
+            variant="secondary"
+            size="sm"
+            aria-pressed={filters.some((f) => f.category === category)}
+            onClick={() => {
+              setFilters((prev) =>
+                prev.some((f) => f.category === category)
+                  ? prev.filter((f) => f.category !== category)
+                  : [...prev, { id: `category:${category}`, label: `类别：${category}`, category }],
+              );
+              setPage(1);
+            }}
+          >
+            {category}
+          </Button>
+        ))}
       </QueryToolbar>
       {filters.length > 0 && (
-        <AppliedFilters filters={filters} onRemove={(id) => setFilters((prev) => prev.filter((f) => f.id !== id))} onClearAll={() => setFilters([])} />
+        <AppliedFilters
+          filters={filters}
+          onRemove={removeFilter}
+          onClearAll={() => {
+            setFilters([]);
+            setPage(1);
+            returnFocusToSearch();
+          }}
+        />
       )}
       <div className="recipes-toolbar-row">
         <ViewSwitcher
@@ -124,14 +178,32 @@ function CollectionRecipe() {
             scope="page"
             totalLabel={`当前页 ${pageRows.length} 条 / 已加载 ${filtered.length} 条`}
             onClear={() => setSelected(new Set())}
-            actions={[{ id: 'export', label: '导出所选', onRun: () => {} }]}
+            actions={[
+              {
+                id: 'mark',
+                label: '标记所选',
+                // A real state change, not an empty callback: the marked ids show up in the rows
+                // below. A recipe should demonstrate the whole loop.
+                onRun: () => {
+                  setMarked((prev) => new Set([...prev, ...selected]));
+                  setSelected(new Set());
+                },
+              },
+            ]}
           />
         )}
+        {marked.size > 0 && (
+          <Button variant="ghost" size="sm" onClick={() => setMarked(new Set())}>
+            清除 {marked.size} 条标记
+          </Button>
+        )}
       </div>
+      {/* Both branches are real collections over the same ids, query result and selection set,
+          so switching the view keeps a record identifiable, selectable and openable. */}
       {view === 'list' ? (
         <DataTable
           caption="档案记录"
-          columns={columns}
+          columns={buildColumns(marked)}
           rows={pageRows}
           getRowId={(row) => row.id}
           selectedIds={selected}
@@ -147,30 +219,57 @@ function CollectionRecipe() {
           }
         />
       ) : (
-        <ul className="recipes-grid">
-          {pageRows.map((row) => (
-            <li key={row.id} className="recipes-grid__card">
-              <p className="recipes-grid__id">{row.id}</p>
-              <p className="recipes-grid__title">{row.title}</p>
-              <p className="recipes-grid__meta">{row.category} · {row.year}</p>
-            </li>
-          ))}
-        </ul>
+        <ResourceGrid
+          label="档案记录"
+          items={pageRows}
+          getItemId={(row) => row.id}
+          getItemTitle={(row) => row.title}
+          getItemLabel={(row) => `选择 ${row.title}`}
+          getItemSpec={(row) => ({
+            badge: marked.has(row.id) ? <StatusBadge status="success">已标记</StatusBadge> : undefined,
+            description: `${row.id} · ${row.category} · ${row.year}`,
+          })}
+          selectedIds={selected}
+          onSelectionChange={setSelected}
+          emptyText={query || filters.length ? '没有匹配的记录' : '还没有任何记录'}
+          emptyAction={
+            query || filters.length ? (
+              <Button variant="ghost" size="sm" onClick={() => { commitQuery(''); setFilters([]); }}>
+                清除全部条件
+              </Button>
+            ) : undefined
+          }
+        />
       )}
       <Pagination page={page} pageCount={pageCount} onPageChange={setPage} totalItems={filtered.length} pageSize={pageSize} showStatus />
     </div>
   );
 }
 
-/** Recipe 2 · record detail page: RecordDetail-as-recipe (ADR-0014 §2) over public parts. */
+/**
+ * Recipe 2 · record detail page: RecordDetail-as-recipe (ADR-0014 §2) over public parts.
+ * The simulated read carries a request token and an explicit failure switch, so switching records
+ * quickly cannot let an older response land on a newer one, and the error path is reproducible.
+ */
 function DetailRecipe() {
   const [detailId, setDetailId] = React.useState<string | null>('ARC-1024');
   const [phase, setPhase] = React.useState<'ready' | 'loading' | 'error'>('ready');
+  const [failNext, setFailNext] = React.useState(false);
+  const requestRef = React.useRef(0);
+  const timer = React.useRef<number | undefined>(undefined);
+  React.useEffect(() => () => window.clearTimeout(timer.current), []);
+
   const load = (id: string) => {
+    // Adapter duty: issue the read, drop responses from superseded requests, and only then
+    // report facts back.
+    const token = ++requestRef.current;
     setDetailId(id);
     setPhase('loading');
-    // Adapter duty: fetch, cancel stale responses, and only then report facts back.
-    window.setTimeout(() => setPhase('ready'), 300);
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => {
+      if (requestRef.current !== token) return; // a newer record was opened meanwhile
+      setPhase(failNext ? 'error' : 'ready');
+    }, 300);
   };
   const row = allRows.find((item) => item.id === detailId);
   return (
@@ -183,15 +282,18 @@ function DetailRecipe() {
         listLabel="档案集合"
         detailLabel="档案详情"
         list={
-          <ul className="recipes-list">
-            {allRows.slice(0, 4).map((item) => (
-              <li key={item.id}>
-                <Button variant="ghost" onClick={() => load(item.id)}>
-                  {item.id} · {item.title}
-                </Button>
-              </li>
-            ))}
-          </ul>
+          <div className="recipes-stack">
+            <ul className="recipes-list">
+              {allRows.slice(0, 4).map((item) => (
+                <li key={item.id}>
+                  <Button variant="ghost" onClick={() => load(item.id)}>
+                    {item.id} · {item.title}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+            <Checkbox label="让下一次读取失败（演示错误路径）" checked={failNext} onCheckedChange={setFailNext} />
+          </div>
         }
         detail={
           phase === 'loading' ? (
@@ -202,7 +304,11 @@ function DetailRecipe() {
             </div>
           ) : phase === 'error' ? (
             <Alert tone="danger" title="详情读取失败">
-              <Button variant="secondary" size="sm" onClick={() => setPhase('loading')}>重试</Button>
+              <p className="recipes-hint">取消上面的开关后重试即可成功；旧内容不会被伪装成新记录。</p>
+              {/* Retry re-issues the read instead of parking the UI in `loading` forever. */}
+              <Button variant="secondary" size="sm" onClick={() => detailId && load(detailId)}>
+                重试
+              </Button>
             </Alert>
           ) : row ? (
             <div className="recipes-stack">
@@ -259,16 +365,52 @@ function DetailRecipe() {
 
 type SaveState = 'idle' | 'dirty' | 'saving' | 'saved' | 'error';
 
-/** Recipe 3 · grouped settings page: dirty/saving/saved/error facts, save runs in the adapter. */
+interface SettingsValues {
+  nickname: string;
+  digest: boolean;
+  format: string;
+  showDeleted: boolean;
+}
+
+const initialSettings: SettingsValues = { nickname: '白芷', digest: true, format: 'csv', showDeleted: false };
+
+/**
+ * Recipe 3 · grouped settings page: dirty/saving/saved/error facts, save runs in the adapter.
+ * Every control is controlled and every value round-trips through the committed snapshot, so the
+ * specimen shows the whole save loop rather than a form that only reports "dirty".
+ */
 function SettingsRecipe() {
-  const [nickname, setNickname] = React.useState('白芷');
-  const [digest, setDigest] = React.useState(true);
+  const [committed, setCommitted] = React.useState<SettingsValues>(initialSettings);
+  const [draft, setDraft] = React.useState<SettingsValues>(initialSettings);
   const [state, setState] = React.useState<SaveState>('idle');
+  // Deterministic instead of Math.random(): a specimen whose outcome flips at random cannot be
+  // screenshotted or asserted on. The failure is an explicit, user-visible switch.
+  const [failNext, setFailNext] = React.useState(false);
+  const timer = React.useRef<number | undefined>(undefined);
+  React.useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  const dirty =
+    draft.nickname !== committed.nickname ||
+    draft.digest !== committed.digest ||
+    draft.format !== committed.format ||
+    draft.showDeleted !== committed.showDeleted;
+
+  const set = <K extends keyof SettingsValues>(key: K) => (value: SettingsValues[K]) =>
+    setDraft((prev) => ({ ...prev, [key]: value }));
+
   const save = () => {
     setState('saving');
-    // Adapter duty: persist locally and report success or failure; the UI never marks success itself.
-    window.setTimeout(() => setState(Math.random() > 0.5 ? 'saved' : 'error'), 500);
+    // Adapter duty: persist and report success or failure; the UI never marks success itself.
+    timer.current = window.setTimeout(() => {
+      if (failNext) {
+        setState('error');
+        return;
+      }
+      setCommitted(draft);
+      setState('saved');
+    }, 500);
   };
+
   return (
     <Form
       onSubmit={(event) => {
@@ -277,30 +419,52 @@ function SettingsRecipe() {
       }}
     >
       <div className="recipes-stack">
-        {state === 'saved' && <Alert tone="success" title="设置已保存">本地适配器已写入。</Alert>}
+        {state === 'saved' && !dirty && (
+          <Alert tone="success" title="设置已保存">本地适配器已写入，下方「已保存的值」同步更新。</Alert>
+        )}
         {state === 'error' && (
           <Alert tone="danger" title="保存失败">
+            <p className="recipes-hint">输入未丢失，可直接重试。</p>
             <Button variant="secondary" size="sm" onClick={save}>重试</Button>
           </Alert>
         )}
         <Fieldset legend="偏好">
           <Field label="显示昵称">
-            <Input value={nickname} onChange={(event) => { setNickname(event.target.value); setState('dirty'); }} />
+            <Input value={draft.nickname} onValueChange={set('nickname')} />
           </Field>
           <Field label="结果摘要邮件" description="仅本地演示，不发送任何邮件。">
-            <Switch checked={digest} onCheckedChange={(next) => { setDigest(next); setState('dirty'); }} label="订阅摘要" />
+            <Switch checked={draft.digest} onCheckedChange={set('digest')} label="订阅摘要" />
           </Field>
         </Fieldset>
         <Fieldset legend="数据">
           <Field label="默认导出格式">
-            <Select options={[{ value: 'csv', label: 'CSV' }, { value: 'json', label: 'JSON' }]} value="csv" onValueChange={() => setState('dirty')} />
+            <Select
+              options={[
+                { value: 'csv', label: 'CSV' },
+                { value: 'json', label: 'JSON' },
+              ]}
+              value={draft.format}
+              // Select can report null (cleared); the recipe keeps a concrete default.
+              onValueChange={(value) => set('format')(value ?? 'csv')}
+            />
           </Field>
-          <Checkbox label="在列表中显示已删除记录" onCheckedChange={() => setState('dirty')} checked={false} />
+          <Checkbox label="在列表中显示已删除记录" checked={draft.showDeleted} onCheckedChange={set('showDeleted')} />
+        </Fieldset>
+        <Fieldset legend="演示开关">
+          <Checkbox label="让下一次保存失败（演示错误路径）" checked={failNext} onCheckedChange={setFailNext} />
         </Fieldset>
         <div className="recipes-toolbar-row">
-          <Button type="submit" disabled={state === 'saving'}>{state === 'saving' ? '保存中…' : '保存设置'}</Button>
-          {state === 'dirty' && <span className="recipes-hint">有未保存的修改；离开前请保存。</span>}
+          {/* loading keeps the button focusable and blocks repeat submits. */}
+          <Button type="submit" loading={state === 'saving'}>
+            {state === 'saving' ? '保存中…' : '保存设置'}
+          </Button>
+          {dirty && state !== 'saving' && <span className="recipes-hint">有未保存的修改；离开前请保存。</span>}
         </div>
+        <RecipeNotes
+          items={[
+            ['已保存的值', `${committed.nickname} · 摘要 ${committed.digest ? '开' : '关'} · ${committed.format.toUpperCase()} · 已删除记录 ${committed.showDeleted ? '显示' : '隐藏'}`],
+          ]}
+        />
       </div>
     </Form>
   );
@@ -327,6 +491,12 @@ export function RecipesPage() {
           三个可运行页面组合，只使用公开入口：集合页、记录详情页（RecordDetail 按 ADR-0014 以 recipe 形态交付）与分组设置页。
           每个 recipe 标注数据适配点与状态所有者——查询、选择、保存与存储都留在宿主一侧。
         </p>
+        <p>
+          <strong>交互范围</strong>：查询、条件、视图切换、选择、批量标记、分页、详情读取（含错误与重试）与设置保存都是
+          <strong>真实可操作</strong>的，结果在页面内可见。以下部分是<strong>样张</strong>：数据为固定示例行，
+          「保存」只写入本页内存而不落盘（真实宿主在此接持久化），异步读取用定时器模拟并带请求令牌。
+          需要观察错误路径时，用各 recipe 内的「让下一次…失败」开关——不使用随机结果，以便截图与断言可复现。
+        </p>
       </PageHeader>
       <SpecimenGrid>
         <Specimen id="recipe-collection" index="01" title="Recipe · 集合页" span="full" note="查询、条件、视图、选择与分页全部由调用者持有；查询变更重置页码">
@@ -336,8 +506,9 @@ export function RecipesPage() {
               ['用途', '档案／资源集合的查找与批量操作起点。'],
               ['数据适配点', 'filtered/pageRows 计算即 adapter：真实宿主换成请求 + 取消 + 去重。'],
               ['状态所有者', '页面组件（query、filters、view、selected、page）；组件只回传意图。'],
-              ['键盘路径', '搜索框提交 → 条件移除落相邻焦点 → 视图方向键切换 → 表格行选择 → 分页保持焦点。'],
-              ['错误与取消', '空结果与无记录分开呈现（EmptyState）；错误态在 adapter 层注入后由表格状态呈现。'],
+              ['键盘路径', '搜索框提交 → 条件移除落相邻焦点（最后一项移除后回搜索框）→ 视图方向键切换 → 选择 → 分页保持焦点。'],
+              ['批量动作', '「标记所选」真实改变数据：标记在列表与网格两种视图中都可见，可再清除。'],
+              ['错误与取消', '空结果与无记录分开呈现（EmptyState）；条件 ID 按类别生成，移除中间项后不会重复。'],
               ['不适用场景', '需要服务端全结果选择、无限滚动或虚拟化时另行立项。'],
             ]}
           />
@@ -347,10 +518,10 @@ export function RecipesPage() {
           <RecipeNotes
             items={[
               ['用途', '从集合进入记录详情、章节定位并返回。'],
-              ['数据适配点', 'load(id) 演示异步详情；真实宿主需取消过期响应，避免旧记录覆盖新记录。'],
+              ['数据适配点', 'load(id) 用定时器模拟异步详情，并带请求令牌：快速切换记录时旧响应被丢弃。'],
               ['状态所有者', 'detailId 与 phase 由页面持有；窄宽模式由 ListDetail 容器测量。'],
               ['键盘路径', '列表条目打开 → 焦点进详情返回入口 → 章节锚点导航 → 返回回到触发条目。'],
-              ['错误与取消', 'loading 用 Skeleton + aria-busy；错误用 Alert + 重试；不把旧内容伪装成新记录。'],
+              ['错误与取消', 'loading 用 Skeleton + aria-busy；错误用 Alert + 重试（重试真的重发）；不把旧内容伪装成新记录。开关控制失败，不用随机值。'],
               ['局部动效', 'MotionPresence 只作用于 aria-hidden 的视觉标记；标题、章节链接即时更新，不保留旧控件、不延迟焦点。'],
               ['不适用场景', '需要拖拽分栏、多窗格停靠或第二个应用外壳时不适用。'],
             ]}
@@ -361,9 +532,9 @@ export function RecipesPage() {
           <RecipeNotes
             items={[
               ['用途', '本地偏好与显示设置的分组表单。'],
-              ['数据适配点', 'save() 为本地演示适配器；真实宿主接持久化并回报成功/失败。'],
-              ['状态所有者', '表单值与保存事实由页面持有；UI 不把输入直接标成已保存。'],
-              ['键盘路径', '标准表单 Tab 顺序；提交按钮 saving 期间禁用防重复提交。'],
+              ['数据适配点', 'save() 只写入本页内存（样张，不落盘）；真实宿主接持久化并回报成功/失败。archive-desk 的设置页演示了真实落盘版本。'],
+              ['状态所有者', '草稿与已提交快照分开；dirty 由两者比较得出，UI 不把输入直接标成已保存。'],
+              ['键盘路径', '标准表单 Tab 顺序；提交按钮 saving 期间保持可聚焦（aria-disabled）并防重复提交。'],
               ['错误与取消', '失败显示 Alert + 重试，输入不丢失；离开保护由宿主路由层实现。'],
               ['不适用场景', '涉及凭据、权限或服务端会话的设置不放入本 recipe。'],
             ]}

@@ -213,17 +213,120 @@ test('resources: grid loads the sample dataset, filters, selects and opens the i
   await expect(grid.getByRole('checkbox', { name: /选择 潮间带照片/ }).first()).toBeChecked();
 });
 
-test('resources: error injection surfaces a retryable failure, reset restores the demo data', async ({ page }) => {
+// The checks below assert end results (rendered collection, re-issued request, reloaded storage)
+// rather than "a control changed state" — the gap the 2026-10-15 audit called out in §6.3.
+
+test('resources: the view switch changes the actual collection and keeps selection identity', async ({ page }) => {
+  await page.getByRole('tab', { name: '资源' }).click();
+  const grid = page.getByRole('list', { name: '资源集合' });
+  await expect(grid).toBeVisible();
+
+  // Select a known resource in grid view.
+  const target = grid.getByRole('checkbox', { name: /选择 潮间带照片/ }).first();
+  await target.check();
+  const selectedLabel = await target.getAttribute('aria-label');
+  await expect(page.getByRole('toolbar', { name: '批量操作' })).toContainText('已选 1 条');
+
+  // Switching to list renders a table, not just a checked radio (audit F01).
+  await page.getByRole('radio', { name: '列表' }).click();
+  await expect(grid).toHaveCount(0);
+  const table = page.getByRole('table', { name: '资源集合' });
+  await expect(table).toBeVisible();
+  await expect(table.getByRole('row')).not.toHaveCount(0);
+
+  // The same resource is identifiable, still selected, and openable from the list view.
+  const rowCheckbox = table.getByRole('checkbox', { name: selectedLabel! }).first();
+  await expect(rowCheckbox).toBeChecked();
+  await expect(page.getByRole('toolbar', { name: '批量操作' })).toContainText('已选 1 条');
+  await table.getByRole('button', { name: /潮间带照片/ }).first().click();
+  await expect(page.getByRole('region', { name: '资源属性' })).toContainText('RES-');
+
+  // Back to grid: the selection survives the round trip.
+  await page.getByRole('radio', { name: '网格' }).click();
+  await expect(page.getByRole('list', { name: '资源集合' })).toBeVisible();
+  await expect(page.getByRole('checkbox', { name: selectedLabel! }).first()).toBeChecked();
+});
+
+test('resources: retry re-issues the read, still failing while the fault is on', async ({ page }) => {
   await page.getByRole('tab', { name: '设置' }).click();
   await page.getByRole('radio', { name: '错误（读取/保存失败）' }).check();
   await page.getByRole('tab', { name: '资源' }).click();
   await expect(page.getByText('注入的读取失败（演示错误恢复）。')).toBeVisible();
+
+  // Clicking retry (the entry the old test never used) must re-run the read: with the fault still
+  // injected it fails again, which is what proves a second request happened (audit F02).
+  const retry = page.getByRole('button', { name: '重试' });
+  await retry.click();
+  await expect(page.getByText('注入的读取失败（演示错误恢复）。')).toBeVisible();
+
+  // Clearing the fault lets the read succeed again (the effect re-runs on the faults change).
   await page.getByRole('tab', { name: '设置' }).click();
   await page.getByRole('radio', { name: '无（正常）' }).check();
   await page.getByRole('tab', { name: '资源' }).click();
   await expect(page.getByRole('list', { name: '资源集合' }).getByRole('checkbox').first()).toBeVisible();
+  await expect(page.getByText('注入的读取失败（演示错误恢复）。')).toHaveCount(0);
+});
+
+test('resources: retry puts the collection back into a loading state (a request really goes out)', async ({ page }) => {
+  // "Still failing after retry" would also hold if retry did nothing at all. A slow failure makes
+  // the re-issued request observable: pressing retry has to show the busy state again (audit F02).
+  await page.getByRole('tab', { name: '设置' }).click();
+  await page.getByRole('radio', { name: '错误（读取/保存失败）' }).check();
+  await page.getByRole('spinbutton', { name: '延迟毫秒' }).fill('2000');
+  await page.getByRole('tab', { name: '资源' }).click();
+
+  const grid = page.getByRole('list', { name: '资源集合' });
+  await expect(grid).toHaveAttribute('aria-busy', 'true');
+  await expect(page.getByText('注入的读取失败（演示错误恢复）。')).toBeVisible({ timeout: 10_000 });
+  await expect(grid).not.toHaveAttribute('aria-busy', 'true');
+
+  // The page stays mounted, so only the retry click can start another read.
+  await page.getByRole('button', { name: '重试' }).click();
+  await expect(grid).toHaveAttribute('aria-busy', 'true');
+  await expect(page.getByText('注入的读取失败（演示错误恢复）。')).toBeVisible({ timeout: 10_000 });
+});
+
+test('settings: a saved preference survives a reload; a failed write keeps the input', async ({ page }) => {
+  await page.getByRole('tab', { name: '设置' }).click();
+  const nickname = page.getByRole('textbox', { name: '显示昵称' });
+  await nickname.fill('审计复验昵称');
+  await page.getByRole('button', { name: '保存设置' }).click();
+  await expect(page.getByText('已写入本机浏览器（重新加载后保留）。')).toBeVisible();
+
+  // The claim is checked against storage, not against the message (audit F03).
+  await page.reload();
+  await page.getByRole('tab', { name: '设置' }).click();
+  await expect(page.getByRole('textbox', { name: '显示昵称' })).toHaveValue('审计复验昵称');
+
+  // A failing write must report the failure and keep the edit.
+  await page.getByRole('radio', { name: '错误（读取/保存失败）' }).check();
+  await page.getByRole('textbox', { name: '显示昵称' }).fill('不应被保存');
+  await page.getByRole('button', { name: '保存设置' }).click();
+  await expect(page.getByText('注入的保存失败（演示错误恢复）。')).toBeVisible();
+  await expect(page.getByRole('textbox', { name: '显示昵称' })).toHaveValue('不应被保存');
+  await page.reload();
+  await page.getByRole('tab', { name: '设置' }).click();
+  await expect(page.getByRole('textbox', { name: '显示昵称' })).toHaveValue('审计复验昵称');
+});
+
+test('settings: restoring demo data discards a real change (not just the untouched seed)', async ({ page }) => {
+  // Make a real change first: resetting pristine seed data can pass without working (audit F04).
+  await page.getByRole('button', { name: '新建记录' }).click();
+  const dialog = page.getByRole('dialog', { name: '新建档案记录' });
+  await dialog.getByRole('textbox', { name: /标题/ }).fill('审计复验记录');
+  await dialog.getByRole('textbox', { name: /学科/ }).fill('物理学');
+  await dialog.getByRole('button', { name: '保存草稿' }).click();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByText('1001 / 1001 条')).toBeVisible();
+
   await page.getByRole('tab', { name: '设置' }).click();
   await page.getByRole('button', { name: '恢复演示数据' }).click();
   await page.getByRole('tab', { name: '档案' }).click();
   await expect(page.getByText('1000 / 1000 条')).toBeVisible();
+
+  // And it is really gone from storage, not just from this render.
+  await page.reload();
+  await expect(page.getByText('1000 / 1000 条')).toBeVisible();
+  await page.getByRole('searchbox').fill('审计复验记录');
+  await expect(page.getByText('0 / 1000 条')).toBeVisible();
 });

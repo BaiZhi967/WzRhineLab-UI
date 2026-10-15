@@ -37,6 +37,20 @@ export interface ListDetailProps {
   className?: string;
 }
 
+/**
+ * Can focus still be handed back to this control? `isConnected` alone is not enough: the trigger
+ * may have been filtered out of the list, hidden, or disabled while the detail was open, and
+ * focusing it would either fail silently or strand focus somewhere invisible (§4.1).
+ */
+function isRestorable(node: HTMLElement): boolean {
+  if (!node.isConnected) return false;
+  if (node.hasAttribute('disabled') || node.getAttribute('aria-hidden') === 'true') return false;
+  // `inert` and `hidden` remove a control from the focus order even when it still has layout.
+  if (node.closest('[inert],[hidden]')) return false;
+  const style = window.getComputedStyle(node);
+  return style.visibility !== 'hidden' && style.display !== 'none';
+}
+
 export const ListDetail = React.forwardRef<HTMLDivElement, ListDetailProps>(function ListDetail(
   {
     list,
@@ -96,20 +110,22 @@ export const ListDetail = React.forwardRef<HTMLDivElement, ListDetailProps>(func
   const hideList = resolvedMode === 'overlay' && open;
 
   // --- focus contract (§4.1–4.2) --------------------------------------------
-  // While closed, remember the last focused element inside the list (focusin keeps the record
-  // current regardless of render timing). Closing restores it, or falls back to the list region
-  // when the trigger was filtered out or removed in the meantime.
+  // Remember the last focused element inside the list (focusin keeps the record current
+  // regardless of render timing). Closing restores it, or falls back to the list region when the
+  // trigger was filtered out or removed in the meantime. The listener stays attached while a
+  // detail is open too: in split mode both regions are reachable, so the user can move back into
+  // the list, and that newer control is the one closing should return to.
   const lastListFocus = React.useRef<HTMLElement | null>(null);
   React.useEffect(() => {
     const listNode = listRef.current;
-    if (!listNode || open) return;
+    if (!listNode) return;
     const onFocusIn = () => {
       const active = document.activeElement;
       if (active instanceof HTMLElement && listNode.contains(active)) lastListFocus.current = active;
     };
     listNode.addEventListener('focusin', onFocusIn);
     return () => listNode.removeEventListener('focusin', onFocusIn);
-  }, [open]);
+  }, []);
 
   // Opening focuses the explicit back entry; the switch itself is synchronous, so a rapid
   // record change (id changes while already open) neither queues nor replays a stale focus job.
@@ -123,9 +139,22 @@ export const ListDetail = React.forwardRef<HTMLDivElement, ListDetailProps>(func
       return;
     }
     const restore = lastListFocus.current;
-    if (restore && restore.isConnected && !restore.hasAttribute('disabled')) restore.focus();
+    if (restore && isRestorable(restore)) restore.focus();
     else listRef.current?.focus();
   }, [open]);
+
+  // Split → overlay while a detail is open: the list becomes hidden and inert, so focus sitting
+  // inside it would be stranded on an invisible control (or dropped to <body> by `inert`). Move
+  // it to the back entry, which is the only way out of the overlay (§4.1–4.2).
+  const wasHiddenRef = React.useRef(hideList);
+  React.useLayoutEffect(() => {
+    const wasHidden = wasHiddenRef.current;
+    wasHiddenRef.current = hideList;
+    if (!hideList || wasHidden) return;
+    const listNode = listRef.current;
+    const active = document.activeElement;
+    if (listNode && active instanceof HTMLElement && listNode.contains(active)) backRef.current?.focus();
+  }, [hideList]);
 
   const requestClose = () => {
     if (!isControlled) setUncontrolledId(null);

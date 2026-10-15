@@ -1,6 +1,7 @@
 import * as React from 'react';
 import '@wzrhine/patterns/styles.css';
-import { Button, Pagination, Text, useToast } from '@wzrhine/react';
+import { Button, DataTable, Pagination, Text, useToast } from '@wzrhine/react';
+import type { DataTableColumn } from '@wzrhine/react';
 import {
   AppliedFilters,
   InspectorPanel,
@@ -10,7 +11,8 @@ import {
   SelectionToolbar,
   ViewSwitcher,
 } from '@wzrhine/patterns';
-import { runQuery, thumbnailSrc, useResources } from './resources';
+import { runQuery, thumbnailSrc } from './resources';
+import { useResources } from './DeskStore';
 import type { DeskResource, Faults } from './resources';
 
 /**
@@ -27,6 +29,26 @@ type GridState =
   | { phase: 'error'; message: string }
   | { phase: 'ready'; items: DeskResource[]; stale: boolean };
 
+/** List-view columns. The title cell carries the open entry, so selecting and opening stay
+ *  separate interactions in both views (contracts §6.7). */
+function buildResourceColumns(onOpen: (id: string) => void): Array<DataTableColumn<DeskResource>> {
+  return [
+    { key: 'id', header: '编号', rowHeader: true, mono: true, width: 'var(--rl-space-24)' },
+    {
+      key: 'title',
+      header: '名称',
+      cell: (resource) => (
+        <Button variant="ghost" size="sm" className="resources__open" onClick={() => onOpen(resource.id)}>
+          {resource.title}
+        </Button>
+      ),
+    },
+    { key: 'category', header: '类别' },
+    { key: 'station', header: '站点' },
+    { key: 'megapixels', header: '规格', align: 'end' },
+  ];
+}
+
 export function ResourcesPage({ faults }: { faults: Faults }) {
   const toast = useToast();
   const { items } = useResources();
@@ -39,6 +61,11 @@ export function ResourcesPage({ faults }: { faults: Faults }) {
   const [page, setPage] = React.useState(1);
   const [state, setState] = React.useState<GridState>({ phase: 'loading' });
   const requestRef = React.useRef(0);
+  // An explicit revision is what makes "retry" re-issue the same query (audit F02). Writing the
+  // query back to its own value is not a refresh signal: React skips an update to an identical
+  // value, so the read effect never re-ran.
+  const [retryTick, setRetryTick] = React.useState(0);
+  const refetch = React.useCallback(() => setRetryTick((tick) => tick + 1), []);
 
   // Adapter: filter → page through the fault-injected pipeline; only the latest token may land.
   React.useEffect(() => {
@@ -67,7 +94,7 @@ export function ResourcesPage({ faults }: { faults: Faults }) {
       },
     );
     return () => handle.cancel();
-  }, [items, query, category, faults, toast]);
+  }, [items, query, category, faults, toast, retryTick]);
 
   const ready = state.phase === 'ready' ? state : null;
   const pageCount = Math.max(1, Math.ceil((ready?.items.length ?? 0) / PAGE_SIZE));
@@ -78,10 +105,21 @@ export function ResourcesPage({ faults }: { faults: Faults }) {
   const inspected = ready?.items.find((resource) => resource.id === inspectorId) ?? null;
 
   const filters = category === '全部' ? [] : [{ id: 'category', label: `类别：${category}` }];
+  const gridStatus = state.phase === 'loading' ? 'loading' : state.phase === 'error' ? 'error' : 'ready';
+  const resourceColumns = React.useMemo(() => buildResourceColumns(setInspectorId), []);
+
+  // The applied-conditions region unmounts with its last chip, so focus goes back to the search
+  // box — the stable entry of the toolbar.
+  const toolbarRef = React.useRef<HTMLDivElement | null>(null);
+  const returnFocusToSearch = () => {
+    window.requestAnimationFrame(() => {
+      toolbarRef.current?.querySelector<HTMLInputElement>('input[type="search"]')?.focus();
+    });
+  };
 
   return (
     <div className="desk resources">
-      <div className="resources__toolbar">
+      <div className="resources__toolbar" ref={toolbarRef}>
         <QueryToolbar
           query={query}
           pendingQuery={pending}
@@ -99,7 +137,21 @@ export function ResourcesPage({ faults }: { faults: Faults }) {
             类别：{category}
           </Button>
         </QueryToolbar>
-        {filters.length > 0 && <AppliedFilters filters={filters} onRemove={() => setCategory('全部')} />}
+        {/* Removing the last condition unmounts the region, so the caller has to land focus — the
+            component has nothing focusable left to hand it to (contracts §4.2, audit §5.2). */}
+        {filters.length > 0 && (
+          <AppliedFilters
+            filters={filters}
+            onRemove={() => {
+              setCategory('全部');
+              returnFocusToSearch();
+            }}
+            onClearAll={() => {
+              setCategory('全部');
+              returnFocusToSearch();
+            }}
+          />
+        )}
         <div className="resources__row">
           <ViewSwitcher
             label="视图"
@@ -132,25 +184,45 @@ export function ResourcesPage({ faults }: { faults: Faults }) {
         detailLabel="资源属性"
         list={
           <div className="resources__list">
-            <ResourceGrid
-              label="资源集合"
-              items={pageItems}
-              getItemId={(resource) => resource.id}
-              getItemTitle={(resource) => resource.title}
-              getItemLabel={(resource) => `选择 ${resource.title}`}
-              getItemSpec={(resource) => ({
-                badge: resource.broken ? <span>图片缺失示例</span> : undefined,
-                description: `${resource.station} · ${resource.megapixels}`,
-                thumbnail: { src: thumbnailSrc(resource), alt: resource.title, width: 320, height: 240 },
-              })}
-              selectedIds={selected}
-              onSelectionChange={setSelected}
-              onOpen={setInspectorId}
-              status={state.phase === 'loading' ? 'loading' : state.phase === 'error' ? 'error' : 'ready'}
-              loadingRows={8}
-              onRetry={() => setQuery((prev) => `${prev}`)}
-              emptyText={query || filters.length > 0 ? '没有符合条件的资源。' : '暂无资源。'}
-            />
+            {/* `view` drives the actual collection, not just the control (audit F01). Both
+                branches share the record ids, the query result and the selection set, so the
+                same resource stays identifiable, selectable and openable across a switch. */}
+            {view === 'grid' ? (
+              <ResourceGrid
+                label="资源集合"
+                items={pageItems}
+                getItemId={(resource) => resource.id}
+                getItemTitle={(resource) => resource.title}
+                getItemLabel={(resource) => `选择 ${resource.title}`}
+                getItemSpec={(resource) => ({
+                  badge: resource.broken ? <span>图片缺失示例</span> : undefined,
+                  description: `${resource.station} · ${resource.megapixels}`,
+                  thumbnail: { src: thumbnailSrc(resource), alt: resource.title, width: 320, height: 240 },
+                })}
+                selectedIds={selected}
+                onSelectionChange={setSelected}
+                onOpen={setInspectorId}
+                status={gridStatus}
+                loadingRows={8}
+                onRetry={refetch}
+                emptyText={query || filters.length > 0 ? '没有符合条件的资源。' : '暂无资源。'}
+              />
+            ) : (
+              <DataTable
+                caption="资源集合"
+                hideCaption
+                columns={resourceColumns}
+                rows={pageItems}
+                getRowId={(resource) => resource.id}
+                getRowLabel={(resource) => `选择 ${resource.title}`}
+                selectedIds={selected}
+                onSelectionChange={setSelected}
+                status={gridStatus}
+                loadingRows={8}
+                onRetry={refetch}
+                emptyText={query || filters.length > 0 ? '没有符合条件的资源。' : '暂无资源。'}
+              />
+            )}
             {state.phase === 'error' && <p className="resources__error-note">{state.message}</p>}
             <Pagination page={page} pageCount={pageCount} onPageChange={setPage} totalItems={ready?.items.length ?? 0} pageSize={PAGE_SIZE} showStatus />
           </div>

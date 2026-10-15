@@ -69,7 +69,11 @@ function load(): DeskResource[] {
   }
 }
 
-export function useResources() {
+/**
+ * Creates the resource store. Call this once, from `DeskStoreProvider`; pages read the shared
+ * instance via `useResources()` (audit F04 — it used to be a per-caller hook over one key).
+ */
+export function createResourcesStore() {
   const [items, setItems] = React.useState<DeskResource[]>(load);
   React.useEffect(() => {
     try {
@@ -79,7 +83,7 @@ export function useResources() {
     }
   }, [items]);
   const reset = React.useCallback(() => setItems(generateResources()), []);
-  return { items, reset };
+  return React.useMemo(() => ({ items, reset }), [items, reset]);
 }
 
 // ---------------------------------------------------------------------------
@@ -111,7 +115,9 @@ export function runQuery<T>(
   onError: (message: string) => void,
 ): QueryHandle {
   const captured = compute();
-  const wait = faults.mode === 'delay' || faults.mode === 'stale' ? faults.delayMs : 60;
+  // The error mode honours `delayMs` too, so a failure is also observably in flight — that makes
+  // "retry really re-issued the read" testable instead of inferring it from the end state.
+  const wait = faults.mode === 'none' ? 60 : faults.delayMs;
   const timer = window.setTimeout(() => {
     if (faults.mode === 'error') {
       onError('注入的读取失败（演示错误恢复）。');

@@ -70,7 +70,27 @@ export function ResourceGrid<Item>({
   className,
 }: ResourceGridProps<Item>) {
   const messages = usePatternsMessages();
-  const [failedSrc, setFailedSrc] = React.useState<ReadonlySet<string>>(new Set());
+  // Failures are keyed by item id and hold the src that failed, so swapping in a working src
+  // clears the placeholder. Keyed by URL in a `Set` it would instead grow for the lifetime of the
+  // grid and keep degrading any item that ever reused that URL.
+  const [failedById, setFailedById] = React.useState<ReadonlyMap<string, string>>(new Map());
+
+  // Drop entries for items that are no longer rendered: the map stays bounded by what is on
+  // screen rather than by everything ever loaded.
+  const liveIds = React.useMemo(() => new Set(items.map(getItemId)), [items, getItemId]);
+  React.useEffect(() => {
+    setFailedById((prev) => {
+      if (prev.size === 0) return prev;
+      const next = new Map([...prev].filter(([id]) => liveIds.has(id)));
+      return next.size === prev.size ? prev : next;
+    });
+  }, [liveIds]);
+
+  const markFailed = (id: string, src: string) =>
+    setFailedById((prev) => {
+      if (prev.get(id) === src) return prev;
+      return new Map(prev).set(id, src);
+    });
 
   const toggle = (id: string) => {
     if (!onSelectionChange) return;
@@ -114,7 +134,8 @@ export function ResourceGrid<Item>({
           const name =
             getItemLabel?.(item) ?? (typeof title === 'string' ? title : undefined) ?? messages.resourceGrid.item;
           const thumbnail = spec.thumbnail;
-          const failed = thumbnail != null && failedSrc.has(thumbnail.src);
+          // Degraded only while the *current* src is the one that failed for this item.
+          const failed = thumbnail != null && failedById.get(id) === thumbnail.src;
           return (
             <li key={id} className="rl-resource-grid__card" data-selected={selectedIds?.has(id) || undefined}>
               <div className="rl-resource-grid__select">
@@ -148,7 +169,7 @@ export function ResourceGrid<Item>({
                       width={thumbnail.width ?? 640}
                       height={thumbnail.height ?? 480}
                       loading="lazy"
-                      onError={() => setFailedSrc((prev) => new Set(prev).add(thumbnail.src))}
+                      onError={() => markFailed(id, thumbnail.src)}
                     />
                   </span>
                 ))}

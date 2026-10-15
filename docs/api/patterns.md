@@ -367,7 +367,7 @@ const patternsZhCN: PatternsMessages
 
 ### `SectionIndexSection`
 
-*interface* — Section index (0.3.0-contracts §4.3 / §6.8): named anchors for record detail sections with a passive current-section highlight. Anchors keep working without JS; with JS, navigation scrolls inside the explicit scroll root (nearest scrolling ancestor by default) honoring a fixed header offset, and smooth scrolling is opt-in and disabled under reduced motion. Observation never steals focus — active navigation is `aria-current`, user intent is a separate event. The observer disconnects on unmount and re-targets when the sections change; ids are caller-owned and stable (never generated here).
+*interface* — Section index (0.3.0-contracts §4.3 / §6.8): named anchors for record detail sections with a passive current-section highlight. Anchors keep working without JS; with JS, a plain click is enhanced into a scroll inside the explicit scroll root (nearest scrolling ancestor by default, the viewport when there is none) honoring a fixed header offset, and smooth scrolling is opt-in and disabled under reduced motion. Modified clicks (Ctrl/Meta/Shift/Alt, middle button) are left to the browser, so "open in new tab" still works. Observation never steals focus — the active section is `aria-current`, user intent is a separate event.
 
 | Member | Type | Description |
 | --- | --- | --- |

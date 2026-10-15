@@ -221,6 +221,88 @@ describe('ListDetail focus', () => {
     const list = screen.getByRole('region', { name: patternsZhCN.listDetail.list });
     expect(list).toHaveAttribute('tabindex', '-1');
   });
+
+  // 0.3.0-contracts §4.1–4.2: in split mode both regions are reachable, so the user can move back
+  // into the list while a detail is open. Narrowing the container then hides the list and makes it
+  // inert — focus must not be stranded there.
+  it('narrowing while a detail is open moves focus out of the list', async () => {
+    const user = userEvent.setup();
+    render(<Harness mode="auto" records={['ARC-1', 'ARC-2']} />);
+    fireContainerWidth(900);
+
+    await user.click(screen.getByRole('button', { name: '打开 ARC-1' }));
+    const back = screen.getByRole('button', { name: patternsZhCN.listDetail.back });
+    expect(back).toHaveFocus();
+
+    // Split mode: the user tabs back into the list and focuses another trigger.
+    const otherTrigger = screen.getByRole('button', { name: '打开 ARC-2' });
+    act(() => otherTrigger.focus());
+    expect(otherTrigger).toHaveFocus();
+
+    fireContainerWidth(400);
+    expect(screen.getByRole('region', { name: patternsZhCN.listDetail.list })).toHaveAttribute('inert');
+    expect(back).toHaveFocus();
+    expect(document.body).not.toHaveFocus();
+  });
+
+  it('narrowing leaves focus alone when it is already outside the list', async () => {
+    const user = userEvent.setup();
+    render(<Harness mode="auto" />);
+    fireContainerWidth(900);
+    await user.click(screen.getByRole('button', { name: '打开 ARC-1' }));
+    const detailControl = screen.getByTestId('detail-body');
+    detailControl.setAttribute('tabindex', '-1');
+    act(() => detailControl.focus());
+
+    fireContainerWidth(400);
+    expect(detailControl).toHaveFocus();
+  });
+
+  it('closing returns focus to the control the user last focused in the list', async () => {
+    const user = userEvent.setup();
+    render(<Harness mode="split" records={['ARC-1', 'ARC-2']} />);
+    await user.click(screen.getByRole('button', { name: '打开 ARC-1' }));
+    // Split mode keeps the list reachable: focusing another trigger makes it the newer target.
+    const second = screen.getByRole('button', { name: '打开 ARC-2' });
+    act(() => second.focus());
+    await user.click(screen.getByRole('button', { name: patternsZhCN.listDetail.back }));
+    expect(second).toHaveFocus();
+  });
+
+  it('closing skips a trigger that was hidden while the detail was open', async () => {
+    const user = userEvent.setup();
+    function HidingTriggerHarness() {
+      const [openId, setOpenId] = React.useState<string | null>(null);
+      // Latches on open and never clears: the trigger is still hidden at the moment the detail
+      // closes, which is what the fallback has to cope with (a filter re-run, not a re-render).
+      const [hidden, setHidden] = React.useState(false);
+      return (
+        <ListDetail
+          mode="split"
+          detailId={openId}
+          onDetailChange={setOpenId}
+          list={
+            <button
+              type="button"
+              // Still connected and not disabled, but no longer focusable.
+              style={{ visibility: hidden ? 'hidden' : 'visible' }}
+              onClick={() => {
+                setOpenId('ARC-1');
+                setHidden(true);
+              }}
+            >
+              打开 ARC-1
+            </button>
+          }
+          detail={<div data-testid="detail-body">详情内容 ARC-1</div>}
+        />
+      );
+    }
+    render(<HidingTriggerHarness />);
+    await user.click(screen.getByRole('button', { name: '打开 ARC-1' }));
+    await user.click(screen.getByRole('button', { name: patternsZhCN.listDetail.back }));
+    expect(screen.getByRole('region', { name: patternsZhCN.listDetail.list })).toHaveFocus();
+  });
 });
 
 // ---------------------------------------------------------------------------

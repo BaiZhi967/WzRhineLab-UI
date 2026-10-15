@@ -92,6 +92,10 @@ export const QueryToolbar = React.forwardRef<HTMLDivElement, QueryToolbarProps>(
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== 'Enter') return;
     if (event.nativeEvent.isComposing || composingRef.current) return;
+    // The toolbar may sit inside a larger form; Enter here means "run this query", never "submit
+    // the surrounding form". Prevent the implicit submission in every branch, including the
+    // swallowed composition-commit one.
+    event.preventDefault();
     if (justEndedRef.current) {
       // Enter that committed the composition (Safari fires compositionend first): swallow it,
       // then clear on keyup or the next macrotask so a genuinely later press submits.
@@ -99,6 +103,14 @@ export const QueryToolbar = React.forwardRef<HTMLDivElement, QueryToolbarProps>(
       return;
     }
     commit();
+  };
+
+  // Reset clears the uncontrolled draft itself: the caller resets its own query to '' , and when
+  // it was already '' the effect above sees no change and the typed text would survive.
+  const handleReset = () => {
+    if (busy || !onReset) return;
+    setInternalPending('');
+    onReset();
   };
 
   const handleCompositionEnd = () => {
@@ -161,7 +173,7 @@ export const QueryToolbar = React.forwardRef<HTMLDivElement, QueryToolbarProps>(
           // is transient, so it stays focusable and only drops the action.
           disabled={resetDisabled}
           loading={busy}
-          onClick={onReset}
+          onClick={handleReset}
         >
           {resetLabel ?? messages.queryToolbar.reset}
         </Button>

@@ -139,6 +139,36 @@ describe('ResourceGrid item states', () => {
     expect(screen.getByAltText('浅层水体照片')).toHaveAttribute('src', 'res-1-retry.jpg');
   });
 
+  // Audit §5.5: the failure cache used to be a global set of URLs that never shrank, so another
+  // item reusing a URL that once failed started out degraded.
+  it('a failure is scoped to the item, not to the URL', () => {
+    const shared = 'shared-thumb.jpg';
+    render(
+      <Harness
+        items={[
+          { id: 'RES-1', title: '第一项', src: shared },
+          { id: 'RES-2', title: '第二项', src: shared },
+        ]}
+      />,
+    );
+    fireEvent.error(screen.getByAltText('第一项'));
+    // Only the item that actually failed degrades; the other keeps its image.
+    expect(screen.getAllByRole('img', { name: patternsZhCN.resourceGrid.imageFailed })).toHaveLength(1);
+    expect(screen.getByAltText('第二项')).toBeInTheDocument();
+  });
+
+  it('failures of items that scrolled away are forgotten (bounded cache)', () => {
+    const { rerender } = render(<Harness />);
+    fireEvent.error(screen.getByAltText('浅层水体照片'));
+    expect(screen.getByRole('img', { name: patternsZhCN.resourceGrid.imageFailed })).toBeInTheDocument();
+
+    // Page away from the failed item, then back to the same id and src (a fresh load attempt).
+    rerender(<Harness items={[{ id: 'RES-9', title: '另一页', src: 'other.jpg' }]} />);
+    rerender(<Harness />);
+    expect(screen.queryByRole('img', { name: patternsZhCN.resourceGrid.imageFailed })).toBeNull();
+    expect(screen.getByAltText('浅层水体照片')).toBeInTheDocument();
+  });
+
   it('loading status renders skeleton cards and announces busy once', () => {
     render(<Harness items={[]} status="loading" loadingRows={3} />);
     const list = screen.getByRole('list', { name: '资源集合' });
