@@ -217,10 +217,11 @@ for (const name of Object.keys(budgets)) {
 const shakePairs = [
   ['react-button', 'react-full'],
   ['agent-status', 'agent-full'],
-  // patterns pair deferred with data: at 8 components (P030-06) patterns-query-toolbar is 25.2%
-  // of patterns-full — the shared message provider is a fixed ~1 KB tax on every component. The
-  // absolute sizes (5.3 KB full / 1.3 KB one component) stay budgeted above; re-evaluate if the
-  // table is ever split per namespace.
+  // patterns pair deferred with data: against patterns-full (5.52 KB) a single component is 24.3%
+  // (query-toolbar, 1.34 KB) to 28.4% (list-detail, 1.57 KB) — the shared message provider is a
+  // fixed ~1 KB tax on every component, so at this package size the ratio says little about
+  // tree-shaking. The absolute sizes stay budgeted above; re-evaluate if the message table is
+  // ever split per namespace, or once the package is large enough for the ratio to mean something.
 ];
 for (const [part, whole] of shakePairs) {
   const ratio = measured[part].gzip / measured[whole].gzip;

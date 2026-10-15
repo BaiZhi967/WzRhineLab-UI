@@ -26,7 +26,7 @@
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `actions` | `React.ReactNode` | Action bar; buttons are composed by the caller from |
+| `actions` | `React.ReactNode` | Action bar; buttons are composed by the caller from `@wzrhine/react`. |
 | `children` | `React.ReactNode` |  |
 | `className` | `string` |  |
 | `closeLabel` | `string` |  |
@@ -229,7 +229,7 @@ const patternsZhCN: PatternsMessages
 
 | Member | Type | Description |
 | --- | --- | --- |
-| `actions` | `React.ReactNode` | Action bar; buttons are composed by the caller from |
+| `actions` | `React.ReactNode` | Action bar; buttons are composed by the caller from `@wzrhine/react`. |
 | `children` | `React.ReactNode` |  |
 | `className` | `string` |  |
 | `closeLabel` | `string` |  |
@@ -261,7 +261,7 @@ const patternsZhCN: PatternsMessages
 
 ### `PatternsMessages`
 
-*interface* — Built-in copy of `@wzrhine/patterns` (ADR-0014 §3), same rules as ADR-0009: component prop > nearest `PatternsMessagesProvider` > `patternsZhCN`. This file is the only patterns source allowed to contain CJK text (package-boundary test). The number locale comes from the nearest `RhineProvider` / `RhineMessagesProvider` of
+*interface* — Built-in copy of `@wzrhine/patterns` (ADR-0014 §3), same rules as ADR-0009: component prop > nearest `PatternsMessagesProvider` > `patternsZhCN`. This file is the only patterns source allowed to contain CJK text (package-boundary test). The number locale comes from the nearest `RhineProvider` / `RhineMessagesProvider` of `@wzrhine/react`, exactly like `@wzrhine/agent`.
 
 | Member | Type | Description |
 | --- | --- | --- |
@@ -432,6 +432,16 @@ const patternsZhCN: PatternsMessages
 ### `AppliedFiltersProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `className` | `string` |  |
+| `clearAllLabel` | `string` |  |
+| `filters` * | `readonly AppliedFilterItem[]` |  |
+| `label` | `string` | Accessible name of the region. |
+| `onClearAll` | `(() => void)` | Provided (with items present) renders the clear-all entry. |
+| `onRemove` | `((id: string) => void)` |  |
+| `removeLabel` | `((filter: AppliedFilterItem) => string)` |  |
 
 ### `ListDetailMode`
 

@@ -1313,6 +1313,11 @@ type MessagePartType = MessagePartView['type']
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `id` * | `string` |  |
+| `type` * | `"text" \| "code" \| "markdown" \| "image" \| "error" \| "thinking" \| "custom" \| "tool-call" \| "attachment" \| "reference" \| "citation" \| "artifact" \| "status"` |  |
+
 ### `MessageRole`
 
 *type*
@@ -1348,6 +1353,11 @@ type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh' | (string
 ### `ProcessBlockView`
 
 *type* — One step inside a model call (stage text, tool reference, thinking).
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `id` * | `string` |  |
+| `type` * | `"text" \| "thinking" \| "tool" \| "pending-record"` |  |
 
 ### `QuestionKind`
 
@@ -1456,6 +1466,10 @@ type ToolDetailKind = ToolDetailView['kind']
 ### `ToolDetailView`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `kind` * | `"command" \| "question" \| "agent" \| "model" \| "generic" \| "file-read" \| "file-write" \| "file-edit" \| "patch" \| "manage-files" \| "mcp"` |  |
 
 ### `ToolStatus`
 

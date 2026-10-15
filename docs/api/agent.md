@@ -4092,6 +4092,17 @@ type ActionStatus = 'idle' | 'submitting' | 'accepted' | 'rejected' | 'unknown'
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `defaultFilter` | `LedgerFilterKey` |  |
+| `events` * | `LedgerEventView[]` |  |
+| `filter` | `LedgerFilterKey` | Actor filter (controlled). |
+| `loading` | `boolean` | First load in progress (Skeleton rows, `aria-busy`). |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onFilterChange` | `((filter: LedgerFilterKey) => void)` |  |
+| `onOpenEvent` | `((event: LedgerEventView) => void)` | Opens one event; each row title becomes a button. |
+| `showFilters` | `boolean` | Show the filter tabs (default true). |
+
 ### `AgentActionHandler`
 
 *type* — Sync or async action callback.
@@ -4120,6 +4131,18 @@ type AgentContextPresentation = 'inline' | 'sheet' | 'standalone'
 
 *type* — AgentEmptyState: EmptyState (@wzrhine/react) with agent defaults. No live role (an empty region is not an event). `onCreate` adds a 「新建会话」 button; without it there is no button.
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `action` | `React.ReactNode` | Custom action instead of the create button. |
+| `createLabel` | `React.ReactNode` |  |
+| `description` | `React.ReactNode` |  |
+| `headingLevel` | `EmptyStateHeadingLevel` | Render the title as `<h2>`–`<h6>`; omitted = `<p>`. |
+| `icon` | `React.ReactNode` | Replace the kind's icon; `null` removes it. Always decorative. |
+| `kind` | `EmptyStateKind` |  |
+| `onCreate` | `(() => void)` | Primary action; renders a button labelled `createLabel`. |
+| `size` | `EmptyStateSize` | `sm` inside tables and cards; `md` for a whole region. |
+| `title` | `React.ReactNode` |  |
+
 ### `AgentEntranceKind`
 
 *type* — First-entrance kinds. `message` = new message; `row` = tool / ledger row; `card` = intervention card.
@@ -4132,21 +4155,86 @@ type AgentEntranceKind = 'message' | 'row' | 'card'
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `animate` | `boolean` | Animate this mount. Pass `false` for items present on first render or restored from history. |
+| `as` | `"div" \| "li" \| "article" \| "section"` |  |
+| `index` | `number` | Position among items that arrived together (stagger). |
+| `kind` | `AgentEntranceKind` |  |
+
 ### `AgentHeaderProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `actions` | `React.ReactNode` | Trailing slot (e.g. a Menu with more conversation actions). |
+| `backLabel` | `string` |  |
+| `badges` | `AgentHeaderBadge[]` |  |
+| `contextLabel` | `string` |  |
+| `contextOpen` | `boolean` | Explicit pane state; defaults to the surrounding AgentShell. |
+| `headingLevel` | `2 \| 3 \| 4 \| 5 \| 6 \| 1` |  |
+| `identity` | `AgentIdentityView` |  |
+| `onBack` | `(() => void)` |  |
+| `onOpenOrigin` | `((origin: ConversationOrigin) => void)` |  |
+| `onRename` | `(() => void)` |  |
+| `onToggleContext` | `(() => void)` | Explicit toggle; defaults to the surrounding AgentShell's toggle when it has a context slot. |
+| `origin` | `ConversationOrigin` |  |
+| `pending` | `boolean` | Disables rename (e.g. while a request is pending); other controls stay. |
+| `renameLabel` | `string` |  |
+| `runPhase` | `RunPhase` |  |
+| `runStatus` | `RunStatus` |  |
+| `statusLabel` | `string` | Overrides the status label (e.g. a custom phase text). |
+| `syncStatus` | `SyncStatus` |  |
+| `title` | `string` |  |
 
 ### `AgentIconName`
 
 *type*
 
+```ts
+type AgentIconName = 'chevron-down' | 'chevron-right' | 'chevron-left' | 'arrow-down' | 'arrow-up' | 'arrow-left' | 'close' | 'plus' | 'search' | 'more' | 'pin' | 'archive' | 'unarchive' | 'trash' | 'edit' | 'fork' | 'copy' | 'check' | 'retry' | 'send' | 'stop' | 'attach' | 'image' | 'at' | 'slash' | 'file' | 'folder' | 'code' | 'terminal' | 'tool' | 'shield' | 'question' | 'agent' | 'spark' | 'panel' | 'link' | 'external' | 'download' | 'history' | 'warning' | 'info' | 'clock' | 'model' | 'globe' | 'database' | 'layers' | 'list'
+```
+
 ### `AgentIconProps`
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` | Custom SVG inner nodes; win over the built-in path for `name`. |
+| `name` * | `string` | Built-in icon name. Any other string is accepted together with `children` (ADR-0013 §3): the children become the icon content and `data-icon` carries the custom name. |
+
 ### `AgentMessageProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `actionCapabilities` | `((message: MessageView) => MessageActionCapabilities \| undefined)` | Per-message availability of the actions (e.g. fork off while a run is active). |
+| `announceInterval` | `number` | Minimum gap between streaming announcements (ms). |
+| `defaultDetailsOpen` | `boolean` |  |
+| `detailsOpen` | `boolean` | Controlled open state of the run-details disclosure. |
+| `details` | `RunDetailsView` | Run details shown in the "运行详情" disclosure; defaults to `message.details`. |
+| `feedback` | `MessageFeedback \| null` |  |
+| `footer` | `React.ReactNode` | Extra content after the body (e.g. a RunSummary from another family). |
+| `message` * | `MessageView` |  |
+| `model` | `string` | Model label shown after the assistant author. |
+| `onCopy` | `CopyHandler` |  |
+| `onDetailsOpenChange` | `((open: boolean) => void)` |  |
+| `onEdit` | `((messageId: string) => void)` |  |
+| `onFeedback` | `((messageId: string, value: MessageFeedback \| null) => void)` |  |
+| `onFork` | `((messageId: string) => void)` |  |
+| `onOpenCitation` | `((citation: CitationView) => void)` |  |
+| `onOpenThinking` | `((thinkingId: string) => void)` |  |
+| `onRecoveryAction` | `((errorId: string, actionId: string) => void)` |  |
+| `onRegenerate` | `((messageId: string) => void)` |  |
+| `onRestoreInput` | `((messageId: string) => void)` | Put this turn's input back into the composer (distinct from `onEdit`). |
+| `onRetry` | `((messageId: string) => void)` |  |
+| `renderArtifact` | `ArtifactRenderer` |  |
+| `renderPart` | `((part: MessagePartView, rendered: React.ReactNode) => React.ReactNode)` | Replaces the rendering of single parts; receives the default rendering. |
+| `renderTool` | `ToolRenderer` |  |
+| `renderers` | `MessagePartRenderers` |  |
 
 ### `AgentMessagesOverrides`
 
@@ -4159,6 +4247,19 @@ type AgentMessagesOverrides = { [K in keyof AgentMessages]?: { [P in keyof Agent
 ### `AgentProcessProps`
 
 *type* — AgentProcess (atlas 09): the record of one run, grouped by model call.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `defaultExpanded` | `boolean` |  |
+| `expanded` | `boolean` |  |
+| `headingLevel` | `2 \| 3 \| 4 \| 5 \| 6` | Heading level of the call titles (default 3). |
+| `onExpandedChange` | `((expanded: boolean) => void)` |  |
+| `onLoadRecord` | `((blockId: string) => void)` |  |
+| `onOpenFull` | `((runId: string) => void)` |  |
+| `onOpenThinking` | `((thinkingId: string) => void)` |  |
+| `renderTool` | `ToolRenderer` |  |
+| `renderers` | `MessagePartRenderers` |  |
+| `run` * | `RunView` |  |
 
 ### `AgentShellLayout`
 
@@ -4180,9 +4281,55 @@ type AgentShellOpenReason = 'toggle' | 'dismiss' | 'layout' | 'selection'
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `activeId` | `string` | Id of the conversation being read; a change closes the index sheet on narrow layouts. |
+| `breakpoints` | `{ context?: number; index?: number; }` | Breakpoints in rem of the shell's own width (defaults: context 64, index 40). |
+| `composer` | `React.ReactNode` | Docked at the bottom of the reading column. |
+| `contextLabel` | `string` | Title of the context sheet on compact / narrow layouts. |
+| `contextMax` | `number` |  |
+| `contextMin` | `number` |  |
+| `contextOpen` | `boolean` |  |
+| `contextSize` | `number` | Width of the inline context pane in CSS pixels. |
+| `context` | `React.ReactNode` | Side pane, usually an AgentSidePane. |
+| `conversation` | `React.ReactNode` | Main reading area (MessageList). |
+| `defaultContextOpen` | `boolean` |  |
+| `defaultContextSize` | `number` |  |
+| `defaultIndexOpen` | `boolean` |  |
+| `direction` | `"forward" \| "back"` | Direction of the view drill-down animation. |
+| `header` | `React.ReactNode` |  |
+| `indexLabel` | `string` | Accessible name of the index column and title of the index sheet. |
+| `indexOpen` | `boolean` |  |
+| `index` | `React.ReactNode` | Conversation index column, usually a ConversationList. |
+| `layout` | `AgentShellLayout` | Force a layout (tests, hosts that already know their size). Overrides measurement. |
+| `mainLabel` | `string` | Accessible name of the reading column. |
+| `onContextClosed` | `(() => void)` |  |
+| `onContextOpenChange` | `((open: boolean, reason: AgentShellOpenReason) => void)` |  |
+| `onContextSizeChange` | `((size: number) => void)` |  |
+| `onIndexOpenChange` | `((open: boolean, reason: AgentShellOpenReason) => void)` |  |
+| `rail` | `React.ReactNode` | App navigation rail (hidden on narrow layouts; the host offers its own menu there). |
+| `readingMin` | `number` |  |
+| `resizable` | `boolean` | Show the ResizeHandle between reading column and pane (default true). |
+| `resizeLargeStep` | `number` |  |
+| `resizeStep` | `number` |  |
+| `viewKey` | `string` | Stable view identity for main conversation ↔ sub-task transitions. |
+
 ### `AgentSidePaneProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `activeTab` | `string` |  |
+| `closeLabel` | `string` |  |
+| `defaultTab` | `string` |  |
+| `headingLevel` | `2 \| 3 \| 4 \| 5 \| 6` |  |
+| `hideHeading` | `boolean` | Hide the visible heading (the landmark keeps its name). |
+| `label` | `string` | Accessible name of the landmark (and visible heading). |
+| `onClose` | `(() => void)` |  |
+| `onTabChange` | `((id: string) => void)` |  |
+| `sections` * | `AgentSidePaneSection[]` |  |
+| `tabsLabel` | `string` | Accessible name of the tab list. |
 
 ### `AgentSparkProps`
 
@@ -4195,6 +4342,16 @@ type AgentSparkProps = Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> &
 ### `AgentStatusProps`
 
 *type* — The status pill shared by every agent component: glyph + label (+ optional meta such as an elapsed time). Tone is never the only signal. Not a live region by itself: components that announce changes wrap it in their own `role="status"` with a throttled text.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` |  |
+| `appearance` | `"pill" \| "inline"` | `pill` = tinted chip; `inline` = glyph + text without a frame. |
+| `glyph` * | `StatusGlyphName` |  |
+| `label` * | `React.ReactNode` |  |
+| `meta` | `React.ReactNode` | Secondary text after the label (elapsed time, count). |
+| `size` | `"sm" \| "md"` |  |
+| `tone` * | `AgentTone` |  |
 
 ### `AgentTone`
 
@@ -4240,6 +4397,18 @@ type ApprovalStatus = 'waiting' | 'material-loading' | 'unavailable' | 'submitti
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `artifact` * | `ArtifactView` |  |
+| `compact` | `boolean` |  |
+| `headingLevel` | `HeadingLevel` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onDownload` | `((artifact: ArtifactView) => void)` |  |
+| `onOpen` | `((artifact: ArtifactView) => void)` |  |
+| `onRetry` | `((artifact: ArtifactView) => void)` | Retries a failed artifact. |
+| `onReveal` | `((artifact: ArtifactView) => void)` | Shows the file in its folder (host file manager). |
+| `renderPreview` | `((artifact: ArtifactView) => React.ReactNode)` | Custom preview (chart, rendered markdown…); default: image thumbnail, text excerpt or kind icon. |
+
 ### `ArtifactKind`
 
 *type* — Artifact kinds the library ships copy and icons for; any other string falls back to the `file` icon and the raw id as its label (ADR-0013 §2).
@@ -4251,6 +4420,19 @@ type ArtifactKind = 'text' | 'markdown' | 'code' | 'image' | 'file' | 'diff' | '
 ### `ArtifactListProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `artifacts` * | `ArtifactView[]` |  |
+| `headingLevel` | `HeadingLevel` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onDownload` | `((artifact: ArtifactView) => void)` |  |
+| `onOpen` | `((artifact: ArtifactView) => void)` |  |
+| `onRetry` | `((artifact: ArtifactView) => void)` | Retries a failed artifact. |
+| `onReveal` | `((artifact: ArtifactView) => void)` | Shows the file in its folder (host file manager). |
+| `onShowAll` | `(() => void)` | Opens the full artifact list; drawn next to the truncated note. |
+| `renderPreview` | `((artifact: ArtifactView) => React.ReactNode)` | Custom preview (chart, rendered markdown…); default: image thumbnail, text excerpt or kind icon. |
+| `truncated` | `boolean` | The host listed only part of the artifacts: adds 「部分产物未列出」. |
 
 ### `ArtifactRenderer`
 
@@ -4280,9 +4462,31 @@ type CapabilityInput = boolean | Capability
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `canGoBack` * | `boolean` | A previous page exists in the host's offset history (drives 「上一页」). |
+| `label` * | `string` | Name of the material (「终端输出」, 「旧文件内容」); names the group and the scroll region. |
+| `newer` | `boolean` | Newer material exists than this snapshot. |
+| `onFirst` | `(() => void)` | Back to offset 0. Enabled when the page does not start at 0. |
+| `onNext` | `((nextOffset: number) => void)` | Next page. Enabled only when `page.nextOffset` is defined (never computed here). |
+| `onPrevious` | `(() => void)` |  |
+| `onReadLatest` | `(() => void)` | Drops back to the newest snapshot; draws 「读取最新」 next to the `newer` notice. |
+| `onRetry` | `(() => void)` | Retries a page that failed to load. |
+| `page` * | `MaterialPageView` |  |
+| `renderContent` | `((text: string) => React.ReactNode)` | Custom renderer of the page text (highlighting); default is wrapped monospace text. |
+
 ### `CitationChipProps`
 
 *type* — CitationChip (atlas 32): an inline `<button>` showing "[n]" (or a short label) inside running text. Hover / focus shows a card with title, source type, locator and excerpt; the same text is the button's description (`aria-describedby` → a `hidden` node), so it is never hover-only.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `citation` * | `CitationView` |  |
+| `icon` | `React.ReactNode` | Custom icon content (SVG inner nodes); wins over the built-in source-type icon. |
+| `label` | `React.ReactNode` | Visible text instead of "[n]" (e.g. a short file name). |
+| `onOpen` | `((citation: CitationView) => void)` |  |
+| `selected` | `boolean` |  |
+| `showIcon` | `boolean` | Show the source-type icon before the index. |
 
 ### `CitationSourceType`
 
@@ -4296,9 +4500,36 @@ type CitationSourceType = 'file' | 'web' | 'code' | 'dataset' | 'message' | 'oth
 
 *type* — CodeBlock: a `<figure>` with a caption (language / file name) and a copy button over a horizontally scrollable `<pre><code>`. Long lines never widen the page; the scroller is focusable (`tabIndex=0`, named by the caption) so keyboard users can scroll it. No highlighting is done here: pass `children` (or MessagePart `renderers.code`) for a highlighted rendering.
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` | Replaces the plain `<code>` content (e.g. host-highlighted tokens). The copy text stays `code`. |
+| `code` * | `string` |  |
+| `copyLabel` | `string` | Copy-button name override. |
+| `copyable` | `boolean` | `false` hides the copy button. Default: shown when a copy path exists. |
+| `filename` | `string` |  |
+| `language` | `string` |  |
+| `maxHeight` | `string` | CSS length; taller code scrolls vertically inside the block. |
+| `onCopy` | `CopyHandler` |  |
+| `showLineNumbers` | `boolean` | Show a line-number gutter (decorative, not copied). |
+
 ### `CodeModeToolTreeProps`
 
 *type* — CodeModeToolTree (atlas 13): a Code Mode / script parent and the calls it spawned. Nested `<ul>` lists carry the hierarchy (each list is named 「X 的子操作」), CSS borders draw the connectors. Every node is a full ToolRecord with its own status — never merged with the parent — and the outcome line is computed from the direct children (「部分完成：1 个子操作失败」). Recursion handles any depth.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `defaultExpandedIds` | `readonly string[]` |  |
+| `detailActions` | `ToolDetailActions` | Callbacks for the built-in detail views (read more, reload, open terminal…). |
+| `detailsErrors` | `Readonly<Record<string, React.ReactNode>>` | Load errors by tool id (`detailsError` of each row). |
+| `expandedIds` | `readonly string[]` |  |
+| `label` | `string` | Tree name; defaults to the root's display name. |
+| `onExpandedChange` | `((ids: string[]) => void)` |  |
+| `onLoadDetails` | `((id: string) => void)` | Called when the row opens and `tool.detailsLoaded === false`, and on retry. |
+| `onViewScript` | `((tool: ToolCallView) => void)` | Open the full script of a truncated parent. |
+| `renderDetail` | `((tool: ToolCallView) => React.ReactNode \| undefined)` | Override the detail body. Return `undefined` to fall back to the built-in view. |
+| `renderTool` | `((tool: ToolCallView, depth: number) => React.ReactNode \| undefined)` | Replace a node's row. Return `undefined` to use ToolRecord. |
+| `root` | `ToolCallView` |  |
+| `tools` | `readonly ToolCallView[]` |  |
 
 ### `CodePart`
 
@@ -4311,6 +4542,23 @@ type CodePart = Extract<MessagePartView, { type: 'code'; }>
 ### `CompactionNoticeProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `busy` | `boolean` | Busy flag for the buttons while an action is being submitted. |
+| `elapsedMs` | `number` | Elapsed time of a running compaction (the host updates it; nothing polls here). |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onCancel` | `AgentActionHandler` | Cancels a running compaction. |
+| `onRetrySave` | `AgentActionHandler` | Retries saving the result (`save-pending`). |
+| `onSummaryOpenChange` | `((open: boolean) => void)` |  |
+| `phase` | `CompactionPhase` | Sub-step of a running compaction, shown as a sub-label. |
+| `renderMarkdown` | `((source: string) => React.ReactNode)` |  |
+| `retryHint` | `React.ReactNode` | Hint after a failed / interrupted compaction; default 「可输入 /compact 重试」. `null` hides it. |
+| `status` * | `CompactionStatus` |  |
+| `summaryOpen` | `boolean` | Summary disclosure (controlled). |
+| `summary` | `string` | Text of the compaction summary (plain text, or markdown through `renderMarkdown`). |
+| `tokensAfter` | `number` |  |
+| `tokensBefore` | `number` |  |
 
 ### `CompactionPhase`
 
@@ -4340,6 +4588,23 @@ type Completeness = 'exact' | 'estimated' | 'partial' | 'unknown'
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `className` | `string` | Class on the wrapper. |
+| `defaultValue` | `string` |  |
+| `hint` | `React.ReactNode` | Screen-reader hint linked via aria-describedby; `false` removes it. |
+| `inputClassName` | `string` | Class on the textarea. |
+| `onMenuKey` | `((event: React.KeyboardEvent<HTMLTextAreaElement>) => boolean)` | Called for every key outside IME composition, before token deletion and submit. Return `true` when the key was consumed (menu navigation): the default action is prevented. |
+| `onSubmit` | `(() => void)` | Enter (or Mod+Enter with `submitOn="mod-enter"`) outside IME composition. Without it Enter inserts a newline. |
+| `onTokenRemoved` | `((token: ComposerToken) => void)` | A token disappeared from the text through a user edit (whole-token delete, cut, overwrite). |
+| `onTriggerChange` | `((match: TriggerMatch \| null) => void)` | Active `@` / `/` trigger before the caret; `null` when none. Not called during IME composition. |
+| `onValueChange` | `((value: string, caret: number) => void)` | Every edit (typing, IME, paste, cut, token insert / delete). `caret` is the new selection end. |
+| `slash` | `"line-start" \| "word-start"` |  |
+| `submitOn` | `"enter" \| "mod-enter"` |  |
+| `tokenKind` | `((token: ComposerToken) => ComposerTokenKind)` | Mirror colour per token (default: `@` → file, `/` → command). |
+| `triggers` | `readonly TriggerChar[]` | Triggers to detect (default both). |
+| `value` | `string` |  |
+
 ### `ComposerNoticeTone`
 
 *type* — A notice that stands in for the input frame when this thread cannot take a message: a sub-agent conversation (「这是子代理的对话，回到主对话发送消息」), an archived thread (「恢复归档」), an inherited / read-only thread. Pass it to `Composer replacement`; the intervention dock above stays, so approvals and questions still reach the user.
@@ -4351,6 +4616,66 @@ type ComposerNoticeTone = 'neutral' | 'info' | 'warning' | 'danger'
 ### `ComposerProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `allowEmptyText` | `boolean` | Allow sending when the text is empty if at least one attachment or reference exists. |
+| `aria-label` | `string` |  |
+| `attachments` | `readonly AttachmentView[]` |  |
+| `blocked` | `string \| boolean` | Input blocked by a pending intervention (e.g. a questionnaire): the textarea becomes read-only and `aria-disabled`, the reason replaces the placeholder and shows in the feedback line. `true` uses the default copy ("请先在上方回答问题"). |
+| `canSend` | `boolean` | Extra condition for sending (e.g. a model must be selected), with its reason. |
+| `className` | `string` |  |
+| `commandLoading` | `boolean` |  |
+| `commandOptions` | `readonly CommandOption[]` | Enables the `/` menu (commands first, then skills). Filtered locally unless `onCommandQuery` is given. |
+| `defaultValue` | `string` |  |
+| `disabledReason` | `string` | Why the composer is disabled (feedback line). |
+| `disabled` | `boolean` |  |
+| `draftStatus` | `DraftStatus` |  |
+| `feedback` | `React.ReactNode` | Extra feedback content after the status text. |
+| `id` | `string` |  |
+| `intervention` | `React.ReactNode` | Approval / questionnaire cards docked above the frame (height animates via grid rows). |
+| `maxLength` | `number` | Shows a character counter and blocks sending above the limit (code points of the plain text). |
+| `mentionError` | `React.ReactNode` |  |
+| `mentionLoading` | `boolean` |  |
+| `mentionOptions` | `readonly MentionOption[]` | Enables the `@` menu. Filtered locally unless `onMentionQuery` is given (then the host filters). |
+| `mentionTokenName` | `((option: MentionOption, query: string) => string)` | Token text for a chosen option (default: drilled folder + label). |
+| `menuSide` | `"top" \| "bottom"` | Side the menus open on. |
+| `onCommandQuery` | `((query: string \| null) => void)` |  |
+| `onCommand` | `((option: CommandOption, match: TriggerMatch) => "insert" \| void)` | A command or skill was chosen. Return `'insert'` to replace the typed `/query` with a token; otherwise the typed query is removed and the host dispatches its own action. |
+| `onDisabledCommand` | `((option: CommandOption, match: TriggerMatch) => "consume" \| void)` | A disabled command was chosen: nothing is dispatched; its reason shows in the feedback line. |
+| `onFilesDrop` | `((files: File[]) => void)` | Files dropped on the frame (drag-over highlight while dragging). No callback → no drop zone. |
+| `onFilesPaste` | `((files: File[]) => void)` | Files pasted into the textarea. Text paste is untouched. |
+| `onMentionDrill` | `((option: MentionOption) => void)` | A folder was drilled into (the query is already rewritten to `folder/`). |
+| `onMentionQuery` | `((query: string \| null) => void)` | Query typed after `@` while the menu is open; `null` when it closes. |
+| `onMentionRetry` | `(() => void)` |  |
+| `onReferenceAdd` | `((option: MentionOption, tokenName: string) => void)` | A mention was inserted as a token: bind the reference. |
+| `onRemoveAttachment` | `((attachment: AttachmentView) => void)` |  |
+| `onRemoveReference` | `((reference: ReferenceView) => void)` |  |
+| `onRetryAction` | `((kind: "send" \| "stop", actionId: string \| undefined) => void)` | Retry an `unknown` send / stop with its original actionId (ADR-0011 §4). |
+| `onRetryAttachment` | `((attachment: AttachmentView) => void)` |  |
+| `onRetryDraftSave` | `(() => void)` |  |
+| `onRetryPersistence` | `(() => void)` |  |
+| `onStop` | `(() => void)` |  |
+| `onSubmit` | `((input: SendInput) => void)` | Receives the plain text (`@name` / `/name`), the raw value with markers, references and attachments. |
+| `onTokenRemoved` | `((token: ComposerToken) => void)` | A token disappeared from the text (whole-token delete, cut, overwrite): unbind its reference. |
+| `onValueChange` | `((value: string) => void)` |  |
+| `persistence` | `"idle" \| DraftStatus` |  |
+| `placeholder` | `string` |  |
+| `readOnly` | `boolean` |  |
+| `references` | `readonly ReferenceView[]` |  |
+| `replacement` | `React.ReactNode` | Rendered instead of the input frame, menus and feedback line, e.g. a `ComposerNotice` for a sub-agent, archived or inherited thread. The `intervention` slot stays above it, so approvals and questions still dock. The draft value is kept and comes back when `replacement` is removed. |
+| `retryBusy` | `boolean` |  |
+| `runStatus` | `RunStatus` |  |
+| `sendDisabledReason` | `string` |  |
+| `showCount` | `boolean` | Show the counter without a limit. |
+| `slash` | `"line-start" \| "word-start"` |  |
+| `stopStatus` | `ActionReceipt \| ActionStatus` |  |
+| `submitOn` | `"enter" \| "mod-enter"` |  |
+| `submitStatus` | `ActionReceipt \| ActionStatus` | Receipt of the last send. `submitting` / `unknown` block Enter and the button (no duplicates). |
+| `tokenKind` | `((token: ComposerToken) => ComposerTokenKind)` |  |
+| `toolbarEnd` | `React.ReactNode` | Toolbar end before the send button (ModelPicker, PermissionPicker, context ring). |
+| `toolbarStart` | `React.ReactNode` | Toolbar start (e.g. a "+" Menu: 添加图片 / 引用文件 / 使用技能). |
+| `value` | `string` |  |
 
 ### `ComposerTokenKind`
 
@@ -4364,6 +4689,18 @@ type ComposerTokenKind = 'file' | 'skill' | 'command'
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `align` | `PopoverAlign` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `openOnHover` | `boolean` | `ring`: also open the Popover on hover (focus and click still open it). |
+| `open` | `boolean` |  |
+| `segmentScale` | `"full" \| "fit-used"` |  |
+| `side` | `PopoverSide` | Popover placement for `ring`. |
+| `usage` * | `ContextUsageView` |  |
+| `variant` | `ContextUsageVariant` | `ring`: compact trigger (ring + 「12.4K / 32K」) that opens the full view in a Popover. `bar`: one line with a meter. `full`: meter, breakdown legend, warnings and note. |
+
 ### `ContextUsageVariant`
 
 *type*
@@ -4376,9 +4713,47 @@ type ContextUsageVariant = 'ring' | 'bar' | 'full'
 
 *type* — ConversationList (atlas 03): grouped conversation index with search, selection and row actions.
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `collapsedGroups` | `readonly string[]` |  |
+| `collapsibleGroups` | `boolean` |  |
+| `empty` | `React.ReactNode` | Empty state shown when there are no conversations and no search. |
+| `error` | `React.ReactNode` | Error message; `true` uses the default copy. |
+| `headingLevel` | `2 \| 3 \| 4 \| 5 \| 6` | Level of the group headings (and the empty-state title). |
+| `isDisabled` | `((item: ConversationView) => boolean)` | Rows that cannot be selected or acted on (e.g. while a switch is pending). |
+| `label` | `string` | Accessible name of the list region. |
+| `loading` | `boolean` |  |
+| `now` | `Date` | Reference time for row timestamps (default: now). |
+| `onArchive` | `((item: ConversationView) => void)` |  |
+| `onCollapsedGroupsChange` | `((groups: string[]) => void)` |  |
+| `onDelete` | `((item: ConversationView) => void \| Promise<unknown>)` |  |
+| `onPin` | `((item: ConversationView, pinned: boolean) => void)` |  |
+| `onRetry` | `(() => void)` |  |
+| `onSearchChange` | `((query: string) => void)` | Renders the search input. |
+| `onSelect` | `((id: string) => void)` |  |
+| `onUnarchive` | `((item: ConversationView) => void)` |  |
+| `renderActions` | `((item: ConversationView) => React.ReactNode)` | Extra controls per row (rendered before the "more" menu). |
+| `search` | `string` | Controlled search query; the host filters `sections`. |
+| `sections` * | `ConversationSection[]` |  |
+| `selectedId` | `string` |  |
+| `skeletonRows` | `number` | Number of skeleton rows while loading. |
+
 ### `ConversationRowProps`
 
 *type* — ConversationRow (atlas 04): one conversation in the index.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `actions` | `React.ReactNode` | Extra controls next to the "more" button. |
+| `disabled` | `boolean` |  |
+| `item` * | `ConversationView` |  |
+| `now` | `Date` | Reference time for the today / earlier format (default: now). |
+| `onArchive` | `((item: ConversationView) => void)` |  |
+| `onDelete` | `((item: ConversationView) => void \| Promise<unknown>)` | Confirmed delete. Return a Promise to keep the dialog open until it settles. |
+| `onPin` | `((item: ConversationView, pinned: boolean) => void)` | Toggle pin; receives the requested state. |
+| `onSelect` | `((id: string) => void)` |  |
+| `onUnarchive` | `((item: ConversationView) => void)` |  |
+| `selected` | `boolean` |  |
 
 ### `CopyHandler`
 
@@ -4408,6 +4783,17 @@ type CustomPart = Extract<MessagePartView, { type: 'custom'; }>
 
 *type* — DiffPreview (atlas 31): one file diff. Header = path, change kind, `+N −M` stats and the proposal status. Lines sit in their own horizontally scrolling, focusable region (the page never overflows); each line is old line no · new line no · sign · code. The sign is visible text (`+` / `−` / space) and screen readers hear 「新增」/「删除」; line numbers are hidden from assistive tech and unselectable, so copying a block copies code only. Added / removed lines are tinted with the success / danger subtle tokens *and* carry the sign, never colour alone.
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `after` | `string` |  |
+| `before` | `string` | Convenience: compute a preview diff from two strings (ignored when `diff` is given). |
+| `diff` | `FileDiffView` |  |
+| `hideHeader` | `boolean` | Hide the header (when an outer disclosure already shows it). |
+| `onReload` | `(() => void)` | Re-read the latest file (shown on conflict). |
+| `onViewFull` | `(() => void)` | Open the full diff (shown when the diff is truncated). |
+| `path` | `string` | Path for the `before` / `after` form. |
+| `status` | `"unavailable" \| "preview" \| "proposed" \| "applied" \| "conflict"` | Status for the `before` / `after` form (defaults to `preview`). |
+
 ### `DraftStatus`
 
 *type* — Draft persistence (composer, questionnaire).
@@ -4436,9 +4822,47 @@ type FilePreviewMode = 'preview' | 'raw' | 'metadata'
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `breadcrumbRoot` | `string` | Workspace root. Paths under it show as a workspace-relative breadcrumb (root name first); paths outside it get the 「外部」 badge. |
+| `copyable` | `boolean` | Copy the loaded text. Default true for text-like files. |
+| `defaultMode` | `FilePreviewMode` |  |
+| `defaultOpenTarget` | `string` | Target used by the primary half of the split button; default the first `app` target. |
+| `defaultZoom` | `FilePreviewZoom` | Initial image zoom; default `fit`. |
+| `file` * | `FilePreviewView` |  |
+| `headingLevel` | `HeadingLevel` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `mode` | `FilePreviewMode` | Active tab (controlled). |
+| `onClose` | `(() => void)` |  |
+| `onCopyPath` | `((path: string, file: FilePreviewView) => void \| Promise<void>)` | Copies `file.path` (menu item 「复制路径」); default writes it to the clipboard. |
+| `onLoadMore` | `(() => void)` | Loads the next chunk of a partially loaded file. |
+| `onModeChange` | `((mode: FilePreviewMode) => void)` |  |
+| `onOpenExternal` | `((file: FilePreviewView) => void)` |  |
+| `onOpenWith` | `((targetId: string, file: FilePreviewView) => void)` |  |
+| `onReference` | `((file: FilePreviewView) => void)` | Adds the file as a reference to the conversation. |
+| `onReload` | `(() => void)` |  |
+| `onRetry` | `(() => void)` |  |
+| `openTargets` | `FileOpenTarget[]` | Ways to open the file. With `onOpenWith` they render a split button + menu. |
+| `referenceDisabled` | `boolean` |  |
+| `reloading` | `boolean` |  |
+| `renderCode` | `((code: string, language?: string) => React.ReactNode)` | Code renderer (highlighting); default is numbered plain lines. |
+| `renderMarkdown` | `((source: string) => React.ReactNode)` | Markdown renderer for the preview tab; default shows the source. |
+| `zoomLevels` | `number[]` | Image zoom percentages (of the natural width); a 「适应宽度」 option is always added. |
+
 ### `FilePreviewTabsProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `activeId` * | `string` | The open tab (controlled). |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onActivate` * | `(id: string) => void` |  |
+| `onCloseAll` | `(() => void)` | Closes every file; Escape inside the strip and the trailing close button call it. |
+| `onCloseTab` * | `(id: string) => void` |  |
+| `renderPanel` * | `(id: string) => React.ReactNode` | Panel content of the active tab (usually a `FilePreview`). |
+| `returnFocusRef` | `React.RefObject<HTMLElement \| null>` | Focus target after the last tab closes (the element that opened the preview). |
+| `tabs` * | `FilePreviewTab[]` |  |
 
 ### `FilePreviewZoom`
 
@@ -4516,6 +4940,12 @@ type ManageFilesDetailProps = DetailBase & { detail: DetailOf<'manage-files'>; o
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `detail` * | `{ kind: "mcp"; server: string; tool: string; endpoint?: string; catalogRevision?: string; catalogStale?: boolean; arguments?: unknown; output?: ToolOutputView; remote?: "pending" \| "completed" \| "failed" \| "unknown"; }` |  |
+| `onReconcile` | `(() => void)` | Ask the adapter to reconcile an unknown remote result. Shown only for `remote: 'unknown'`. |
+| `outputProps` | `Pick<ToolOutputProps, "onLoadMore" \| "onOpenFull" \| "loadingMore" \| "onCopyText">` |  |
+
 ### `MessageActionCapabilities`
 
 *type* — Per-action availability: `Capability` (`{ enabled, reason }`) or a boolean. Absent = enabled.
@@ -4536,6 +4966,21 @@ type MessageActionKey = 'copy' | 'regenerate' | 'edit' | 'fork' | 'restore' | 'f
 
 *type* — MessageActions: a `role="toolbar"` of icon buttons for one message. A capability without a callback renders no button (ADR-0011 §4); copy appears when `copyText` is given and either `onCopy` or the Clipboard API exists. One tab stop: arrow keys / Home / End move between the buttons (roving tabindex), Tab leaves the toolbar.
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `capabilities` | `Partial<Record<MessageActionKey, CapabilityInput>>` | Availability per action; a disabled one is shown `aria-disabled` with its reason. |
+| `children` | `React.ReactNode` | Extra trailing buttons (rendered inside the toolbar, part of the roving order). |
+| `copyText` | `string` | Text copied by the copy action; omit to hide copy. |
+| `feedback` | `MessageFeedback \| null` |  |
+| `label` | `string` | Toolbar name; defaults to the copy table. |
+| `onCopy` | `CopyHandler` |  |
+| `onEdit` | `(() => void)` |  |
+| `onFeedback` | `((value: MessageFeedback \| null) => void)` |  |
+| `onFork` | `(() => void)` |  |
+| `onRegenerate` | `(() => void)` |  |
+| `onRestoreInput` | `(() => void)` | Restore this turn's input into the composer (not the same as `onEdit`). |
+| `order` | `MessageActionKey[]` | Preferred action order; omitted uses the library order. |
+
 ### `MessageFeedback`
 
 *type*
@@ -4548,6 +4993,27 @@ type MessageFeedback = 'up' | 'down'
 
 *type* — MessageList (atlas 07): the conversation viewport. It owns its own vertical scroll and decides when to follow new content; it never moves focus.
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `animateEntrance` | `boolean` | Turn off entrance motion for appended messages. |
+| `earlierError` | `React.ReactNode` | Error text for the last earlier-load attempt; shows a retry button. |
+| `empty` | `React.ReactNode` | Replaces the default empty state. |
+| `followThreshold` | `number` |  |
+| `footer` | `React.ReactNode` | Content after the last message inside the scroller (run summary, typing line). |
+| `hasEarlier` | `boolean` |  |
+| `holdFollow` | `boolean` | Pause auto-follow while true (content still renders); resumes on release if still at the latest. |
+| `isStreaming` | `boolean` |  |
+| `jumpThreshold` | `number` |  |
+| `label` | `string` | Accessible name of the viewport. |
+| `loadingEarlier` | `boolean` |  |
+| `loading` | `boolean` | First load: no messages yet. |
+| `messageProps` | `Omit<AgentMessageProps, "message">` | Props forwarded to the default AgentMessage (handlers, renderers). |
+| `messages` * | `MessageView[]` |  |
+| `nestedScrollSelector` | `string` |  |
+| `onFollowChange` | `((following: boolean) => void)` |  |
+| `onLoadEarlier` | `(() => void)` |  |
+| `renderMessage` | `((message: MessageView, index: number) => React.ReactNode)` | Custom rendering per message; the list still wraps it in a keyed `<li data-message-id>`. |
+
 ### `MessagePartType`
 
 *type*
@@ -4559,6 +5025,11 @@ type MessagePartType = MessagePartView['type']
 ### `MessagePartView`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `id` * | `string` |  |
+| `type` * | `"image" \| "text" \| "code" \| "custom" \| "thinking" \| "error" \| "status" \| "markdown" \| "tool-call" \| "attachment" \| "reference" \| "citation" \| "artifact"` |  |
 
 ### `MessageRole`
 
@@ -4596,21 +5067,70 @@ type ModelEffort = 'off' | 'low' | 'medium' | 'high' | 'max' | 'xhigh' | (string
 
 *type* — MultiFileDiff: several file diffs as a list of disclosures, each with its own status (a conflict in one file never colours the others). The first file and every conflicting file are open by default; `expanded` / `onExpandedChange` control it by path.
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `defaultExpanded` | `readonly string[]` |  |
+| `expanded` | `readonly string[]` |  |
+| `files` * | `readonly FileDiffView[]` |  |
+| `label` | `string` | List name; defaults to 「改动的文件」. |
+| `onExpandedChange` | `((paths: string[]) => void)` |  |
+| `onReload` | `((path: string) => void)` |  |
+| `onViewFull` | `((path: string) => void)` |  |
+
 ### `NativeModelDetailProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `detail` * | `{ kind: "model"; provider: string; model: string; purpose?: string; inputs?: { id: string; label: string; size?: number; mimeType?: string; destination?: string; }[]; params?: Record<string, string \| number \| boolean>; results?: { id: string; label: string; preview?: string; alt?: string; saved: boolean; }[]; save?: "pending" \| "saving" \| "saved" \| "partial" \| "failed"; costNotice?: string; endpoint?: string; route?: string; timeoutMs?: number; sha256?: string; arguments?: unknown; remote?: boolean \| "pending" \| "completed" \| "failed" \| "unknown"; stopReason?: string; saveRetry?: boolean; saveError?: string; }` |  |
+| `onRetrySave` | `(() => void)` | Save the generated material again (never calls the model again). Shown for partial / failed saves. |
+| `retrying` | `boolean` |  |
+| `running` | `boolean` | The tool call is still running: show activity without a percentage. |
 
 ### `PersistentTerminalProps`
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `headingLevel` | `HeadingLevel` |  |
+| `hideName` | `boolean` | Hide the name heading (e.g. inside `TerminalTabs`, where the tab already names it). |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onInput` | `AgentActionHandler<[text: string, terminal: TerminalView]>` | Sends one line to the session. Without it (or when read-only) no input line is drawn. |
+| `onLoadEarlier` | `AgentActionHandler<[terminal: TerminalView]>` | Loads older output (`terminal.outputTruncated`). The scroll position is kept. |
+| `onLoadMoreHistory` | `AgentActionHandler<[terminal: TerminalView]>` | Loads earlier entries of `terminal.history`. |
+| `onReadLatest` | `AgentActionHandler<[terminal: TerminalView]>` | Reads the newest output (`terminal.newerOutput`); draws 「有新输出，读取最新」. |
+| `onStop` | `AgentActionHandler<[terminal: TerminalView]>` | Requests a stop. Drawn only when `terminal.stoppable`. Also used by 「重试停止」. |
+| `page` | `MaterialPageView` | One page of stored output; replaces the live tail with a `ChunkPager`. |
+| `pager` | `Partial<ChunkPagerActions>` | Paging callbacks for `page` (`canGoBack` defaults to false). |
+| `terminal` * | `TerminalView` |  |
+
 ### `PinnedSummaryProps`
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `defaultExpanded` | `boolean` |  |
+| `expanded` | `boolean` | Body expanded (controlled). |
+| `headingLevel` | `HeadingLevel` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onExpandedChange` | `((expanded: boolean) => void)` |  |
+| `onOpenSource` | `((citation: CitationView) => void)` | Opens a source. Without it sources are listed as text. |
+| `onPinChange` | `((pinned: boolean) => void)` |  |
+| `pinned` | `boolean` | Pin state; the pin toggle is drawn only with `onPinChange`. |
+| `renderMarkdown` | `((source: string) => React.ReactNode)` | Markdown renderer for the body; default is plain text with kept line breaks. |
+| `summary` * | `PinnedSummaryView` |  |
+
 ### `ProcessBlockView`
 
 *type* — One step inside a model call (stage text, tool reference, thinking).
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `id` * | `string` |  |
+| `type` * | `"tool" \| "text" \| "thinking" \| "pending-record"` |  |
 
 ### `QuestionAnswerState`
 
@@ -4664,13 +5184,59 @@ type ReferenceKind = 'file' | 'folder' | 'skill' | 'command' | 'url' | 'symbol' 
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `anchor` | `HTMLElement \| React.RefObject<HTMLElement \| null>` |  |
+| `defaultOpen` | `boolean` |  |
+| `disabled` | `boolean` |  |
+| `error` | `React.ReactNode` |  |
+| `hasMore` | `boolean` |  |
+| `hideTrigger` | `boolean` |  |
+| `items` | `readonly ReferenceOption[]` |  |
+| `loadingMore` | `boolean` |  |
+| `loading` | `boolean` |  |
+| `onAdd` * | `(path: string) => Promise<boolean> \| boolean` |  |
+| `onLoadMore` | `(() => void)` |  |
+| `onNavigate` | `((path: string) => void)` |  |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `onRetry` | `(() => void)` |  |
+| `onSearch` | `((query: string) => void)` |  |
+| `onUp` | `(() => void)` |  |
+| `onValueChange` | `((value: string) => void)` |  |
+| `open` | `boolean` |  |
+| `truncated` | `boolean` |  |
+| `value` | `string` |  |
+
 ### `ResizeHandleProps`
 
 *type* — ResizeHandle (atlas 01): a focusable vertical splitter between two columns.
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `defaultSize` | `number` |  |
+| `disabled` | `boolean` |  |
+| `getAriaValueText` | `((size: number) => string)` |  |
+| `label` | `string` | Accessible name; defaults to the shell copy 「调整详情面板宽度」. |
+| `largeStep` | `number` | Shift + arrow step. |
+| `max` * | `number` |  |
+| `min` * | `number` |  |
+| `onDraggingChange` | `((dragging: boolean) => void)` |  |
+| `onSizeChange` | `((size: number) => void)` |  |
+| `pane` | `"end" \| "start"` | Logical side of the handle the resized pane is on. |
+| `resetSize` | `number` | Size restored on double-click; defaults to `defaultSize`. |
+| `size` | `number` |  |
+| `step` | `number` | Arrow-key step in CSS pixels. |
+
 ### `RunCommandDetailProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `detail` * | `{ kind: "command"; command: string; cwd?: string; shell?: string; timeoutMs?: number; exitCode?: number; execution?: "pending" \| "running" \| "returned" \| "background" \| "timed-out" \| "cancel-unconfirmed"; output?: ToolOutputView; terminalId?: string; sandboxed?: boolean; }` |  |
+| `onCopyText` | `((text: string) => void \| Promise<void>)` |  |
+| `onOpenTerminal` | `((terminalId: string) => void)` |  |
+| `outputProps` | `Pick<ToolOutputProps, "onLoadMore" \| "onOpenFull" \| "loadingMore" \| "onCopyText">` | Passed through to the output (display truncation). |
 
 ### `RunDetailsProps`
 
@@ -4684,6 +5250,21 @@ type RunDetailsProps = Omit<React.HTMLAttributes<HTMLDListElement>, 'children'> 
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `defaultOpen` | `boolean` |  |
+| `facts` | `readonly RunOverviewFact[]` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onClose` | `(() => void)` |  |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `onReopen` | `(() => void)` |  |
+| `onSectionOpenChange` | `((id: string, open: boolean) => void)` |  |
+| `open` | `boolean` |  |
+| `sectionOpen` | `Readonly<Record<string, boolean>>` |  |
+| `sections` | `readonly RunOverviewSection[]` |  |
+| `subagents` | `readonly SubagentView[]` |  |
+| `terminals` | `React.ReactNode` |  |
+
 ### `RunPhase`
 
 *type* — What a run is doing right now. Finer than `RunStatus` and purely descriptive: it drives the label, glyph and AgentSpark phase, never the available actions.
@@ -4696,13 +5277,55 @@ type RunPhase = | 'queued' | 'preparing' | 'waiting-model' | 'thinking' | 'respo
 
 *type* — RunStatus (atlas 10): the run axis as glyph + label (+ phase, elapsed, hint). Sync health and the receipt of the last user action are separate axes and render as their own small chips when they say something (`syncStatus` ≠ live, `actionStatus` ≠ idle) — a reconnecting stream never changes the run label, and an `unknown` receipt is never drawn as success.
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `actionStatus` | `ActionStatus` |  |
+| `announceInterval` | `number` | Minimum gap between announcements (ms). |
+| `announce` | `boolean` | Render a polite, throttled screen-reader announcement of the label. |
+| `appearance` | `"pill" \| "inline" \| "line"` |  |
+| `elapsedMs` | `number` |  |
+| `hint` | `React.ReactNode` | Short explanation shown after the status ("等待你批准 1 个操作"). |
+| `labelOverride` | `React.ReactNode` | Replaces the computed label. |
+| `phase` | `RunPhase` |  |
+| `run` | `Pick<RunView, "status" \| "phase" \| "label" \| "elapsedMs" \| "syncStatus" \| "actionStatus">` |  |
+| `size` | `"sm" \| "md"` |  |
+| `status` | `RunStatusValue` |  |
+| `syncStatus` | `SyncStatus` |  |
+
 ### `RunSummaryProps`
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `headingLevel` | `HeadingLevel` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onOpenArtifact` | `((id: string) => void)` | Opens one artifact from the mini list. |
+| `onOpenDetails` | `(() => void)` |  |
+| `onOpenTrace` | `(() => void)` |  |
+| `onRetrySave` | `AgentActionHandler` | Retries persisting the result (`persistence: 'failed'`). |
+| `run` * | `RunSummaryView` |  |
+
 ### `SendStopButtonProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `canSend` * | `boolean` | There is something to send (non-empty text, nothing uploading, within limits). |
+| `className` | `string` |  |
+| `disabledReason` | `string` | Why sending is not possible; shown in the tooltip and linked with aria-describedby. |
+| `draftStatus` | `DraftStatus` |  |
+| `labels` | `Partial<Record<SendStopState \| "send-retry" \| "stop-retry", string>>` | Override labels per state. |
+| `mode` | `"send" \| "stop"` | Force a mode. Default: `stop` while `canStopRun(runStatus)` or `cancelling`, else `send`. |
+| `onRetrySave` | `(() => void)` | Draft save failed: the button becomes 重试保存. |
+| `onRetry` | `((kind: "send" \| "stop", actionId: string \| undefined) => void)` | Retry an `unknown` action with its original `actionId` (ADR-0011 §4). Without it, or when the receipt says `retryable: false`, the unknown state is inert so no duplicate action is created. |
+| `onSend` | `(() => void)` |  |
+| `onStop` | `(() => void)` |  |
+| `retryBusy` | `boolean` |  |
+| `runStatus` | `RunStatus` |  |
+| `sendReceipt` | `ActionReceipt \| ActionStatus` | Receipt of the last send (`submitting` → inert, `unknown` → 结果待确认). |
+| `stopReceipt` | `ActionReceipt \| ActionStatus` | Receipt of the last stop request (`submitting` / `accepted` while the run still runs → 停止待确认). |
 
 ### `SendStopState`
 
@@ -4715,6 +5338,23 @@ type SendStopState = 'send' | 'sending' | 'send-unknown' | 'retry-save' | 'stop'
 ### `SkillPickerProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `anchor` | `HTMLElement \| React.RefObject<HTMLElement \| null>` |  |
+| `defaultOpen` | `boolean` |  |
+| `disabled` | `boolean` |  |
+| `error` | `React.ReactNode` |  |
+| `hideTrigger` | `boolean` |  |
+| `loading` | `boolean` |  |
+| `max` | `number` |  |
+| `onChange` * | `(skills: SkillOption[]) => void` |  |
+| `onLimitReached` | `((max: number) => void)` |  |
+| `onOpenChange` | `((open: boolean) => void)` |  |
+| `onRetry` | `(() => void)` |  |
+| `open` | `boolean` |  |
+| `selected` * | `readonly SkillOption[]` |  |
+| `skills` * | `readonly SkillOption[]` |  |
 
 ### `SkillUseListProps`
 
@@ -4744,13 +5384,44 @@ type StatusGlyphName = | 'idle' | 'pending' | 'thinking' | 'tool' | 'waiting-use
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` | Ongoing activity: CSS adds a slow breathing halo (`data-loop` from the caller). |
+| `children` | `React.ReactNode` | Custom SVG inner nodes; win over the built-in glyph for `name`. |
+| `name` * | `string` | Built-in glyph name. Any other string is accepted together with `children` (ADR-0013 §3): the children become the glyph content and `data-glyph` carries the custom name. |
+| `tone` | `AgentTone` |  |
+
 ### `SubAgentCardProps`
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `agent` * | `SubagentView` |  |
+| `animate` | `boolean` | Animate the spark (default). `false` forces the static frame, e.g. in long lists. |
+| `headingLevel` | `HeadingLevel` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onOpenSnapshot` | `((id: string) => void)` | Opens the read-only snapshot of an inherited record; draws 「查看快照」. |
+| `onOpen` | `((id: string) => void)` | Opens the sub-task; draws 「查看子任务」. Not drawn for inherited records. |
+
 ### `SubAgentListProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `agents` * | `SubagentView[]` |  |
+| `animate` | `boolean` |  |
+| `disabled` | `boolean` |  |
+| `empty` | `React.ReactNode` |  |
+| `groupBy` | `"none" \| "state"` |  |
+| `groupInherited` | `boolean` | Put inherited records under their own 「继承的子任务记录」 heading after the live ones. |
+| `headingLevel` | `HeadingLevel` | Level of each card heading; the list heading (`title`) is one level above. |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onOpenSnapshot` | `((id: string) => void)` |  |
+| `onOpen` | `((id: string) => void)` |  |
+| `title` | `string \| (string & React.ReactElement<unknown, string \| React.JSXElementConstructor<any>>) \| (string & Iterable<React.ReactNode>) \| (string & React.ReactPortal) \| (string & Promise<AwaitedReactNode>)` | Visible list heading; omitted → the list is named by `aria-label` only. |
+| `variant` | `"row" \| "card"` |  |
 
 ### `SubagentStatus`
 
@@ -4788,9 +5459,34 @@ type TerminalGroupKey = 'open' | 'ended' | 'unknown' | 'inherited'
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `currentId` | `string` |  |
+| `defaultCollapsed` | `TerminalGroupKey[]` | Groups collapsed on first render (uncontrolled per group). Default: inherited. |
+| `empty` | `React.ReactNode` |  |
+| `error` | `React.ReactNode` |  |
+| `hasMore` | `boolean` | `false` hides the 「加载更多终端」 button even when `onLoadMore` is given. |
+| `loadingMore` | `boolean` |  |
+| `loading` | `boolean` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onLoadMore` | `(() => void)` |  |
+| `onOpen` | `((terminal: TerminalView) => void)` |  |
+| `onRetry` | `(() => void)` |  |
+| `onStop` | `AgentActionHandler<[terminal: TerminalView, context: { actionId: string; }]>` |  |
+| `terminals` * | `TerminalView[]` |  |
+| `total` | `number` |  |
+
 ### `TerminalRowProps`
 
 *type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `current` | `boolean` | Marks the open terminal (`aria-current`). |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onOpen` | `((terminal: TerminalView) => void)` | Opens the terminal (row button). Without it the row is plain text. |
+| `onStop` | `AgentActionHandler<[terminal: TerminalView, context: { actionId: string; }]>` | Stop action; a separate button, drawn only when the terminal is stoppable. |
+| `terminal` * | `TerminalView` |  |
 
 ### `TerminalSessionStatus`
 
@@ -4804,13 +5500,55 @@ type TerminalSessionStatus = | 'opening' | 'running' | 'waiting-input' | 'idle' 
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `defaultValue` | `string` |  |
+| `headingLevel` | `HeadingLevel` |  |
+| `messages` | `WorkspaceMessagesProp` |  |
+| `onInput` | `AgentActionHandler<[text: string, terminal: TerminalView]>` |  |
+| `onLoadEarlier` | `AgentActionHandler<[terminal: TerminalView]>` |  |
+| `onLoadMoreHistory` | `AgentActionHandler<[terminal: TerminalView]>` |  |
+| `onReadLatest` | `AgentActionHandler<[terminal: TerminalView]>` |  |
+| `onStop` | `AgentActionHandler<[terminal: TerminalView]>` |  |
+| `onValueChange` | `((id: string) => void)` |  |
+| `terminals` * | `TerminalView[]` |  |
+| `value` | `string` | Active terminal id (controlled). |
+
 ### `ThinkingBlockProps`
 
 *type* — ThinkingBlock (atlas 08): the public thinking summary of one model call as a disclosure, collapsed by default. It never assumes private reasoning exists: without a summary it says so.
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `defaultExpanded` | `boolean` |  |
+| `expanded` | `boolean` |  |
+| `label` | `React.ReactNode` | Overrides `thinking.label` / the default label. |
+| `onExpandedChange` | `((expanded: boolean) => void)` |  |
+| `onOpenFull` | `((thinkingId: string) => void)` | Shown as a button under the truncated notice. |
+| `renderers` | `MessagePartRenderers` |  |
+| `thinking` * | `ThinkingView` |  |
+
 ### `ToolActivityProps`
 
 *type* — ToolActivity (atlas 11): one round of tool calls. The header is a disclosure button with the operation count, the running count, elapsed time and aggregated status counts (glyph + text). While any row is active an AgentSpark (executing) runs next to the count; it is decorative — the running count is the text. Rows are deduped by id and ordered by `sequence`.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` | The round is still running. Defaults to "any row is active". |
+| `defaultExpanded` | `boolean` |  |
+| `detailActions` | `ToolDetailActions` | Callbacks for the built-in detail views (read more, reload, open terminal…). |
+| `detailsErrors` | `Readonly<Record<string, React.ReactNode>>` | Load errors by tool id (`detailsError` of each row). |
+| `elapsedMs` | `number` | Elapsed time of the round. |
+| `expandedIds` | `readonly string[]` | Controlled expanded rows by id. |
+| `expanded` | `boolean` |  |
+| `onExpandedChange` | `((expanded: boolean) => void)` |  |
+| `onLoadDetails` | `((id: string) => void)` | Called when the row opens and `tool.detailsLoaded === false`, and on retry. |
+| `onOpenHistory` | `(() => void)` | Shows the 「完整工具记录」 link. |
+| `onToolExpandedChange` | `((id: string, expanded: boolean) => void)` |  |
+| `renderDetail` | `((tool: ToolCallView) => React.ReactNode \| undefined)` | Override the detail body. Return `undefined` to fall back to the built-in view. |
+| `renderTool` | `((tool: ToolCallView) => React.ReactNode \| undefined)` | Replace a row. Return `undefined` to use the default ToolRecord. |
+| `title` | `string \| (string & React.ReactElement<unknown, string \| React.JSXElementConstructor<any>>) \| (string & Iterable<React.ReactNode>) \| (string & React.ReactPortal) \| (string & Promise<AwaitedReactNode>)` | Header title override (default 「N 个操作」). |
+| `tools` * | `readonly ToolCallView[]` |  |
 
 ### `ToolCategory`
 
@@ -4840,17 +5578,67 @@ type ToolDetailProps = ToolDetailActions & { tool: ToolCallView; detail?: ToolDe
 
 *type*
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `kind` * | `"agent" \| "command" \| "question" \| "model" \| "generic" \| "file-read" \| "file-write" \| "file-edit" \| "patch" \| "manage-files" \| "mcp"` |  |
+
 ### `ToolHistoryProps`
 
 *type* — ToolHistory (atlas 46): 「完整工具记录」 disclosure listing every loaded page. Rows are deduped by id across pages and never reordered once read; a load error keeps the loaded rows and offers 「加载更多」 again (no retry loop). The count says how many are loaded (and the total when the adapter knows it). Rows mount without entrance motion (history is restored, not new). `onOpenOperation` adds a 「在对话中定位」 button beside each row.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `defaultExpanded` | `boolean` |  |
+| `detailActions` | `ToolDetailActions` | Callbacks for the built-in detail views (read more, reload, open terminal…). |
+| `detailsErrors` | `Readonly<Record<string, React.ReactNode>>` | Load errors by tool id (`detailsError` of each row). |
+| `error` | `React.ReactNode` |  |
+| `expanded` | `boolean` |  |
+| `hasMore` | `boolean` |  |
+| `items` * | `readonly ToolCallView[]` | All loaded rows (pages concatenated; duplicates allowed, they are dropped here). |
+| `loading` | `boolean` |  |
+| `onExpandedChange` | `((expanded: boolean) => void)` |  |
+| `onLoadDetails` | `((id: string) => void)` | Called when the row opens and `tool.detailsLoaded === false`, and on retry. |
+| `onLoadMore` | `(() => void)` |  |
+| `onOpenOperation` | `((id: string) => void)` |  |
+| `renderDetail` | `((tool: ToolCallView) => React.ReactNode \| undefined)` | Override the detail body. Return `undefined` to fall back to the built-in view. |
+| `title` | `string \| (string & React.ReactElement<unknown, string \| React.JSXElementConstructor<any>>) \| (string & Iterable<React.ReactNode>) \| (string & React.ReactPortal) \| (string & Promise<AwaitedReactNode>)` |  |
+| `total` | `number` |  |
 
 ### `ToolOutputProps`
 
 *type* — ToolOutput (atlas 45): bounded preview of one tool output. The body never grows past `--rl-agent-output-max-height`; it scrolls inside a focusable, named region so keyboard users can scroll it and the page never overflows. Text stays selectable; the copy button copies the loaded portion only.
 
+| Member | Type | Description |
+| --- | --- | --- |
+| `copyable` | `boolean` | Hide the copy button. |
+| `label` | `React.ReactNode` | Heading text; defaults to the kind label (「终端输出」, 「JSON」…). |
+| `loadingMore` | `boolean` | Busy state for `onLoadMore`. |
+| `onCopyText` | `((text: string) => void \| Promise<void>)` | Replace the clipboard write (tests, host clipboards). |
+| `onLoadMore` | `(() => void)` | Load the next display chunk (`truncated: 'display'`). |
+| `onOpenFull` | `(() => void)` | Open the full output elsewhere (`truncated: 'display'`). |
+| `output` * | `ToolOutputView` |  |
+| `page` | `MaterialPageView` | One page of the stored output; replaces the inline body with a `ChunkPager`. |
+| `pager` | `Partial<ChunkPagerActions>` | Paging callbacks for `page` (`canGoBack` defaults to false). |
+| `regionLabel` | `string` | Name of the scroll region; defaults to the label text. |
+
 ### `ToolRecordProps`
 
 *type* — ToolRecord (atlas 12): one tool call. The whole row is the disclosure trigger (a real `<button>` from `@wzrhine/react` Collapsible, `aria-expanded` / `aria-controls`) whose accessible name reads category, name, subject, summary, status and elapsed time. The raw tool name is in the name's `title` and in the details.
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `actions` | `React.ReactNode` | Controls placed next to the row (outside the trigger button), e.g. 「在对话中定位」. |
+| `defaultExpanded` | `boolean` |  |
+| `detailActions` | `ToolDetailActions` | Callbacks for the built-in detail views (read more, reload, open terminal…). |
+| `detailsError` | `React.ReactNode` | Loading the full record failed (shown with a retry when `onLoadDetails` exists). |
+| `detailsFooter` | `React.ReactNode` | Extra content at the end of the details (e.g. Code Mode script). |
+| `detailsLoading` | `boolean` |  |
+| `expanded` | `boolean` |  |
+| `onExpandedChange` | `((expanded: boolean, id: string) => void)` |  |
+| `onLoadDetails` | `((id: string) => void)` | Called when the row opens and `tool.detailsLoaded === false`, and on retry. |
+| `onRetry` | `((tool: ToolCallView) => void)` |  |
+| `renderDetail` | `((tool: ToolCallView) => React.ReactNode \| undefined)` | Override the detail body. Return `undefined` to fall back to the built-in view. |
+| `tool` * | `ToolCallView` |  |
 
 ### `ToolRenderer`
 
