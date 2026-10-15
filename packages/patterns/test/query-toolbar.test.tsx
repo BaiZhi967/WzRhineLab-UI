@@ -157,6 +157,54 @@ describe('QueryToolbar busy and reset', () => {
     expect(onReset).toHaveBeenCalledTimes(1);
   });
 
+  // Audit §5.5: with an uncontrolled draft and an already-empty committed query, the caller's
+  // reset changes nothing observable, so the typed text used to survive it.
+  it('reset clears the uncontrolled draft even when the committed query is already empty', async () => {
+    const user = userEvent.setup();
+    const onReset = vi.fn();
+    render(<QueryToolbar query="" onQueryChange={() => {}} onReset={onReset} />);
+    const input = screen.getByRole('searchbox');
+    await user.type(input, '未提交的草稿');
+    expect(input).toHaveValue('未提交的草稿');
+
+    await user.click(screen.getByRole('button', { name: patternsZhCN.queryToolbar.reset }));
+    expect(onReset).toHaveBeenCalledTimes(1);
+    expect(input).toHaveValue('');
+  });
+
+  it('a controlled pending value stays owned by the caller on reset', async () => {
+    const user = userEvent.setup();
+    render(
+      <QueryToolbar
+        query=""
+        pendingQuery="调用者持有"
+        onPendingQueryChange={() => {}}
+        onQueryChange={() => {}}
+        onReset={() => {}}
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: patternsZhCN.queryToolbar.reset }));
+    // The component must not fight a controlled value; clearing it is the caller's job.
+    expect(screen.getByRole('searchbox')).toHaveValue('调用者持有');
+  });
+
+  // Audit §5.5: the toolbar is often nested in a larger form; Enter means "run this query",
+  // never "submit the surrounding form".
+  it('Enter runs the query without submitting a surrounding form', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn((event: React.FormEvent) => event.preventDefault());
+    const onQueryChange = vi.fn();
+    render(
+      <form onSubmit={onSubmit}>
+        <QueryToolbar query="" onQueryChange={onQueryChange} />
+        <button type="submit">外层提交</button>
+      </form>,
+    );
+    await user.type(screen.getByRole('searchbox'), '关键词{Enter}');
+    expect(onQueryChange).toHaveBeenCalledWith('关键词');
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
   it('pending value can be controlled externally', () => {
     const onPendingQueryChange = vi.fn();
     render(
