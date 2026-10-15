@@ -193,6 +193,11 @@ describe('SectionIndex navigation', () => {
   });
 });
 
+/** Minimal IntersectionObserverEntry stand-in: the component only reads target and isIntersecting. */
+function makeEntry(target: Element, isIntersecting: boolean): IntersectionObserverEntry {
+  return { target, isIntersecting, intersectionRatio: isIntersecting ? 1 : 0 } as unknown as IntersectionObserverEntry;
+}
+
 describe('SectionIndex observation', () => {
   type IOInstance = {
     callback: ResizeObserverCallback | IntersectionObserverCallback;
@@ -228,7 +233,7 @@ describe('SectionIndex observation', () => {
 
   const intersect = (target: Element, isIntersecting: boolean) => {
     for (const inst of instances) {
-      const entry = { target, isIntersecting, intersectionRatio: isIntersecting ? 1 : 0 } as IntersectionObserverEntry;
+      const entry = makeEntry(target, isIntersecting);
       act(() => {
         (inst.callback as (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => void)([entry], inst as unknown as IntersectionObserver);
       });
@@ -293,7 +298,7 @@ describe('SectionIndex observation', () => {
     render(<Host />);
     const inst = instances[0]!;
     const entries = ['sec-result', 'sec-method'].map(
-      (id) => ({ target: document.getElementById(id)!, isIntersecting: true, intersectionRatio: 1 }) as IntersectionObserverEntry,
+      (id) => makeEntry(document.getElementById(id)!, true),
     );
     act(() => {
       (inst.callback as (e: IntersectionObserverEntry[], o: IntersectionObserver) => void)(entries, inst as unknown as IntersectionObserver);
@@ -396,7 +401,7 @@ describe('SectionIndex observation', () => {
     // The retired node fires a late entry: it must not become the current section.
     act(() => {
       (inst.callback as (e: IntersectionObserverEntry[], o: IntersectionObserver) => void)(
-        [{ target: staleMethod, isIntersecting: true, intersectionRatio: 1 } as IntersectionObserverEntry],
+        [makeEntry(staleMethod, true)],
         inst as unknown as IntersectionObserver,
       );
     });

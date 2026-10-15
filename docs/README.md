@@ -2,7 +2,7 @@
 
 ## 当前开发路线
 
-WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基线；0.3.0 的页面与集合浏览（`@wzrhine/patterns`）库侧已实现并通过门禁，**尚未发布到 npm**。开发自主推进，消费反馈经过评估进入版本，不以其他应用的接入节奏作为等待条件。
+WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基线；0.3.0 的页面与集合浏览（`@wzrhine/patterns`）库侧已实现，经外部独立验收后完成一轮返修，当前处于 Validating，**尚未发布到 npm**（逐条处置见 [审计响应](roadmap/execution-backlog.md#9-审计响应2026-10-15外部独立验收)）。开发自主推进，消费反馈经过评估进入版本，不以其他应用的接入节奏作为等待条件。
 
 | 文档 | 用途 |
 | --- | --- |
@@ -15,7 +15,7 @@ WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基�
 | [roadmap/quality-and-release.md](roadmap/quality-and-release.md) | 质量门禁、版本、发布和回滚 |
 | [planning/templates/component-demand.md](planning/templates/component-demand.md) | 单条需求记录模板，所有消费项目共用 |
 
-0.3.0 的 patterns 页面模式已实现（见 [api/patterns.md](api/patterns.md) 与 [components/patterns.md](components/patterns.md)）；R2 及以后的能力仍为规划状态，不能仅凭计划在业务代码中调用。源码与发布包证明已有 API，验收记录证明实际执行结果。
+0.3.0 的 patterns 页面模式已实现（见 [api/patterns.md](api/patterns.md) 与 [components/patterns.md](components/patterns.md)），但版本状态是 Validating 而非 Accepted；R2 及以后的能力仍为规划状态，不能仅凭计划在业务代码中调用。源码与发布包证明已有 API，验收记录证明实际执行结果。
 
 ## 设计与开发规范
 
