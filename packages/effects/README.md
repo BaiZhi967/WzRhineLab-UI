@@ -1,6 +1,6 @@
 # @wzrhine/effects
 
-WzRhineLab UI 的**可选**展示动效：解密、扫描、轨道，以及用于对照的四通道动效播放器。`@wzrhine/react` 不依赖本包。
+WzRhineLab UI 的**可选**展示动效：解密、扫描、轨道、仪器对准、关系传导与标注线，以及四通道动效播放器。共享元素锚点、纯路径与受控进度可用于扩展新的 DOM/SVG 效果；`@wzrhine/react` 不依赖本包。
 
 > 实验性（0.x 期间 API 可能调整）；MIT 许可证。
 

@@ -1,6 +1,7 @@
 # Showcase effects · `@wzrhine/effects`
 
-- 状态：**Experimental（M4）** · 源码：`packages/effects/src/*` · Showcase：`#/motion/effects`
+- 状态：**Experimental**（M4 起；MFX-01 扩展尚未发布） · 源码：`packages/effects/src/*` · Showcase：`#/motion/effects`
+- 仪器对准、关系传导、标注线及共享几何／进度底座见 [Effect foundations](effect-foundations.md)；继承本文内容先于动画、按需启用与减动规则。
 - **可选包**：`@wzrhine/react` 不导入、不依赖它（包边界测试强制）。只在需要演示效果的页面引入，并且只导入单个效果时可以按需裁剪。
 
 ```tsx
@@ -49,15 +50,23 @@ MOTION.md 要求展示动画时提供 Default / Slow ×0.25 / Reduced / Interrup
 - 状态行是 polite 实时区域。通道按 4 → 2 → 1 列排布（容器查询），不会出现单独一格在一行。
 - 也可以用 `EffectClock`（`speed`、`reduced`）给自定义效果提供同样的计时；效果内部通过 `useEffectTiming()` 读取。
 
-## 体积（实测，Vite 库模式，外置 react / motion / @wzrhine/react）
+## 当前体积与验证（MFX-01，未发布）
+
+当前基于真实 dist 的 esbuild 门禁实测：effects 全量约 **6.77 KB gzip**，CSS 约 **1.92 KB**；独立路径生成 0.29 KB、SignalPath 2.77 KB、CalibrationReticle 1.19 KB、ArchiveReveal 1.34 KB。peer 外置，算法、预算与独立入口隔离规则见 [SIZE](../development/SIZE.md)。
+
+当前 effects 单元测试 **72 项**；新增效果三浏览器 **54 项**、原有动效／减动／布局三浏览器定向回归 **279 项**通过。实际执行范围、首次失败、未覆盖项与已知问题见 [MFX-01 验收记录](../development/acceptance/2026-10-15-mfx-01.md)，不把这些数字当作完整全路由 E2E 或外部无障碍审计。
+
+## 历史体积（M4，非当前基线）
+
+以下为 M4 时 Vite 库模式实测，外置 react / motion / @wzrhine/react，保留作历史对照。
 | 导入 | min | gzip |
 | --- | --- | --- |
 | `@wzrhine/effects` 全部 | 11.0 kB | 3.8 kB |
 | 只导入 `MotionPlayer` | 3.4 kB | 1.3 kB |
 | `@wzrhine/react` 的 Button + Text（对照） | 6.5 kB | 2.5 kB，不含任何 effects 代码 |
 
-Showcase 用 `React.lazy` 按需加载效果页，生成独立的 5.4 kB JS 和 1.6 kB CSS（gzip）；E2E 验证其他页面不会请求这个分包。
+M4 时 Showcase 用 `React.lazy` 按需加载效果页，生成独立的 5.4 kB JS 和 1.6 kB CSS（gzip）；这些历史分包数值不代表 MFX-01 构建。当前首页仪器 recipe 与效果实验区独立懒加载，普通组件页不加载它们。
 
-## 测试
+## 历史测试（M4／M10）
 - 单测 `packages/effects/test`（共 45 项）：scramble 7 项、计时与组件 23 项、生命周期 9 项（M10，`lifecycle.test.tsx`）、包边界 6 项。
 - 浏览器 `apps/docs/e2e/effects.spec.ts`：通道布局 4 项、MotionPlayer 4 项、减动扫描 1 项、页面内效果 5 项（含「效果代码只在本页加载」）、明暗 axe 2 项。Chromium、Firefox、WebKit 均通过。M10 的隐藏页暂停与轨道接续另见 `motion-core.spec.ts`。

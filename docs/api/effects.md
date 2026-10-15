@@ -1,8 +1,28 @@
 # @wzrhine/effects · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 24 个导出（5 components，9 functions & hooks，5 interfaces，5 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 48 个导出（8 components，14 functions & hooks，17 interfaces，9 types）。
 
 ## Components
+
+### `AnnotationTrace`
+
+*component* — Connect an object to its always-readable annotation using the shared anchor geometry.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` |  |
+| `bend` | `number` |  |
+| `className` | `string` |  |
+| `containerRef` * | `RefObject<HTMLElement \| null>` |  |
+| `fromAnchor` | `EffectAnchorSide` |  |
+| `fromRef` * | `RefObject<HTMLElement \| null>` |  |
+| `onSettled` | `((active: boolean) => void)` |  |
+| `route` | `EffectPathKind` |  |
+| `toAnchor` | `EffectAnchorSide` |  |
+| `toRef` * | `RefObject<HTMLElement \| null>` |  |
+| `tracking` | `boolean` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
 ### `ArchiveReveal`
 
@@ -16,6 +36,18 @@
 | `paused` | `boolean` |  |
 | `revealed` * | `boolean` | Target state. Changing it animates from the current position. |
 | `text` * | `string` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `CalibrationReticle`
+
+*component* — Decorative alignment structure. It does not represent a sensor reading or task result.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` |  |
+| `className` | `string` |  |
+| `onSettled` | `((active: boolean) => void)` |  |
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
@@ -82,7 +114,43 @@
 
 `*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
+### `SignalPath`
+
+*component* — A static relationship with an explicitly controlled signal; never an automatic loop.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` |  |
+| `bend` | `number` |  |
+| `className` | `string` |  |
+| `containerRef` * | `RefObject<HTMLElement \| null>` |  |
+| `fromAnchor` | `EffectAnchorSide` |  |
+| `fromRef` * | `RefObject<HTMLElement \| null>` |  |
+| `onSettled` | `((active: boolean) => void)` |  |
+| `route` | `EffectPathKind` |  |
+| `toAnchor` | `EffectAnchorSide` |  |
+| `toRef` * | `RefObject<HTMLElement \| null>` |  |
+| `tracking` | `boolean` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
 ## Functions & hooks
+
+### `createEffectPath`
+
+*function* — Deterministic SVG geometry. No routing, layout, animation or DOM ownership.
+
+```ts
+function createEffectPath: (from: EffectPoint, to: EffectPoint, { route, bend }?: EffectPathOptions) => string
+```
+
+### `effectAnchorPoint`
+
+*function* — An edge midpoint in viewport coordinates, before conversion to the overlay's space.
+
+```ts
+function effectAnchorPoint: (rect: EffectRect, side?: EffectAnchorSide) => EffectPoint
+```
 
 ### `isWide`
 
@@ -132,12 +200,36 @@ function scrambleText: (text: string, progress: number, frame: number) => string
 function stepToward: (current: number, target: number, step: number) => number
 ```
 
+### `toEffectPoint`
+
+*function* — Convert a viewport point to an absolute child's local coordinate system.
+
+```ts
+function toEffectPoint: (point: EffectPoint, space: EffectCoordinateSpace) => EffectPoint | null
+```
+
+### `useEffectProgress`
+
+*function* — A visual target, not task progress: state and accessible content must update independently.
+
+```ts
+function useEffectProgress: ({ active, viewportRef, preset, onSettled }: EffectProgressOptions) => EffectProgressResult
+```
+
 ### `useEffectTiming`
 
 *function*
 
 ```ts
 function useEffectTiming: () => EffectTiming
+```
+
+### `useElementAnchors`
+
+*function* — Measure actual edge midpoints in the positioning container's local CSS-pixel space.
+
+```ts
+function useElementAnchors: ({ containerRef, anchors, active, tracking }: ElementAnchorsOptions) => ElementAnchorsResult
 ```
 
 ### `useInViewport`
@@ -158,6 +250,34 @@ function usePageVisible: () => boolean
 
 ## Interfaces
 
+### `AnnotationTraceProps`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` |  |
+| `bend` | `number` |  |
+| `className` | `string` |  |
+| `containerRef` * | `RefObject<HTMLElement \| null>` |  |
+| `fromAnchor` | `EffectAnchorSide` |  |
+| `fromRef` * | `RefObject<HTMLElement \| null>` |  |
+| `onSettled` | `((active: boolean) => void)` |  |
+| `route` | `EffectPathKind` |  |
+| `toAnchor` | `EffectAnchorSide` |  |
+| `toRef` * | `RefObject<HTMLElement \| null>` |  |
+| `tracking` | `boolean` |  |
+
+### `CalibrationReticleProps`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` |  |
+| `className` | `string` |  |
+| `onSettled` | `((active: boolean) => void)` |  |
+
 ### `EffectClockProps`
 
 *interface*
@@ -168,6 +288,70 @@ function usePageVisible: () => boolean
 | `reduced` | `boolean` |  |
 | `speed` | `number` |  |
 
+### `EffectCoordinateSpace`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `borderLeft` | `number` |  |
+| `borderTop` | `number` |  |
+| `height` * | `number` |  |
+| `rect` * | `EffectRect` |  |
+| `scrollLeft` | `number` |  |
+| `scrollTop` | `number` |  |
+| `width` * | `number` |  |
+
+### `EffectPathOptions`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `bend` | `number` |  |
+| `route` | `EffectPathKind` |  |
+
+### `EffectPoint`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `x` * | `number` |  |
+| `y` * | `number` |  |
+
+### `EffectProgressOptions`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `active` * | `boolean` |  |
+| `onSettled` | `((active: boolean) => void)` |  |
+| `preset` | `EffectProgressPreset` |  |
+| `viewportRef` * | `React.RefObject<Element \| null>` |  |
+
+### `EffectProgressResult`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `progress` * | `MotionValue<number>` |  |
+| `reduced` * | `boolean` |  |
+| `state` * | `EffectProgressState` |  |
+
+### `EffectRect`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `height` * | `number` |  |
+| `left` * | `number` |  |
+| `top` * | `number` |  |
+| `width` * | `number` |  |
+
 ### `EffectTiming`
 
 *interface*
@@ -177,6 +361,38 @@ function usePageVisible: () => boolean
 | `reduced` * | `boolean` |  |
 | `scale` * | `(ms: number) => number` | Scale a base duration (ms) by the current speed. |
 | `speed` * | `number` |  |
+
+### `ElementAnchor`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `offset` | `EffectPoint` |  |
+| `ref` * | `React.RefObject<HTMLElement \| null>` |  |
+| `side` | `EffectAnchorSide` |  |
+
+### `ElementAnchorsOptions`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` |  |
+| `anchors` * | `Readonly<Record<string, ElementAnchor>>` |  |
+| `containerRef` * | `React.RefObject<HTMLElement \| null>` |  |
+| `tracking` | `boolean` | Follow transform-only motion while visible. Off by default; idle effects do not poll. |
+
+### `ElementAnchorsResult`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `height` * | `number` |  |
+| `points` * | `Readonly<Record<string, EffectPoint \| null>>` |  |
+| `refresh` * | `() => void` |  |
+| `width` * | `number` |  |
 
 ### `MotionDemoProps`
 
@@ -211,6 +427,24 @@ function usePageVisible: () => boolean
 | `char` * | `string` |  |
 | `resolved` * | `boolean` |  |
 
+### `SignalPathProps`
+
+*interface*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `active` | `boolean` |  |
+| `bend` | `number` |  |
+| `className` | `string` |  |
+| `containerRef` * | `RefObject<HTMLElement \| null>` |  |
+| `fromAnchor` | `EffectAnchorSide` |  |
+| `fromRef` * | `RefObject<HTMLElement \| null>` |  |
+| `onSettled` | `((active: boolean) => void)` |  |
+| `route` | `EffectPathKind` |  |
+| `toAnchor` | `EffectAnchorSide` |  |
+| `toRef` * | `RefObject<HTMLElement \| null>` |  |
+| `tracking` | `boolean` |  |
+
 ## Types
 
 ### `ArchiveRevealProps`
@@ -225,6 +459,38 @@ function usePageVisible: () => boolean
 | `paused` | `boolean` |  |
 | `revealed` * | `boolean` | Target state. Changing it animates from the current position. |
 | `text` * | `string` |  |
+
+### `EffectAnchorSide`
+
+*type*
+
+```ts
+type EffectAnchorSide = 'top' | 'right' | 'bottom' | 'left' | 'center'
+```
+
+### `EffectPathKind`
+
+*type*
+
+```ts
+type EffectPathKind = 'straight' | 'curve' | 'rail'
+```
+
+### `EffectProgressPreset`
+
+*type*
+
+```ts
+type EffectProgressPreset = Exclude<keyof typeof transition, 'loop'>
+```
+
+### `EffectProgressState`
+
+*type*
+
+```ts
+type EffectProgressState = 'idle' | 'running' | 'paused' | 'settled'
+```
 
 ### `MotionLane`
 

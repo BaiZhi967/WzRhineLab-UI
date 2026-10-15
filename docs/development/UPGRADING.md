@@ -4,6 +4,14 @@
 
 版本策略见 [RELEASING.md](RELEASING.md)：`0.x` 允许破坏性变更，但每一项都会出现在这里。六个包同一版本线；使用页面模式时安装 `@wzrhine/patterns`，使用 Agent UI 时连同 `@wzrhine/agent-core` 与 `@wzrhine/agent` 一起升级。
 
+## MFX-01：可选动效扩展（开发中，未发布）
+
+新增能力保持 opt-in，既有 ArchiveReveal／ScanSurface／OrbitalDiagram 用法不变。需要仪器对准／关系传导／标注时从 `@wzrhine/effects` 导入对应组件并继续显式导入样式；不使用时基础 React 包不引入该代码。
+
+连线宿主需提供同一 `position: relative` 容器与端点 ref，并留出路径空间；不能把旧固定 SVG 坐标直接传入作为节点位置。自定义效果可组合 `useElementAnchors`、`createEffectPath` 与 `useEffectProgress`，合同及支持边界见 [效果底座](../components/effect-foundations.md)。
+
+`active` 表示视觉目标，不是任务执行；初挂直接显示目标、不自动播放。真正的任务状态与可访问文本由宿主立即更新，不等待 onSettled。减动与可见性继承现有 Provider／EffectClock。
+
 ## 升级前检查清单
 1. 基础包升级到同一版本：`@wzrhine/tokens`、`@wzrhine/react`、以及使用了的话 `@wzrhine/patterns`、`@wzrhine/effects`；使用 Agent UI 时再加入 `@wzrhine/agent-core` 与 `@wzrhine/agent`。
 2. 运行类型检查。破坏性的 API 变化都会体现在类型上（例如被移除的 variant 会报错）。

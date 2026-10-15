@@ -58,6 +58,10 @@ const entries = [
   { name: 'patterns-css', kind: 'css', spec: '@wzrhine/patterns/styles.css' },
   // @wzrhine/react is a peer of effects: the consumer already pays for it, so it is external here.
   { name: 'effects-full', kind: 'js', code: "export * from '@wzrhine/effects';", external: ['@wzrhine/react'] },
+  { name: 'effects-geometry', kind: 'js', code: "export { createEffectPath } from '@wzrhine/effects';", external: ['@wzrhine/react'] },
+  { name: 'effects-signal', kind: 'js', code: "export { SignalPath } from '@wzrhine/effects';", external: ['@wzrhine/react'] },
+  { name: 'effects-calibration', kind: 'js', code: "export { CalibrationReticle } from '@wzrhine/effects';", external: ['@wzrhine/react'] },
+  { name: 'effects-reveal', kind: 'js', code: "export { ArchiveReveal } from '@wzrhine/effects';", external: ['@wzrhine/react'] },
   { name: 'effects-css', kind: 'css', spec: '@wzrhine/effects/styles.css' },
   // @wzrhine/react is a peer of agent (external); agent-core and Base UI are real dependencies.
   { name: 'agent-core', kind: 'js', code: "export * from '@wzrhine/agent-core';" },
@@ -159,6 +163,19 @@ try {
     const leaked = Object.keys(result.metafile.inputs).filter((f) => /packages\/[^/]+\/src\//.test(f));
     if (leaked.length) {
       console.error(`[size] ${entry.name}: bundled workspace sources instead of dist: ${leaked.join(', ')}`);
+      process.exit(1);
+    }
+    const inputs = Object.values(result.metafile.outputs).flatMap((output) =>
+      Object.entries(output.inputs).filter(([, info]) => info.bytesInOutput > 0).map(([file]) => file.replace(/\\/g, '/')),
+    );
+    const forbidden = entry.name === 'effects-geometry'
+      ? /effects\/dist\/(?!geometry\.js)[^/]+\.js$/
+      : entry.name === 'effects-calibration' || entry.name === 'effects-reveal'
+        ? /effects\/dist\/(?:useElementAnchors|geometry|ConnectionPath|SignalPath|AnnotationTrace)\.js$/
+        : null;
+    const unrelated = forbidden ? inputs.filter((file) => forbidden.test(file) && !file.endsWith('/effects/dist/index.js')) : [];
+    if (unrelated.length) {
+      console.error(`[size] ${entry.name}: unrelated effect modules retained: ${unrelated.join(', ')}`);
       process.exit(1);
     }
     const output = result.outputFiles.find((f) => /\.(js|css)$/.test(f.path));

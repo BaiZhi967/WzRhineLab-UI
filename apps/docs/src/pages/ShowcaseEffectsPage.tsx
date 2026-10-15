@@ -11,6 +11,10 @@ import { records } from '../scenarios/data';
  * Slow ×0.25 / Reduced / Interrupt lanes, as MOTION.md requires for showcase animation.
  */
 
+const SignatureEffectsLab = React.lazy(() =>
+  import('./SignatureEffectsLab').then((module) => ({ default: module.SignatureEffectsLab })),
+);
+
 const sample = records[0]!;
 
 const orbitNodes = [
@@ -149,6 +153,10 @@ export function ShowcaseEffectsPage() {
           </Tabs>
         </Specimen>
       </SpecimenGrid>
+
+      <React.Suspense fallback={<p className="sc-small" role="status">正在加载仪器与关系线实验…</p>}>
+        <SignatureEffectsLab />
+      </React.Suspense>
     </div>
   );
 }

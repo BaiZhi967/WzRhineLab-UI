@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useReducedMotionConfig } from 'motion/react';
+import { useMotionPreference } from './preference.js';
 import { useInViewport, usePageVisible } from './visibility.js';
 
 /*
@@ -44,7 +44,7 @@ export function useMotionLifecycle({ active, autoStart = false, viewportRef, red
   const [manualPause, setManualPause] = React.useState(false);
   const visible = usePageVisible();
   const inView = useInViewport(viewportRef ?? noRef);
-  const reduced = useReducedMotionConfig() === true || forceReduced;
+  const reduced = useMotionPreference() || forceReduced;
 
   const isRequested = active ?? requested;
   const started = active === undefined ? everStarted : everStarted || active;

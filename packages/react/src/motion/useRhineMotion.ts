@@ -1,6 +1,7 @@
 'use client';
 
-import { useReducedMotionConfig } from 'motion/react';
+import { useMemo } from 'react';
+import { useMotionPreference } from './preference.js';
 import type { Transition } from 'motion/react';
 import { transition } from './presets.js';
 import { resolveMotion, useMotionSpeed } from './resolve.js';
@@ -24,12 +25,12 @@ export interface RhineMotion {
  * so apps (and the showcase) can force either mode.
  */
 export function useRhineMotion(): RhineMotion {
-  const reduced = useReducedMotionConfig() === true;
+  const reduced = useMotionPreference();
   const speed = useMotionSpeed();
-  return {
+  return useMemo(() => ({
     reduced,
     speed,
-    get: (name) => (reduced ? transition.instant : resolveMotion('transform', name, false, speed)),
-    resolve: (kind, name) => resolveMotion(kind, name, reduced, speed),
-  };
+    get: (name: RhineTransitionName) => (reduced ? transition.instant : resolveMotion('transform', name, false, speed)),
+    resolve: (kind: MotionPropertyKind, name: RhineTransitionName) => resolveMotion(kind, name, reduced, speed),
+  }), [reduced, speed]);
 }

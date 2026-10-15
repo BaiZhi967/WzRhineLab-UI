@@ -1,9 +1,13 @@
+import * as React from 'react';
 import { StatusBadge, Surface } from '@wzrhine/react';
 import { hrefFor } from '../app/routes';
 import type { RouteId } from '../app/routes';
 import { ArrowRight } from '../icons';
 import { LinkButton } from '../ui/LinkButton';
 import { SectionRule } from '../ui/Specimen';
+
+// Keep the optional effects import out of the main docs entry. The recipe is idle on mount.
+const ResearchHeroScene = React.lazy(() => import('./ResearchHeroScene'));
 
 const entries: Array<{ id: RouteId; index: string; title: string; body: string; meta: string }> = [
   {
@@ -84,6 +88,10 @@ export function OverviewPage() {
           </div>
         </dl>
       </header>
+
+      <React.Suspense fallback={<p className="sc-small" role="status">正在加载抽象仪器示意…</p>}>
+        <ResearchHeroScene />
+      </React.Suspense>
 
       <SectionRule index="01" label="Entry points" meta="Foundations · Components · Motion" />
       <nav className="sc-entries" aria-label="展示入口">

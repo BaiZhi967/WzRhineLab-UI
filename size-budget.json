@@ -29,7 +29,19 @@
       "gzip": 3072
     },
     "effects-full": {
-      "gzip": 5120
+      "gzip": 8192
+    },
+    "effects-geometry": {
+      "gzip": 2048
+    },
+    "effects-signal": {
+      "gzip": 4096
+    },
+    "effects-calibration": {
+      "gzip": 3072
+    },
+    "effects-reveal": {
+      "gzip": 3072
     },
     "effects-css": {
       "gzip": 3072

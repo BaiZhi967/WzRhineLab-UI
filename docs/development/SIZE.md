@@ -27,6 +27,10 @@ esbuild 通过 Vite（`apps/docs` 的依赖）解析，没有新增依赖；当�
 | `patterns-query-toolbar` | `export { QueryToolbar } from '@wzrhine/patterns'` |
 | `patterns-css` | `@wzrhine/patterns/styles.css`（含三个 `@import` 分片） |
 | `effects-full` | `export * from '@wzrhine/effects'` |
+| `effects-geometry` | `export { createEffectPath } from '@wzrhine/effects'`（纯几何隔离检查） |
+| `effects-signal` | `export { SignalPath } from '@wzrhine/effects'` |
+| `effects-calibration` | `export { CalibrationReticle } from '@wzrhine/effects'`（不得带入锚点测量） |
+| `effects-reveal` | `export { ArchiveReveal } from '@wzrhine/effects'`（存量效果隔离对照） |
 | `effects-css` | `@wzrhine/effects/styles.css` |
 | `agent-core` | `export * from '@wzrhine/agent-core'` |
 | `agent-full` | `export * from '@wzrhine/agent'`（`@wzrhine/react` 是 peer，视为外部依赖） |
@@ -39,6 +43,14 @@ esbuild 通过 Vite（`apps/docs` 的依赖）解析，没有新增依赖；当�
 - tree-shaking 检查：`react-button` 的 gzip 体积必须小于 `react-full` 的 25%，`agent-status` 必须小于 `agent-full` 的 25%。超过说明只导入一个组件就拉进了大半个包（检查 `sideEffects` 和模块顶层副作用）。
   patterns 暂不设此配对：全量入口只有 5.52 KB，而共享文案 Provider 对每个组件都是约 1 KB 的固定开销，单组件占比落在 24.3%（query-toolbar）到 28.4%（list-detail），比值在这个包体量下说明不了 tree-shaking 是否有效。四个 patterns 条目的绝对体积照常受预算约束；若文案表将来按命名空间拆分、或包体增长到比值有意义时再评估。
 - `pnpm build:packages` 失败：什么都不量，直接失败。
+
+## MFX-01 增量（未发布）
+
+2026-10-15 新构建实测：effects-full 6.77 KB gzip（新增真实锚点、纯几何、受控进度与三个效果），预算由 5 KB 调至 8 KB；CSS 1.92 KB，保留 3 KB 预算。独立 geometry 0.29 KB、signal 2.77 KB、calibration 1.19 KB、存量 reveal 1.34 KB，按同一向上取整规则分别新增 2/4/3/3 KB 预算。独立条目的 metafile 额外验证无关模块不留在输出中，不以全量入口增长掩盖 tree-shaking。
+
+react-button 由 2.66 KB 增至约 2.92 KB，原因是统一实时减动订阅与 memoized Motion resolver，不包含 effects；原 4 KB 预算不变。react-full 约189.21 KB、DataTable约7.53 KB，均沿用既有预算；其他包预算未改。新增 effects 成本只在显式使用时进入，首页 recipe 继续独立懒加载。
+
+以下是 P030 的历史对照，不代表 MFX-01 的当前数值。
 
 ## 当前数值
 2026-10-15，0.3.0（P030）后的 `pnpm size:check` 输出，15 个条目全部在预算内。新增四个 `patterns-*` 条目；**其余条目的预算未变**，沿用 0.2.0 的数值。以 `size-budget.json` 和命令输出为准。

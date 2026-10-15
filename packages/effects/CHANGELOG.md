@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### Added
+- **MFX-01 · ADR-0015**：真实元素锚点 `useElementAnchors`、纯路径生成 `createEffectPath` 与受控视觉进度 `useEffectProgress`，供后续 DOM/SVG 效果共享几何、减动与中断能力。
+- `CalibrationReticle`、`SignalPath`、`AnnotationTrace`：显式激活的仪器对准、关系传导与标注线；首帧静态、隐藏暂停、减动直接目标；业务事实由宿主提供。
+- 连线绑定 ref 指定边的真实中点，响应容器尺寸、端点变化与滚动，不使用独立固定 viewBox 猜测位置。装饰层不拦截指针。
+
+### Size
+- 新增三个效果与几何／进度底座后，全量效果入口实测约 6.77 KB gzip（原 3.85 KB），预算仅将 effects-full 由 5 KB 调至 8 KB。新增独立 geometry/signal/calibration/reveal 度量与模块隔离断言；基础包预算保持不变。
+
+### Compatibility
+- 保留原有三个效果及其默认行为，不新增动画引擎或运行时依赖；`@wzrhine/react` 不引入 effects。新能力仍为 Experimental，未发布。
+
 ## [0.2.0] - 2026-10-14
 
 ### Added
