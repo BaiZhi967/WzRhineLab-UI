@@ -57,17 +57,33 @@ describe('SelectionToolbar actions', () => {
     expect(onRun).toHaveBeenCalledTimes(1);
   });
 
-  it('a busy action disables its button (no double submission); other actions stay usable', () => {
+  // 0.3.0-contracts §4.2: a busy control keeps focus (aria-disabled) instead of being natively
+  // disabled, which would drop focus to <body> exactly while the batch action runs.
+  it('a busy action stays focusable and announced, and drops repeat submissions', async () => {
+    const user = userEvent.setup();
+    const onRun = vi.fn();
     render(
       <SelectionToolbar
         selectedCount={2}
         actions={[
-          { id: 'delete', label: '删除', onRun: () => {}, busy: true },
+          { id: 'delete', label: '删除', onRun, busy: true },
           { id: 'export', label: '导出', onRun: () => {} },
         ]}
       />,
     );
-    expect(screen.getByRole('button', { name: '删除' })).toBeDisabled();
+    const busyButton = screen.getByRole('button', { name: '删除' });
+    expect(busyButton).toHaveAttribute('aria-disabled', 'true');
+    expect(busyButton).toHaveAttribute('aria-busy', 'true');
+    // Not natively disabled: that is what would drop focus to <body>.
+    expect(busyButton).not.toHaveAttribute('disabled');
+
+    busyButton.focus();
+    expect(busyButton).toHaveFocus();
+    await user.click(busyButton);
+    expect(onRun).not.toHaveBeenCalled();
+    expect(busyButton).toHaveFocus();
+    expect(document.body).not.toHaveFocus();
+
     expect(screen.getByRole('button', { name: '导出' })).toBeEnabled();
   });
 

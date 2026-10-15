@@ -19,7 +19,7 @@ export interface InspectorPanelProps {
   eyebrow?: React.ReactNode;
   /** Metadata rows, rendered with MetadataList (stacked, compact). */
   meta?: readonly MetadataItem[];
-  /** Action bar; buttons are composed by the caller from @wzrhine/react. */
+  /** Action bar; buttons are composed by the caller from `@wzrhine/react`. */
   actions?: React.ReactNode;
   children?: React.ReactNode;
   /** Rendered when provided; reports the intent only. */

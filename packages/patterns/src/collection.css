@@ -58,11 +58,10 @@
 .rl-resource-grid__title { display: block; overflow-wrap: anywhere; }
 .rl-resource-grid__description { margin: 0; font: var(--rl-type-meta); color: var(--rl-fg-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .rl-resource-grid__more { display: flex; gap: var(--rl-space-1); }
-.rl-resource-grid__loading { margin: 0; font: var(--rl-type-meta); color: var(--rl-fg-muted); }
-.rl-resource-grid__card[data-loading] .rl-resource-grid__thumb { animation: rl-resource-pulse 1.2s ease-in-out infinite; }
-@keyframes rl-resource-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
-@media (prefers-reduced-motion: reduce) { .rl-resource-grid__card[data-loading] .rl-resource-grid__thumb { animation: none; } }
+/* Loading cards are Skeleton (react package): it owns the pulse and the reduced-motion opt-out. */
+.rl-resource-grid__thumb-skeleton { display: block; aspect-ratio: 4 / 3; width: 100%; height: auto; border-radius: var(--rl-radius-sm); }
 .rl-resource-grid__empty { grid-column: 1 / -1; display: grid; gap: var(--rl-space-2); justify-items: center; padding: var(--rl-space-8) var(--rl-space-4); border: var(--rl-border-width) dashed var(--rl-border-default); border-radius: var(--rl-radius-md); color: var(--rl-fg-muted); font: var(--rl-type-body-sm); }
-.rl-resource-grid__retry { padding: var(--rl-space-1) var(--rl-space-3); border: var(--rl-border-width) solid var(--rl-border-default); border-radius: var(--rl-radius-sm); background: var(--rl-bg-surface); color: var(--rl-fg-primary); font: var(--rl-type-label-sm); cursor: pointer; }
-.rl-resource-grid__retry:hover { background: var(--rl-bg-hover); }
-.rl-resource-grid__retry:focus-visible { outline: var(--rl-focus-ring); outline-offset: var(--rl-focus-offset); }
+.rl-resource-grid__error { margin: 0; color: var(--rl-danger); font: var(--rl-type-body-sm); }
+/* The loading announcement is visually hidden; patterns must not depend on the react package's
+   stylesheet being imported, so the rule lives here under its own name. */
+.rl-resource-grid__status { position: absolute; top: 0; left: 0; width: var(--rl-border-width); height: var(--rl-border-width); margin: calc(var(--rl-border-width) * -1); padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }

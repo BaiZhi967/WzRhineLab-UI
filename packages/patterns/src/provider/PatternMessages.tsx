@@ -6,10 +6,9 @@ import * as React from 'react';
  * Built-in copy of `@wzrhine/patterns` (ADR-0014 §3), same rules as ADR-0009: component prop >
  * nearest `PatternsMessagesProvider` > `patternsZhCN`. This file is the only patterns source
  * allowed to contain CJK text (package-boundary test). The number locale comes from the nearest
- * `RhineProvider` / `RhineMessagesProvider` of @wzrhine/react, exactly like @wzrhine/agent.
+ * `RhineProvider` / `RhineMessagesProvider` of `@wzrhine/react`, exactly like `@wzrhine/agent`.
  *
- * Namespaces arrive with their components (P030-02 onwards); key surfaces follow
- * docs/roadmap/0.3.0-contracts.md §6.
+ * One namespace per component; key surfaces follow docs/roadmap/0.3.0-contracts.md §6.
  */
 export interface PatternsMessages {
   /** ListDetail copy; overrides the `backLabel` / `listLabel` / `detailLabel` props' defaults. */

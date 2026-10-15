@@ -56,10 +56,12 @@ export const SectionIndex = React.forwardRef<HTMLElement, SectionIndexProps>(fun
   const [observedActive, setObservedActive] = React.useState<string | null>(null);
   const current = activeId ?? observedActive;
 
-  const reduceMotion = React.useMemo(() => {
+  // Read on every navigation rather than once per mount: the preference can change while the
+  // page is open, and a stale value would smooth-scroll a user who just asked for reduced motion.
+  const prefersReducedMotion = () => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  }, []);
+  };
 
   React.useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return;
@@ -75,11 +77,34 @@ export const SectionIndex = React.forwardRef<HTMLElement, SectionIndexProps>(fun
       },
       root ? { root, rootMargin: '0px 0px -70% 0px' } : undefined,
     );
-    for (const section of sections) {
-      const target = document.getElementById(section.id);
-      if (target) observer.observe(target);
-    }
-    return () => observer.disconnect();
+
+    // Section nodes can appear, move or be replaced after this effect ran (an async detail body
+    // mounts its headings later). Re-target on content changes so the highlight keeps up
+    // (0.3.0-contracts §4.3) — observing an already-observed element is a no-op.
+    const observed = new Set<Element>();
+    const retarget = () => {
+      for (const section of sections) {
+        const target = document.getElementById(section.id);
+        if (!target || observed.has(target)) continue;
+        observer.observe(target);
+        observed.add(target);
+      }
+    };
+    retarget();
+
+    const contentRoot = root ?? document.body;
+    const mutations =
+      typeof MutationObserver === 'undefined'
+        ? null
+        : new MutationObserver(() => {
+            retarget();
+          });
+    mutations?.observe(contentRoot, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mutations?.disconnect();
+    };
   }, [sections, scrollRoot, onActiveChange]);
 
   const navigate = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
@@ -87,7 +112,7 @@ export const SectionIndex = React.forwardRef<HTMLElement, SectionIndexProps>(fun
     const target = document.getElementById(id);
     if (!target) return; // no JS-native anchor needed: let the browser jump
     event.preventDefault();
-    target.scrollIntoView({ block: 'start', behavior: smoothScroll && !reduceMotion ? 'smooth' : 'auto' });
+    target.scrollIntoView({ block: 'start', behavior: smoothScroll && !prefersReducedMotion() ? 'smooth' : 'auto' });
     const root = scrollRoot?.current ?? findScrollAncestor(navRef.current);
     if (root && offsetTop) root.scrollBy(0, -offsetTop);
   };

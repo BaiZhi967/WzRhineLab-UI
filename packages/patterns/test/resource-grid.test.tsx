@@ -139,11 +139,15 @@ describe('ResourceGrid item states', () => {
     expect(screen.getByAltText('浅层水体照片')).toHaveAttribute('src', 'res-1-retry.jpg');
   });
 
-  it('loading status renders skeleton cards and announces busy', () => {
+  it('loading status renders skeleton cards and announces busy once', () => {
     render(<Harness items={[]} status="loading" loadingRows={3} />);
     const list = screen.getByRole('list', { name: '资源集合' });
     expect(list).toHaveAttribute('aria-busy', 'true');
-    expect(within(list).getAllByText(patternsZhCN.resourceGrid.loading).length).toBeGreaterThan(0);
+    expect(list.querySelectorAll('[data-loading]')).toHaveLength(3);
+    // Skeleton cards are decorative: the loading fact is announced by one status region rather
+    // than repeated once per placeholder card.
+    expect(screen.getByRole('status')).toHaveTextContent(patternsZhCN.resourceGrid.loading);
+    expect(within(list).queryByText(patternsZhCN.resourceGrid.loading)).toBeNull();
   });
 
   it('error status renders a retry entry', async () => {

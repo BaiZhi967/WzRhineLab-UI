@@ -81,7 +81,11 @@ export const QueryToolbar = React.forwardRef<HTMLDivElement, QueryToolbarProps>(
   const justEndedTimer = React.useRef<number | undefined>(undefined);
   React.useEffect(() => () => window.clearTimeout(justEndedTimer.current), []);
 
+  // `busy` is announced with aria-disabled, not the native attribute, so the control keeps focus
+  // while a query is in flight (0.3.0-contracts §4.2; same contract as Pagination). Every entry
+  // point therefore has to drop the action itself.
   const commit = () => {
+    if (busy) return;
     onQueryChange?.(pending);
   };
 
@@ -140,7 +144,9 @@ export const QueryToolbar = React.forwardRef<HTMLDivElement, QueryToolbarProps>(
         <Button
           type="button"
           variant="secondary"
-          disabled={busy}
+          // `loading` is the react package's in-flight entry: it keeps the control focusable via
+          // aria-disabled instead of the native attribute (0.3.0-contracts §4.2).
+          loading={busy}
           onClick={commit}
         >
           {submitLabel ?? messages.queryToolbar.submit}
@@ -151,7 +157,10 @@ export const QueryToolbar = React.forwardRef<HTMLDivElement, QueryToolbarProps>(
         <Button
           type="button"
           variant="ghost"
-          disabled={busy || resetDisabled}
+          // `resetDisabled` means there is nothing to reset: native disabled is correct. `busy`
+          // is transient, so it stays focusable and only drops the action.
+          disabled={resetDisabled}
+          loading={busy}
           onClick={onReset}
         >
           {resetLabel ?? messages.queryToolbar.reset}
