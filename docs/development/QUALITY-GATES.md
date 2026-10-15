@@ -23,7 +23,7 @@
 - [x] 有自动化测试证明回归范围；未运行不得填「通过」（M13 / 0.2.0 定版：tokens 247 / agent-core 24 / react 511 / effects 48 / agent 499 单测，共 1329；Showcase E2E 与视觉基线见 [M13 验收记录](acceptance/2026-10-13-m13-wpi-ui.md)的跨内核结果；验收记录只列真实执行过的命令）
 
 ## G3 — Release
-- [x] 公开许可证确认（MIT，2026-10-12 由维护者选定；仓库根与五个可发布包各一份 `LICENSE`，`license` 字段与 `pnpm license:audit` 白名单一致：17 个运行时依赖 = MIT 16 + 0BSD 1），第三方字体/图片/图标权利核对（✅ 无内置字体文件；图标为原创 SVG，Showcase 的 Lucide 基础层只在 [THIRD-PARTY-LICENSES.md](THIRD-PARTY-LICENSES.md) 登记、不进入 npm 包）
+- [x] 公开许可证确认（MIT，2026-10-12 由维护者选定；仓库根与六个可发布包各一份 `LICENSE`，`license` 字段与 `pnpm license:audit` 白名单一致：17 个运行时依赖 = MIT 16 + 0BSD 1），第三方字体/图片/图标权利核对（✅ 无内置字体文件；图标为原创 SVG，Showcase 的 Lucide 基础层只在 [THIRD-PARTY-LICENSES.md](THIRD-PARTY-LICENSES.md) 登记、不进入 npm 包）
 - [x] npm exports/CSS sideEffects/ESM 类型声明测试（`pnpm verify:packages`，M5）
 - [x] 示例与包版本匹配、changelog 更新（五个包同一版本线，各自 CHANGELOG 已定版 0.2.0；示例应用以 `workspace:*` 引用，`pnpm check` 构建它们）
 - [x] 视觉回归基线（`pnpm test:visual`；M6 建立 31 张，M9 后 74 张，M13 后 `apps/docs/e2e/visual/__screenshots__/win32` 共 124 张，110 个对照用例，Chromium on Windows）与升级指南（[UPGRADING.md](UPGRADING.md)）

@@ -42,7 +42,7 @@ import '@wzrhine/patterns/styles.css';
 />
 ```
 
-覆盖层形态由 recipe 组合现有 `Drawer` 实现（见 `#/recipes`），patterns 不新增焦点陷阱。
+覆盖层形态由调用者组合现有 `Drawer` 实现（样张见 `#/patterns` 的「InspectorPanel · 覆盖层组合」），patterns 不新增焦点陷阱：焦点捕获、Escape 关闭、滚动锁定与关闭后焦点回收全部来自 `Drawer`。
 
 ### InspectorPanel · 属性检查区域
 

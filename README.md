@@ -18,6 +18,7 @@
 - **原创视觉语言**：科研机构 / 档案终端风格；明 / 暗 / system 三主题 × 双密度，全部由 `--rl-*` 语义 token 驱动，不污染 `:root`。
 - **可访问性优先**：语义 HTML、完整键盘路径；所有实际使用的前景 / 背景组合在三种主题下由测试验证满足 WCAG 2.2 AA；动效尊重系统减少动态且可中断。
 - **两组件体系**：`@wzrhine/react`（83 个组件，交互底座 Base UI）与 `@wzrhine/agent`（87 个 Agent UI 组件：工作台、会话流、composer、工具调用、审批干预、终端、产物预览）。
+- **可组合的页面模式**：`@wzrhine/patterns`（8 个组件）把主从布局、查询工具区、批量选择、资源网格与章节索引做成受控模式——查询、选择与详情状态全部留在宿主，宽窄形态按容器可用空间决定而非全局窗口宽度。
 - **框架无关的 Agent 契约**：`@wzrhine/agent-core` 用 view-model 与纯函数描述会话 / 运行 / 工具 / 审批，不依赖 React，可在任意框架或 Node 中使用；UI 层只做渲染——view-model 进、actions 出。
 - **干净的包工程**：入口无 CSS 副作用、样式显式导入；支持 tree-shaking（只引 `Button` 的体积为全量入口的 1.4%）；三浏览器内核 E2E、视觉回归基线、体积预算与 tarball 真实安装验证构成发布门禁。
 
@@ -27,11 +28,13 @@
 | --- | --- | ---: |
 | [`@wzrhine/tokens`](https://www.npmjs.com/package/@wzrhine/tokens) | 设计令牌：`--rl-*` CSS 变量、类型化清单、对比度工具 | 34 |
 | [`@wzrhine/react`](https://www.npmjs.com/package/@wzrhine/react) | React 组件库（83 个组件，Base UI 底座） | 294 |
+| [`@wzrhine/patterns`](docs/components/patterns.md) | 页面模式（8 个组件）：主从布局、属性检查、查询工具区、已应用条件、视图切换、批量选择、资源网格、章节索引 | 32 |
 | [`@wzrhine/effects`](https://www.npmjs.com/package/@wzrhine/effects) | 可选展示动效：解密 / 扫描 / 轨道 / 动效播放器 | 24 |
 | [`@wzrhine/agent-core`](https://www.npmjs.com/package/@wzrhine/agent-core) | 框架无关 Agent 契约：view-model 与纯函数 | 138 |
 | [`@wzrhine/agent`](https://www.npmjs.com/package/@wzrhine/agent) | Agent UI 组件（87 个组件） | 400 |
 
 导出数字来自自动生成的 [API reports](docs/README.md#额外资料与导入)，完整签名以 [docs/api/](docs/api) 为准。
+`@wzrhine/patterns` 是 0.3.0 新增包，库侧已实现并通过门禁，**尚未发布到 npm**；其余五个包自 0.2.0 起已发布。
 
 ## 快速开始
 
@@ -61,7 +64,20 @@ export function App() {
 - 入口没有 CSS 副作用，样式需像上面一样显式导入（[ADR-0002](docs/development/adr/0002-source-exports-and-style-entry.md)）。
 - Dialog、AlertDialog、Drawer、Select、Tooltip、Popover、Menu、Toast 等弹层组件必须放在 `RhineProvider` 内，才能继承主题、locale 与减动设置。
 
-使用 Agent UI 时，在 React 样式之后再导入：
+使用页面模式（集合页、记录详情页）时，在 React 样式之后再导入：
+
+```sh
+pnpm add @wzrhine/patterns
+```
+
+```tsx
+import '@wzrhine/patterns/styles.css';
+import { ListDetail, QueryToolbar } from '@wzrhine/patterns';
+```
+
+`@wzrhine/patterns` 以 `@wzrhine/react` 为 peer 依赖，自带独立文案表（不并入 `RhineMessages`，见 [ADR-0014](docs/development/adr/0014-patterns-package-and-p030-scope.md)）。查询、筛选、选择与详情 ID 都由调用者持有；组件只回传意图。
+
+使用 Agent UI 时，同样在 React 样式之后导入：
 
 ```sh
 pnpm add @wzrhine/agent @wzrhine/agent-core

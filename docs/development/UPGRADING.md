@@ -2,10 +2,10 @@
 
 本文面向已经在使用（源码直出期）或即将接入 `@wzrhine/*` 的项目，按版本列出**需要使用方动手**的变更。每个包的完整变更见各自的 CHANGELOG；本文只收集影响升级的条目，并给出改前 / 改后。
 
-版本策略见 [RELEASING.md](RELEASING.md)：`0.x` 允许破坏性变更，但每一项都会出现在这里。五个包同一版本线；使用 Agent UI 时连同 `@wzrhine/agent-core` 与 `@wzrhine/agent` 一起升级。
+版本策略见 [RELEASING.md](RELEASING.md)：`0.x` 允许破坏性变更，但每一项都会出现在这里。六个包同一版本线；使用页面模式时安装 `@wzrhine/patterns`，使用 Agent UI 时连同 `@wzrhine/agent-core` 与 `@wzrhine/agent` 一起升级。
 
 ## 升级前检查清单
-1. 基础包升级到同一版本：`@wzrhine/tokens`、`@wzrhine/react`、以及使用了的话 `@wzrhine/effects`；使用 Agent UI 时再加入 `@wzrhine/agent-core` 与 `@wzrhine/agent`。
+1. 基础包升级到同一版本：`@wzrhine/tokens`、`@wzrhine/react`、以及使用了的话 `@wzrhine/patterns`、`@wzrhine/effects`；使用 Agent UI 时再加入 `@wzrhine/agent-core` 与 `@wzrhine/agent`。
 2. 运行类型检查。破坏性的 API 变化都会体现在类型上（例如被移除的 variant 会报错）。
 3. 搜索下面每一节列出的关键字，逐项处理。
 4. 打开应用，在浅色、深色和系统主题下各看一遍；有弹层（Dialog / AlertDialog / Drawer / Select / Menu / Popover / Toast）的页面请实际打开一次。
@@ -195,3 +195,40 @@ MessageActions / CodeBlock 复制失败时，错误提示会一直保留，直�
 - 新增属性：Button `tone`、Alert `size`、ScrollArea `reveal`、Dialog `finalFocus`、AlertDialog 第三按钮、Popover `anchor` / `sideOffset` / `initialFocus={false}`、RadioGroup `appearance`、Form `submitOnEnter`、Composer `allowEmptyText`、MessageList `followThreshold` / `jumpThreshold` / `nestedScrollSelector`、ModelPicker `effortLabels` / `effortState` / `onEffortReset`、OrbitalDiagram `size` / 节点 `tone` / `selected`、ScanSurface `duration` / `tone` / `containerType`、ArchiveReveal `paused`。不传时渲染结果与 0.1.0 相同。
 - 新增 token：`--rl-category-1` … `--rl-category-8`、`--rl-danger-hover`。
 - 体积：只在同时导入全部组件时整包 gzip 才会变化（按需导入不受影响），预算与度量见 [SIZE.md](SIZE.md)。
+
+## 升到 0.3.0（页面模式，P030）
+
+本版本**没有删除或重命名任何公开 API**。`@wzrhine/react`、`@wzrhine/tokens`、`@wzrhine/effects`、`@wzrhine/agent-core`、`@wzrhine/agent` 的公开导出与行为均无改动；全部新增集中在新包 `@wzrhine/patterns`。不使用页面模式的项目升级时无需动手。
+
+### 1. 新包 `@wzrhine/patterns`（新增，可选）
+八个页面级模式组件：`ListDetail`、`InspectorPanel`、`QueryToolbar`、`AppliedFilters`、`ViewSwitcher`、`SelectionToolbar`、`ResourceGrid`、`SectionIndex`（[ADR-0014](adr/0014-patterns-package-and-p030-scope.md)）。
+
+```sh
+pnpm add @wzrhine/patterns
+```
+
+```diff
+  import '@wzrhine/tokens/styles.css';
+  import '@wzrhine/react/styles.css';
++ import '@wzrhine/patterns/styles.css'; // 仅在使用页面模式时，放在 react 样式之后
+```
+
+`@wzrhine/react` 是它的 peer 依赖，版本随同一版本线。
+
+### 2. 文案表独立，不并入 `RhineMessages`（新增）
+patterns 自带文案表，通过 `PatternsMessagesProvider` 提供，**不会**被 `RhineMessagesProvider` 的覆写影响（[ADR-0014](adr/0014-patterns-package-and-p030-scope.md) §3）：
+
+```tsx
+import { PatternsMessagesProvider, mergePatternsMessages, patternsEnUS } from '@wzrhine/patterns';
+```
+
+- 不传 Provider 时使用内置 `patternsZhCN`；数字格式仍沿用最近的 `RhineProvider` / `RhineMessagesProvider` 的 locale。
+- 搜索关键字：`RhineMessagesProvider`（如果你原本期望它能覆写页面模式文案）。
+
+### 3. 状态所有权（接入须知）
+查询、筛选、排序、页码、视图模式、`selectedIds`、详情 ID 以及一切异步事实都由调用者持有；组件只回传意图。请求、取消、缓存与持久化留在宿主一侧。完整受控合同见 [0.3.0 公共合同](../roadmap/0.3.0-contracts.md)，可运行组合见 showcase 的 `#/recipes`。
+
+### 4. 不用改、但值得知道
+- `RecordDetail` 不是组件：记录详情页按 ADR-0014 §2 以 recipe 形态交付（`ListDetail` + `RecordHeader` + `MetadataList` + `SectionIndex` 组合）。
+- `InspectorPanel` 本身没有覆盖层模式；需要抽屉形态时由调用者组合既有 `Drawer`（showcase `#/patterns` 有样张）。
+- `examples/archive-desk` 的本地存储键升版为 `records:v2` 与 `resources:v1`；旧键不迁移，示例会重新生成演示数据。这只影响示例应用本身。

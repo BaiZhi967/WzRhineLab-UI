@@ -47,7 +47,7 @@ packages/patterns/
   src/components.css # 聚合样式，经包导出 "./styles.css"
 ```
 
-与 `Workbench` 的边界：Workbench 是每页一个的应用级外壳（rail + index + main，含导航语义与唯一 main landmark）；ListDetail 是可嵌入页面任意位置、可同页多实例的主从模式容器，不渲染 nav、不渲染第二个 main。InspectorPanel 是区域组件；覆盖层形态由 recipe 组合现有 Drawer 实现，patterns 不新增焦点陷阱。
+与 `Workbench` 的边界：Workbench 是每页一个的应用级外壳（rail + index + main，含导航语义与唯一 main landmark）；ListDetail 是可嵌入页面任意位置、可同页多实例的主从模式容器，不渲染 nav、不渲染第二个 main。InspectorPanel 是区域组件；覆盖层形态由调用者组合现有 Drawer 实现（样张见 showcase `#/patterns`），patterns 不新增焦点陷阱。
 
 ### 2. 九候选裁决：八组件 + 一 recipe
 
