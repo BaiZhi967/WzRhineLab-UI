@@ -6,12 +6,21 @@ import { cx } from '../utils/cx.js';
 
 /**
  * Section index (0.3.0-contracts §4.3 / §6.8): named anchors for record detail sections with a
- * passive current-section highlight. Anchors keep working without JS; with JS, navigation scrolls
- * inside the explicit scroll root (nearest scrolling ancestor by default) honoring a fixed header
- * offset, and smooth scrolling is opt-in and disabled under reduced motion. Observation never
- * steals focus — active navigation is `aria-current`, user intent is a separate event. The
- * observer disconnects on unmount and re-targets when the sections change; ids are caller-owned
- * and stable (never generated here).
+ * passive current-section highlight. Anchors keep working without JS; with JS, a plain click is
+ * enhanced into a scroll inside the explicit scroll root (nearest scrolling ancestor by default,
+ * the viewport when there is none) honoring a fixed header offset, and smooth scrolling is opt-in
+ * and disabled under reduced motion. Modified clicks (Ctrl/Meta/Shift/Alt, middle button) are left
+ * to the browser, so "open in new tab" still works. Observation never steals focus — the active
+ * section is `aria-current`, user intent is a separate event.
+ *
+ * The current section is the first visible one in `sections` order, so leaving a section hands the
+ * highlight back to whatever is still on screen. Targets are re-resolved when the content changes
+ * and replaced nodes are unobserved, so the observed set stays bounded across repeated swaps.
+ *
+ * Caller-owned ids must be stable and must match the heading ids (never generated here). Under a
+ * hash router, note that these anchors use `href="#<id>"`: when the target is missing the native
+ * jump is allowed through, which changes `location.hash` and can trigger a route change. Keep
+ * section ids rendered alongside the index, or own navigation via `onNavigate`.
  */
 export interface SectionIndexSection {
   /** Anchor id; must match the content heading's id. Stable, not generated. */
@@ -66,29 +75,67 @@ export const SectionIndex = React.forwardRef<HTMLElement, SectionIndexProps>(fun
   React.useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return;
     const root = scrollRoot?.current ?? findScrollAncestor(navRef.current);
+    const order = sections.map((section) => section.id);
+
+    // The current section is the first *visible* one in declaration order, not the most recent
+    // enter event: an exit has to hand the highlight back to whatever is still on screen
+    // (0.3.0-contracts §4.3). Keeping a candidate set means leaving a section returns to the
+    // previous one without waiting for the browser to re-emit an enter event for it.
+    const visible = new Set<string>();
+    // Section nodes can appear, move or be replaced after this effect ran (an async detail body
+    // mounts its headings later), so targets are re-resolved on content changes. This map is the
+    // single source of truth for "the node currently observed for this id": a replaced heading
+    // keeps its id but is a new node, and the retired one must neither stay observed nor keep
+    // reporting visibility (0.3.0-contracts §4.3).
+    const observed = new Map<string, Element>();
+
+    const pickActive = () => {
+      if (visible.size === 0) return; // nothing on screen: keep the last known section
+      const next = order.find((id) => visible.has(id));
+      if (!next) return;
+      setObservedActive((prev) => {
+        if (prev === next) return prev;
+        onActiveChange?.(next);
+        return next;
+      });
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
           const id = entry.target.id;
-          setObservedActive((prev) => (prev === id ? prev : id));
-          onActiveChange?.(id);
+          // Drop late entries from a node that has already been replaced or disconnected.
+          if (observed.get(id) !== entry.target) continue;
+          if (entry.isIntersecting) visible.add(id);
+          else visible.delete(id);
         }
+        pickActive();
       },
       root ? { root, rootMargin: '0px 0px -70% 0px' } : undefined,
     );
 
-    // Section nodes can appear, move or be replaced after this effect ran (an async detail body
-    // mounts its headings later). Re-target on content changes so the highlight keeps up
-    // (0.3.0-contracts §4.3) — observing an already-observed element is a no-op.
-    const observed = new Set<Element>();
     const retarget = () => {
-      for (const section of sections) {
-        const target = document.getElementById(section.id);
-        if (!target || observed.has(target)) continue;
-        observer.observe(target);
-        observed.add(target);
+      let changed = false;
+      const drop = (id: string, node: Element) => {
+        observer.unobserve(node);
+        observed.delete(id);
+        if (visible.delete(id)) changed = true;
+      };
+      for (const id of order) {
+        const target = document.getElementById(id);
+        const previous = observed.get(id);
+        if (previous === target) continue;
+        if (previous) drop(id, previous);
+        if (target) {
+          observer.observe(target);
+          observed.set(id, target);
+        }
       }
+      // A node can also disconnect without being replaced by one with the same id.
+      for (const [id, node] of [...observed]) {
+        if (!node.isConnected) drop(id, node);
+      }
+      if (changed) pickActive();
     };
     retarget();
 
@@ -108,13 +155,24 @@ export const SectionIndex = React.forwardRef<HTMLElement, SectionIndexProps>(fun
   }, [sections, scrollRoot, onActiveChange]);
 
   const navigate = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    // Only plain primary-button clicks are enhanced. Ctrl/Meta (new tab), Shift (new window),
+    // Alt (download) and middle/right clicks keep the anchor's native behaviour — cancelling
+    // them would silently break "open in new tab" on a real link (WAI-ARIA link pattern).
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
     onNavigate?.(id);
     const target = document.getElementById(id);
     if (!target) return; // no JS-native anchor needed: let the browser jump
     event.preventDefault();
     target.scrollIntoView({ block: 'start', behavior: smoothScroll && !prefersReducedMotion() ? 'smooth' : 'auto' });
+    if (!offsetTop) return;
+    // A fixed header overlaps the target by `offsetTop`, so scroll back by that much. Which
+    // thing actually scrolled depends on the mode: an explicit/ancestor scroll root in the
+    // container case, the viewport when the whole page scrolls.
     const root = scrollRoot?.current ?? findScrollAncestor(navRef.current);
-    if (root && offsetTop) root.scrollBy(0, -offsetTop);
+    if (root) root.scrollBy(0, -offsetTop);
+    else if (typeof window !== 'undefined' && typeof window.scrollBy === 'function') window.scrollBy(0, -offsetTop);
   };
 
   return (
