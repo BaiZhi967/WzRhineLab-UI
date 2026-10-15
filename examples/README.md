@@ -1,6 +1,6 @@
 # 示例应用（M6 / M9.5 / M12）
 
-五个独立的小应用，用来验证组件库在真实集成方式下是否好用。它们只通过公开入口（`@wzrhine/react`、`@wzrhine/tokens`，agent-console 另加 `@wzrhine/agent` / `@wzrhine/agent-core`，以及各自的 `styles.css`）使用组件库，不引用 Showcase 的任何代码。数据都是写死的示例，界面上标注为示例。
+五个独立的小应用，用来验证组件库在真实集成方式下是否好用。它们只通过公开入口（`@wzrhine/react`、`@wzrhine/tokens`，archive-desk 另加 `@wzrhine/patterns`，agent-console 另加 `@wzrhine/agent` / `@wzrhine/agent-core`，以及各自的 `styles.css`）使用组件库，不引用 Showcase 的任何代码。数据都是写死的示例，界面上标注为示例。
 
 | 示例 | 集成方式 | 验证重点 | 命令 |
 | --- | --- | --- | --- |

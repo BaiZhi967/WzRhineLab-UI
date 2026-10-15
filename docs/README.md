@@ -2,7 +2,7 @@
 
 ## 当前开发路线
 
-WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基线；下一主线是 0.3.0 的页面、集合浏览与档案详情。开发自主推进，消费反馈经过评估进入版本，不以其他应用的接入节奏作为等待条件。
+WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基线；0.3.0 的页面与集合浏览（`@wzrhine/patterns`）库侧已实现并通过门禁，**尚未发布到 npm**。开发自主推进，消费反馈经过评估进入版本，不以其他应用的接入节奏作为等待条件。
 
 | 文档 | 用途 |
 | --- | --- |
@@ -15,7 +15,7 @@ WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基�
 | [roadmap/quality-and-release.md](roadmap/quality-and-release.md) | 质量门禁、版本、发布和回滚 |
 | [planning/templates/component-demand.md](planning/templates/component-demand.md) | 单条需求记录模板，所有消费项目共用 |
 
-新能力均为规划状态，不能仅凭计划在业务代码中调用。源码与发布包证明已有 API，验收记录证明实际执行结果。
+0.3.0 的 patterns 页面模式已实现（见 [api/patterns.md](api/patterns.md) 与 [components/patterns.md](components/patterns.md)）；R2 及以后的能力仍为规划状态，不能仅凭计划在业务代码中调用。源码与发布包证明已有 API，验收记录证明实际执行结果。
 
 ## 设计与开发规范
 
@@ -40,9 +40,9 @@ WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基�
 
 [INSTALL](development/INSTALL.md) · [RELEASING](development/RELEASING.md) · [UPGRADING](development/UPGRADING.md) · [SIZE](development/SIZE.md) · [第三方许可证](development/THIRD-PARTY-LICENSES.md) · [示例应用](../examples/README.md)。
 
-API 参考（自动生成）：[tokens](api/tokens.md) · [react](api/react.md) · [effects](api/effects.md) · [agent-core](api/agent-core.md) · [agent](api/agent.md)。
+API 参考（自动生成）：[tokens](api/tokens.md) · [react](api/react.md) · [patterns](api/patterns.md) · [effects](api/effects.md) · [agent-core](api/agent-core.md) · [agent](api/agent.md)。
 
-组件文档：[表单](components/forms.md) · [字段](components/field.md) · [数据与导航](components/data-navigation.md) · [基础操作](components/icon-button-text.md) · [覆盖层](components/overlays.md) · [菜单与通知](components/popover-menu-toast.md) · [确认框](components/alert-dialog.md) · [抽屉](components/drawer.md) · [反馈](components/feedback.md) · [档案](components/archive.md) · [动效](components/effects.md) · [文案](components/locale.md) · [高级交互](components/advanced.md) · [命令与选择](components/command.md)。
+组件文档：[表单](components/forms.md) · [字段](components/field.md) · [数据与导航](components/data-navigation.md) · [基础操作](components/icon-button-text.md) · [覆盖层](components/overlays.md) · [菜单与通知](components/popover-menu-toast.md) · [确认框](components/alert-dialog.md) · [抽屉](components/drawer.md) · [反馈](components/feedback.md) · [档案](components/archive.md) · [页面模式](components/patterns.md) · [动效](components/effects.md) · [文案](components/locale.md) · [高级交互](components/advanced.md) · [命令与选择](components/command.md)。
 
 领域 UI 文档：[外壳](components/agent-shell.md) · [消息](components/agent-message.md) · [工具](components/agent-tools.md) · [输入](components/agent-composer.md) · [干预](components/agent-intervention.md) · [工作空间](components/agent-workspace.md)。
 

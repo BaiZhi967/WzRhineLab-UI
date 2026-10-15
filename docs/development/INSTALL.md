@@ -1,20 +1,25 @@
 # INSTALL · 安装、导出与样式导入
 
-三个包目前都是 `private`，**尚未发布到 npm**（维护者决定，ADR-0008 §4）。下面的写法与发布后的用法一致；在本仓库内通过 `workspace:*` 引用即可试用，示例应用就是这样接入的。
+`tokens`、`react`、`effects`、`agent-core`、`agent` 自 2026-10-12 起已发布到 public npm，最新发布版本为 0.2.0；`@wzrhine/patterns` 是 0.3.0 新增包，库侧已完成但**尚未发布**。六个包同属 0.3.0 开发线，定版后一起发布。在本仓库内通过 `workspace:*` 引用即可试用，示例应用就是这样接入的。
 
 ## 1. 安装
 | 包 | 用途 | 依赖（随包安装） | peer（由使用方安装） |
 | --- | --- | --- | --- |
 | `@wzrhine/tokens` | `--rl-*` 设计变量、token 清单、对比度工具 | — | — |
-| `@wzrhine/react` | 组件、`RhineProvider`、Motion Core、默认文案表 | `@base-ui/react`（精确版本）、`@wzrhine/tokens` | `react` `^19`、`react-dom` `^19`、`motion` `^12` |
-| `@wzrhine/effects` | 可选展示动效（解密、扫描、轨道、动效播放器） | — | `@wzrhine/react`（同版本线）、`react` / `react-dom` `^19`、`motion` `^12` |
+| `@wzrhine/react` | 组件、`RhineProvider`、Motion Core、默认文案表 | `@base-ui/react`（精确版本）、`@wzrhine/tokens` | `react` `^19`、`react-dom` `^19`、`motion` `^14` |
+| `@wzrhine/patterns` | 页面模式：主从布局、查询工具区、批量选择、资源网格、章节索引 | `@wzrhine/tokens` | `@wzrhine/react`（同版本线）、`react` / `react-dom` `^19`、`motion` `^14` |
+| `@wzrhine/effects` | 可选展示动效（解密、扫描、轨道、动效播放器） | — | `@wzrhine/react`（同版本线）、`react` / `react-dom` `^19`、`motion` `^14` |
+| `@wzrhine/agent-core` | 框架无关 Agent 契约：view-model 与纯函数 | — | — |
+| `@wzrhine/agent` | Agent UI 组件 | `@wzrhine/agent-core`、`@wzrhine/tokens` | `@wzrhine/react`（同版本线）、`react` / `react-dom` `^19`、`motion` `^14` |
 
 ```sh
 pnpm add @wzrhine/react @wzrhine/tokens react react-dom motion
-pnpm add @wzrhine/effects   # 可选
+pnpm add @wzrhine/patterns          # 可选，页面模式
+pnpm add @wzrhine/effects           # 可选，展示动效
+pnpm add @wzrhine/agent @wzrhine/agent-core   # 可选，Agent UI
 ```
 
-只支持 React 19（ADR-0008 §1）。三个包同一版本线，请一起升级（[UPGRADING.md](UPGRADING.md)）。
+只支持 React 19（ADR-0008 §1）。六个包同一版本线，请一起升级（[UPGRADING.md](UPGRADING.md)）；`patterns` 自 0.3.0 起进入该版本线。
 
 ## 2. 导出
 发布产物只提供 ESM（`dist/*.js` + `.d.ts` + source map），`sideEffects` 只声明 CSS。
@@ -24,9 +29,14 @@ pnpm add @wzrhine/effects   # 可选
 | `@wzrhine/tokens` | `.` | `publicTokens`、`motionDurations` / `motionEasings`、`contrastRatio` 等（[API](../api/tokens.md)） |
 | | `./styles.css` | 全部 `--rl-*` 变量，作用域为 `.rl-theme`，不写 `:root` |
 | `@wzrhine/react` | `.` | 全部组件与 hooks（[API](../api/react.md)）；无 CSS 副作用 |
-| | `./styles.css` | 组件样式入口，自动 `@import` 八个分片 |
+| | `./styles.css` | 组件样式入口，自动 `@import` 12 个分片 |
+| `@wzrhine/patterns` | `.` | 页面模式组件与文案表（[API](../api/patterns.md)） |
+| | `./styles.css` | 页面模式样式入口，自动 `@import` layout／collection／record 三个分片 |
 | `@wzrhine/effects` | `.` | 展示动效（[API](../api/effects.md)） |
 | | `./styles.css` | 动效样式 |
+| `@wzrhine/agent-core` | `.` | Agent view-model 与纯函数（[API](../api/agent-core.md)）；无样式 |
+| `@wzrhine/agent` | `.` | Agent UI 组件（[API](../api/agent.md)） |
+| | `./styles.css` | Agent UI 样式 |
 
 `./package.json` 也在导出中，便于工具读取版本。没有其他子路径：不要从 `dist/components/…` 深层导入，它们不属于公开 API。
 
@@ -36,7 +46,9 @@ pnpm add @wzrhine/effects   # 可选
 ```tsx
 import '@wzrhine/tokens/styles.css';
 import '@wzrhine/react/styles.css';
-import '@wzrhine/effects/styles.css'; // 仅在使用 effects 时
+import '@wzrhine/patterns/styles.css'; // 仅在使用页面模式时
+import '@wzrhine/effects/styles.css';  // 仅在使用 effects 时
+import '@wzrhine/agent/styles.css';    // 仅在使用 Agent UI 时
 ```
 
 - 顺序：tokens 在前。组件样式只用 `rl-` 类与 `--rl-*` 变量，不污染宿主的全局标签；宿主自己的全局样式不会泄漏进组件（`reset.css`，`examples/host-embed` 双向验证）。

@@ -117,15 +117,36 @@ describe('QueryToolbar IME (0.3.0-contracts §4.4)', () => {
 });
 
 describe('QueryToolbar busy and reset', () => {
-  it('busy disables submit and reset but keeps the typed value', () => {
+  // 0.3.0-contracts §4.2: busy announces with aria-disabled and keeps the control focusable, so
+  // focus does not drop to <body> while the query is in flight.
+  it('busy keeps submit and reset focusable (aria-disabled) and preserves the typed value', () => {
     render(
       <QueryToolbar query="样本" onQueryChange={() => {}} onReset={() => {}} busy>
         <span />
       </QueryToolbar>,
     );
-    expect(screen.getByRole('button', { name: patternsZhCN.queryToolbar.submit })).toBeDisabled();
-    expect(screen.getByRole('button', { name: patternsZhCN.queryToolbar.reset })).toBeDisabled();
+    const submit = screen.getByRole('button', { name: patternsZhCN.queryToolbar.submit });
+    const reset = screen.getByRole('button', { name: patternsZhCN.queryToolbar.reset });
+    for (const button of [submit, reset]) {
+      expect(button).toHaveAttribute('aria-disabled', 'true');
+      // Not natively disabled: that is what would drop focus to <body>.
+      expect(button).not.toHaveAttribute('disabled');
+      button.focus();
+      expect(button).toHaveFocus();
+    }
     expect(screen.getByRole('searchbox')).toHaveValue('样本');
+  });
+
+  it('busy drops submit and reset actions instead of re-running them', async () => {
+    const user = userEvent.setup();
+    const onQueryChange = vi.fn();
+    const onReset = vi.fn();
+    render(<QueryToolbar query="样本" onQueryChange={onQueryChange} onReset={onReset} busy />);
+    await user.click(screen.getByRole('button', { name: patternsZhCN.queryToolbar.submit }));
+    await user.click(screen.getByRole('button', { name: patternsZhCN.queryToolbar.reset }));
+    fireEvent.keyDown(screen.getByRole('searchbox'), { key: 'Enter' });
+    expect(onQueryChange).not.toHaveBeenCalled();
+    expect(onReset).not.toHaveBeenCalled();
   });
 
   it('reset reports the intent; the caller clears query, filters and page', async () => {

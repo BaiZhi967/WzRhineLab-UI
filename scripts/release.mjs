@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Manual, local release for @wzrhine/tokens, @wzrhine/react, @wzrhine/effects.
+ * Manual, local release for the six publishable packages (see `packages` below).
  * No CI is involved (AGENTS.md: no automatic workflows without approval).
  *
  *   node scripts/release.mjs <version>             # dry run (default): all gates + `pnpm publish --dry-run`
@@ -13,8 +13,9 @@
  *   - every CHANGELOG has a `## [<version>]` section (not only Unreleased)
  *   - `pnpm release:check` passes (typecheck, tests, build, API report, tarball install check)
  * Publishing is pinned to the official registry so a local mirror (e.g. npmmirror) can't intercept it.
- * Version bumping is explicit: this script writes <version> into the three package.json files
- * only after the gates pass, and the caller commits and tags it.
+ * Version bumping is explicit: this script writes <version> into every package.json only after
+ * the gates pass, and the caller commits and tags it. During development each package.json
+ * already carries the target version (the 0.2.0 precedent), so this is normally a no-op.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';

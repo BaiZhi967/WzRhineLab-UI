@@ -181,6 +181,42 @@ describe('SectionIndex observation', () => {
     expect(second.targets.map((t) => t.id)).toEqual(['sec-overview']);
   });
 
+  // 0.3.0-contracts §4.3: an async detail body mounts its headings after the index, so the
+  // observer has to pick up targets that appear later.
+  it('observes section nodes that mount after the index', async () => {
+    function LateHost() {
+      const rootRef = React.useRef<HTMLDivElement | null>(null);
+      const [ready, setReady] = React.useState(false);
+      return (
+        <div>
+          <SectionIndex sections={sections} label="章节" scrollRoot={rootRef} />
+          <button type="button" onClick={() => setReady(true)}>
+            载入正文
+          </button>
+          <div ref={rootRef}>
+            {ready &&
+              sections.map((section) => (
+                <section key={section.id} id={section.id}>
+                  <h2>{section.label}</h2>
+                </section>
+              ))}
+          </div>
+        </div>
+      );
+    }
+
+    const user = userEvent.setup();
+    render(<LateHost />);
+    const observer = instances[0]!;
+    expect(observer.targets).toHaveLength(0);
+
+    await user.click(screen.getByRole('button', { name: '载入正文' }));
+    expect(observer.targets.map((t) => t.id)).toEqual(['sec-overview', 'sec-method', 'sec-result']);
+
+    intersect(document.getElementById('sec-method')!, true);
+    expect(screen.getByRole('link', { name: '方法' })).toHaveAttribute('aria-current', 'true');
+  });
+
   it('renders without IntersectionObserver support (no crash, no tracking)', () => {
     vi.unstubAllGlobals();
     const { container } = render(<Host />);

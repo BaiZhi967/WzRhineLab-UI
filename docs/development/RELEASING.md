@@ -18,7 +18,7 @@
 ## 命令
 | 命令 | 作用 |
 | --- | --- |
-| `pnpm build:packages` | 用 `tsc -p tsconfig.build.json` 构建五个包到 `dist/`，并复制 CSS |
+| `pnpm build:packages` | 用 `tsc -p tsconfig.build.json` 构建六个包到 `dist/`，并复制 CSS |
 | `pnpm api:report` | 根据 `dist/*.d.ts` 重新生成 `docs/api/*.md` |
 | `pnpm api:check` | API 报告与构建结果不一致时失败，用来在评审中暴露公开 API 的变化 |
 | `pnpm docs:check` | 文档搜索索引（`apps/docs/src/search-index.json`）与路由、文档标题、API 报告不一致时失败；`pnpm docs:index` 重新生成 |
@@ -31,7 +31,7 @@
 
 ### `verify:packages` 验证的内容
 1. tarball 不含 `src/` 和测试；manifest 中没有 `workspace:`；带有类型声明、`sideEffects`、README、CHANGELOG、`repository`；每个 export 指向的文件都在包内。
-2. 在临时目录新建一个使用方项目，安装五个 tarball 以及 npm 上的 react、react-dom、motion。
+2. 在临时目录新建一个使用方项目，安装六个 tarball 以及 npm 上的 react、react-dom、motion。
 3. 用 `skipLibCheck: false` 的严格模式类型检查使用方代码；并用 `@ts-expect-error` 确认错误用法（未知 variant、缺少名称的 IconButton）会被发布出去的类型拒绝。
 4. 在纯 Node ESM 下用 `react-dom/server` 渲染组件。
 5. 用 Vite 打包：tokens、`components.css` 以及它 `@import` 的全部八个分片（reset / overlays / feedback / archive / forms / data / drawer / status）都必须出现，每个分片用一个只属于它的选择器检查；没有引入 effects 的应用中不能出现 effects 代码。
@@ -68,7 +68,7 @@
 发布执行（维护者在仓库根、`main` 分支上，先确认 `npm whoami` 已是 `wzrhine` 组织的发布者）：
 
 ```sh
-pnpm release:dry                            # 全部门禁 + 五包 pnpm publish --dry-run，不写 registry
+pnpm release:dry                            # 全部门禁 + 六包 pnpm publish --dry-run，不写 registry
 node scripts/release.mjs 0.2.0 --publish --otp=<新码>   # 逐包上传；首码若在门禁阶段过期，剩余包用新码重试
 git tag v0.2.0 && git push origin v0.2.0
 ```
@@ -88,5 +88,6 @@ ROADMAP M5 写的是「Storybook 或自研 explorer」。本项目选择自研�
 
 ## 版本策略
 - `0.x`：允许破坏性变更，但必须写进 CHANGELOG 的 Changed 段，标注「破坏性」并附迁移说明。
-- 五个包保持相同的版本号并按依赖顺序发布；`effects` 以 peer 方式依赖同版本线的 react 包，`agent` 依赖 `agent-core`。
+- 六个包保持相同的版本号并按依赖顺序发布（tokens → react → patterns → effects → agent-core → agent）；`patterns` 与 `effects` 以 peer 方式依赖同版本线的 react 包，`agent` 依赖 `agent-core`。
+- 版本号在**开发期**就写成目标版本，而不是等到定版：0.2.0 时即如此（`f1a06e8` 在功能提交里把全部 `package.json` 与根 `release:dry` 一起抬到 0.2.0）。因此当前六包的 `package.json` 均为 `0.3.0`，CHANGELOG 保持 `## [Unreleased]`，定版时只需把该标题改成 `## [0.3.0] - <日期>` 并打 tag——`release.mjs` 写入版本号的那一步通常是空操作。
 - 公开 API 的任何变化都会让 `api:check` 失败，需要重新生成 `docs/api/*.md`，并在 PR 中评审 diff。

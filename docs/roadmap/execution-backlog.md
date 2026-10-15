@@ -1,10 +1,10 @@
 # WzUI 后续开发执行清单
 
-> 2026-10-14。P030 任务全部为 Planned；后续任务为 Proposed。本文列实施产物，不把规划文件的完成计为组件完成。当前优先级以 [总路线](README.md) 和 [0.3.0 计划](0.3.0-plan.md) 为准。
+> 2026-10-15。P030 全部 12 项为 Accepted（库侧验收通过，npm 发布未执行）；P040 起的后续任务为 Proposed。本文列实施产物，不把规划文件的完成计为组件完成。当前优先级以 [总路线](README.md) 和 [0.3.0 计划](0.3.0-plan.md) 为准。
 
 ## 1. 使用方式
 
-每个任务使用唯一 ID；实施时记录负责人、分支／worktree、依赖、当前状态、实际改动、执行命令、证据、未执行项和恢复点。下面的目标路径是拟议位置，不声称文件已经存在。
+每个任务使用唯一 ID；实施时记录负责人、分支／worktree、依赖、当前状态、实际改动、执行命令、证据、未执行项和恢复点。P030 各任务的目标路径已是实际产物位置；后续阶段任务卡的目标路径仍是拟议位置，不声称文件已经存在。
 
 一次确认的工作包在 `.worktree/` 下施工，中文小步提交，最后一个汇总 PR。不得按本表每行新建 PR，不自动合并、不直接写 main、不擅自触发 Actions。
 
@@ -45,7 +45,7 @@
 - [x] 按 P030-00 决策创建必要目录、公开入口、文案与作用域样式；不创建空包占位。（`packages/patterns`：`PatternsMessagesProvider` 机制 + `listDetail` 首个文案命名空间 + `styles.css` 入口；组件自 P030-02 起加入，同一工作包内不出现空包状态）
 - [x] 若有新包，接入 workspace 构建、dist/types、显式样式、API、license、size 和真实安装验证。（六个脚本接入 + `docs/api/patterns.md` 8 导出 + size 预算 + license 审计 + `pnpm verify:packages` 全绿：tarball 检查、'use client' 边界、干净消费者安装、严格类型检查、SSR、Vite 构建）
 - [ ] 若选择 recipes，确定唯一示例位置和 imports，不复制组件库实现。（三个页面 recipes 属 P030-07，届时确定唯一位置）
-- [x] 建立最小可运行 fixture，覆盖 Provider、双主题／密度与实例隔离。（`test/pattern-messages.test.tsx` 13 测试：双表键一致、默认回落、覆盖优先、嵌套合并、兄弟隔离、RhineProvider 双主题×双密度组合；另有包边界测试 6 项）
+- [x] 建立最小可运行 fixture，覆盖 Provider、双主题／密度与实例隔离。（`test/pattern-messages.test.tsx` 7 个用例：双表键一致、默认回落、覆盖优先、嵌套合并、兄弟隔离、RhineProvider 双主题×双密度组合——最后一项在单个用例内循环四种组合；另有包边界测试 6 项）
 
 验收：最小消费者能通过公开入口运行和构建；未载入页面模式的基础入口不引入重型新依赖。（通过：patterns-full 0.46 KB gzip，仅依赖 tokens；`@wzrhine/react` 为 peer）
 
@@ -96,8 +96,13 @@
 执行 [质量门禁](quality-and-release.md) 中与本版对应的所有检查。性能样本固定，先记录 0.2.0 基础入口和新增模块的独立基准，再评估差异。记录命令、环境、commit 和日志，不能复制旧测试计数。
 
 > 2026-10-15 实测记录（本机 Win11 · Node 24.13 · pnpm 10.17.1 · Playwright 1.63 · chromium/firefox/webkit 均已安装）：
-> `pnpm check` 通过（全仓 typecheck + 五包+patterns 测试 + showcase/示例构建）；showcase e2e chromium 621 过 / firefox 621 过 1 跳过 / webkit 622 过；示例套件 agent-console 21、next-app-router 15、ssr-hydrate 18、host-embed 27 全过，archive-desk 45 过 / 3 失败（同一「keyboard only: create dialog 初始焦点」用例 ×3 浏览器——在未改动的 main 检出上同样失败，属提交基线后的环境漂移，已单独记录，不在本版修复）；视觉基线 121/121 过（基线因同一环境漂移整体重建，PR 需复核 PNG 差异：导航新条目、新增 patterns/recipes 页、文字渲染微差）；`pnpm release:check` exit 0（check + api:check + docs:check + license + verify:packages + size 全绿，patterns-full 5.32 KB gzip 在预算内）。
-> 未执行项：读屏（NVDA/VoiceOver）与真机触摸人工验证未声明为本版目标环境，未执行；tree-shaking 配对因文案 Provider 固定成本实测 25.2% 暂缓（已记录于 size-check 注释）。
+> `pnpm check` 通过（全仓 typecheck + 六包测试 + showcase/示例构建）；showcase e2e 三内核各收集 623 项（`--list` 实测），其中唯一的跳过项是 `e2e/search.spec.ts:45` 的 `test.skip(browserName === 'webkit')`，归属 **webkit**（早前记录误记在 firefox 名下，且 621/622 的过数与 `--list` 的 623 不符，已按实测更正）；示例套件 agent-console 21、next-app-router 15、ssr-hydrate 18、host-embed 27 全过，archive-desk 45 过 / 3 失败（同一「keyboard only: create dialog 初始焦点」用例 ×3 浏览器——在未改动的 main 检出上同样失败，属提交基线后的环境漂移，已单独记录，不在本版修复）；视觉基线 121/121 过（基线因同一环境漂移整体重建，PR 需复核 PNG 差异：导航新条目、新增 patterns/recipes 页、文字渲染微差）；`pnpm release:check` exit 0（check + api:check + docs:check + license + verify:packages + size 全绿，patterns-full 5.32 KB gzip 在预算内）。
+> 未执行项：读屏（NVDA/VoiceOver）与真机触摸人工验证未声明为本版目标环境，未执行；tree-shaking 配对因文案 Provider 固定成本暂缓（已记录于 size-check 注释）。
+
+> 2026-10-15 复核与修复（`fix/p030-review-followup`）：PR #16 评审发现的问题已修复，门禁重跑实测——
+> `pnpm typecheck` 12 项目全过；`pnpm test` 1437 项全过（tokens 247、react 511、patterns 108、effects 48、agent-core 24、agent 499）；`pnpm build` 与 `pnpm build:examples` exit 0；`api:check` / `docs:check`（2077 条）/ `license-audit` / `size-check`（15 条全在预算内）/ `verify-packages`（六包打包、LICENSE 双层断言、净消费者安装、严格类型检查、SSR、Vite 构建）全部 exit 0；视觉基线重生成后复跑 121/121 过，仅 7 张 patterns 页截图变化。
+> showcase e2e：**chromium 639 过 / 0 失败**（623 → 639，新增 16 项正是 patterns/recipes 两页进入 axe、五宽度溢出与减动门禁）。firefox 与 webkit 的全量跑在本机出现**间歇失败**，三次运行的失败用例各不相同（firefox：agent-intervention / agent-message / agent-shell 的 axe；webkit：overlays、locale、command、reduced-motion 等），全部落在既有页面、无一涉及 patterns/recipes；逐个单独重跑均通过（firefox 三个 axe spec 33/33、webkit 新页面相关 21/21），且在未改动的 main 检出上单独跑同样通过 33/33。判定为本机在 firefox/webkit 下全量并发的资源竞争，与本次改动无关——但**未取得这两个内核的一次全绿全量记录**，故不在此声称其通过项数。两个新页面在 webkit 下的 axe（双主题）、五宽度溢出与减动共 21 项已单独实测通过。
+> 修复项：showcase ResourceGrid 空 `src` 改为可解析 data URI 并新增单项降级样张；两个新页面加入 `e2e/helpers.ts` 的 `routes`；补 `packages/patterns/LICENSE` 并在 `verify-packages.mjs` 加「包目录存在 + tarball 内存在」双层断言（npm 会从仓库根兜底注入，只查 tarball 永远通过）；`busy` 改用 react 包 `Button` 的 `loading` 入口以满足合同 §4.2 的 focusable 要求；`ResourceGrid` 的空/错/骨架态改为复用 `EmptyState`/`Skeleton`/`Button`；`SectionIndex` 补 MutationObserver 以满足 §4.3「内容变化重新观察」，`prefers-reduced-motion` 改为每次导航读取；contracts §4.1/4.2 三处与实现相反的条文按实现修订（AppliedFilters 末项焦点回落归调用者、`useLatestGuard` 改为说明实际手段）；PatternsPage 重排为 01–06 顺序编号、去掉固定高度截断、补 Drawer 覆盖层样张与 SectionIndex 独立样张、修正行对齐（grid 作用于 `.rl-button__label` 并用容器查询处理窄列）；RecipesPage 补齐三个章节锚点；`api-report.mjs` 修 type alias 无成员表（`AppliedFiltersProps` 原本零字段信息）与 JSDoc 裸 `@wzrhine` 被当作 tag 吞掉描述；四条与本版无关的体积预算回退到 0.2.0 原值（ADR-0008 §3）。
 
 ### P030-11 候选交付
 

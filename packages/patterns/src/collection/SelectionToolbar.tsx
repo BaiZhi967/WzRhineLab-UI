@@ -65,7 +65,11 @@ export const SelectionToolbar = React.forwardRef<HTMLDivElement, SelectionToolba
             type="button"
             variant="secondary"
             size="sm"
-            disabled={action.disabled || action.busy}
+            // `disabled` is a standing fact (the action does not apply); `busy` is a run in
+            // flight, so `loading` keeps the button focusable via aria-disabled and blocks
+            // repeat submission (0.3.0-contracts §4.2: focus stays in the toolbar).
+            disabled={action.disabled}
+            loading={action.busy}
             onClick={() => action.onRun?.()}
           >
             {action.icon}

@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { Button, EmptyState, Skeleton } from '@wzrhine/react';
 import { usePatternsMessages } from '../provider/PatternMessages.js';
 import { cx } from '../utils/cx.js';
 
@@ -82,89 +83,111 @@ export function ResourceGrid<Item>({
   const rows = status === 'loading' ? Array.from({ length: loadingRows }) : items;
 
   return (
-    <ul
-      className={cx('rl-resource-grid', className)}
-      data-slot="resource-grid"
-      aria-label={label}
-      aria-busy={status === 'loading' || undefined}
-      data-status={status}
-    >
-      {rows.map((row, index) => {
-        if (status === 'loading') {
+    <>
+      {/* The skeleton cards are decorative (aria-hidden); the loading fact is announced here
+          instead, the same split DataTable uses. */}
+      {status === 'loading' && (
+        <p className="rl-resource-grid__status" role="status">
+          {messages.resourceGrid.loading}
+        </p>
+      )}
+      <ul
+        className={cx('rl-resource-grid', className)}
+        data-slot="resource-grid"
+        aria-label={label}
+        aria-busy={status === 'loading' || undefined}
+        data-status={status}
+      >
+        {rows.map((row, index) => {
+          if (status === 'loading') {
+            return (
+              <li key={index} className="rl-resource-grid__card" data-loading aria-hidden="true">
+                <Skeleton className="rl-resource-grid__thumb-skeleton" />
+                <Skeleton shape="text" width={index % 2 === 1 ? '50%' : '70%'} />
+              </li>
+            );
+          }
+          const item = row as Item;
+          const id = getItemId(item);
+          const spec = getItemSpec?.(item) ?? {};
+          const title = getItemTitle(item);
+          const name =
+            getItemLabel?.(item) ?? (typeof title === 'string' ? title : undefined) ?? messages.resourceGrid.item;
+          const thumbnail = spec.thumbnail;
+          const failed = thumbnail != null && failedSrc.has(thumbnail.src);
           return (
-            <li key={index} className="rl-resource-grid__card" data-loading>
-              <span className="rl-resource-grid__thumb" aria-hidden="true" />
-              <p className="rl-resource-grid__loading">{messages.resourceGrid.loading}</p>
+            <li key={id} className="rl-resource-grid__card" data-selected={selectedIds?.has(id) || undefined}>
+              <div className="rl-resource-grid__select">
+                {onSelectionChange && (
+                  <input
+                    type="checkbox"
+                    className="rl-resource-grid__checkbox"
+                    checked={selectedIds?.has(id) ?? false}
+                    onChange={() => toggle(id)}
+                    aria-label={name}
+                  />
+                )}
+                {spec.badge != null && <span className="rl-resource-grid__badge">{spec.badge}</span>}
+              </div>
+              {thumbnail != null &&
+                (failed ? (
+                  <span
+                    className="rl-resource-grid__thumb rl-resource-grid__thumb--failed"
+                    role="img"
+                    aria-label={messages.resourceGrid.imageFailed}
+                  >
+                    <span aria-hidden="true" className="rl-resource-grid__failed-mark">
+                      ✕
+                    </span>
+                  </span>
+                ) : (
+                  <span className="rl-resource-grid__thumb">
+                    <img
+                      src={thumbnail.src}
+                      alt={thumbnail.alt}
+                      width={thumbnail.width ?? 640}
+                      height={thumbnail.height ?? 480}
+                      loading="lazy"
+                      onError={() => setFailedSrc((prev) => new Set(prev).add(thumbnail.src))}
+                    />
+                  </span>
+                ))}
+              {onOpen ? (
+                <button type="button" className="rl-resource-grid__open" onClick={() => onOpen(id)}>
+                  <span className="rl-resource-grid__title">{title}</span>
+                </button>
+              ) : (
+                <span className="rl-resource-grid__title">{title}</span>
+              )}
+              {spec.description != null && <p className="rl-resource-grid__description">{spec.description}</p>}
+              {spec.moreActions != null && <div className="rl-resource-grid__more">{spec.moreActions}</div>}
             </li>
           );
-        }
-        const item = row as Item;
-        const id = getItemId(item);
-        const spec = getItemSpec?.(item) ?? {};
-        const title = getItemTitle(item);
-        const name =
-          getItemLabel?.(item) ?? (typeof title === 'string' ? title : undefined) ?? messages.resourceGrid.item;
-        const thumbnail = spec.thumbnail;
-        const failed = thumbnail != null && failedSrc.has(thumbnail.src);
-        return (
-          <li key={id} className="rl-resource-grid__card" data-selected={selectedIds?.has(id) || undefined}>
-            <div className="rl-resource-grid__select">
-              {onSelectionChange && (
-                <input
-                  type="checkbox"
-                  className="rl-resource-grid__checkbox"
-                  checked={selectedIds?.has(id) ?? false}
-                  onChange={() => toggle(id)}
-                  aria-label={name}
-                />
-              )}
-              {spec.badge != null && <span className="rl-resource-grid__badge">{spec.badge}</span>}
-            </div>
-            {thumbnail != null &&
-              (failed ? (
-                <span className="rl-resource-grid__thumb rl-resource-grid__thumb--failed" role="img" aria-label={messages.resourceGrid.imageFailed}>
-                  <span aria-hidden="true" className="rl-resource-grid__failed-mark">✕</span>
-                </span>
-              ) : (
-                <span className="rl-resource-grid__thumb">
-                  <img
-                    src={thumbnail.src}
-                    alt={thumbnail.alt}
-                    width={thumbnail.width ?? 640}
-                    height={thumbnail.height ?? 480}
-                    loading="lazy"
-                    onError={() => setFailedSrc((prev) => new Set(prev).add(thumbnail.src))}
-                  />
-                </span>
-              ))}
-            {onOpen ? (
-              <button type="button" className="rl-resource-grid__open" onClick={() => onOpen(id)}>
-                <span className="rl-resource-grid__title">{title}</span>
-              </button>
-            ) : (
-              <span className="rl-resource-grid__title">{title}</span>
-            )}
-            {spec.description != null && <p className="rl-resource-grid__description">{spec.description}</p>}
-            {spec.moreActions != null && <div className="rl-resource-grid__more">{spec.moreActions}</div>}
+        })}
+        {status === 'ready' && items.length === 0 && (
+          <li className="rl-resource-grid__empty">
+            <EmptyState
+              size="sm"
+              kind="no-results"
+              icon={null}
+              title={emptyText ?? messages.resourceGrid.empty}
+              action={emptyAction}
+            />
           </li>
-        );
-      })}
-      {status === 'ready' && items.length === 0 && (
-        <li className="rl-resource-grid__empty">
-          <p>{emptyText ?? messages.resourceGrid.empty}</p>
-          {emptyAction}
-        </li>
-      )}
-      {status === 'error' && (
-        <li className="rl-resource-grid__empty">
-          <p role="alert">{messages.resourceGrid.error}</p>
-          {onRetry && (
-            <button type="button" className="rl-resource-grid__retry" onClick={onRetry}>
-              {messages.resourceGrid.retry}
-            </button>
-          )}
-        </li>
-      )}
-    </ul>
+        )}
+        {status === 'error' && (
+          <li className="rl-resource-grid__empty" data-kind="error">
+            <p role="alert" className="rl-resource-grid__error">
+              {messages.resourceGrid.error}
+            </p>
+            {onRetry && (
+              <Button size="sm" variant="secondary" onClick={onRetry}>
+                {messages.resourceGrid.retry}
+              </Button>
+            )}
+          </li>
+        )}
+      </ul>
+    </>
   );
 }

@@ -53,6 +53,9 @@ log(`work dir ${work}`);
 const tarballs = {};
 for (const pkg of packages) {
   const dir = join(root, 'packages', pkg);
+  // npm falls back to the repository root LICENSE when a package has none, so the tarball check
+  // alone would always pass. Assert the package carries its own copy.
+  if (!existsSync(join(dir, 'LICENSE'))) fail(`${pkg}: packages/${pkg}/LICENSE missing`);
   run('pnpm', ['pack', '--pack-destination', packDir], { cwd: dir, capture: true });
   const name = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).name;
   const file = readdirSync(packDir).find((f) => f.startsWith(name.replace('@', '').replace('/', '-')));
@@ -90,7 +93,7 @@ for (const [name, tgz] of Object.entries(tarballs)) {
   // agent-core ships no CSS: `sideEffects: false`. Every other package lists CSS only.
   const sideEffectsOk = name === '@wzrhine/agent-core' ? manifest.sideEffects === false : Array.isArray(manifest.sideEffects) && manifest.sideEffects.includes('**/*.css');
   if (!sideEffectsOk) fail(`${name}: sideEffects must list CSS only (agent-core: false)`);
-  for (const doc of ['package/README.md', 'package/CHANGELOG.md']) {
+  for (const doc of ['package/README.md', 'package/CHANGELOG.md', 'package/LICENSE']) {
     if (!list.includes(doc)) fail(`${name}: ${doc.replace('package/', '')} missing from tarball`);
   }
   if (!manifest.repository?.url) fail(`${name}: repository field missing`);

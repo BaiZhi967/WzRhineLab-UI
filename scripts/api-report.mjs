@@ -124,7 +124,16 @@ function report(pkg) {
       if (rows.length) lines.push('| Member | Type | Description |', '| --- | --- | --- |', ...rows, '');
     } else if (kind === 'type' && decl && ts.isTypeAliasDeclaration(decl)) {
       const text = decl.type.getText(decl.getSourceFile()).replace(/\s+/g, ' ');
-      if (text.length < 240) lines.push('```ts', `type ${exp.getName()} = ${text}`, '```', '');
+      if (text.length < 240) {
+        lines.push('```ts', `type ${exp.getName()} = ${text}`, '```', '');
+      } else {
+        // Too long to inline. An object-shaped alias (`type FooProps = { … }`) carries the same
+        // information as an interface, so fall back to the member table instead of emitting
+        // nothing — otherwise a Props type declared with `type` has no field documentation at all.
+        const rows = propsTable(checker, checker.getDeclaredTypeOfSymbol(symbol), decl);
+        if (rows.length) lines.push('| Member | Type | Description |', '| --- | --- | --- |', ...rows, '');
+        else lines.push('```ts', `type ${exp.getName()} = ${text}`, '```', '');
+      }
     }
     (sections[kind] ?? (sections.type)).push(lines.join('\n'));
   }
