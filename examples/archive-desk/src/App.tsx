@@ -17,6 +17,10 @@ import {
   RhineProvider,
   Select,
   StatusIndicator,
+  Tab,
+  TabList,
+  TabPanel,
+  Tabs,
   Text,
   Timeline,
   useToast,
@@ -24,6 +28,10 @@ import {
 import type { DataTableColumn, RhineTheme, SortState } from '@wzrhine/react';
 import { statusLabel, statusTone, useRecords } from './store';
 import type { DeskRecord, NewRecord, RecordStatus } from './store';
+import { ResourcesPage } from './ResourcesPage';
+import { SettingsPage } from './SettingsPage';
+import { defaultFaults, useResources } from './resources';
+import type { Faults } from './resources';
 
 /**
  * Archive desk: a complete small app assembled only from the public `@wzrhine/react` API —
@@ -322,15 +330,42 @@ function Desk({ theme, onThemeChange }: { theme: RhineTheme; onThemeChange: (t: 
 const THEME_KEY = 'wzrhine-example:archive-desk:theme';
 
 export function App() {
+  const [page, setPage] = React.useState<'archives' | 'resources' | 'settings'>('archives');
   const [theme, setTheme] = React.useState<RhineTheme>(() => {
     const saved = window.localStorage.getItem(THEME_KEY);
     return saved === 'dark' || saved === 'system' ? saved : 'light';
   });
   React.useEffect(() => window.localStorage.setItem(THEME_KEY, theme), [theme]);
 
+  const [faults, setFaults] = React.useState<Faults>(defaultFaults);
+  const resetResources = useResources().reset;
+  const resetRecords = useRecords().reset;
+
   return (
     <RhineProvider theme={theme} className="desk-root">
-      <Desk theme={theme} onThemeChange={setTheme} />
+      <Tabs value={page} onValueChange={(next) => setPage(next as 'archives' | 'resources' | 'settings')}>
+        <TabList aria-label="页面" className="desk-tabs">
+          <Tab value="archives">档案</Tab>
+          <Tab value="resources">资源</Tab>
+          <Tab value="settings">设置</Tab>
+        </TabList>
+        <TabPanel value="archives">
+          <Desk theme={theme} onThemeChange={setTheme} />
+        </TabPanel>
+        <TabPanel value="resources">
+          <ResourcesPage faults={faults} />
+        </TabPanel>
+        <TabPanel value="settings">
+          <SettingsPage
+            faults={faults}
+            onFaultsChange={setFaults}
+            onResetAll={() => {
+              resetRecords();
+              resetResources();
+            }}
+          />
+        </TabPanel>
+      </Tabs>
     </RhineProvider>
   );
 }

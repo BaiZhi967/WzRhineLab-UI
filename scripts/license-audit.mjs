@@ -61,7 +61,7 @@ function walk(pkgDir, via) {
   }
 }
 
-for (const p of ['tokens', 'react', 'effects', 'agent-core', 'agent']) {
+for (const p of ['tokens', 'react', 'patterns', 'effects', 'agent-core', 'agent']) {
   const dir = join(root, 'packages', p);
   const pj = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
   for (const dep of [...Object.keys(pj.dependencies ?? {}), ...Object.keys(pj.peerDependencies ?? {})]) {

@@ -1,0 +1,54 @@
+/*
+ * ListDetail (@wzrhine/patterns) — embeddable master-detail layout.
+ * The root is a grid; split mode places the regions side by side, overlay stacks them in one
+ * cell and hides the list with `visibility` (scroll position survives) plus the `inert` DOM
+ * attribute set by the component. No literal lengths or colours: --rl-* tokens only.
+ */
+
+.rl-list-detail { display: grid; min-width: 0; min-height: 0; height: 100%; }
+
+.rl-list-detail[data-mode='split'] { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: var(--rl-space-4); }
+.rl-list-detail:not([data-open])[data-mode='split'] > .rl-list-detail__list { grid-column: 1 / -1; }
+
+.rl-list-detail[data-mode='overlay'] { grid-template-columns: minmax(0, 1fr); }
+.rl-list-detail[data-mode='overlay'] > .rl-list-detail__list { grid-area: 1 / 1; }
+.rl-list-detail[data-mode='overlay'] > .rl-list-detail__detail { grid-area: 1 / 1; }
+.rl-list-detail[data-mode='overlay'][data-open] > .rl-list-detail__list { visibility: hidden; }
+
+.rl-list-detail__list { min-width: 0; min-height: 0; overflow: auto; padding: var(--rl-space-4); background: var(--rl-bg-surface); border: var(--rl-border-width) solid var(--rl-border-default); border-radius: var(--rl-radius-md); }
+
+.rl-list-detail__detail { display: grid; grid-template-rows: auto minmax(0, 1fr); min-width: 0; min-height: 0; background: var(--rl-bg-surface); border: var(--rl-border-width) solid var(--rl-border-default); border-radius: var(--rl-radius-md); overflow: hidden; }
+
+.rl-list-detail__detail-bar { display: flex; align-items: center; padding: var(--rl-space-2) var(--rl-space-3); border-block-end: var(--rl-border-width) solid var(--rl-border-subtle); }
+
+.rl-list-detail__back { display: inline-flex; align-items: center; gap: var(--rl-space-1); padding: var(--rl-space-1) var(--rl-space-2); border: none; border-radius: var(--rl-radius-sm); background: transparent; color: var(--rl-fg-primary); font: inherit; cursor: pointer; }
+.rl-list-detail__back:hover { background: var(--rl-bg-hover); }
+.rl-list-detail__back:active { background: var(--rl-bg-pressed); }
+.rl-list-detail__back:focus-visible { outline: var(--rl-focus-ring); outline-offset: var(--rl-focus-offset); }
+
+.rl-list-detail__back-icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+.rl-list-detail__detail-body { min-height: 0; overflow: auto; padding: var(--rl-space-4); }
+
+/* InspectorPanel — semantic region with header, meta, actions and a scrolling body. */
+
+.rl-inspector { display: flex; flex-direction: column; min-width: 0; min-height: 0; height: 100%; overflow: hidden; background: var(--rl-bg-surface); border: var(--rl-border-width) solid var(--rl-border-default); border-radius: var(--rl-radius-md); }
+/* display:flex above overrides the UA rule for [hidden]; re-assert it so a closed panel
+   keeps no focusable controls. */
+.rl-inspector[hidden] { display: none; }
+
+.rl-inspector__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--rl-space-2); padding: var(--rl-space-3) var(--rl-space-4); border-block-end: var(--rl-border-width) solid var(--rl-border-subtle); }
+.rl-inspector__eyebrow { margin: 0 0 var(--rl-space-1); font: var(--rl-type-meta); font-family: var(--rl-font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--rl-fg-subtle); }
+.rl-inspector__title { font: var(--rl-type-heading-3); color: var(--rl-fg-primary); overflow-wrap: anywhere; }
+
+.rl-inspector__close { display: inline-flex; align-items: center; justify-content: center; padding: var(--rl-space-1); border: none; border-radius: var(--rl-radius-sm); background: transparent; color: var(--rl-fg-muted); cursor: pointer; }
+.rl-inspector__close:hover { background: var(--rl-bg-hover); color: var(--rl-fg-primary); }
+.rl-inspector__close:active { background: var(--rl-bg-pressed); }
+.rl-inspector__close:focus-visible { outline: var(--rl-focus-ring); outline-offset: var(--rl-focus-offset); }
+.rl-inspector__close-icon { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; }
+
+.rl-inspector__meta { padding: var(--rl-space-2) var(--rl-space-4); border-block-end: var(--rl-border-width) solid var(--rl-border-subtle); overflow: auto; }
+
+.rl-inspector__actions { display: flex; flex-wrap: wrap; gap: var(--rl-space-2); padding: var(--rl-space-2) var(--rl-space-4); border-block-end: var(--rl-border-width) solid var(--rl-border-subtle); }
+
+.rl-inspector__body { flex: 1; min-height: 0; overflow: auto; padding: var(--rl-space-4); }

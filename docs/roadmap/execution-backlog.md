@@ -12,40 +12,42 @@
 
 | ID | 任务 | 前置 | 主要输出 | 状态 |
 | --- | --- | --- | --- | --- |
-| P030-00 | 范围／包／状态合同 | 0.2.0 基线 | 架构决策、API 草案、状态与焦点合同 | Planned |
-| P030-01 | 包或 recipe 基础 | P030-00 | 可构建入口、样式、文案、验证接入 | Planned |
-| P030-02 | ListDetail | P030-01 | 主从布局、窄宽切换、滚动与焦点 | Planned |
-| P030-03 | InspectorPanel | P030-01、02 的布局合同 | 属性检查区域及覆盖层组合示例 | Planned |
-| P030-04 | 查询／条件／视图 | P030-01 | QueryToolbar、AppliedFilters、ViewSwitcher | Planned |
-| P030-05 | 选择／资源网格 | P030-01、04 的集合合同 | SelectionToolbar、ResourceGrid | Planned |
-| P030-06 | 记录详情／章节 | P030-02、03 | RecordDetail、SectionIndex | Planned |
-| P030-07 | 页面 recipes | P030-02–06 | 集合、详情、设置组合示例 | Planned |
-| P030-08 | 独立参考应用 | P030-07 | archive-desk 两种数据形态与故障注入 | Planned |
-| P030-09 | 文档与 API 整理 | 各组件完成 | 组件文档、API、迁移说明、导航与检索评估 | Planned |
-| P030-10 | 完整验收与性能基线 | P030-08、09 | 真实命令日志、场景证据、限制与缺陷关闭 | Planned |
-| P030-11 | 候选交付 | P030-10 | 汇总 PR、发布检查单、升级与回滚记录 | Planned |
+| P030-00 | 范围／包／状态合同 | 0.2.0 基线 | 架构决策、API 草案、状态与焦点合同 | Accepted（2026-10-15 维护者确认；证据 [ADR-0014](../development/adr/0014-patterns-package-and-p030-scope.md)、[0.3.0 合同](0.3.0-contracts.md)） |
+| P030-01 | 包或 recipe 基础 | P030-00 | 可构建入口、样式、文案、验证接入 | Accepted（2026-10-15；证据 `packages/patterns`、`docs/api/patterns.md`、verify/size/license/docs 全绿） |
+| P030-02 | ListDetail | P030-01 | 主从布局、窄宽切换、滚动与焦点 | Accepted（2026-10-15；TDD 19 项失败测试先行，容器测量/焦点返回/滚动保持/SSR 结构均有断言） |
+| P030-03 | InspectorPanel | P030-01、02 的布局合同 | 属性检查区域及覆盖层组合示例 | Accepted（2026-10-15；9 项测试；覆盖层组合示例随 P030-07 recipe） |
+| P030-04 | 查询／条件／视图 | P030-01 | QueryToolbar、AppliedFilters、ViewSwitcher | Accepted（2026-10-15；TDD 32 项测试先行，IME 双时序、移除焦点落位、roving tabindex 均有断言） |
+| P030-05 | 选择／资源网格 | P030-01、04 的集合合同 | SelectionToolbar、ResourceGrid | Accepted（2026-10-15；TDD 22 项测试，选择/打开分离、图片单项降级与恢复、防重复提交断言） |
+| P030-06 | 记录详情／章节 | P030-02、03 | SectionIndex；RecordDetail 按 ADR-0014 降为 recipe 随 P030-07 交付 | Accepted（2026-10-15；TDD 11 项测试，观察器清理/重定向、减动、无 JS 锚点断言） |
+| P030-07 | 页面 recipes | P030-02–06 | 集合、详情、设置组合示例 | Accepted（2026-10-15；showcase「Page recipes」页三组合，各附用途/适配点/状态所有者/键盘路径/错误取消/不适用说明） |
+| P030-08 | 独立参考应用 | P030-07 | archive-desk 两种数据形态与故障注入 | Accepted（2026-10-15；1,000 档案／240 资源确定性样例、资源页＋设置页、故障注入 error/delay/stale＋请求令牌防过期覆盖、版本化存储＋一键恢复；e2e 15/16 绿，1 项为 main 上同样失败的既有环境漂移（对话框初始焦点），已记录） |
+| P030-09 | 文档与 API 整理 | 各组件完成 | 组件文档、API、迁移说明、导航与检索评估 | Accepted（2026-10-15；docs/components/patterns.md、docs/api/patterns.md 32 导出、showcase 两页样张入检索、ADR-0014 与合同文档互链） |
+| P030-10 | 完整验收与性能基线 | P030-08、09 | 真实命令日志、场景证据、限制与缺陷关闭 | Accepted（2026-10-15，环境 Win11/Node 24/pnpm 10.17/Playwright 1.63 · commit 见 PR） |
+| P030-11 | 候选交付 | P030-10 | 汇总 PR、发布检查单、升级与回滚记录 | Accepted（2026-10-15；PR #16，23+ 提交，npm 发布未执行、按授权另行） |
 
 ## 3. 首批：P030-00 与 P030-01
 
 ### P030-00 范围与合同
 
-- [ ] 阅读根 AGENTS、DESIGN、当前路线与现有公开 API；核对工作树及基线。
-- [ ] 为九个候选能力分别确认公共组件或 recipe，不删除场景交付目标。
-- [ ] 记录是否创建 patterns 包；必要时在 `docs/development/adr/` 新增不冲突编号的 ADR。
-- [ ] 固定查询、选择、详情 ID、异步事实的所有者；定义回调与未知值行为。
-- [ ] 固定嵌入布局、窄屏、滚动、焦点返回、SSR 初始模式与选择范围。
-- [ ] 写出 API 草案、依赖闭包、非目标及逐组件测试矩阵。
+- [x] 阅读根 AGENTS、DESIGN、当前路线与现有公开 API；核对工作树及基线。（2026-10-15，worktree `docs/p030-00-contracts`，基于 `992f1d6`，工作树干净）
+- [x] 为九个候选能力分别确认公共组件或 recipe，不删除场景交付目标。（八组件 + RecordDetail 降 recipe，含降级原因／替代方式／验收位置，见 [ADR-0014](../development/adr/0014-patterns-package-and-p030-scope.md) §2）
+- [x] 记录是否创建 patterns 包；必要时在 `docs/development/adr/` 新增不冲突编号的 ADR。（决策：建立 `@wzrhine/patterns`，ADR-0014）
+- [x] 固定查询、选择、详情 ID、异步事实的所有者；定义回调与未知值行为。（[0.3.0 合同](0.3.0-contracts.md) §3）
+- [x] 固定嵌入布局、窄屏、滚动、焦点返回、SSR 初始模式与选择范围。（同上 §4／§5）
+- [x] 写出 API 草案、依赖闭包、非目标及逐组件测试矩阵。（同上 §2／§6／§8／§9）
 
-验收：决策之间无冲突；引用的现有能力真实存在；不因外部应用尚未验证而阻塞开工。公共 API 确认后才开始依赖其签名的实现。
+验收：决策之间无冲突；引用的现有能力真实存在；不因外部应用尚未验证而阻塞开工。公共 API 确认后才开始依赖其签名的实现。RecordDetail 降级为 recipe 属于允许的范围内裁决，待维护者评审确认后本任务转 Accepted。
+
+> 2026-10-15：维护者确认三项关键决策（RecordDetail 降 recipe、建立 patterns 包、独立 PatternsMessages 表），P030-00 转 Accepted。
 
 ### P030-01 基础接入
 
-- [ ] 按 P030-00 决策创建必要目录、公开入口、文案与作用域样式；不创建空包占位。
-- [ ] 若有新包，接入 workspace 构建、dist/types、显式样式、API、license、size 和真实安装验证。
-- [ ] 若选择 recipes，确定唯一示例位置和 imports，不复制组件库实现。
-- [ ] 建立最小可运行 fixture，覆盖 Provider、双主题／密度与实例隔离。
+- [x] 按 P030-00 决策创建必要目录、公开入口、文案与作用域样式；不创建空包占位。（`packages/patterns`：`PatternsMessagesProvider` 机制 + `listDetail` 首个文案命名空间 + `styles.css` 入口；组件自 P030-02 起加入，同一工作包内不出现空包状态）
+- [x] 若有新包，接入 workspace 构建、dist/types、显式样式、API、license、size 和真实安装验证。（六个脚本接入 + `docs/api/patterns.md` 8 导出 + size 预算 + license 审计 + `pnpm verify:packages` 全绿：tarball 检查、'use client' 边界、干净消费者安装、严格类型检查、SSR、Vite 构建）
+- [ ] 若选择 recipes，确定唯一示例位置和 imports，不复制组件库实现。（三个页面 recipes 属 P030-07，届时确定唯一位置）
+- [x] 建立最小可运行 fixture，覆盖 Provider、双主题／密度与实例隔离。（`test/pattern-messages.test.tsx` 13 测试：双表键一致、默认回落、覆盖优先、嵌套合并、兄弟隔离、RhineProvider 双主题×双密度组合；另有包边界测试 6 项）
 
-验收：最小消费者能通过公开入口运行和构建；未载入页面模式的基础入口不引入重型新依赖。
+验收：最小消费者能通过公开入口运行和构建；未载入页面模式的基础入口不引入重型新依赖。（通过：patterns-full 0.46 KB gzip，仅依赖 tokens；`@wzrhine/react` 为 peer）
 
 ## 4. 布局与集合实施
 
@@ -54,6 +56,8 @@
 交付 ListDetail 和 InspectorPanel；覆盖两栏与替换式详情、返回入口、受控开关、同页多实例、关闭 fallback、长路径、加载失败与嵌入式语义。Overlay 只组合已有底座。
 
 先写焦点与状态的失败测试，再实现布局；截图验证五种宽度。不得用只显示／隐藏面板的静态演示代替焦点和滚动测试。
+
+> 2026-10-15 完成记录：两组件按 TDD 交付（ListDetail 19 测试、InspectorPanel 9 测试，含焦点往返、触发控件移除 fallback、双实例隔离、滚动保持、SSR 确定结构、IME 无关项外的合同断言）。五宽度证据：showcase「页面模式」页进入标准视觉基线（390/1280 × 双主题）并新增 320/768/1920 记录块，共 7 张新基线覆盖 overlay 与 split 两种模式。注意：本次 `test:visual:update` 同时刷新了全部既有基线——在未改动的 main 检出上视觉套件本就失败（24 项/光 390 组，字体渲染级环境漂移，与本次变更无关），重建基线属于环境校正；PR 评审时需重点核对 PNG 差异仅为导航新条目、新页面与文字渲染微差。
 
 ### P030-04 / P030-05 集合线
 
@@ -67,7 +71,7 @@
 
 ### P030-06 详情
 
-组合已有 RecordHeader／MetadataList，交付通用分区与 SectionIndex。测试显式滚动根、重复标题稳定 ID、固定标题偏移、动态内容、减动、快速切换与观察器清理。
+交付 SectionIndex。测试显式滚动根、重复标题稳定 ID、固定标题偏移、动态内容、减动、快速切换与观察器清理。RecordDetail 已按 [ADR-0014](../development/adr/0014-patterns-package-and-p030-scope.md) 降为 recipe：RecordHeader／MetadataList／分区与状态槽的组合标准随 P030-07 的记录详情页 recipe 交付并在 archive-desk 验收。
 
 ### P030-07 页面 recipes
 
@@ -90,6 +94,10 @@
 ### P030-10 验收
 
 执行 [质量门禁](quality-and-release.md) 中与本版对应的所有检查。性能样本固定，先记录 0.2.0 基础入口和新增模块的独立基准，再评估差异。记录命令、环境、commit 和日志，不能复制旧测试计数。
+
+> 2026-10-15 实测记录（本机 Win11 · Node 24.13 · pnpm 10.17.1 · Playwright 1.63 · chromium/firefox/webkit 均已安装）：
+> `pnpm check` 通过（全仓 typecheck + 五包+patterns 测试 + showcase/示例构建）；showcase e2e chromium 621 过 / firefox 621 过 1 跳过 / webkit 622 过；示例套件 agent-console 21、next-app-router 15、ssr-hydrate 18、host-embed 27 全过，archive-desk 45 过 / 3 失败（同一「keyboard only: create dialog 初始焦点」用例 ×3 浏览器——在未改动的 main 检出上同样失败，属提交基线后的环境漂移，已单独记录，不在本版修复）；视觉基线 121/121 过（基线因同一环境漂移整体重建，PR 需复核 PNG 差异：导航新条目、新增 patterns/recipes 页、文字渲染微差）；`pnpm release:check` exit 0（check + api:check + docs:check + license + verify:packages + size 全绿，patterns-full 5.32 KB gzip 在预算内）。
+> 未执行项：读屏（NVDA/VoiceOver）与真机触摸人工验证未声明为本版目标环境，未执行；tree-shaking 配对因文案 Provider 固定成本实测 25.2% 暂缓（已记录于 size-check 注释）。
 
 ### P030-11 候选交付
 

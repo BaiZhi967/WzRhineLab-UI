@@ -21,7 +21,7 @@ import { join, resolve } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 
 const root = resolve(import.meta.dirname, '..');
-const packages = ['tokens', 'react', 'effects', 'agent-core', 'agent'];
+const packages = ['tokens', 'react', 'patterns', 'effects', 'agent-core', 'agent'];
 const keep = process.argv.includes('--keep');
 const log = (msg) => console.log(`\u001b[36m[verify]\u001b[0m ${msg}`);
 const fail = (msg) => {
@@ -115,12 +115,13 @@ function usesReactAtRuntime(file, code) {
 // Modules that must stay importable from React Server Components (no directive).
 const pureModules = {
   '@wzrhine/react': ['index', 'utils/cx', 'motion/presets', 'components/pagination-utils', 'components/meter-utils'],
+  '@wzrhine/patterns': ['index', 'utils/cx'],
   '@wzrhine/effects': ['index', 'scramble', 'usePageVisible'],
   '@wzrhine/agent': ['index', 'utils/cx', 'provider/messages/status'],
 };
 const walkSrc = (dir) =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walkSrc(join(dir, e.name)) : [join(dir, e.name)]));
-for (const [name, dirName] of [['@wzrhine/react', 'react'], ['@wzrhine/effects', 'effects'], ['@wzrhine/agent', 'agent']]) {
+for (const [name, dirName] of [['@wzrhine/react', 'react'], ['@wzrhine/patterns', 'patterns'], ['@wzrhine/effects', 'effects'], ['@wzrhine/agent', 'agent']]) {
   const srcDir = join(root, 'packages', dirName, 'src');
   const entries = readTarball(tarballs[name]);
   const expected = new Map();
@@ -171,6 +172,7 @@ writeFileSync(
       dependencies: {
         '@wzrhine/tokens': `file:${tarballs['@wzrhine/tokens']}`,
         '@wzrhine/react': `file:${tarballs['@wzrhine/react']}`,
+        '@wzrhine/patterns': `file:${tarballs['@wzrhine/patterns']}`,
         '@wzrhine/effects': `file:${tarballs['@wzrhine/effects']}`,
         '@wzrhine/agent-core': `file:${tarballs['@wzrhine/agent-core']}`,
         '@wzrhine/agent': `file:${tarballs['@wzrhine/agent']}`,
@@ -249,6 +251,29 @@ export function Effects() {
 `,
 );
 writeFileSync(
+  join(app, 'src/Patterns.tsx'),
+  `import '@wzrhine/patterns/styles.css';
+import { AppliedFilters, ListDetail, PatternsMessagesProvider, patternsEnUS, usePatternsMessages, ViewSwitcher } from '@wzrhine/patterns';
+import type { PatternsMessages, ViewSwitcherOption } from '@wzrhine/patterns';
+const table: PatternsMessages = patternsEnUS;
+const views: readonly ViewSwitcherOption[] = [{ value: 'list', label: 'List' }, { value: 'grid', label: 'Grid' }];
+function Probe() {
+  const messages = usePatternsMessages();
+  return <span>{messages.listDetail.back}</span>;
+}
+export function Patterns() {
+  return (
+    <PatternsMessagesProvider messages={table}>
+      <Probe />
+      <AppliedFilters filters={[{ id: 'kind', label: 'Kind: sample' }]} />
+      <ViewSwitcher label="View" options={views} defaultValue="list" />
+      <ListDetail list={<ul><li>record</li></ul>} detail={<p>detail</p>} mode="split" />
+    </PatternsMessagesProvider>
+  );
+}
+`,
+);
+writeFileSync(
   join(app, 'src/Agent.tsx'),
   `import '@wzrhine/agent/styles.css';
 import { AgentSpark, AgentStatus, runStatusMeta, toPlainText, encodeToken } from '@wzrhine/agent';
@@ -280,8 +305,9 @@ writeFileSync(
   join(app, 'src/main.tsx'),
   `import { createRoot } from 'react-dom/client';
 import { App } from './App';
+import { Patterns } from './Patterns';
 import { Agent } from './Agent';
-createRoot(document.getElementById('root')!).render(<><App /><Agent /></>);
+createRoot(document.getElementById('root')!).render(<><App /><Patterns /><Agent /></>);
 `,
 );
 writeFileSync(
@@ -291,9 +317,11 @@ import { createElement as h } from 'react';
 import { Button, RhineProvider, StatusBadge, Text } from '@wzrhine/react';
 import { ArchiveReveal } from '@wzrhine/effects';
 import { AgentSpark, AgentStatus } from '@wzrhine/agent';
+import { PatternsMessagesProvider, patternsEnUS, usePatternsMessages } from '@wzrhine/patterns';
 import { motionDurations } from '@wzrhine/tokens';
-const html = renderToString(h(RhineProvider, { theme: 'dark' }, h(Button, null, '保存'), h(StatusBadge, { status: 'info' }, '审核中'), h(Text, { variant: 'mono' }, 'ARC-1'), h(ArchiveReveal, { text: 'ARC-1024', revealed: true }), h(AgentSpark, { phase: 'thinking' }), h(AgentStatus, { glyph: 'active', tone: 'accent', label: '运行中' })));
-for (const needle of ['rl-theme', 'data-rl-theme="dark"', 'rl-button', '保存', 'rl-badge', 'rl-reveal', 'ARC-1024', 'rl-agent-spark', 'data-phase="thinking"', 'rl-agent-status', '运行中']) {
+const PatternProbe = () => { const m = usePatternsMessages(); return h('span', null, m.listDetail.back); };
+const html = renderToString(h(RhineProvider, { theme: 'dark' }, h(Button, null, '保存'), h(StatusBadge, { status: 'info' }, '审核中'), h(Text, { variant: 'mono' }, 'ARC-1'), h(ArchiveReveal, { text: 'ARC-1024', revealed: true }), h(AgentSpark, { phase: 'thinking' }), h(AgentStatus, { glyph: 'active', tone: 'accent', label: '运行中' }), h(PatternsMessagesProvider, { messages: patternsEnUS }, h(PatternProbe))));
+for (const needle of ['rl-theme', 'data-rl-theme="dark"', 'rl-button', '保存', 'rl-badge', 'rl-reveal', 'ARC-1024', 'rl-agent-spark', 'data-phase="thinking"', 'rl-agent-status', '运行中', 'Back to list']) {
   if (!html.includes(needle)) { console.error('SSR output missing ' + needle); process.exit(1); }
 }
 if (motionDurations.press !== 80) process.exit(1);
@@ -337,6 +365,7 @@ const cssChecks = {
   'status.css': '.rl-callout',
   'disclosure.css': '.rl-collapsible__panel',
   'agent.css': '.rl-agent-spark__dot',
+  'patterns/layout.css': '.rl-list-detail__detail-bar',
 };
 for (const [file, needle] of Object.entries(cssChecks)) {
   if (!css.includes(needle)) fail(`bundled CSS missing ${needle} from ${file} (style entry or @import chain broken)`);

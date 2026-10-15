@@ -13,6 +13,7 @@
     "test:e2e:all": "playwright test"
   },
   "dependencies": {
+    "@wzrhine/patterns": "workspace:*",
     "@wzrhine/react": "workspace:*",
     "@wzrhine/tokens": "workspace:*",
     "motion": "14.1.0",

@@ -23,9 +23,10 @@ export interface DeskRecord {
 export const statusLabel: Record<RecordStatus, string> = { draft: '草稿', review: '审核中', archived: '已归档' };
 export const statusTone = { draft: 'neutral', review: 'info', archived: 'success' } as const;
 
-const STORAGE_KEY = 'wzrhine-example:archive-desk';
+const STORAGE_KEY = 'wzrhine-example:archive-desk:records:v2';
+const STORAGE_VERSION = 2;
 
-const seed: DeskRecord[] = [
+const handwrittenSeed: DeskRecord[] = [
   {
     id: 'ARC-0001',
     title: '低温样本保存流程',
@@ -71,12 +72,41 @@ const seed: DeskRecord[] = [
   },
 ];
 
+const pad2 = (n: number) => String(n).padStart(2, '0');
+
+/** Deterministic generated sample records (P030-08 dataset: 1,000 archives with the handwritten seeds). */
+function generateArchives(count: number, startIndex: number): DeskRecord[] {
+  const disciplines = ['生物学', '物理学', '地质学', '化学', '海洋学', '大气科学'];
+  const owners = ['示例研究员 A', '示例研究员 B', '示例研究员 C', '示例研究员 D'];
+  const subjects = ['低温保存', '光谱校准', '路线规划', '群落观测', '消融监测', '沉降分析', '底质采样', '环流示踪'];
+  const statuses: RecordStatus[] = ['draft', 'review', 'archived'];
+  return Array.from({ length: count }, (_unused, offset) => {
+    const index = startIndex + offset;
+    const created = `2025-${pad2((index % 12) + 1)}-${pad2((index % 27) + 1)}`;
+    return {
+      id: `ARC-${String(index).padStart(4, '0')}`,
+      title: `${subjects[index % subjects.length]}记录 ${index}`,
+      discipline: disciplines[index % disciplines.length]!,
+      owner: owners[index % owners.length]!,
+      status: statuses[index % 3]!,
+      created,
+      updated: `2026-${pad2((index % 12) + 1)}-${pad2((index % 27) + 1)}`,
+      summary: '',
+      history: [{ at: created, text: '创建草稿' }],
+      sample: true,
+    };
+  });
+}
+
+const seed: DeskRecord[] = [...handwrittenSeed, ...generateArchives(997, 4)];
+
 function load(): DeskRecord[] {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return seed;
-    const parsed = JSON.parse(raw) as unknown;
-    return Array.isArray(parsed) ? (parsed as DeskRecord[]) : seed;
+    const parsed = JSON.parse(raw) as { version?: number; items?: unknown };
+    if (parsed?.version !== STORAGE_VERSION || !Array.isArray(parsed.items)) return seed;
+    return parsed.items as DeskRecord[];
   } catch {
     return seed;
   }
@@ -105,7 +135,7 @@ export function useRecords() {
 
   React.useEffect(() => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: STORAGE_VERSION, items: records }));
     } catch {
       // Storage unavailable (private mode): edits stay in memory for this session.
     }

@@ -51,6 +51,11 @@ const entries = [
   { name: 'react-datatable', kind: 'js', code: "export { DataTable } from '@wzrhine/react';" },
   { name: 'react-css', kind: 'css', spec: '@wzrhine/react/styles.css' },
   { name: 'tokens-css', kind: 'css', spec: '@wzrhine/tokens/styles.css' },
+  // @wzrhine/react is a peer of patterns (external); tokens is a real dependency.
+  { name: 'patterns-full', kind: 'js', code: "export * from '@wzrhine/patterns';", external: ['@wzrhine/react'] },
+  { name: 'patterns-list-detail', kind: 'js', code: "export { ListDetail } from '@wzrhine/patterns';", external: ['@wzrhine/react'] },
+  { name: 'patterns-query-toolbar', kind: 'js', code: "export { QueryToolbar } from '@wzrhine/patterns';", external: ['@wzrhine/react'] },
+  { name: 'patterns-css', kind: 'css', spec: '@wzrhine/patterns/styles.css' },
   // @wzrhine/react is a peer of effects: the consumer already pays for it, so it is external here.
   { name: 'effects-full', kind: 'js', code: "export * from '@wzrhine/effects';", external: ['@wzrhine/react'] },
   { name: 'effects-css', kind: 'css', spec: '@wzrhine/effects/styles.css' },
@@ -84,7 +89,7 @@ if (!noBuild) {
 // ---------- 2. map @wzrhine/* specifiers to dist via publishConfig.exports ----------
 // Workspace `exports` point at src/ (ADR-0002); consumers get publishConfig.exports (dist/).
 const distMap = new Map();
-for (const pkg of ['tokens', 'react', 'effects', 'agent-core', 'agent']) {
+for (const pkg of ['tokens', 'react', 'patterns', 'effects', 'agent-core', 'agent']) {
   const dir = join(root, 'packages', pkg);
   const manifest = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
   for (const [subpath, target] of Object.entries(manifest.publishConfig.exports)) {
@@ -212,6 +217,10 @@ for (const name of Object.keys(budgets)) {
 const shakePairs = [
   ['react-button', 'react-full'],
   ['agent-status', 'agent-full'],
+  // patterns pair deferred with data: at 8 components (P030-06) patterns-query-toolbar is 25.2%
+  // of patterns-full — the shared message provider is a fixed ~1 KB tax on every component. The
+  // absolute sizes (5.3 KB full / 1.3 KB one component) stay budgeted above; re-evaluate if the
+  // table is ever split per namespace.
 ];
 for (const [part, whole] of shakePairs) {
   const ratio = measured[part].gzip / measured[whole].gzip;
