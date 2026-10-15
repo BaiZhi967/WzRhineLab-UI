@@ -119,7 +119,7 @@ function usesReactAtRuntime(file, code) {
 const pureModules = {
   '@wzrhine/react': ['index', 'utils/cx', 'motion/presets', 'components/pagination-utils', 'components/meter-utils'],
   '@wzrhine/patterns': ['index', 'utils/cx'],
-  '@wzrhine/effects': ['index', 'scramble', 'usePageVisible'],
+  '@wzrhine/effects': ['index', 'scramble', 'geometry', 'usePageVisible'],
   '@wzrhine/agent': ['index', 'utils/cx', 'provider/messages/status'],
 };
 const walkSrc = (dir) =>
@@ -179,9 +179,9 @@ writeFileSync(
         '@wzrhine/effects': `file:${tarballs['@wzrhine/effects']}`,
         '@wzrhine/agent-core': `file:${tarballs['@wzrhine/agent-core']}`,
         '@wzrhine/agent': `file:${tarballs['@wzrhine/agent']}`,
-        react: '19.3.0',
-        'react-dom': '19.3.0',
-        motion: '12.43.0',
+        react: devPin('react'),
+        'react-dom': devPin('react-dom'),
+        motion: devPin('motion'),
       },
       devDependencies: {
         typescript: devPin('typescript') === '5.9.0' ? '5.9.3' : devPin('typescript'),
@@ -247,9 +247,26 @@ export function App() {
 writeFileSync(
   join(app, 'src/Effects.tsx'),
   `import '@wzrhine/effects/styles.css';
-import { ArchiveReveal, MotionPlayer } from '@wzrhine/effects';
+import { useRef } from 'react';
+import { ArchiveReveal, MotionPlayer, CalibrationReticle, SignalPath, AnnotationTrace, createEffectPath, useElementAnchors, useEffectProgress } from '@wzrhine/effects';
+import type { EffectPoint, EffectAnchorSide, EffectPathKind } from '@wzrhine/effects';
+const point: EffectPoint = { x: 10, y: 20 };
+const side: EffectAnchorSide = 'bottom';
+const route: EffectPathKind = 'rail';
+export const path: string = createEffectPath(point, { x: 90, y: 20 }, { route });
 export function Effects() {
-  return <MotionPlayer title="Reveal" demo={({ active }) => <ArchiveReveal text="ARC-1024" revealed={active} />} />;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const fromRef = useRef<HTMLDivElement>(null);
+  const toRef = useRef<HTMLDivElement>(null);
+  const anchors = useElementAnchors({ containerRef, anchors: { source: { ref: fromRef, side } } });
+  const effect = useEffectProgress({ active: false, viewportRef: containerRef });
+  return <div ref={containerRef} style={{ position: 'relative' }} data-width={anchors.width} data-state={effect.state}>
+    <div ref={fromRef}>Source</div><div ref={toRef}>Target</div>
+    <SignalPath containerRef={containerRef} fromRef={fromRef} toRef={toRef} />
+    <AnnotationTrace containerRef={containerRef} fromRef={fromRef} toRef={toRef} />
+    <CalibrationReticle active={false} />
+    <MotionPlayer title="Reveal" demo={({ active }) => <ArchiveReveal text="ARC-1024" revealed={active} />} />
+  </div>;
 }
 `,
 );
@@ -318,7 +335,7 @@ writeFileSync(
   `import { renderToString } from 'react-dom/server';
 import { createElement as h } from 'react';
 import { Button, RhineProvider, StatusBadge, Text } from '@wzrhine/react';
-import { ArchiveReveal } from '@wzrhine/effects';
+import { ArchiveReveal, CalibrationReticle, SignalPath, AnnotationTrace, createEffectPath } from '@wzrhine/effects';
 import { AgentSpark, AgentStatus } from '@wzrhine/agent';
 import { PatternsMessagesProvider, patternsEnUS, usePatternsMessages } from '@wzrhine/patterns';
 import { motionDurations } from '@wzrhine/tokens';
@@ -328,7 +345,15 @@ for (const needle of ['rl-theme', 'data-rl-theme="dark"', 'rl-button', '保存',
   if (!html.includes(needle)) { console.error('SSR output missing ' + needle); process.exit(1); }
 }
 if (motionDurations.press !== 80) process.exit(1);
-console.log('ssr ok (' + html.length + ' chars)');
+const emptyRef = { current: null };
+const endpoints = { containerRef: emptyRef, fromRef: emptyRef, toRef: emptyRef, active: true };
+const effects = renderToString(h(RhineProvider, { motion: 'reduce' }, h(CalibrationReticle, { active: true }), h(SignalPath, endpoints), h(AnnotationTrace, endpoints)));
+for (const needle of ['rl-calibration', 'rl-signal-path', 'rl-annotation-trace']) {
+  if (!effects.includes(needle)) { console.error('Effects SSR missing ' + needle); process.exit(1); }
+}
+if (effects.includes('rl-effect-connection__track')) { console.error('SSR guessed connection coordinates'); process.exit(1); }
+if (!createEffectPath({ x: 10, y: 20 }, { x: 90, y: 20 }, { route: 'rail' })) process.exit(1);
+console.log('ssr ok (' + (html.length + effects.length) + ' chars)');
 `,
 );
 
@@ -373,8 +398,23 @@ const cssChecks = {
 for (const [file, needle] of Object.entries(cssChecks)) {
   if (!css.includes(needle)) fail(`bundled CSS missing ${needle} from ${file} (style entry or @import chain broken)`);
 }
-if (/rl-reveal|scrambleCells|rl-player/.test(js + css)) fail('effects code leaked into an app that never imports @wzrhine/effects');
+if (/rl-reveal|scrambleCells|rl-player|rl-calibration|rl-signal-path|rl-annotation-trace/.test(js + css)) fail('effects code leaked into an app that never imports @wzrhine/effects');
 log(`vite bundle ok: ${assets.length} assets, tokens + component CSS present, no effects code`);
+
+writeFileSync(join(app, 'src/main.tsx'), `import { createRoot } from 'react-dom/client';
+import { RhineProvider } from '@wzrhine/react';
+import '@wzrhine/tokens/styles.css';
+import '@wzrhine/react/styles.css';
+import { Effects } from './Effects';
+createRoot(document.getElementById('root')).render(<RhineProvider><Effects /></RhineProvider>);
+`);
+run(join(app, 'node_modules/.bin/vite'), ['build', '--logLevel', 'error', '--outDir', 'dist-effects'], { cwd: app });
+const effectAssets = readdirSync(join(app, 'dist-effects/assets'));
+const effectOutput = effectAssets.filter((f) => /\.(js|css)$/.test(f)).map((f) => readFileSync(join(app, 'dist-effects/assets', f), 'utf8')).join('\n');
+for (const needle of ['rl-calibration', 'rl-signal-path', 'rl-annotation-trace', 'rl-effect-connection__track']) {
+  if (!effectOutput.includes(needle)) fail(`effects consumer bundle missing ${needle}`);
+}
+log('effects consumer build ok: shared geometry, progress and three signature effects');
 
 if (!keep) rmSync(work, { recursive: true, force: true });
 log('all package checks passed');

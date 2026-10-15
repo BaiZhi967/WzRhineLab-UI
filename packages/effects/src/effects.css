@@ -225,6 +225,36 @@
   color: var(--rl-accent-text);
 }
 
+/* ---------- Anchored effects ---------- */
+.rl-effect-connection {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+.rl-effect-connection__track,
+.rl-effect-connection__signal {
+  fill: none;
+  stroke-width: var(--rl-border-width);
+}
+.rl-effect-connection__track { stroke: var(--rl-border-strong); }
+.rl-effect-connection__signal { stroke: var(--rl-accent-text); stroke-width: var(--rl-border-width-strong); }
+.rl-effect-connection__endpoint { fill: var(--rl-accent-text); }
+.rl-calibration { min-width: 0; width: 100%; pointer-events: none; }
+.rl-calibration__svg { display: block; width: 100%; height: auto; }
+.rl-calibration__structure { fill: none; stroke: var(--rl-border-default); stroke-width: var(--rl-border-width); }
+.rl-calibration__arc { fill: none; stroke: var(--rl-fg-muted); stroke-width: var(--rl-space-1); }
+.rl-calibration__signal { fill: none; stroke: var(--rl-accent-text); stroke-width: var(--rl-border-width-strong); }
+
+@media (forced-colors: active) {
+  .rl-effect-connection__track, .rl-calibration__structure, .rl-calibration__arc { stroke: CanvasText; }
+  .rl-effect-connection__signal, .rl-calibration__signal { stroke: Highlight; }
+  .rl-effect-connection__endpoint { fill: Highlight; }
+}
+
 /* ---------- MotionPlayer ---------- */
 .rl-player {
   display: grid;

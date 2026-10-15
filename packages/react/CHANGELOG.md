@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+### Fixed
+- **MFX-01**：统一 `useRhineMotion` 与 `useMotionLifecycle` 的系统减动订阅，运行中改变 `prefers-reduced-motion` 时立即通知所有消费者；保留 MotionConfig user/always/never 优先级，SSR 首帧确定且只有一组共享媒体监听。未新增公开 API 或依赖。
+
 ## [0.2.0] - 2026-10-14
 
 Wpi-Agent 接入补齐（M13，B0–B9）。五个包同一版本线，公开 API 相对 0.1.0 只有新增，没有重命名或删除。
