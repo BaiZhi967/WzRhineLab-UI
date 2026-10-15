@@ -212,6 +212,8 @@ function DetailRecipe() {
                 headingLevel={2}
                 meta={[{ label: '年份', value: String(row.year) }, { label: '入库', value: '2026-09-30' }]}
               />
+              {/* Every section id below has a matching heading: an index entry without a target
+                  would silently do nothing on click. */}
               <SectionIndex
                 label="本记录章节"
                 sections={[
@@ -219,9 +221,11 @@ function DetailRecipe() {
                   { id: 'recipe-method', label: '方法' },
                   { id: 'recipe-result', label: '结果' },
                 ]}
-                activeId="recipe-summary"
               />
-              <section id="recipe-summary"><h3>概览</h3><p>正文区由调用者组合；章节 id 与内容标题一一对应。</p></section>
+              <section id="recipe-summary">
+                <h3>概览</h3>
+                <p>正文区由调用者组合；章节 id 与内容标题一一对应。</p>
+              </section>
               <MetadataList
                 layout="stacked"
                 items={[
@@ -229,6 +233,14 @@ function DetailRecipe() {
                   { label: '保存条件', value: '4°C 避光' },
                 ]}
               />
+              <section id="recipe-method">
+                <h3>方法</h3>
+                <p>分层取样、现场冷藏运输；实验室筛分后称重并记录含水率。</p>
+              </section>
+              <section id="recipe-result">
+                <h3>结果</h3>
+                <p>示例文本仅用于排版演示，不代表真实监测指标。</p>
+              </section>
             </div>
           ) : null
         }
