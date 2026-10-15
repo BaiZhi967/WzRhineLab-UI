@@ -130,7 +130,12 @@ export interface NewRecord {
   summary: string;
 }
 
-export function useRecords() {
+/**
+ * Creates the record store. Call this once, from `DeskStoreProvider` — every page then reads the
+ * same instance via `useRecords()`. It used to be a hook each page called for itself, which gave
+ * every caller its own state over one storage key (audit F04).
+ */
+export function createRecordsStore() {
   const [records, setRecords] = React.useState<DeskRecord[]>(load);
 
   React.useEffect(() => {
@@ -141,16 +146,18 @@ export function useRecords() {
     }
   }, [records]);
 
-  const create = React.useCallback(
-    (input: NewRecord): string => {
-      const id = nextId(records);
-      const at = today();
-      const record: DeskRecord = { ...input, id, status: 'draft', created: at, updated: at, history: [{ at, text: '创建草稿' }], sample: false };
-      setRecords((rs) => [...rs, record]);
-      return id;
-    },
-    [records],
-  );
+  // `create` has to return the new id synchronously (the caller opens that record), so it reads
+  // the latest committed list through a ref instead of depending on `records` — that dependency
+  // rebuilt the callback on every edit and captured a stale list.
+  const latest = React.useRef(records);
+  latest.current = records;
+  const create = React.useCallback((input: NewRecord): string => {
+    const id = nextId(latest.current);
+    const at = today();
+    const record: DeskRecord = { ...input, id, status: 'draft', created: at, updated: at, history: [{ at, text: '创建草稿' }], sample: false };
+    setRecords((rs) => [...rs, record]);
+    return id;
+  }, []);
 
   const advance = React.useCallback((id: string) => {
     setRecords((rs) =>
@@ -164,7 +171,9 @@ export function useRecords() {
   }, []);
 
   const remove = React.useCallback((id: string) => setRecords((rs) => rs.filter((r) => r.id !== id)), []);
-  const reset = React.useCallback(() => setRecords(seed), []);
+  // A fresh array every time: `setRecords(seed)` would be the same reference React already holds
+  // on a clean start, so the update — and with it the storage write — would be skipped (F04).
+  const reset = React.useCallback(() => setRecords([...seed]), []);
 
-  return { records, create, advance, remove, reset };
+  return React.useMemo(() => ({ records, create, advance, remove, reset }), [records, create, advance, remove, reset]);
 }

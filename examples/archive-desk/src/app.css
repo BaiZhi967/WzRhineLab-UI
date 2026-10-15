@@ -120,6 +120,8 @@ body {
 .resources__row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--rl-space-3); }
 .resources__list { display: grid; gap: var(--rl-space-3); min-height: 0; }
 .resources__inspector { display: grid; min-height: 0; }
+/* List view: the title cell carries the open entry, so it reads as text until hovered. */
+.resources__open { padding-inline: 0; justify-content: start; text-align: start; }
 .resources__preview { max-width: 100%; height: auto; border: var(--rl-border-width) solid var(--rl-border-default); border-radius: var(--rl-radius-sm); }
 .resources__preview-note { color: var(--rl-fg-muted); font-size: 0.85em; }
 .settings { max-width: 42rem; }
