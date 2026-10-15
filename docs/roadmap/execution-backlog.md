@@ -108,6 +108,13 @@
 > showcase e2e：**chromium 639 过 / 0 失败**（623 → 639，新增 16 项正是 patterns/recipes 两页进入 axe、五宽度溢出与减动门禁）。firefox 与 webkit 的全量跑在本机出现**间歇失败**，三次运行的失败用例各不相同（firefox：agent-intervention / agent-message / agent-shell 的 axe；webkit：overlays、locale、command、reduced-motion 等），全部落在既有页面、无一涉及 patterns/recipes；逐个单独重跑均通过（firefox 三个 axe spec 33/33、webkit 新页面相关 21/21），且在未改动的 main 检出上单独跑同样通过 33/33。判定为本机在 firefox/webkit 下全量并发的资源竞争，与本次改动无关——但**未取得这两个内核的一次全绿全量记录**，故不在此声称其通过项数。两个新页面在 webkit 下的 axe（双主题）、五宽度溢出与减动共 21 项已单独实测通过。
 > 修复项：showcase ResourceGrid 空 `src` 改为可解析 data URI 并新增单项降级样张；两个新页面加入 `e2e/helpers.ts` 的 `routes`；补 `packages/patterns/LICENSE` 并在 `verify-packages.mjs` 加「包目录存在 + tarball 内存在」双层断言（npm 会从仓库根兜底注入，只查 tarball 永远通过）；`busy` 改用 react 包 `Button` 的 `loading` 入口以满足合同 §4.2 的 focusable 要求；`ResourceGrid` 的空/错/骨架态改为复用 `EmptyState`/`Skeleton`/`Button`；`SectionIndex` 补 MutationObserver 以满足 §4.3「内容变化重新观察」，`prefers-reduced-motion` 改为每次导航读取；contracts §4.1/4.2 三处与实现相反的条文按实现修订（AppliedFilters 末项焦点回落归调用者、`useLatestGuard` 改为说明实际手段）；PatternsPage 重排为 01–06 顺序编号、去掉固定高度截断、补 Drawer 覆盖层样张与 SectionIndex 独立样张、修正行对齐（grid 作用于 `.rl-button__label` 并用容器查询处理窄列）；RecipesPage 补齐三个章节锚点；`api-report.mjs` 修 type alias 无成员表（`AppliedFiltersProps` 原本零字段信息）与 JSDoc 裸 `@wzrhine` 被当作 tag 吞掉描述；四条与本版无关的体积预算回退到 0.2.0 原值（ADR-0008 §3）。
 
+> 2026-10-15 审计返修实测（`fix/p030-audit-followup`，同一 commit · 本机 Win11 · Node 24.18 · pnpm 10.17.1 · Playwright 1.63 · esbuild 0.25.12）：
+> `pnpm typecheck` 12 项目全过；`pnpm test` **1460 项全过**（tokens 247、react 511、patterns 131、effects 48、agent-core 24、agent 499；patterns 由 108 增至 131）；`pnpm build`、`pnpm build:packages`、`pnpm build:examples` 均 exit 0；`api:check` / `docs:check`（2077 条）/ `license-audit` / `size-check`（15 条全在预算内）/ `verify-packages`（六包打包、LICENSE 双层断言、净消费者安装、严格类型检查、SSR、Vite 构建）全部 exit 0；`pnpm release:check` exit 0。
+> **三内核受控对照（按审计 §6.2 要求：同工具链、同测试集、固定 `--workers=1`）——首次全部取得全绿全量记录**：showcase e2e chromium **639 过 / 0 失败**；firefox **639 过 / 0 失败**（单 worker，18.6 分钟，exit 0）；webkit **638 过 / 0 失败 / 1 跳过**（JSON reporter 实测 `expected=638, unexpected=0, flaky=0, skipped=1`；跳过项为 `e2e/search.spec.ts:45` 的 webkit 定向 `test.skip`）。上一轮记录的 firefox/webkit 间歇失败由此确认为本机并发资源竞争，降并发后不复现；该结论现在有全绿全量记录支撑，而非只靠单 spec 重跑推断。
+> 示例套件：archive-desk **三内核 60/60 全过**（chromium 20 + firefox 20 + webkit 20，单 worker）——长期失败的「keyboard only: create dialog 初始焦点」已查明根因并修复，**不再需要已知问题豁免**；chromium 下 agent-console 7、host-embed 9、next-app-router 5、ssr-hydrate 6 全过。
+> 视觉基线 121/121 过；本轮仅 4 张 recipes 页截图变化（该页有实际改动），重生成后复跑通过。
+> 未执行项：读屏（NVDA/VoiceOver）与真机触摸未声明为本版目标环境，未执行；200% 缩放与交互耗时／DOM 规模／长会话内存的可追溯性能记录仍缺（审计 §7.4），与 §5.4 的 A／B 乱序竞态夹具一并留为待办；tree-shaking 配对因文案 Provider 固定成本暂缓（已记录于 size-check 注释）。
+
 ### P030-11 候选交付
 
 完成一个汇总 PR，列清 Must 范围、延期项、需求记录、检查、限制、升级和回滚。代码合并不等于 npm 已发布；发布另按授权执行。主线下一任务可进入评审，不等待消费方全部升级。
@@ -163,8 +170,8 @@
 | §5.3 | recipes 存在重复 ID、空动作、写死值、随机成败 | 已修：稳定 ID 与按字段过滤、批量动作真实改数据、网格改用 ResourceGrid、表单全受控、失败改显式开关、详情补请求令牌与真实重试、页面明示样张边界 |
 | §5.4 | 过期响应注入未真正制造「取消后仍回来」的旧结果 | **未修**，保留为待办：需要可控 A／B 乱序返回的测试夹具，超出本轮返修范围 |
 | §5.5 | QueryToolbar 重置不清未提交草稿、Enter 可能误提交父表单；ResourceGrid 失败缓存按 URL 全局累计 | 已修：reset 清本地草稿（受控值仍归调用方）、Enter 阻止隐式提交、失败缓存改为按条目 id 且随渲染项淘汰 |
-| §6 | archive-desk 三内核各 1 项失败未闭环 | 已修：根因为示例缺 `initialFocus`（Dialog 关闭按钮在 DOM 中先于表单字段，Base UI 取首个可 tab 元素）。补齐后 chromium 20/20 全绿，不需要豁免 |
-| §6.2 | 「每次失败用例不同、单独重跑通过」不足以归因环境 | 接受该批评。上一轮的对照（在 main 上单独跑那三个 spec）条件不同，不成立；本轮按同工具链、固定 workers、同测试集重跑并记录原始结论 |
+| §6 | archive-desk 三内核各 1 项失败未闭环 | 已修：根因为示例缺 `initialFocus`（Dialog 关闭按钮在 DOM 中先于表单字段，Base UI 取首个可 tab 元素）。补齐后三内核 60/60 全绿，**不需要豁免** |
+| §6.2 | 「每次失败用例不同、单独重跑通过」不足以归因环境 | 接受该批评——上一轮的对照（在 main 上单独跑那三个 spec）条件不同，不成立。本轮按同工具链、同测试集、固定 `--workers=1` 重跑：chromium 639/0、firefox 639/0、webkit 638/0/1 跳过，**三内核首次全部全绿**；间歇失败确认为并发资源竞争，结论现在有全量记录支撑 |
 
 测试有效性（审计 §6.3 的核心要求：要结果断言，不要回调断言）：
 - 替换了名不副实的 `error injection surfaces a retryable failure`——它靠切页关故障恢复、从不点重试，
@@ -174,8 +181,10 @@
   先造真实变化再重置并重载验证存储。
 - 每条新测试都在修复前的实现上验证过失败，确保锁定行为而非实现细节。
 
-状态结论：本轮不自行把 P030 改回 Accepted。按审计 §10 的签署条件，仍需维护者确认三内核、
-示例、视觉、包消费与发布门禁在同一提交的可追溯结论，以及 §5.4 的竞态夹具与性能证据。
+状态结论：本轮不自行把 P030 改回 Accepted。审计 §10 的六项签署条件中，第 1–4 项与第 6 项已在同一
+commit 上取得可追溯结论（见上方「审计返修实测」）；**第 5 项仍不完整**——200% 缩放与交互耗时／
+DOM 规模／长会话内存的性能证据（§7.4）尚缺，§5.4 的 A／B 乱序竞态夹具亦未实现。是否据此签署、
+以及这两项是本版阻断还是转入下一版，由维护者裁定。
 
 ## 10. 后续 Agent 开始指令
 
