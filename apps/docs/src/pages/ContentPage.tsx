@@ -42,7 +42,13 @@ function MarkdownSpecimen() {
 function CodeSpecimen() {
   return (
     <section className="sc-playground__canvas" aria-label="CodeBlock">
-      <CodeBlock code="const answer = 42;\nconsole.log(answer);" language="ts" filename="answer.ts" showLineNumbers />
+      <CodeBlock
+        code={['const answer = 42;', 'console.log(answer);', ...Array.from({ length: 16 }, (_, index) => `const sample${index + 1} = ${index + 1};`)].join('\n')}
+        language="ts"
+        filename="answer.ts"
+        showLineNumbers
+        maxHeight="12rem"
+      />
     </section>
   );
 }

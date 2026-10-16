@@ -9,9 +9,10 @@
 }
 
 .rl-content-code__caption {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
-  gap: var(--rl-space-2);
+  column-gap: var(--rl-space-2);
   min-inline-size: 0;
   padding: var(--rl-space-2) var(--rl-space-3) 0;
   color: var(--rl-fg-muted);
@@ -25,13 +26,14 @@
 }
 
 .rl-content-code__language {
-  margin-inline-start: auto;
+  margin-inline-start: 0;
   color: var(--rl-fg-subtle);
   font: var(--rl-type-mono);
+  text-align: end;
 }
 
 .rl-content-code .rl-content-code__caption .rl-icon-button {
-  margin-inline-start: auto;
+  margin-inline-start: 0;
 }
 
 .rl-content-code__status {

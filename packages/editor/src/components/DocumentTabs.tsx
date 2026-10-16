@@ -54,13 +54,14 @@ export const DocumentTabs = React.forwardRef<HTMLDivElement, DocumentTabsProps>(
   };
 
   return (
-    <div {...rest} ref={ref} className={['rl-editor__document-tabs', className].filter(Boolean).join(' ')}>
+    <div {...rest} ref={ref} className={['rl-editor__document-tabs', className].filter(Boolean).join(' ')} style={{ '--rl-editor-tab-count': tabs.length, ...rest.style } as React.CSSProperties}>
       <div role="tablist" aria-label={label ?? messages.tabs.label} className="rl-editor__document-tab-list">
         {tabs.map((tab, index) => {
           const dirtyId = `rl-editor-tab-dirty-${index}`;
           return (
             <button
                 className="rl-editor__document-tab"
+                style={{ '--rl-editor-tab-index': index + 1 } as React.CSSProperties}
                 type="button"
                 role="tab"
                 ref={(node) => { if (node) tabRefs.current.set(tab.id, node); else tabRefs.current.delete(tab.id); }}
@@ -86,9 +87,10 @@ export const DocumentTabs = React.forwardRef<HTMLDivElement, DocumentTabsProps>(
         })}
       </div>
       <div className="rl-editor__document-tab-actions" aria-label="文档关闭操作">
-        {tabs.map((tab) => tab.closable !== false && (
+        {tabs.map((tab, index) => tab.closable !== false && (
           <IconButton
             key={tab.id}
+            style={{ '--rl-editor-tab-index': index + 1 } as React.CSSProperties}
             size="sm"
             variant="ghost"
             label={(closeLabel ?? messages.tabs.close)(tab.title)}

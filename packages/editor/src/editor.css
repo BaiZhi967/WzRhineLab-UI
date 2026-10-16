@@ -26,15 +26,18 @@
 }
 
 .rl-editor__document-tab-list {
-  display: flex;
+  display: contents;
   min-inline-size: 0;
-  overflow-x: auto;
 }
 
 .rl-editor__document-tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(var(--rl-editor-tab-count), minmax(10rem, max-content));
+  grid-template-rows: auto;
   min-inline-size: 0;
-  overflow: hidden;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .rl-editor__document-tab {
@@ -42,6 +45,9 @@
   align-items: center;
   min-inline-size: 0;
   flex: 0 0 auto;
+  grid-column: var(--rl-editor-tab-index);
+  grid-row: 1;
+  padding-inline-end: var(--rl-space-8);
   border-block-end: var(--rl-border-width) solid transparent;
 }
 
@@ -65,9 +71,14 @@
 }
 
 .rl-editor__document-tab-actions {
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
+  display: contents;
+}
+
+.rl-editor__document-tab-actions .rl-icon-button {
+  grid-column: var(--rl-editor-tab-index);
+  grid-row: 1;
+  justify-self: end;
+  z-index: 1;
 }
 
 .rl-editor__document-tab-title {
