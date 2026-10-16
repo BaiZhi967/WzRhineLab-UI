@@ -53,6 +53,81 @@ body,
   outline-offset: var(--rl-focus-offset);
 }
 
+.sc-editor-workbench {
+  min-block-size: 42rem;
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-sm);
+  background: var(--rl-bg-surface);
+}
+
+.sc-editor-workbench__content {
+  position: relative;
+  min-inline-size: 0;
+  padding: var(--rl-space-4);
+}
+
+.sc-editor-workbench .rl-workbench__header {
+  min-inline-size: 0;
+  border-block-end: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.sc-editor-workbench .rl-editor__document-tabs,
+.sc-editor-workbench .rl-editor__toolbar {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-x: auto;
+}
+
+.sc-editor-workbench .rl-workbench__index {
+  padding: var(--rl-space-4);
+  border-inline-end: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.sc-editor-toolbar-actions,
+.sc-editor-status-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--rl-space-2);
+}
+
+.sc-editor-status-row {
+  justify-content: space-between;
+  margin-block: var(--rl-space-3);
+}
+
+.sc-editor-fixture-note {
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-meta);
+}
+
+.sc-editor-close-guard {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--rl-space-3);
+  margin-block-start: var(--rl-space-3);
+  padding: var(--rl-space-3);
+  color: var(--rl-fg-primary);
+  background: var(--rl-warning-subtle);
+  border: var(--rl-border-width) solid var(--rl-warning);
+  border-radius: var(--rl-radius-sm);
+}
+
+.sc-editor-close-guard p {
+  flex: 1 1 100%;
+}
+
+@media (max-width: 42rem) {
+  .sc-editor-workbench {
+    min-block-size: 34rem;
+  }
+
+  .sc-editor-workbench__content {
+    padding: var(--rl-space-2);
+  }
+}
+
 /* Page headings receive programmatic focus on route change only; they are not operable, so no ring. */
 .sc-app h1[tabindex='-1']:focus {
   outline: none;

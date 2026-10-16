@@ -48,6 +48,7 @@ export const routes = [
   { id: 'patterns', path: '/patterns', label: 'Page patterns', group: 'archive', index: '39' },
   { id: 'recipes', path: '/recipes', label: 'Page recipes', group: 'archive', index: '40' },
   { id: 'content', path: '/archive/content', label: 'Markdown content', group: 'archive', index: '41' },
+  { id: 'editor', path: '/archive/editor', label: 'Markdown editor', group: 'archive', index: '42' },
   { id: 'motion', path: '/motion', label: 'Motion', group: 'motion', index: '18' },
   { id: 'effects', path: '/motion/effects', label: 'Showcase effects', group: 'motion', index: '19' },
 ] as const satisfies readonly RouteDef[];

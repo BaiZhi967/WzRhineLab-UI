@@ -40,6 +40,7 @@ export const routes = [
   { name: 'patterns', hash: '/#/patterns' },
   { name: 'recipes', hash: '/#/recipes' },
   { name: 'content', hash: '/#/archive/content' },
+  { name: 'editor', hash: '/#/archive/editor' },
 ] as const;
 
 export const widths = [320, 390, 768, 1280, 1920] as const;
@@ -63,7 +64,7 @@ export async function findHorizontalOverflow(page: Page) {
     const offenders: string[] = [];
     for (const el of Array.from(document.querySelectorAll<HTMLElement>('body *'))) {
       // Intentional inner scrollers: tables, code, overflowing tab lists, long breadcrumbs (ADR-0005), and the closed drawer.
-      if (el.closest('.sc-table-wrap, .rl-table-scroll, .sc-code pre, .rl-content-code__scroll, .rl-tabs__list, .rl-breadcrumb, .sc-sidebar[data-hidden]')) continue;
+      if (el.closest('.sc-table-wrap, .rl-table-scroll, .sc-code pre, .rl-content-code__scroll, .rl-editor__document-tabs, .rl-editor__toolbar, .rl-editor__document-tab-list, .rl-editor__surface-host, .rl-editor__mode-pane, .rl-tabs__list, .rl-breadcrumb, .sc-sidebar[data-hidden]')) continue;
       const rect = el.getBoundingClientRect();
       if (rect.width === 0 || rect.height === 0) continue;
       if (rect.right > vw + 1 || rect.left < -1) {
