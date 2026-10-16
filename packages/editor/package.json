@@ -1,0 +1,84 @@
+{
+  "name": "@wzrhine/editor",
+  "version": "0.6.0",
+  "license": "MIT",
+  "description": "Optional engine-neutral Markdown editor contracts and UI primitives for WzRhineLab UI.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BaiZhi967/WzRhineLab-UI.git",
+    "directory": "packages/editor"
+  },
+  "sideEffects": ["**/*.css"],
+  "files": ["dist", "README.md", "CHANGELOG.md", "LICENSE"],
+  "exports": {
+    ".": "./src/index.ts",
+    "./codemirror": "./src/codemirror.ts",
+    "./styles.css": "./src/components.css"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      },
+      "./codemirror": {
+        "types": "./dist/codemirror.d.ts",
+        "import": "./dist/codemirror.js",
+        "default": "./dist/codemirror.js"
+      },
+      "./styles.css": "./dist/components.css",
+      "./package.json": "./package.json"
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts"
+  },
+  "peerDependencies": {
+    "@wzrhine/react": "workspace:^",
+    "motion": "^14.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@codemirror/commands": "^6.8.1",
+    "@codemirror/lang-markdown": "^6.3.2",
+    "@codemirror/search": "^6.5.10",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.36.5"
+  },
+  "peerDependenciesMeta": {
+    "@codemirror/commands": { "optional": true },
+    "@codemirror/lang-markdown": { "optional": true },
+    "@codemirror/search": { "optional": true },
+    "@codemirror/state": { "optional": true },
+    "@codemirror/view": { "optional": true }
+  },
+  "dependencies": {
+    "@wzrhine/content": "workspace:*",
+    "@wzrhine/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.7",
+    "@types/node": "24.19.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@wzrhine/react": "workspace:*",
+    "jsdom": "27.4.0",
+    "motion": "^14.1.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^5.9.0",
+    "vitest": "4.1.11"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "node ../../scripts/build-package.mjs",
+    "prepack": "node ../../scripts/build-package.mjs"
+  }
+}

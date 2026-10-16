@@ -1,0 +1,6 @@
+.rl-editor {
+  color: var(--rl-fg-primary);
+  background: var(--rl-bg-surface);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-sm);
+}
