@@ -12,10 +12,13 @@ WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基�
 | [roadmap/0.3.0-plan.md](roadmap/0.3.0-plan.md) | 九个候选能力、行为合同、参考应用与版本验收 |
 | [roadmap/execution-backlog.md](roadmap/execution-backlog.md) | P030 的 12 项任务、依赖、证据与后续阶段任务卡 |
 | [roadmap/demand-workflow.md](roadmap/demand-workflow.md) | 反馈受理、分类、排期、范围变更与消费结果 |
+| [roadmap/requests/README.md](roadmap/requests/README.md) | 已完成初步评估的组件与 recipe 需求记录 |
 | [roadmap/quality-and-release.md](roadmap/quality-and-release.md) | 质量门禁、版本、发布和回滚 |
 | [planning/templates/component-demand.md](planning/templates/component-demand.md) | 单条需求记录模板，所有消费项目共用 |
 
 0.3.0 的 patterns 页面模式已实现（见 [api/patterns.md](api/patterns.md) 与 [components/patterns.md](components/patterns.md)），但版本状态是 Validating 而非 Accepted；R2 及以后的能力仍为规划状态，不能仅凭计划在业务代码中调用。源码与发布包证明已有 API，验收记录证明实际执行结果。
+
+Markdown 内容层、编辑器层和写作工作台的设计方案见 [2026-10-16 设计方案](superpowers/specs/2026-10-16-markdown-writing-workbench-design.md)，对应需求卡见 [roadmap/requests](roadmap/requests/README.md)。这些文档只冻结分析范围与候选合同，不表示相关包、组件或 recipe 已实现。
 
 ## 设计与开发规范
 
