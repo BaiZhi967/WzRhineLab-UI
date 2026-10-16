@@ -21,7 +21,7 @@ import { join, resolve } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 
 const root = resolve(import.meta.dirname, '..');
-const packages = ['tokens', 'react', 'patterns', 'effects', 'agent-core', 'agent'];
+const packages = ['tokens', 'react', 'patterns', 'content', 'effects', 'agent-core', 'agent'];
 const keep = process.argv.includes('--keep');
 const log = (msg) => console.log(`\u001b[36m[verify]\u001b[0m ${msg}`);
 const fail = (msg) => {
@@ -119,12 +119,13 @@ function usesReactAtRuntime(file, code) {
 const pureModules = {
   '@wzrhine/react': ['index', 'utils/cx', 'motion/presets', 'components/pagination-utils', 'components/meter-utils'],
   '@wzrhine/patterns': ['index', 'utils/cx'],
+  '@wzrhine/content': ['index', 'markdown/heading-index', 'markdown/url-policy'],
   '@wzrhine/effects': ['index', 'scramble', 'geometry', 'usePageVisible'],
   '@wzrhine/agent': ['index', 'utils/cx', 'provider/messages/status'],
 };
 const walkSrc = (dir) =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walkSrc(join(dir, e.name)) : [join(dir, e.name)]));
-for (const [name, dirName] of [['@wzrhine/react', 'react'], ['@wzrhine/patterns', 'patterns'], ['@wzrhine/effects', 'effects'], ['@wzrhine/agent', 'agent']]) {
+for (const [name, dirName] of [['@wzrhine/react', 'react'], ['@wzrhine/patterns', 'patterns'], ['@wzrhine/content', 'content'], ['@wzrhine/effects', 'effects'], ['@wzrhine/agent', 'agent']]) {
   const srcDir = join(root, 'packages', dirName, 'src');
   const entries = readTarball(tarballs[name]);
   const expected = new Map();
@@ -176,6 +177,7 @@ writeFileSync(
         '@wzrhine/tokens': `file:${tarballs['@wzrhine/tokens']}`,
         '@wzrhine/react': `file:${tarballs['@wzrhine/react']}`,
         '@wzrhine/patterns': `file:${tarballs['@wzrhine/patterns']}`,
+        '@wzrhine/content': `file:${tarballs['@wzrhine/content']}`,
         '@wzrhine/effects': `file:${tarballs['@wzrhine/effects']}`,
         '@wzrhine/agent-core': `file:${tarballs['@wzrhine/agent-core']}`,
         '@wzrhine/agent': `file:${tarballs['@wzrhine/agent']}`,
@@ -222,7 +224,9 @@ writeFileSync(
   join(app, 'src/App.tsx'),
   `import '@wzrhine/tokens/styles.css';
 import '@wzrhine/react/styles.css';
+import '@wzrhine/content/styles.css';
 import { Button, DataTable, Field, Input, RhineProvider, StatusBadge } from '@wzrhine/react';
+import { MarkdownRenderer } from '@wzrhine/content';
 import type { ButtonProps, DataTableColumn } from '@wzrhine/react';
 import { contrastRatio, motionDurations } from '@wzrhine/tokens';
 
@@ -239,6 +243,7 @@ export function App() {
       <StatusBadge status="success">已归档</StatusBadge>
       <Field label="记录编号"><Input mono /></Field>
       <DataTable caption="记录" columns={columns} rows={[{ id: 'ARC-1', title: '示例' }]} getRowId={(r) => r.id} />
+      <MarkdownRenderer source="# Consumer preview\\n\\nContent works." />
     </RhineProvider>
   );
 }
@@ -335,13 +340,14 @@ writeFileSync(
   `import { renderToString } from 'react-dom/server';
 import { createElement as h } from 'react';
 import { Button, RhineProvider, StatusBadge, Text } from '@wzrhine/react';
+import { MarkdownRenderer } from '@wzrhine/content';
 import { ArchiveReveal, CalibrationReticle, SignalPath, AnnotationTrace, createEffectPath } from '@wzrhine/effects';
 import { AgentSpark, AgentStatus } from '@wzrhine/agent';
 import { PatternsMessagesProvider, patternsEnUS, usePatternsMessages } from '@wzrhine/patterns';
 import { motionDurations } from '@wzrhine/tokens';
 const PatternProbe = () => { const m = usePatternsMessages(); return h('span', null, m.listDetail.back); };
-const html = renderToString(h(RhineProvider, { theme: 'dark' }, h(Button, null, '保存'), h(StatusBadge, { status: 'info' }, '审核中'), h(Text, { variant: 'mono' }, 'ARC-1'), h(ArchiveReveal, { text: 'ARC-1024', revealed: true }), h(AgentSpark, { phase: 'thinking' }), h(AgentStatus, { glyph: 'active', tone: 'accent', label: '运行中' }), h(PatternsMessagesProvider, { messages: patternsEnUS }, h(PatternProbe))));
-for (const needle of ['rl-theme', 'data-rl-theme="dark"', 'rl-button', '保存', 'rl-badge', 'rl-reveal', 'ARC-1024', 'rl-agent-spark', 'data-phase="thinking"', 'rl-agent-status', '运行中', 'Back to list']) {
+const html = renderToString(h(RhineProvider, { theme: 'dark' }, h(Button, null, '保存'), h(StatusBadge, { status: 'info' }, '审核中'), h(Text, { variant: 'mono' }, 'ARC-1'), h(MarkdownRenderer, { source: '# Consumer preview\\n\\nContent works.' }), h(ArchiveReveal, { text: 'ARC-1024', revealed: true }), h(AgentSpark, { phase: 'thinking' }), h(AgentStatus, { glyph: 'active', tone: 'accent', label: '运行中' }), h(PatternsMessagesProvider, { messages: patternsEnUS }, h(PatternProbe))));
+for (const needle of ['rl-theme', 'data-rl-theme="dark"', 'rl-button', '保存', 'rl-badge', 'rl-content-markdown', 'Consumer preview', 'rl-reveal', 'ARC-1024', 'rl-agent-spark', 'data-phase="thinking"', 'rl-agent-status', '运行中', 'Back to list']) {
   if (!html.includes(needle)) { console.error('SSR output missing ' + needle); process.exit(1); }
 }
 if (motionDurations.press !== 80) process.exit(1);

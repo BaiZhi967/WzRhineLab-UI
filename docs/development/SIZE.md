@@ -9,6 +9,7 @@
    - 外部依赖（使用方本来就有的 peer）：`react`、`react-dom`、`react/*`、`react-dom/*`、`motion`、`motion/*`。
    - **计入体积**：`@base-ui/react`（以及它依赖的 `@floating-ui/*` 等）和 `@wzrhine/tokens`，因为它们是随包安装、最终打进用户应用的真实依赖。
    - `effects-full`、`agent-full` 与三个 `patterns-*` JS 条目额外把 `@wzrhine/react` 视为外部依赖（它是这些包的 peer，费用已计入 `react-*` 条目）。
+   - `content-full`、`content-markdown` 额外把 `@wzrhine/react` 视为外部依赖（它是内容包的 peer，parser 和 `@wzrhine/tokens` 计入内容包）。
    - `'use client'` 指令（ADR-0008 §2）不影响度量：esbuild 0.25.12 打包这些文件时不产生告警（已实测），脚本仍把 `module-level-directive` 设为静默，以防将来版本像 Rollup 那样报告。
 4. CSS 条目用 esbuild 的 CSS 打包，会跟随 `@import` 把全部分片合并后压缩。
 5. 输出用 `zlib.gzipSync`（level 9）压缩，同时报告压缩后（minified）与 gzip 两个字节数。**门禁只看 gzip。**
@@ -26,6 +27,9 @@ esbuild 通过 Vite（`apps/docs` 的依赖）解析，没有新增依赖；当�
 | `patterns-list-detail` | `export { ListDetail } from '@wzrhine/patterns'` |
 | `patterns-query-toolbar` | `export { QueryToolbar } from '@wzrhine/patterns'` |
 | `patterns-css` | `@wzrhine/patterns/styles.css`（含三个 `@import` 分片） |
+| `content-full` | `export * from '@wzrhine/content'`（`@wzrhine/react` 是 peer，视为外部依赖） |
+| `content-markdown` | `export { MarkdownRenderer } from '@wzrhine/content'`（`@wzrhine/react` 是 peer，视为外部依赖） |
+| `content-css` | `@wzrhine/content/styles.css`（含内容、代码块和 Markdown 样式分片） |
 | `effects-full` | `export * from '@wzrhine/effects'` |
 | `effects-geometry` | `export { createEffectPath } from '@wzrhine/effects'`（纯几何隔离检查） |
 | `effects-signal` | `export { SignalPath } from '@wzrhine/effects'` |
@@ -53,7 +57,7 @@ react-button 由 2.66 KB 增至约 2.92 KB，原因是统一实时减动订阅�
 以下是 P030 的历史对照，不代表 MFX-01 的当前数值。
 
 ## 当前数值
-2026-10-15，0.3.0（P030）后的 `pnpm size:check` 输出，15 个条目全部在预算内。新增四个 `patterns-*` 条目；**其余条目的预算未变**，沿用 0.2.0 的数值。以 `size-budget.json` 和命令输出为准。
+2026-10-16，R2 Markdown 内容层候选包后的 `pnpm size:check` 输出，22 个条目全部在预算内。新增三个 `content-*` 条目；**其余条目的预算沿用既有值**，以 `size-budget.json` 和命令输出为准。
 
 | 条目 | minified | gzip | 预算（gzip） | 余量 |
 | --- | ---: | ---: | ---: | ---: |
@@ -66,6 +70,9 @@ react-button 由 2.66 KB 增至约 2.92 KB，原因是统一实时减动订阅�
 | `patterns-list-detail` | 3.21 KB | 1.57 KB | 3 KB | 47.8% |
 | `patterns-query-toolbar` | 2.78 KB | 1.34 KB | 3 KB | 55.3% |
 | `patterns-css` | 10.60 KB | 1.87 KB | 3 KB | 37.8% |
+| `content-full` | 160.37 KB | 49.71 KB | 56 KB | 11.2% |
+| `content-markdown` | 159.71 KB | 49.46 KB | 56 KB | 11.7% |
+| `content-css` | 3.32 KB | 0.83 KB | 2 KB | 58.7% |
 | `effects-full` | 9.43 KB | 3.85 KB | 5 KB | 23.1% |
 | `effects-css` | 6.75 KB | 1.76 KB | 3 KB | 41.3% |
 | `agent-core` | 10.59 KB | 3.81 KB | 5 KB | 23.9% |

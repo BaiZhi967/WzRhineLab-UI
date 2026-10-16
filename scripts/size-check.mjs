@@ -56,6 +56,10 @@ const entries = [
   { name: 'patterns-list-detail', kind: 'js', code: "export { ListDetail } from '@wzrhine/patterns';", external: ['@wzrhine/react'] },
   { name: 'patterns-query-toolbar', kind: 'js', code: "export { QueryToolbar } from '@wzrhine/patterns';", external: ['@wzrhine/react'] },
   { name: 'patterns-css', kind: 'css', spec: '@wzrhine/patterns/styles.css' },
+  // @wzrhine/react is a peer of content: the consumer already pays for it, so it is external here.
+  { name: 'content-full', kind: 'js', code: "export * from '@wzrhine/content';", external: ['@wzrhine/react'] },
+  { name: 'content-markdown', kind: 'js', code: "export { MarkdownRenderer } from '@wzrhine/content';", external: ['@wzrhine/react'] },
+  { name: 'content-css', kind: 'css', spec: '@wzrhine/content/styles.css' },
   // @wzrhine/react is a peer of effects: the consumer already pays for it, so it is external here.
   { name: 'effects-full', kind: 'js', code: "export * from '@wzrhine/effects';", external: ['@wzrhine/react'] },
   { name: 'effects-geometry', kind: 'js', code: "export { createEffectPath } from '@wzrhine/effects';", external: ['@wzrhine/react'] },
@@ -93,7 +97,7 @@ if (!noBuild) {
 // ---------- 2. map @wzrhine/* specifiers to dist via publishConfig.exports ----------
 // Workspace `exports` point at src/ (ADR-0002); consumers get publishConfig.exports (dist/).
 const distMap = new Map();
-for (const pkg of ['tokens', 'react', 'patterns', 'effects', 'agent-core', 'agent']) {
+for (const pkg of ['tokens', 'react', 'patterns', 'content', 'effects', 'agent-core', 'agent']) {
   const dir = join(root, 'packages', pkg);
   const manifest = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
   for (const [subpath, target] of Object.entries(manifest.publishConfig.exports)) {
