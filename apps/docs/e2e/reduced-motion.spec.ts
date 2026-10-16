@@ -20,7 +20,7 @@ for (const route of routes) {
     await setSettings(page, { motion: 'reduce' });
     await recordAnimations(page);
     await page.goto(route.hash);
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('.sc-page-title, .sc-hero__title').first()).toBeVisible();
     await expect(page.locator('.sc-app')).toHaveAttribute('data-rl-motion', 'reduce');
     // Lazy chunks (effects, lab) mount after the heading; give them time to start anything they would.
     await page.waitForTimeout(800);

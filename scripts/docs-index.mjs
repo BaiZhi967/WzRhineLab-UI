@@ -69,7 +69,7 @@ for (const file of ['docs/design', 'docs/components', 'docs/development', 'docs/
 }
 
 // 3. API exports from the generated reports.
-for (const pkg of ['react', 'tokens', 'patterns', 'effects', 'agent-core', 'agent']) {
+for (const pkg of ['react', 'tokens', 'patterns', 'content', 'editor', 'effects', 'agent-core', 'agent']) {
   const text = read(`docs/api/${pkg}.md`);
   for (const [, name] of text.matchAll(/^### `([^`]+)`$/gm)) {
     entries.push({ kind: 'api', title: name, section: `@wzrhine/${pkg}`, href: `${repoUrl}docs/api/${pkg}.md#${slug(name)}` });

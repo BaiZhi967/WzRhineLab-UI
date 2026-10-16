@@ -13,7 +13,7 @@ for (const width of widths) {
       test(`${route.name}: no horizontal page overflow`, async ({ page }) => {
         await setSettings(page, { motion: 'reduce' });
         await page.goto(route.hash);
-        await expect(page.locator('h1')).toBeVisible();
+        await expect(page.locator('.sc-page-title, .sc-hero__title').first()).toBeVisible();
         const result = await findHorizontalOverflow(page);
         expect(result.offenders, JSON.stringify(result)).toEqual([]);
         expect(result.scrollWidth).toBeLessThanOrEqual(result.clientWidth);

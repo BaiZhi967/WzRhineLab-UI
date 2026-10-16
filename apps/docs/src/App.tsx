@@ -36,6 +36,8 @@ import { DocSearch } from './ui/DocSearch';
 
 import { AdvancedPage } from './pages/AdvancedPage';
 import { CommandPage } from './pages/CommandPage';
+import { ContentPage } from './pages/ContentPage';
+import { EditorPage } from './pages/EditorPage';
 
 // Agent UI pages are code-split: the base showcase chunk never includes @wzrhine/agent.
 const AgentPages = React.lazy(() => import('./agent/AgentPages').then((m) => ({ default: m.AgentPages })));
@@ -207,6 +209,10 @@ export default function App() {
         return <PatternsPage />;
       case 'recipes':
         return <RecipesPage />;
+      case 'content':
+        return <ContentPage />;
+      case 'editor':
+        return <EditorPage />;
       case 'advanced':
         return <AdvancedPage />;
       case 'command':

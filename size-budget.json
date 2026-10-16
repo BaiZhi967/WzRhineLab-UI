@@ -28,6 +28,15 @@
     "patterns-css": {
       "gzip": 3072
     },
+    "content-full": {
+      "gzip": 57344
+    },
+    "content-markdown": {
+      "gzip": 57344
+    },
+    "content-css": {
+      "gzip": 2048
+    },
     "effects-full": {
       "gzip": 8192
     },
@@ -57,6 +66,15 @@
     },
     "agent-css": {
       "gzip": 19456
+    },
+    "editor-core": {
+      "gzip": 60416
+    },
+    "editor-codemirror": {
+      "gzip": 200704
+    },
+    "editor-css": {
+      "gzip": 2048
     }
   }
 }

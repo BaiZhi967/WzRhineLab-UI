@@ -30,7 +30,7 @@
 
 0.3.0 开发线上的增量（2026-10-15 实测，不改写上面按 0.2.0 定版核对的记录）：
 - 六个可发布包各一份 `LICENSE`（新增 `packages/patterns/LICENSE`），并由 `pnpm verify:packages` 断言包目录与 tarball 内都存在。
-- 六包 `package.json` 与根 `release:dry` 均为 `0.3.0`；各包 CHANGELOG 仍为 `## [Unreleased]`，定版时改标题。0.2.0 定版后 `packages/` 下只有 patterns 有改动，故其余五包的 `[Unreleased]` 为空是事实而非遗漏。
+- 八包 `package.json` 与根 `release:dry` 均为 `0.3.0`；各包 CHANGELOG 仍为 `## [Unreleased]`，定版时改标题。content/editor 的 R2/R4 能力已纳入本开发线，R6 仍 Deferred。
 - 视觉回归基线 121 项对照用例全部通过（基线在 P030 期间因环境漂移整体重建）。
 - showcase e2e chromium 639 过 / 0 失败（patterns、recipes 两页已纳入 axe、五宽度溢出与减动门禁）；firefox / webkit 的全量并发跑在本机间歇失败且失败用例每次不同，均落在既有页面、单独重跑通过，未取得全绿全量记录。
 - [x] 主题契约冻结（`@wzrhine/tokens` 的 `publicTokens`，测试保证与 CSS 一致，M6）

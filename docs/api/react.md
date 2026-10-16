@@ -1,6 +1,6 @@
 # @wzrhine/react · API reference
 
-> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 294 个导出（83 components，19 functions & hooks，8 constants，31 interfaces，153 types）。
+> 由 `scripts/api-report.mjs` 从 `dist/index.d.ts` 生成，请勿手改。版本 0.3.0，共 299 个导出（85 components，19 functions & hooks，8 constants，31 interfaces，156 types）。
 
 ## Components
 
@@ -1351,6 +1351,33 @@
 ### `ToastViewport`
 
 *component* — Viewport that renders queued toasts. Mounted by RhineProvider; render it yourself only without one.
+
+### `ToggleButton`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` |  |
+| `disabled` | `boolean` |  |
+| `iconStart` | `React.ReactNode` |  |
+| `loading` | `boolean` |  |
+| `onPressedChange` | `((pressed: boolean) => void)` |  |
+| `pressed` * | `boolean` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
+
+### `Toolbar`
+
+*component*
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` |  |
+| `label` * | `string` |  |
+| `orientation` | `ToolbarOrientation` |  |
+
+`*` 必填。原生 DOM 属性（如 `onClick`、`aria-*`）未列出。
 
 ### `Tooltip`
 
@@ -3736,6 +3763,35 @@ type ToastProviderProps = React.ComponentProps<typeof BaseToast.Provider>
 
 ```ts
 type ToastStatus = Exclude<StatusKind, 'neutral'> | 'neutral'
+```
+
+### `ToggleButtonProps`
+
+*type*
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `children` | `React.ReactNode` |  |
+| `disabled` | `boolean` |  |
+| `iconStart` | `React.ReactNode` |  |
+| `loading` | `boolean` |  |
+| `onPressedChange` | `((pressed: boolean) => void)` |  |
+| `pressed` * | `boolean` |  |
+
+### `ToolbarOrientation`
+
+*type*
+
+```ts
+type ToolbarOrientation = 'horizontal' | 'vertical'
+```
+
+### `ToolbarProps`
+
+*type*
+
+```ts
+type ToolbarProps = Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 'role'> & { label: string; orientation?: ToolbarOrientation; children?: React.ReactNode; }
 ```
 
 ### `TooltipProps`

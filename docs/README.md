@@ -4,6 +4,8 @@
 
 WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基线；0.3.0 的页面与集合浏览（`@wzrhine/patterns`）库侧已实现，经外部独立验收后完成一轮返修，当前处于 Validating，**尚未发布到 npm**（逐条处置见 [审计响应](roadmap/execution-backlog.md#9-审计响应2026-10-15外部独立验收)）。开发自主推进，消费反馈经过评估进入版本，不以其他应用的接入节奏作为等待条件。
 
+Markdown 内容层与写作工作台编辑器均纳入 0.3.0 开发线：`@wzrhine/content` 承担只读内容，`@wzrhine/editor` 承担 R4 源码编辑与预览组合。编辑器以 Markdown 原文为唯一事实源，CodeMirror 只通过可选 `./codemirror` 子路径接入；完整 WYSIWYM 暂不属于当前发布范围。设计说明见 [内容层文档](components/content.md) 与 [编辑器层文档](components/editor.md)。R6 高成本节点/看板和 Canvas/WebGL 仍保持 Deferred。
+
 | 文档 | 用途 |
 | --- | --- |
 | [ROADMAP.md](ROADMAP.md) | 当前版本、阶段摘要与历史映射 |
@@ -12,10 +14,13 @@ WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基�
 | [roadmap/0.3.0-plan.md](roadmap/0.3.0-plan.md) | 九个候选能力、行为合同、参考应用与版本验收 |
 | [roadmap/execution-backlog.md](roadmap/execution-backlog.md) | P030 的 12 项任务、依赖、证据与后续阶段任务卡 |
 | [roadmap/demand-workflow.md](roadmap/demand-workflow.md) | 反馈受理、分类、排期、范围变更与消费结果 |
+| [roadmap/requests/README.md](roadmap/requests/README.md) | 已完成初步评估的组件与 recipe 需求记录 |
 | [roadmap/quality-and-release.md](roadmap/quality-and-release.md) | 质量门禁、版本、发布和回滚 |
 | [planning/templates/component-demand.md](planning/templates/component-demand.md) | 单条需求记录模板，所有消费项目共用 |
 
-0.3.0 的 patterns 页面模式已实现（见 [api/patterns.md](api/patterns.md) 与 [components/patterns.md](components/patterns.md)），但版本状态是 Validating 而非 Accepted；R2 及以后的能力仍为规划状态，不能仅凭计划在业务代码中调用。源码与发布包证明已有 API，验收记录证明实际执行结果。
+0.3.0 的 patterns、content 和 editor 页面能力已实现（见对应 API 与组件文档），版本状态仍是 Validating 而非 Accepted；R3 及 R6 能力仍为规划或 Deferred，不能仅凭计划在业务代码中调用。源码与发布包证明已有 API，验收记录证明实际执行结果。
+
+Markdown 内容层、编辑器层和写作工作台的设计方案见 [2026-10-16 设计方案](superpowers/specs/2026-10-16-markdown-writing-workbench-design.md)，对应需求卡见 [roadmap/requests](roadmap/requests/README.md)。这些文档只冻结分析范围与候选合同，不表示相关包、组件或 recipe 已实现。
 
 ## 设计与开发规范
 
@@ -40,9 +45,9 @@ WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基�
 
 [INSTALL](development/INSTALL.md) · [RELEASING](development/RELEASING.md) · [UPGRADING](development/UPGRADING.md) · [SIZE](development/SIZE.md) · [第三方许可证](development/THIRD-PARTY-LICENSES.md) · [示例应用](../examples/README.md)。
 
-API 参考（自动生成）：[tokens](api/tokens.md) · [react](api/react.md) · [patterns](api/patterns.md) · [effects](api/effects.md) · [agent-core](api/agent-core.md) · [agent](api/agent.md)。
+API 参考（自动生成）：[tokens](api/tokens.md) · [react](api/react.md) · [patterns](api/patterns.md) · [content](api/content.md) · [effects](api/effects.md) · [agent-core](api/agent-core.md) · [agent](api/agent.md)。
 
-组件文档：[表单](components/forms.md) · [字段](components/field.md) · [数据与导航](components/data-navigation.md) · [基础操作](components/icon-button-text.md) · [覆盖层](components/overlays.md) · [菜单与通知](components/popover-menu-toast.md) · [确认框](components/alert-dialog.md) · [抽屉](components/drawer.md) · [反馈](components/feedback.md) · [档案](components/archive.md) · [页面模式](components/patterns.md) · [动效](components/effects.md) · [效果底座](components/effect-foundations.md) · [文案](components/locale.md) · [高级交互](components/advanced.md) · [命令与选择](components/command.md)。
+组件文档：[表单](components/forms.md) · [字段](components/field.md) · [数据与导航](components/data-navigation.md) · [基础操作](components/icon-button-text.md) · [覆盖层](components/overlays.md) · [菜单与通知](components/popover-menu-toast.md) · [确认框](components/alert-dialog.md) · [抽屉](components/drawer.md) · [反馈](components/feedback.md) · [档案](components/archive.md) · [页面模式](components/patterns.md) · [Markdown 内容层](components/content.md) · [动效](components/effects.md) · [效果底座](components/effect-foundations.md) · [文案](components/locale.md) · [高级交互](components/advanced.md) · [命令与选择](components/command.md)。
 
 领域 UI 文档：[外壳](components/agent-shell.md) · [消息](components/agent-message.md) · [工具](components/agent-tools.md) · [输入](components/agent-composer.md) · [干预](components/agent-intervention.md) · [工作空间](components/agent-workspace.md)。
 

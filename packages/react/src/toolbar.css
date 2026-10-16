@@ -1,0 +1,42 @@
+.rl-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--rl-control-gap);
+  min-inline-size: 0;
+}
+
+.rl-toolbar[data-orientation='vertical'] {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.rl-toggle-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rl-control-gap);
+  min-block-size: var(--rl-control-height-md);
+  padding-inline: var(--rl-control-padding-x-md);
+  color: var(--rl-fg-primary);
+  background: var(--rl-bg-surface);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-sm);
+  font: var(--rl-type-label-sm);
+}
+
+.rl-toggle-button[data-pressed] {
+  color: var(--rl-fg-on-accent);
+  background: var(--rl-accent-subtle);
+  border-color: var(--rl-accent);
+}
+
+.rl-toggle-button[aria-disabled='true'] {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.rl-toggle-button:focus-visible,
+.rl-toolbar [data-rl-toolbar-item]:focus-visible {
+  outline: var(--rl-focus-ring);
+  outline-offset: var(--rl-focus-offset);
+}

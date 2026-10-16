@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Manual, local release for the six publishable packages (see `packages` below).
+ * Manual, local release for the eight publishable packages (see `packages` below).
  * No CI is involved (AGENTS.md: no automatic workflows without approval).
  *
  *   node scripts/release.mjs <version>             # dry run (default): all gates + `pnpm publish --dry-run`
@@ -28,7 +28,7 @@ const publish = flags.includes('--publish');
 // Forwarded to every publish call; codes expire (~30s), so a long gate run may
 // consume the first code — retry the remaining packages with a fresh one.
 const otp = flags.find((f) => f.startsWith('--otp='));
-const packages = ['tokens', 'react', 'patterns', 'effects', 'agent-core', 'agent'];
+const packages = ['tokens', 'react', 'content', 'patterns', 'editor', 'effects', 'agent-core', 'agent'];
 const problems = [];
 const isWin = process.platform === 'win32';
 const sh = (cmd, args, opts = {}) =>

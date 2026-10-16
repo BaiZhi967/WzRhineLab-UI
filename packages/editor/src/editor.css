@@ -1,0 +1,192 @@
+.rl-editor {
+  color: var(--rl-fg-primary);
+  background: var(--rl-bg-surface);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-sm);
+}
+
+.rl-editor__save-status,
+.rl-editor__mode-switcher {
+  display: flex;
+  align-items: center;
+  gap: var(--rl-control-gap);
+}
+
+.rl-editor__save-status-label {
+  color: var(--rl-fg-muted);
+  font: var(--rl-type-meta);
+}
+
+.rl-editor__save-status-actions,
+.rl-editor__toolbar-slot {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rl-space-2);
+}
+
+.rl-editor__save-status-actions {
+  margin-inline-start: auto;
+}
+
+.rl-editor__document-tab-list {
+  display: contents;
+  min-inline-size: 0;
+}
+
+.rl-editor__document-tabs {
+  display: grid;
+  grid-template-columns: repeat(var(--rl-editor-tab-count), minmax(10rem, max-content));
+  grid-template-rows: auto;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.rl-editor__document-tab {
+  display: inline-flex;
+  align-items: center;
+  min-inline-size: 0;
+  flex: 0 0 auto;
+  grid-column: var(--rl-editor-tab-index);
+  grid-row: 1;
+  padding-inline-end: var(--rl-space-8);
+  border-block-end: var(--rl-border-width) solid transparent;
+}
+
+.rl-editor__document-tab[data-active] {
+  border-block-end-color: var(--rl-accent);
+}
+
+.rl-editor__document-tab {
+  gap: var(--rl-space-2);
+  min-block-size: var(--rl-control-height-md);
+  max-inline-size: 20ch;
+  padding-inline: var(--rl-control-padding-x-md);
+  color: var(--rl-fg-muted);
+  background: transparent;
+  border: 0;
+  font: var(--rl-type-label-sm);
+}
+
+.rl-editor__document-tab[data-active] {
+  color: var(--rl-fg-primary);
+}
+
+.rl-editor__document-tab-actions {
+  display: contents;
+}
+
+.rl-editor__document-tab-actions .rl-icon-button {
+  grid-column: var(--rl-editor-tab-index);
+  grid-row: 1;
+  justify-self: end;
+  z-index: 1;
+}
+
+.rl-editor__document-tab-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rl-editor__document-tab-dirty {
+  color: var(--rl-accent);
+  font: var(--rl-type-label);
+}
+
+.rl-editor__sr {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.rl-editor__toolbar kbd {
+  color: var(--rl-fg-subtle);
+  font: var(--rl-type-mono);
+}
+
+.rl-editor__surface {
+  position: relative;
+  min-block-size: var(--rl-space-16);
+  overflow: hidden;
+}
+
+.rl-editor__surface-host {
+  min-block-size: inherit;
+}
+
+.rl-editor__surface-error {
+  padding: var(--rl-space-4);
+  color: var(--rl-danger);
+  background: var(--rl-danger-subtle);
+}
+
+.rl-editor__surface-placeholder,
+.rl-editor__surface-fallback {
+  position: absolute;
+  inset: var(--rl-space-4);
+  color: var(--rl-fg-subtle);
+  pointer-events: none;
+}
+
+.rl-editor__mode-view {
+  container-type: inline-size;
+  min-inline-size: 0;
+}
+
+.rl-editor__mode-view > .rl-editor__mode-switcher {
+  margin-block-end: var(--rl-space-3);
+}
+
+.rl-editor__mode-pane {
+  min-inline-size: 0;
+  min-block-size: var(--rl-space-16);
+  overflow: auto;
+}
+
+.rl-editor__preview-pane {
+  min-block-size: var(--rl-space-16);
+  padding: var(--rl-space-4);
+}
+
+.rl-editor__split-view {
+  display: grid;
+  grid-template-columns: var(--rl-editor-split-start, minmax(0, 1fr)) auto minmax(0, 1fr);
+  min-inline-size: 0;
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  border-radius: var(--rl-radius-sm);
+  overflow: hidden;
+}
+
+.rl-editor__split-view > .rl-editor__mode-pane {
+  min-block-size: 24rem;
+}
+
+.rl-editor__split-divider {
+  align-self: stretch;
+  min-inline-size: var(--rl-border-width);
+  background: var(--rl-border-subtle);
+}
+
+.rl-editor__split-view > [role='separator'] {
+  min-inline-size: var(--rl-control-height-sm);
+  background: transparent;
+}
+
+@container (max-width: 42rem) {
+  .rl-editor__split-view {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rl-editor__split-view > .rl-editor__mode-pane {
+    min-block-size: var(--rl-space-16);
+  }
+
+  .rl-editor__split-divider {
+    display: none;
+  }
+}

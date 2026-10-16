@@ -1,0 +1,67 @@
+{
+  "name": "@wzrhine/content",
+  "version": "0.3.0",
+  "license": "MIT",
+  "description": "Optional Markdown content rendering primitives for WzRhineLab UI.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BaiZhi967/WzRhineLab-UI.git",
+    "directory": "packages/content"
+  },
+  "sideEffects": ["**/*.css"],
+  "files": ["dist", "README.md", "CHANGELOG.md", "LICENSE"],
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/components.css"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      },
+      "./styles.css": "./dist/components.css",
+      "./package.json": "./package.json"
+    },
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts"
+  },
+  "peerDependencies": {
+    "@wzrhine/react": "workspace:^",
+    "motion": "^14.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@wzrhine/tokens": "workspace:*",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.7",
+    "@types/node": "24.19.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@wzrhine/react": "workspace:*",
+    "jsdom": "27.4.0",
+    "motion": "^14.1.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^5.9.0",
+    "vitest": "4.1.11"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "node ../../scripts/build-package.mjs",
+    "prepack": "node ../../scripts/build-package.mjs"
+  }
+}

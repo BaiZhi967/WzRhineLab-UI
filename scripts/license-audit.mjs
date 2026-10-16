@@ -2,7 +2,7 @@
 /**
  * Third-party license audit for the publishable packages (QUALITY-GATES G3).
  * Walks the real installed runtime dependency tree (dependencies + peerDependencies) of
- * @wzrhine/tokens, @wzrhine/react and @wzrhine/effects, then writes
+ * @wzrhine/tokens, @wzrhine/react, @wzrhine/content and @wzrhine/editor, then writes
  * docs/development/THIRD-PARTY-LICENSES.md. Fails if any license is not on the allow list.
  * Dev-only tooling (vitest, playwright, vite…) is not shipped and is out of scope.
  */
@@ -61,7 +61,7 @@ function walk(pkgDir, via) {
   }
 }
 
-for (const p of ['tokens', 'react', 'patterns', 'effects', 'agent-core', 'agent']) {
+for (const p of ['tokens', 'react', 'patterns', 'content', 'editor', 'effects', 'agent-core', 'agent']) {
   const dir = join(root, 'packages', p);
   const pj = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
   for (const dep of [...Object.keys(pj.dependencies ?? {}), ...Object.keys(pj.peerDependencies ?? {})]) {
