@@ -22,8 +22,8 @@ WzRhineLab-UI/
 │  ├─ tokens/          # @wzrhine/tokens：tokens.css、manifest、contract（公开 token 契约）、contrast
 │  ├─ react/           # @wzrhine/react：组件、Provider、Motion Core，无业务代码
 │  ├─ patterns/        # @wzrhine/patterns：页面模式（layout / collection / record），peer 依赖 react 包（ADR-0014）
-│  ├─ content/         # @wzrhine/content：可选 Markdown 内容渲染、标题索引与代码块（R2）
-│  ├─ editor/           # @wzrhine/editor：Markdown 源码编辑合同、预览和可选 CodeMirror adapter（R4）
+│  ├─ content/         # @wzrhine/content：Markdown 内容渲染、标题索引与代码块（0.3.0 / R2）
+│  ├─ editor/           # @wzrhine/editor：Markdown 源码编辑合同、预览和可选 CodeMirror adapter（0.3.0 / R4）
 │  └─ effects/         # @wzrhine/effects：可选展示动效与动效播放器（ADR-0004），react 包不依赖它
 ├─ apps/
 │  └─ docs/            # @wzrhine/showcase：Vite 文档 / Showcase；e2e/ 为三内核 E2E，e2e/visual 为视觉回归基线（121 项，win32 Chromium）

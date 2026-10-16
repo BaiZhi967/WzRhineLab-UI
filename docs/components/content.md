@@ -1,6 +1,6 @@
 # Markdown 内容层（@wzrhine/content）
 
-- 状态：**R2 / 0.4.x 候选** · ADR：[0016](../development/adr/0016-content-package-and-markdown-safety.md) · 设计方案：[Markdown 内容层、编辑器层与写作工作台设计方案](../superpowers/specs/2026-10-16-markdown-writing-workbench-design.md)
+- 状态：**0.3.0 开发线 / R2 内容能力已纳入** · ADR：[0016](../development/adr/0016-content-package-and-markdown-safety.md) · 设计方案：[Markdown 内容层、编辑器层与写作工作台设计方案](../superpowers/specs/2026-10-16-markdown-writing-workbench-design.md)
 - 定位：只读 Markdown 内容渲染、标题索引和代码块；不包含编辑器、文件系统、保存服务或 WYSIWYM。
 - 源码：`packages/content/src/` · Showcase：`#/archive/content`
 

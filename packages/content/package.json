@@ -1,6 +1,6 @@
 {
   "name": "@wzrhine/content",
-  "version": "0.4.0",
+  "version": "0.3.0",
   "license": "MIT",
   "description": "Optional Markdown content rendering primitives for WzRhineLab UI.",
   "type": "module",

@@ -30,14 +30,14 @@
 | [`@wzrhine/tokens`](https://www.npmjs.com/package/@wzrhine/tokens) | 设计令牌：`--rl-*` CSS 变量、类型化清单、对比度工具 | 34 |
 | [`@wzrhine/react`](https://www.npmjs.com/package/@wzrhine/react) | React 组件库（83 个组件，Base UI 底座） | 294 |
 | [`@wzrhine/patterns`](docs/components/patterns.md) | 页面模式（8 个组件）：主从布局、属性检查、查询工具区、已应用条件、视图切换、批量选择、资源网格、章节索引 | 32 |
-| [`@wzrhine/content`](docs/components/content.md) | 可选 Markdown 内容层：安全渲染、GFM、标题索引、代码块 | Planned |
-| [`@wzrhine/editor`](docs/components/editor.md) | Markdown 源码编辑层：CodeMirror adapter、标签、工具栏、预览和模式组合 | Planned |
+| [`@wzrhine/content`](docs/components/content.md) | 0.3.0 内容层：安全渲染、GFM、标题索引、代码块 | Validating |
+| [`@wzrhine/editor`](docs/components/editor.md) | 0.3.0 编辑层：CodeMirror adapter、标签、工具栏、预览和模式组合 | Validating |
 | [`@wzrhine/effects`](docs/components/effects.md) | 可选展示动效：解密 / 扫描 / 轨道 / 仪器对准 / 关系传导 / 标注线；共享几何与进度、动效播放器 | 48 |
 | [`@wzrhine/agent-core`](https://www.npmjs.com/package/@wzrhine/agent-core) | 框架无关 Agent 契约：view-model 与纯函数 | 138 |
 | [`@wzrhine/agent`](https://www.npmjs.com/package/@wzrhine/agent) | Agent UI 组件（87 个组件） | 400 |
 
 导出数字来自自动生成的 [API reports](docs/README.md#额外资料与导入)，完整签名以 [docs/api/](docs/api) 为准。
-六个包同属 0.3.0 开发版本线。npm 上的发布基线是 0.2.0（tokens / react / effects / agent-core / agent 自 0.2.0 起已发布）；`@wzrhine/patterns` 是 0.3.0 新增包，库侧已实现并通过门禁，**尚未发布**。MFX-01 的三个新效果及共享底座也属于本开发线，**尚未发布**，不能据本表从 npm 0.2.0 调用；使用与支持边界见[效果底座](docs/components/effect-foundations.md)。0.3.0 定版后六包一起发布。
+八个包同属 0.3.0 开发版本线。npm 上的发布基线是 0.2.0；`@wzrhine/patterns`、`@wzrhine/content` 与 `@wzrhine/editor` 是本开发线新增/纳入的能力，库侧已实现并通过门禁，**尚未发布**。MFX-01 的三个新效果及共享底座也属于本开发线，**尚未发布**，不能据本表从 npm 0.2.0 调用；使用与支持边界见[效果底座](docs/components/effect-foundations.md)。0.3.0 定版后八包一起发布。
 
 ## 快速开始
 

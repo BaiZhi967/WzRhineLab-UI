@@ -1,6 +1,6 @@
 # @wzrhine/editor
 
-Engine-neutral Markdown editor contracts and UI primitives. The package is an R4 candidate and does not yet provide a complete WYSIWYM editor.
+Engine-neutral Markdown editor contracts and UI primitives. The package is included in the 0.3.0 development line and does not provide a complete WYSIWYM editor.
 # @wzrhine/editor
 
 Markdown 编辑器层的 engine-neutral 合同、源码编辑 UI 和可选 CodeMirror 6 adapter。当前包支持源码编辑、只读预览、source/preview/split 模式、文档标签、工具栏命令和保存状态展示；完整 WYSIWYM 文档模型暂不属于本包。

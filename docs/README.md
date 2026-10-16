@@ -4,7 +4,7 @@
 
 WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基线；0.3.0 的页面与集合浏览（`@wzrhine/patterns`）库侧已实现，经外部独立验收后完成一轮返修，当前处于 Validating，**尚未发布到 npm**（逐条处置见 [审计响应](roadmap/execution-backlog.md#9-审计响应2026-10-15外部独立验收)）。开发自主推进，消费反馈经过评估进入版本，不以其他应用的接入节奏作为等待条件。
 
-Markdown 写作工作台的编辑器层位于 `@wzrhine/editor`，当前为 R4 候选开发包。它以 Markdown 原文为唯一事实源，CodeMirror 只通过可选 `./codemirror` 子路径接入；完整 WYSIWYM 暂不属于当前发布范围。设计说明见 [编辑器层文档](components/editor.md)。
+Markdown 内容层与写作工作台编辑器均纳入 0.3.0 开发线：`@wzrhine/content` 承担只读内容，`@wzrhine/editor` 承担 R4 源码编辑与预览组合。编辑器以 Markdown 原文为唯一事实源，CodeMirror 只通过可选 `./codemirror` 子路径接入；完整 WYSIWYM 暂不属于当前发布范围。设计说明见 [内容层文档](components/content.md) 与 [编辑器层文档](components/editor.md)。R6 高成本节点/看板和 Canvas/WebGL 仍保持 Deferred。
 
 | 文档 | 用途 |
 | --- | --- |
@@ -18,7 +18,7 @@ Markdown 写作工作台的编辑器层位于 `@wzrhine/editor`，当前为 R4 �
 | [roadmap/quality-and-release.md](roadmap/quality-and-release.md) | 质量门禁、版本、发布和回滚 |
 | [planning/templates/component-demand.md](planning/templates/component-demand.md) | 单条需求记录模板，所有消费项目共用 |
 
-0.3.0 的 patterns 页面模式已实现（见 [api/patterns.md](api/patterns.md) 与 [components/patterns.md](components/patterns.md)），但版本状态是 Validating 而非 Accepted；R2 及以后的能力仍为规划状态，不能仅凭计划在业务代码中调用。源码与发布包证明已有 API，验收记录证明实际执行结果。
+0.3.0 的 patterns、content 和 editor 页面能力已实现（见对应 API 与组件文档），版本状态仍是 Validating 而非 Accepted；R3 及 R6 能力仍为规划或 Deferred，不能仅凭计划在业务代码中调用。源码与发布包证明已有 API，验收记录证明实际执行结果。
 
 Markdown 内容层、编辑器层和写作工作台的设计方案见 [2026-10-16 设计方案](superpowers/specs/2026-10-16-markdown-writing-workbench-design.md)，对应需求卡见 [roadmap/requests](roadmap/requests/README.md)。这些文档只冻结分析范围与候选合同，不表示相关包、组件或 recipe 已实现。
 

@@ -1,6 +1,6 @@
 # Markdown 编辑器层（`@wzrhine/editor`）
 
-- 状态：**R4 候选 / 0.6.x 开发线** · 计划：[Markdown 编辑器层计划](../superpowers/plans/2026-10-16-markdown-editor-layer.md)
+- 状态：**0.3.0 开发线 / R4 编辑能力已纳入** · 计划：[Markdown 编辑器层计划](../superpowers/plans/2026-10-16-markdown-editor-layer.md)
 - 源码：`packages/editor/src/` · Showcase：`#/archive/editor`
 - 预览依赖：`@wzrhine/content` · 控件依赖：`@wzrhine/react` · 源码内核：可选 CodeMirror 6
 
