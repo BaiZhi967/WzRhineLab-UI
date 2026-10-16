@@ -118,6 +118,10 @@ export { ScrollArea } from './components/ScrollArea.js';
 export type { ScrollAreaOrientation, ScrollAreaProps, ScrollReveal } from './components/ScrollArea.js';
 export { FileDropZone, matchesAccept, validateFiles } from './components/FileDropZone.js';
 export type { FileDropZoneProps, FileRejection, FileRejectionReason } from './components/FileDropZone.js';
+export { Toolbar } from './components/Toolbar.js';
+export type { ToolbarOrientation, ToolbarProps } from './components/Toolbar.js';
+export { ToggleButton } from './components/ToggleButton.js';
+export type { ToggleButtonProps } from './components/ToggleButton.js';
 export { DataTable } from './components/DataTable.js';
 export type {
   DataTableColumn,
