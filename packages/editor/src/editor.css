@@ -17,12 +17,15 @@
   font: var(--rl-type-meta);
 }
 
-.rl-editor__save-status button {
-  color: var(--rl-accent-text);
-  background: transparent;
-  border: 0;
-  font: var(--rl-type-label-sm);
-  text-decoration: underline;
+.rl-editor__save-status-actions,
+.rl-editor__toolbar-slot {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rl-space-2);
+}
+
+.rl-editor__save-status-actions {
+  margin-inline-start: auto;
 }
 
 .rl-editor__document-tab-list {

@@ -125,7 +125,7 @@ body,
 
 .content-states {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(min(100%, 12rem), 1fr));
   gap: var(--rl-space-4);
   inline-size: 100%;
 }

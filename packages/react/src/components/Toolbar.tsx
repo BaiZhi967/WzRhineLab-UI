@@ -15,12 +15,16 @@ function isDisabled(child: React.ReactElement): boolean {
   return props.disabled === true || props['aria-disabled'] === true || props['aria-disabled'] === 'true';
 }
 
+function isSlot(child: React.ReactElement): boolean {
+  return Boolean((child.props as { 'data-rl-toolbar-slot'?: string })['data-rl-toolbar-slot']);
+}
+
 export const Toolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(function Toolbar(
   { label, orientation = 'horizontal', children, className, onKeyDown, ...rest },
   ref,
 ) {
   const items = React.Children.toArray(children);
-  const enabledIndices = items.flatMap((child, index) => React.isValidElement(child) && !isDisabled(child) ? [index] : []);
+  const enabledIndices = items.flatMap((child, index) => React.isValidElement(child) && !isSlot(child) && !isDisabled(child) ? [index] : []);
   const [activeIndex, setActiveIndex] = React.useState(enabledIndices[0] ?? 0);
   const currentIndex = enabledIndices.includes(activeIndex) ? activeIndex : (enabledIndices[0] ?? 0);
 
@@ -62,6 +66,7 @@ export const Toolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(function T
     >
       {items.map((child, index) => {
         if (!React.isValidElement(child)) return child;
+        if (isSlot(child)) return child;
         const disabled = isDisabled(child);
         const props = child.props as { onFocus?: React.FocusEventHandler; tabIndex?: number };
         return React.cloneElement(child as React.ReactElement<Record<string, unknown>>, {

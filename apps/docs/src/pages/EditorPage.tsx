@@ -97,11 +97,11 @@ function EditorFixture() {
   };
 
   const toolbarCommands = [
-    { id: 'undo', label: '撤销', command: { type: 'undo' } as const, shortcut: 'Mod-Z' },
-    { id: 'redo', label: '重做', command: { type: 'redo' } as const, shortcut: 'Mod-Shift-Z' },
-    { id: 'bold', label: '粗体', command: { type: 'toggle-mark', mark: 'bold' } as const, shortcut: 'Mod-B' },
-    { id: 'heading', label: '二级标题', command: { type: 'set-heading', level: 2 } as const },
-    { id: 'bullet', label: '无序列表', command: { type: 'toggle-list', kind: 'bullet' } as const },
+    { id: 'undo', label: '撤销', command: { type: 'undo' } as const, shortcut: 'Mod-Z', group: 'history' },
+    { id: 'redo', label: '重做', command: { type: 'redo' } as const, shortcut: 'Mod-Shift-Z', group: 'history' },
+    { id: 'bold', label: '粗体', command: { type: 'toggle-mark', mark: 'bold' } as const, shortcut: 'Mod-B', group: 'format' },
+    { id: 'heading', label: '二级标题', command: { type: 'set-heading', level: 2 } as const, group: 'format' },
+    { id: 'bullet', label: '无序列表', command: { type: 'toggle-list', kind: 'bullet' } as const, group: 'format' },
   ];
 
   return (

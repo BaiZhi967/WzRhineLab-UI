@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { Button } from '@wzrhine/react';
 import type { SaveStatusKind } from '../contracts.js';
 import { useEditorMessages } from '../provider/EditorMessages.js';
 
@@ -16,10 +17,12 @@ export const SaveStatus = React.forwardRef<HTMLDivElement, SaveStatusProps>(func
 ) {
   const messages = useEditorMessages();
   return (
-    <div {...rest} ref={ref} className={['rl-editor__save-status', className].filter(Boolean).join(' ')} role="status" aria-live="polite" data-status={status}>
-      <span className="rl-editor__save-status-label">{messages.saveStatus[status]}</span>
-      {status === 'error' && onRetry && <button type="button" onClick={onRetry}>{messages.retry}</button>}
-      {status === 'conflict' && onResolveConflict && <button type="button" onClick={onResolveConflict}>{messages.resolveConflict}</button>}
+    <div {...rest} ref={ref} className={['rl-editor__save-status', className].filter(Boolean).join(' ')} data-status={status}>
+      <span className="rl-editor__save-status-label" role="status" aria-live="polite" data-status={status}>{messages.saveStatus[status]}</span>
+      <span className="rl-editor__save-status-actions">
+        {status === 'error' && onRetry && <Button size="sm" variant="secondary" onClick={onRetry}>{messages.retry}</Button>}
+        {status === 'conflict' && onResolveConflict && <Button size="sm" variant="ghost" onClick={onResolveConflict}>{messages.resolveConflict}</Button>}
+      </span>
     </div>
   );
 });

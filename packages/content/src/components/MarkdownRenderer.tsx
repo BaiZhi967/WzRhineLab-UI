@@ -3,6 +3,7 @@
 import * as React from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Alert, Button, EmptyState, Spinner } from '@wzrhine/react';
 import { CodeBlock } from './CodeBlock.js';
 import { extractHeadings, type MarkdownHeading, type MarkdownHeadingDepth } from '../markdown/heading-index.js';
 import { resolveMarkdownUrl } from '../markdown/url-policy.js';
@@ -78,16 +79,17 @@ export const MarkdownRenderer = React.forwardRef<HTMLElement, MarkdownRendererPr
   const retryText = retryLabel ?? messages.state.retry;
 
   if (status === 'loading') {
-    return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="loading" aria-busy="true"><span role="status" aria-busy="true" aria-label={messages.state.loading} /> </section>;
+    return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="loading" aria-busy="true"><Spinner size="lg" label={messages.state.loading} aria-label={messages.state.loading} aria-busy="true" /></section>;
   }
   if (status === 'empty' || (status === 'ready' && source.trim() === '')) {
-    return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="empty"><p data-testid="rl-content-empty">{messages.state.empty}</p></section>;
+    return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="empty"><EmptyState data-testid="rl-content-empty" title={messages.state.empty} kind="empty" size="md" /></section>;
   }
   if (status === 'error') {
     return (
-      <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="error" role="alert">
-        {error}
-        {onRetry && <button type="button" onClick={onRetry}>{retryText}</button>}
+      <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="error">
+        <Alert tone="danger" live="assertive" action={onRetry && <Button size="sm" variant="secondary" onClick={onRetry}>{retryText}</Button>}>
+          {error}
+        </Alert>
       </section>
     );
   }

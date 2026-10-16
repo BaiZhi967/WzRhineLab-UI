@@ -96,7 +96,7 @@ export function ContentPage() {
         <Specimen id="content-code" index="02" title="CodeBlock · 复制与滚动" span="full" note="代码区可聚焦，行号不参与复制，复制状态使用 status 播报">
           <CodeSpecimen />
         </Specimen>
-        <Specimen id="content-states" index="03" title="内容状态 · loading / empty / error" span="half" note="状态由调用者提供，错误重试不改变内容层所有权">
+        <Specimen id="content-states" index="03" title="内容状态 · loading / empty / error" span="full" note="状态由调用者提供，错误重试不改变内容层所有权">
           <StateSpecimen />
         </Specimen>
         <Specimen id="content-headings" index="04" title="HeadingIndex · SectionIndex 组合" span="half" note="标题索引生成稳定 ID，目录 UI 继续复用 @wzrhine/patterns">

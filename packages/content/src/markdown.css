@@ -93,22 +93,6 @@
   border: var(--rl-border-width) solid var(--rl-border-subtle);
 }
 
-.rl-content-markdown button {
-  min-block-size: var(--rl-control-height-sm);
-  padding: var(--rl-control-padding-y-sm) var(--rl-control-padding-x-sm);
-  color: var(--rl-fg-primary);
-  background: var(--rl-bg-surface);
-  border: var(--rl-border-width) solid var(--rl-border-default);
-  border-radius: var(--rl-radius-sm);
-  font: var(--rl-type-label-sm);
-  cursor: pointer;
-}
-
-.rl-content-markdown button:hover {
-  background: var(--rl-bg-subtle);
-  border-color: var(--rl-border-strong);
-}
-
 .rl-content-markdown[data-state='loading'],
 .rl-content-markdown[data-state='empty'],
 .rl-content-markdown[data-state='error'] {
