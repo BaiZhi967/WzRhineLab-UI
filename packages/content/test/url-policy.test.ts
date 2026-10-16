@@ -18,6 +18,11 @@ describe('resolveMarkdownUrl', () => {
     expect(resolveMarkdownUrl(url, 'image')).toBeUndefined();
   });
 
+  it('rejects protocol-relative external URLs', () => {
+    expect(resolveMarkdownUrl('//evil.example/asset.png', 'image')).toBeUndefined();
+    expect(resolveMarkdownUrl('//evil.example/page', 'link')).toBeUndefined();
+  });
+
   it('rejects control characters after trimming surrounding whitespace', () => {
     expect(resolveMarkdownUrl('  https://example.com/\n', 'link')).toBeUndefined();
   });

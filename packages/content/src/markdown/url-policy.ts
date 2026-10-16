@@ -8,6 +8,7 @@ export function resolveMarkdownUrl(url: string, kind: MarkdownUrlKind): string |
   if (CONTROL_CHARACTERS.test(url)) return undefined;
   const value = url.trim();
   if (!value) return undefined;
+  if (value.startsWith('//')) return undefined;
   if (value.startsWith('#') || value.startsWith('/') || value.startsWith('./') || value.startsWith('../')) return value;
 
   const scheme = value.match(/^([a-z][a-z\d+.-]*):/i)?.[1]?.toLocaleLowerCase();
