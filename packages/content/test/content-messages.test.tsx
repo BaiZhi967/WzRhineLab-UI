@@ -22,6 +22,7 @@ describe('ContentMessagesProvider', () => {
       </ContentMessagesProvider>,
     );
     expect(screen.getByTestId('default')).toHaveTextContent(`${contentZhCN.code.copy}|${contentZhCN.code.copied}`);
+    expect(contentZhCN.state.empty).toBe('暂无内容。');
   });
 
   it('supports the built-in English table', () => {
@@ -31,6 +32,7 @@ describe('ContentMessagesProvider', () => {
       </ContentMessagesProvider>,
     );
     expect(screen.getByTestId('english')).toHaveTextContent(`${contentEnUS.code.copy}|${contentEnUS.code.copied}`);
+    expect(contentEnUS.state.empty).toBe('No content.');
   });
 
   it('merges partial overrides without replacing unrelated messages', () => {

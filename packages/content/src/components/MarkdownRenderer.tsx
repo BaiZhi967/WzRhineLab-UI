@@ -62,7 +62,7 @@ export const MarkdownRenderer = React.forwardRef<HTMLElement, MarkdownRendererPr
     status = 'ready',
     error,
     onRetry,
-    retryLabel = 'Retry',
+    retryLabel,
     components,
     onLinkActivate,
     renderImage,
@@ -75,18 +75,19 @@ export const MarkdownRenderer = React.forwardRef<HTMLElement, MarkdownRendererPr
   const headings = React.useMemo(() => extractHeadings(source), [source]);
   const headingCursor = { value: 0 };
   const { a: customAnchor, img: customImage, ...customComponents } = components ?? {};
+  const retryText = retryLabel ?? messages.state.retry;
 
   if (status === 'loading') {
-    return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="loading" aria-busy="true"><span role="status" aria-busy="true" /></section>;
+    return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="loading" aria-busy="true"><span role="status" aria-busy="true" aria-label={messages.state.loading} /> </section>;
   }
   if (status === 'empty' || (status === 'ready' && source.trim() === '')) {
-    return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="empty"><p data-testid="rl-content-empty">No content.</p></section>;
+    return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="empty"><p data-testid="rl-content-empty">{messages.state.empty}</p></section>;
   }
   if (status === 'error') {
     return (
       <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="error" role="alert">
         {error}
-        {onRetry && <button type="button" onClick={onRetry}>{retryLabel}</button>}
+        {onRetry && <button type="button" onClick={onRetry}>{retryText}</button>}
       </section>
     );
   }

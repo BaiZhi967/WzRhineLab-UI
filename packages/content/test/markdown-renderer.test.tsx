@@ -97,7 +97,7 @@ describe('MarkdownRenderer', () => {
         </ContentMessagesProvider>
       </RhineProvider>,
     );
-    expect(screen.getByTestId('rl-content-empty')).toBeInTheDocument();
+    expect(screen.getByTestId('rl-content-empty')).toHaveTextContent(contentEnUS.state.empty);
     rerender(
       <RhineProvider theme="light">
         <ContentMessagesProvider messages={contentEnUS}>

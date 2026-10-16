@@ -16,12 +16,18 @@ export interface ContentMessages {
     title: string;
     detail: (kind: string) => string;
   };
+  state: {
+    loading: string;
+    empty: string;
+    retry: string;
+  };
 }
 
 export interface ContentMessagesOverrides {
   code?: Partial<ContentMessages['code']>;
   image?: Partial<ContentMessages['image']>;
   unsupported?: Partial<ContentMessages['unsupported']>;
+  state?: Partial<ContentMessages['state']>;
 }
 
 export interface ContentMessagesProviderProps {
@@ -43,6 +49,11 @@ export const contentZhCN: ContentMessages = {
     title: '暂不支持此内容',
     detail: (kind) => `内容类型：${kind}`,
   },
+  state: {
+    loading: '正在加载内容…',
+    empty: '暂无内容。',
+    retry: '重试',
+  },
 };
 
 export const contentEnUS: ContentMessages = {
@@ -59,6 +70,11 @@ export const contentEnUS: ContentMessages = {
     title: 'Content not supported',
     detail: (kind) => `Content type: ${kind}`,
   },
+  state: {
+    loading: 'Loading content…',
+    empty: 'No content.',
+    retry: 'Retry',
+  },
 };
 
 export function mergeContentMessages(base: ContentMessages, overrides?: ContentMessagesOverrides): ContentMessages {
@@ -67,6 +83,7 @@ export function mergeContentMessages(base: ContentMessages, overrides?: ContentM
     code: { ...base.code, ...overrides.code },
     image: { ...base.image, ...overrides.image },
     unsupported: { ...base.unsupported, ...overrides.unsupported },
+    state: { ...base.state, ...overrides.state },
   };
 }
 

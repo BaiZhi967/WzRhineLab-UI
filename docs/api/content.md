@@ -120,6 +120,7 @@ const contentZhCN: ContentMessages
 | --- | --- | --- |
 | `code` * | `{ copy: string; copied: string; copyFailed: string; label: string; }` |  |
 | `image` * | `{ unavailable: string; }` |  |
+| `state` * | `{ loading: string; empty: string; retry: string; }` |  |
 | `unsupported` * | `{ title: string; detail: (kind: string) => string; }` |  |
 
 ### `ContentMessagesOverrides`
@@ -130,6 +131,7 @@ const contentZhCN: ContentMessages
 | --- | --- | --- |
 | `code` | `Partial<{ copy: string; copied: string; copyFailed: string; label: string; }>` |  |
 | `image` | `Partial<{ unavailable: string; }>` |  |
+| `state` | `Partial<{ loading: string; empty: string; retry: string; }>` |  |
 | `unsupported` | `Partial<{ title: string; detail: (kind: string) => string; }>` |  |
 
 ### `ContentMessagesProviderProps`
