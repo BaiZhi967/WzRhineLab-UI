@@ -24,6 +24,7 @@ const packages = [
   { dir: 'react', name: '@wzrhine/react' },
   { dir: 'patterns', name: '@wzrhine/patterns' },
   { dir: 'content', name: '@wzrhine/content' },
+  { dir: 'editor', name: '@wzrhine/editor', subpaths: [{ label: './codemirror', file: 'dist/codemirror.d.ts' }] },
   { dir: 'effects', name: '@wzrhine/effects' },
   { dir: 'agent-core', name: '@wzrhine/agent-core' },
   { dir: 'agent', name: '@wzrhine/agent' },
@@ -150,11 +151,36 @@ function report(pkg) {
   return { out: out.replace(/\n{3,}/g, '\n\n'), count: exports.length };
 }
 
+function subpathReport(pkg, subpath) {
+  const entry = join(root, 'packages', pkg.dir, subpath.file);
+  const program = ts.createProgram([entry], {
+    module: ts.ModuleKind.NodeNext,
+    moduleResolution: ts.ModuleResolutionKind.NodeNext,
+    strict: true,
+    skipLibCheck: true,
+    noEmit: true,
+  });
+  const checker = program.getTypeChecker();
+  const source = program.getSourceFile(entry);
+  const moduleSymbol = checker.getSymbolAtLocation(source);
+  const exports = checker.getExportsOfModule(moduleSymbol).sort((a, b) => a.getName().localeCompare(b.getName()));
+  const lines = [`## Optional subpath \`${subpath.label}\``, '', `由 \`scripts/api-report.mjs\` 从 \`${subpath.file}\` 生成，共 ${exports.length} 个导出。`, ''];
+  for (const exp of exports) {
+    const symbol = exp.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(exp) : exp;
+    const decl = symbol.valueDeclaration ?? symbol.getDeclarations()?.[0];
+    const kind = kindOf(decl, checker, symbol);
+    lines.push(`### \`${exp.getName()}\``, '', `*${kind}*`, '', '```ts', `${kind === 'function' ? 'function' : 'const'} ${exp.getName()}: ${checker.typeToString(checker.getTypeOfSymbolAtLocation(symbol, decl), decl, flags)}`, '```', '');
+  }
+  return lines.join('\n');
+}
+
 const apiDir = join(root, 'docs/api');
 mkdirSync(apiDir, { recursive: true });
 let stale = [];
 for (const pkg of packages) {
-  const { out, count } = report(pkg);
+  const result = report(pkg);
+  const out = `${result.out}${(pkg.subpaths ?? []).map((subpath) => `\n${subpathReport(pkg, subpath)}\n`).join('')}`;
+  const count = result.count;
   const file = join(apiDir, `${pkg.dir}.md`);
   const current = existsSync(file) ? readFileSync(file, 'utf8').replace(/\r\n/g, '\n') : '';
   if (check) {

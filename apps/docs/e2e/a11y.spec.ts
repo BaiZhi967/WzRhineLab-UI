@@ -8,7 +8,7 @@ for (const theme of ['light', 'dark'] as const) {
       test(`${route.name} has no WCAG 2.2 A/AA violations`, async ({ page }) => {
         await setSettings(page, { theme });
         await page.goto(route.hash);
-        await expect(page.locator('h1')).toBeVisible();
+        await expect(page.locator('.sc-page-title, .sc-hero__title').first()).toBeVisible();
         const results = await new AxeBuilder({ page })
           .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
           .analyze();

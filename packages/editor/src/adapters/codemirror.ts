@@ -73,6 +73,7 @@ export function createCodeMirrorAdapter(): EditorAdapter {
       const endComposition = () => { composing = false; options.onCompositionChange?.(false); };
       view.contentDOM.addEventListener('compositionstart', startComposition);
       view.contentDOM.addEventListener('compositionend', endComposition);
+      view.contentDOM.setAttribute('aria-label', options.ariaLabel ?? 'Markdown source');
       view.contentDOM.addEventListener('focus', () => options.onFocus?.());
       view.contentDOM.addEventListener('blur', () => options.onBlur?.());
       const host: EditorHost = {

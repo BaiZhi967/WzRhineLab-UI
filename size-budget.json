@@ -66,6 +66,15 @@
     },
     "agent-css": {
       "gzip": 19456
+    },
+    "editor-core": {
+      "gzip": 60416
+    },
+    "editor-codemirror": {
+      "gzip": 200704
+    },
+    "editor-css": {
+      "gzip": 2048
     }
   }
 }

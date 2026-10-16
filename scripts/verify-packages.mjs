@@ -2,7 +2,7 @@
 /**
  * Consumer install check (QUALITY-GATES G3 "npm exports / CSS sideEffects / ESM 类型声明测试").
  *
- * 1. Builds and packs @wzrhine/tokens, @wzrhine/react, @wzrhine/effects with `pnpm pack`
+ * 1. Builds and packs the publishable workspace packages with `pnpm pack`
  *    (prepack builds dist; workspace: ranges are rewritten to real versions).
  * 2. Inspects each tarball: publishConfig exports, no src/ or tests, every export target present.
  *    Client boundary (ADR-0008 §2): every src module that uses React at runtime starts with
@@ -21,7 +21,7 @@ import { join, resolve } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 
 const root = resolve(import.meta.dirname, '..');
-const packages = ['tokens', 'react', 'patterns', 'content', 'effects', 'agent-core', 'agent'];
+const packages = ['tokens', 'react', 'patterns', 'content', 'editor', 'effects', 'agent-core', 'agent'];
 const keep = process.argv.includes('--keep');
 const log = (msg) => console.log(`\u001b[36m[verify]\u001b[0m ${msg}`);
 const fail = (msg) => {
@@ -113,6 +113,7 @@ function startsWithUseClient(code) {
 /** A module needs the directive when it runs React code: any .tsx file, or a value import from React / motion / Base UI. */
 function usesReactAtRuntime(file, code) {
   if (file.endsWith('.tsx')) return true;
+  if (/[\\/]src[\\/]codemirror\.ts$/.test(file)) return true;
   return /^import\s+(?!type\b)[^;]*?from\s+['"](?:react|motion\/react|@base-ui\/react(?:\/[^'"]*)?)['"]/m.test(code);
 }
 // Modules that must stay importable from React Server Components (no directive).
@@ -120,12 +121,13 @@ const pureModules = {
   '@wzrhine/react': ['index', 'utils/cx', 'motion/presets', 'components/pagination-utils', 'components/meter-utils'],
   '@wzrhine/patterns': ['index', 'utils/cx'],
   '@wzrhine/content': ['index', 'markdown/heading-index', 'markdown/url-policy'],
+  '@wzrhine/editor': ['index', 'contracts'],
   '@wzrhine/effects': ['index', 'scramble', 'geometry', 'usePageVisible'],
   '@wzrhine/agent': ['index', 'utils/cx', 'provider/messages/status'],
 };
 const walkSrc = (dir) =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walkSrc(join(dir, e.name)) : [join(dir, e.name)]));
-for (const [name, dirName] of [['@wzrhine/react', 'react'], ['@wzrhine/patterns', 'patterns'], ['@wzrhine/content', 'content'], ['@wzrhine/effects', 'effects'], ['@wzrhine/agent', 'agent']]) {
+for (const [name, dirName] of [['@wzrhine/react', 'react'], ['@wzrhine/patterns', 'patterns'], ['@wzrhine/content', 'content'], ['@wzrhine/editor', 'editor'], ['@wzrhine/effects', 'effects'], ['@wzrhine/agent', 'agent']]) {
   const srcDir = join(root, 'packages', dirName, 'src');
   const entries = readTarball(tarballs[name]);
   const expected = new Map();
@@ -178,12 +180,18 @@ writeFileSync(
         '@wzrhine/react': `file:${tarballs['@wzrhine/react']}`,
         '@wzrhine/patterns': `file:${tarballs['@wzrhine/patterns']}`,
         '@wzrhine/content': `file:${tarballs['@wzrhine/content']}`,
+        '@wzrhine/editor': `file:${tarballs['@wzrhine/editor']}`,
         '@wzrhine/effects': `file:${tarballs['@wzrhine/effects']}`,
         '@wzrhine/agent-core': `file:${tarballs['@wzrhine/agent-core']}`,
         '@wzrhine/agent': `file:${tarballs['@wzrhine/agent']}`,
         react: devPin('react'),
         'react-dom': devPin('react-dom'),
         motion: devPin('motion'),
+        '@codemirror/commands': '^6.8.1',
+        '@codemirror/lang-markdown': '^6.3.2',
+        '@codemirror/search': '^6.5.10',
+        '@codemirror/state': '^6.5.2',
+        '@codemirror/view': '^6.36.5',
       },
       devDependencies: {
         typescript: devPin('typescript') === '5.9.0' ? '5.9.3' : devPin('typescript'),
@@ -196,7 +204,9 @@ writeFileSync(
         overrides: {
           '@wzrhine/tokens': `file:${tarballs['@wzrhine/tokens']}`,
           '@wzrhine/react': `file:${tarballs['@wzrhine/react']}`,
+          '@wzrhine/content': `file:${tarballs['@wzrhine/content']}`,
           '@wzrhine/agent-core': `file:${tarballs['@wzrhine/agent-core']}`,
+          '@wzrhine/editor': `file:${tarballs['@wzrhine/editor']}`,
         },
       },
     },
@@ -225,8 +235,11 @@ writeFileSync(
   `import '@wzrhine/tokens/styles.css';
 import '@wzrhine/react/styles.css';
 import '@wzrhine/content/styles.css';
+import '@wzrhine/editor/styles.css';
 import { Button, DataTable, Field, Input, RhineProvider, StatusBadge } from '@wzrhine/react';
 import { MarkdownRenderer } from '@wzrhine/content';
+import { EditorMessagesProvider, EditorModeView, editorEnUS } from '@wzrhine/editor';
+import { createCodeMirrorAdapter } from '@wzrhine/editor/codemirror';
 import type { ButtonProps, DataTableColumn } from '@wzrhine/react';
 import { contrastRatio, motionDurations } from '@wzrhine/tokens';
 
@@ -244,6 +257,9 @@ export function App() {
       <Field label="记录编号"><Input mono /></Field>
       <DataTable caption="记录" columns={columns} rows={[{ id: 'ARC-1', title: '示例' }]} getRowId={(r) => r.id} />
       <MarkdownRenderer source="# Consumer preview\\n\\nContent works." />
+      <EditorMessagesProvider messages={editorEnUS}>
+        <EditorModeView mode="preview" source="# Editor preview\\n\\nSource remains canonical." adapter={createCodeMirrorAdapter()} onModeChange={() => undefined} />
+      </EditorMessagesProvider>
     </RhineProvider>
   );
 }
@@ -341,13 +357,15 @@ writeFileSync(
 import { createElement as h } from 'react';
 import { Button, RhineProvider, StatusBadge, Text } from '@wzrhine/react';
 import { MarkdownRenderer } from '@wzrhine/content';
+import { EditorMessagesProvider, EditorModeView, editorEnUS } from '@wzrhine/editor';
+import { createCodeMirrorAdapter } from '@wzrhine/editor/codemirror';
 import { ArchiveReveal, CalibrationReticle, SignalPath, AnnotationTrace, createEffectPath } from '@wzrhine/effects';
 import { AgentSpark, AgentStatus } from '@wzrhine/agent';
 import { PatternsMessagesProvider, patternsEnUS, usePatternsMessages } from '@wzrhine/patterns';
 import { motionDurations } from '@wzrhine/tokens';
 const PatternProbe = () => { const m = usePatternsMessages(); return h('span', null, m.listDetail.back); };
-const html = renderToString(h(RhineProvider, { theme: 'dark' }, h(Button, null, '保存'), h(StatusBadge, { status: 'info' }, '审核中'), h(Text, { variant: 'mono' }, 'ARC-1'), h(MarkdownRenderer, { source: '# Consumer preview\\n\\nContent works.' }), h(ArchiveReveal, { text: 'ARC-1024', revealed: true }), h(AgentSpark, { phase: 'thinking' }), h(AgentStatus, { glyph: 'active', tone: 'accent', label: '运行中' }), h(PatternsMessagesProvider, { messages: patternsEnUS }, h(PatternProbe))));
-for (const needle of ['rl-theme', 'data-rl-theme="dark"', 'rl-button', '保存', 'rl-badge', 'rl-content-markdown', 'Consumer preview', 'rl-reveal', 'ARC-1024', 'rl-agent-spark', 'data-phase="thinking"', 'rl-agent-status', '运行中', 'Back to list']) {
+const html = renderToString(h(RhineProvider, { theme: 'dark' }, h(Button, null, '保存'), h(StatusBadge, { status: 'info' }, '审核中'), h(Text, { variant: 'mono' }, 'ARC-1'), h(MarkdownRenderer, { source: '# Consumer preview\\n\\nContent works.' }), h(EditorMessagesProvider, { messages: editorEnUS }, h(EditorModeView, { mode: 'preview', source: '# Editor preview\\n\\nSource remains canonical.', adapter: createCodeMirrorAdapter(), onModeChange: () => undefined })), h(ArchiveReveal, { text: 'ARC-1024', revealed: true }), h(AgentSpark, { phase: 'thinking' }), h(AgentStatus, { glyph: 'active', tone: 'accent', label: '运行中' }), h(PatternsMessagesProvider, { messages: patternsEnUS }, h(PatternProbe))));
+for (const needle of ['rl-theme', 'data-rl-theme="dark"', 'rl-button', '保存', 'rl-badge', 'rl-content-markdown', 'Consumer preview', 'rl-editor__mode-view', 'Editor preview', 'rl-reveal', 'ARC-1024', 'rl-agent-spark', 'data-phase="thinking"', 'rl-agent-status', '运行中', 'Back to list']) {
   if (!html.includes(needle)) { console.error('SSR output missing ' + needle); process.exit(1); }
 }
 if (motionDurations.press !== 80) process.exit(1);

@@ -30,6 +30,9 @@ function MarkdownSpecimen() {
       <MarkdownRenderer
         source={source}
         onLinkActivate={() => {}}
+        components={{
+          input: ({ checked, ...props }) => <input {...props} checked={checked} aria-label={checked ? '已完成任务' : '未完成任务'} />,
+        }}
         renderImage={({ src, alt }) => <img src={src} alt={alt} loading="lazy" decoding="async" />}
       />
     </section>

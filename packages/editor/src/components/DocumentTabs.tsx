@@ -59,13 +59,12 @@ export const DocumentTabs = React.forwardRef<HTMLDivElement, DocumentTabsProps>(
         {tabs.map((tab, index) => {
           const dirtyId = `rl-editor-tab-dirty-${index}`;
           return (
-            <div className="rl-editor__document-tab" data-active={tab.id === activeId || undefined} key={tab.id}>
-              <button
+            <button
+                className="rl-editor__document-tab"
                 type="button"
                 role="tab"
                 ref={(node) => { if (node) tabRefs.current.set(tab.id, node); else tabRefs.current.delete(tab.id); }}
                 aria-selected={tab.id === activeId}
-                aria-controls={`rl-editor-panel-${tab.id}`}
                 aria-describedby={tab.dirty ? dirtyId : undefined}
                 aria-disabled={tab.disabled || undefined}
                 disabled={tab.disabled}
@@ -83,18 +82,20 @@ export const DocumentTabs = React.forwardRef<HTMLDivElement, DocumentTabsProps>(
                 <span className="rl-editor__document-tab-title">{tab.title}</span>
                 {tab.dirty && <span id={dirtyId} className="rl-editor__document-tab-dirty"><span aria-hidden="true">•</span><span className="rl-editor__sr">{messages.tabs.dirty}</span></span>}
               </button>
-              {tab.closable !== false && (
-                <IconButton
-                  size="sm"
-                  variant="ghost"
-                  label={(closeLabel ?? messages.tabs.close)(tab.title)}
-                  icon={closeIcon()}
-                  onClick={(event) => { event.stopPropagation(); close(tab); }}
-                />
-              )}
-            </div>
           );
         })}
+      </div>
+      <div className="rl-editor__document-tab-actions" aria-label="文档关闭操作">
+        {tabs.map((tab) => tab.closable !== false && (
+          <IconButton
+            key={tab.id}
+            size="sm"
+            variant="ghost"
+            label={(closeLabel ?? messages.tabs.close)(tab.title)}
+            icon={closeIcon()}
+            onClick={() => close(tab)}
+          />
+        ))}
       </div>
     </div>
   );

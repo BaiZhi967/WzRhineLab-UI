@@ -4,6 +4,8 @@
 
 WzUI 主要服务维护者个人长期 React 前端开发。0.2.0 是发布基线；0.3.0 的页面与集合浏览（`@wzrhine/patterns`）库侧已实现，经外部独立验收后完成一轮返修，当前处于 Validating，**尚未发布到 npm**（逐条处置见 [审计响应](roadmap/execution-backlog.md#9-审计响应2026-10-15外部独立验收)）。开发自主推进，消费反馈经过评估进入版本，不以其他应用的接入节奏作为等待条件。
 
+Markdown 写作工作台的编辑器层位于 `@wzrhine/editor`，当前为 R4 候选开发包。它以 Markdown 原文为唯一事实源，CodeMirror 只通过可选 `./codemirror` 子路径接入；完整 WYSIWYM 暂不属于当前发布范围。设计说明见 [编辑器层文档](components/editor.md)。
+
 | 文档 | 用途 |
 | --- | --- |
 | [ROADMAP.md](ROADMAP.md) | 当前版本、阶段摘要与历史映射 |

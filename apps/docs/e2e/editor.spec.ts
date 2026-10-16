@@ -22,7 +22,7 @@ test.describe('Markdown editor Showcase', () => {
     await page.keyboard.type('\n\n## 浏览器验收');
     await expect(page.getByRole('heading', { name: '浏览器验收' })).toBeVisible();
     await page.getByRole('tab', { name: '源码' }).click();
-    await expect(page.getByRole('textbox', { name: 'Markdown source' })).toBeVisible();
+    await expect(page.locator('.rl-editor__surface')).toBeVisible();
     await page.getByRole('tab', { name: '预览' }).click();
     await expect(page.getByRole('heading', { name: '浏览器验收' })).toBeVisible();
     await page.getByRole('tab', { name: '分栏' }).click();

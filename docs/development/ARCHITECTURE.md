@@ -23,6 +23,7 @@ WzRhineLab-UI/
 │  ├─ react/           # @wzrhine/react：组件、Provider、Motion Core，无业务代码
 │  ├─ patterns/        # @wzrhine/patterns：页面模式（layout / collection / record），peer 依赖 react 包（ADR-0014）
 │  ├─ content/         # @wzrhine/content：可选 Markdown 内容渲染、标题索引与代码块（R2）
+│  ├─ editor/           # @wzrhine/editor：Markdown 源码编辑合同、预览和可选 CodeMirror adapter（R4）
 │  └─ effects/         # @wzrhine/effects：可选展示动效与动效播放器（ADR-0004），react 包不依赖它
 ├─ apps/
 │  └─ docs/            # @wzrhine/showcase：Vite 文档 / Showcase；e2e/ 为三内核 E2E，e2e/visual 为视觉回归基线（121 项，win32 Chromium）
@@ -81,12 +82,13 @@ packages/react/src/
 - agent 包 peer 依赖 `@wzrhine/react`、react、motion，依赖 `@wzrhine/agent-core`、`@wzrhine/tokens`、`@base-ui/react`（同一精确版本）；不得依赖 Agent SDK、请求库、Tauri、MCP client、Markdown / 高亮 / 图标库或具体后端协议（`packages/agent/test/package-boundary.test.ts` 强制）；agent-core 没有任何运行时依赖；react 包不依赖 agent 包。
 - patterns 包 peer 依赖 `@wzrhine/react`、react、react-dom、motion，运行时只依赖 `@wzrhine/tokens`；不得直接依赖 Base UI 或 agent 系列（通过 `@wzrhine/react` 组合），中文字面量只允许出现在 `src/provider/PatternMessages.tsx`（`packages/patterns/test/package-boundary.test.ts` 强制，ADR-0014 §3、§5）。
 - content 包 peer 依赖 `@wzrhine/react`、react、react-dom、motion，运行时依赖 `@wzrhine/tokens`、`react-markdown`、`remark-gfm`；不得依赖 Base UI、agent、文件系统、网络客户端或编辑器内核，原始 HTML 默认关闭，中文字面量只允许出现在 `src/provider/ContentMessages.tsx`（`packages/content/test/package-boundary.test.ts` 强制，ADR-0016）。
+- editor 包根入口保持 engine-neutral，peer 依赖 `@wzrhine/react`、react、react-dom、motion 和可选 CodeMirror 6；运行时依赖 `@wzrhine/content`、`@wzrhine/tokens`，只有 `./codemirror` 子路径加载 CodeMirror。Markdown 原文、保存状态和冲突策略由宿主持有，不读取文件或网络，也不建立 WYSIWYM 文档模型。
 - WebGL、粒子、音效和复杂图表置于可选包/示例，禁止拉入基础 `Button` 的依赖链。
 - 复杂可访问交互的单一 headless 底座已由 [ADR-0001](adr/0001-headless-primitives.md) 选定 Base UI（`@base-ui/react` 1.9.0，精确锁定），不与 React Aria / Radix 混用。
 - 不把 React package 中的 CSS 注入全局原生元素；所有类名 `rl-` 前缀，主题采用 `data-rl-theme`。
 
 ## 产品 API
-发布路径：@wzrhine/tokens、@wzrhine/react、@wzrhine/patterns、@wzrhine/content、@wzrhine/effects、@wzrhine/agent-core、@wzrhine/agent（发布顺序同此，依赖在前）。`@wzrhine/content` 属于 R2 候选包，完成真实构建、安装和验收前不能声称已发布。单组件可访问的命名导出，避免不透明 barrel 导出副作用。Style 与 Token 保留明确导入路径。
+发布路径：@wzrhine/tokens、@wzrhine/react、@wzrhine/patterns、@wzrhine/content、@wzrhine/editor、@wzrhine/effects、@wzrhine/agent-core、@wzrhine/agent（发布顺序同此，依赖在前）。`@wzrhine/content` 与 `@wzrhine/editor` 属于候选开发包，完成真实构建、安装和验收前不能声称已发布。单组件可访问的命名导出，避免不透明 barrel 导出副作用。Style 与 Token 保留明确导入路径。
 
 @wzrhine/agent 公开的是 view-model、actions、capabilities、renderer 和 slots。运行时事件、缓存、权限事实、文件系统、终端、窗口和路由属于消费项目。
 

@@ -46,6 +46,7 @@ export interface EditorHost {
 export interface EditorAdapterOptions {
   source: string;
   selection?: EditorSelection;
+  ariaLabel?: string;
   readOnly?: boolean;
   onChange?: (change: EditorChange) => void;
   onSelectionChange?: (selection: EditorSelection) => void;

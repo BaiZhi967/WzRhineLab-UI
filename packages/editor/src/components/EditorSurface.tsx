@@ -38,6 +38,7 @@ export const EditorSurface = React.forwardRef<HTMLDivElement, EditorSurfaceProps
       host = adapter.create(container, {
         source,
         selection,
+        ariaLabel: rest['aria-label'],
         readOnly,
         onChange: (change) => {
           callbacks.current.onChange?.(change);
