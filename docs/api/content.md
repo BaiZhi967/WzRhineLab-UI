@@ -234,3 +234,4 @@ type MarkdownRenderStatus = 'ready' | 'loading' | 'empty' | 'error'
 ```ts
 type MarkdownUrlKind = 'link' | 'image'
 ```
+
