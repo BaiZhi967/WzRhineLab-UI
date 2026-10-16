@@ -24,3 +24,7 @@ export { EditorToolbar } from './components/EditorToolbar.js';
 export type { EditorToolbarCommand, EditorToolbarProps } from './components/EditorToolbar.js';
 export { EditorSurface } from './components/EditorSurface.js';
 export type { EditorSurfaceProps } from './components/EditorSurface.js';
+export { PreviewPane } from './components/PreviewPane.js';
+export type { PreviewPaneProps } from './components/PreviewPane.js';
+export { EditorModeView } from './components/EditorModeView.js';
+export type { EditorModeViewProps } from './components/EditorModeView.js';
