@@ -11,3 +11,5 @@ export {
   useContentMessages,
 } from './provider/ContentMessages.js';
 export type { ContentMessages, ContentMessagesOverrides, ContentMessagesProviderProps } from './provider/ContentMessages.js';
+export { CodeBlock } from './components/CodeBlock.js';
+export type { CodeBlockProps, CodeCopyHandler } from './components/CodeBlock.js';
