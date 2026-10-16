@@ -46,6 +46,16 @@ function headingRenderer(depth: MarkdownHeadingDepth, headings: readonly Markdow
   };
 }
 
+function ImageFallback({ alt, message }: { alt: string; message: string }) {
+  return <span role="status" aria-label={alt} className="rl-content-markdown__image-fallback">{message}</span>;
+}
+
+function NativeImage({ image, message }: { image: MarkdownImageProps; message: string }) {
+  const [failed, setFailed] = React.useState(false);
+  if (failed) return <ImageFallback alt={image.alt} message={message} />;
+  return <img {...image} loading="lazy" decoding="async" onError={() => setFailed(true)} />;
+}
+
 export const MarkdownRenderer = React.forwardRef<HTMLElement, MarkdownRendererProps>(function MarkdownRenderer(
   {
     source,
@@ -64,6 +74,7 @@ export const MarkdownRenderer = React.forwardRef<HTMLElement, MarkdownRendererPr
   const messages = useContentMessages();
   const headings = React.useMemo(() => extractHeadings(source), [source]);
   const headingCursor = { value: 0 };
+  const { a: customAnchor, img: customImage, ...customComponents } = components ?? {};
 
   if (status === 'loading') {
     return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="loading" aria-busy="true"><span role="status" aria-busy="true" /></section>;
@@ -97,19 +108,21 @@ export const MarkdownRenderer = React.forwardRef<HTMLElement, MarkdownRendererPr
     a: ({ href, children, node: _node, ...props }) => {
       const safe = href ? resolveMarkdownUrl(href, 'link') : undefined;
       if (!safe) return <span {...props}>{children}</span>;
+      if (customAnchor) return React.createElement(customAnchor, { ...props, href: safe, children });
       return <a {...props} href={safe} onClick={(event) => { if (onLinkActivate) { event.preventDefault(); onLinkActivate(safe); } }}>{children}</a>;
     },
     img: ({ src, alt, title, node: _node, ...props }) => {
       const safe = src ? resolveMarkdownUrl(src, 'image') : undefined;
-      if (!safe) return <span className="rl-content-markdown__image-fallback">{messages.image.unavailable}</span>;
+      if (!safe) return <ImageFallback alt={alt ?? ''} message={messages.image.unavailable} />;
       const image: MarkdownImageProps = { ...props, src: safe, alt: alt ?? '', title };
-      return renderImage ? renderImage(image) : <img {...image} loading="lazy" decoding="async" />;
+      if (customImage) return React.createElement(customImage, image);
+      return renderImage ? renderImage(image) : <NativeImage image={image} message={messages.image.unavailable} />;
     },
   };
 
   return (
     <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="ready">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml urlTransform={(url, _key, _node) => resolveMarkdownUrl(url, 'link') ?? ''} components={{ ...builtIns, ...components }}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml urlTransform={(url, key, _node) => resolveMarkdownUrl(url, key === 'src' ? 'image' : 'link') ?? ''} components={{ ...builtIns, ...customComponents }}>
         {source}
       </ReactMarkdown>
     </section>

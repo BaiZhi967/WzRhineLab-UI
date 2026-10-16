@@ -11,6 +11,10 @@ test.describe('Markdown content page', () => {
     await expect(markdown.getByRole('checkbox')).toBeChecked();
     await expect(markdown.getByRole('link', { name: '安全链接' })).toHaveAttribute('href', 'https://example.com');
     await expect(markdown.getByRole('link', { name: '危险链接' })).toHaveCount(0);
+    await page.getByRole('radio', { name: 'Dark' }).check();
+    await expect(page.locator('.rl-theme')).toHaveAttribute('data-rl-theme', 'dark');
+    await page.getByRole('radio', { name: '紧凑' }).check();
+    await expect(page.locator('.rl-theme')).toHaveAttribute('data-rl-density', 'compact');
     const code = page.getByRole('region', { name: 'CodeBlock' });
     await expect(code.getByText('const answer = 42;')).toBeVisible();
     await code.getByRole('button', { name: /复制代码|Copy code|已复制代码|Code copied/ }).click();

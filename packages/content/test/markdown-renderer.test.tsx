@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -53,6 +53,23 @@ describe('MarkdownRenderer', () => {
     renderMarkdown({ source: '![figure](https://example.com/figure.png)', renderImage });
     expect(renderImage).toHaveBeenCalledWith(expect.objectContaining({ src: 'https://example.com/figure.png', alt: 'figure' }));
     expect(screen.getByTestId('image-resolver')).toHaveTextContent('https://example.com/figure.png|figure');
+  });
+
+  it('does not pass an unsafe image URL to a custom image component', () => {
+    renderMarkdown({
+      source: '![unsafe](mailto:test@example.com)',
+      components: { img: ({ src }) => <span data-testid="custom-image">{src}</span> },
+    });
+    expect(screen.queryByTestId('custom-image')).not.toBeInTheDocument();
+    expect(screen.getByText(contentEnUS.image.unavailable)).toBeInTheDocument();
+  });
+
+  it('announces a native image load failure and preserves the alternative text', () => {
+    renderMarkdown({ source: '![figure](https://example.com/figure.png)' });
+    const image = screen.getByRole('img', { name: 'figure' });
+    fireEvent.error(image);
+    expect(screen.getByRole('status')).toHaveAccessibleName('figure');
+    expect(screen.getByRole('status')).toHaveTextContent(contentEnUS.image.unavailable);
   });
 
   it('renders fenced code through CodeBlock', () => {
