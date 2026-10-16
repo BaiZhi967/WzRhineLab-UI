@@ -23,6 +23,7 @@ const packages = [
   { dir: 'tokens', name: '@wzrhine/tokens' },
   { dir: 'react', name: '@wzrhine/react' },
   { dir: 'patterns', name: '@wzrhine/patterns' },
+  { dir: 'content', name: '@wzrhine/content' },
   { dir: 'effects', name: '@wzrhine/effects' },
   { dir: 'agent-core', name: '@wzrhine/agent-core' },
   { dir: 'agent', name: '@wzrhine/agent' },

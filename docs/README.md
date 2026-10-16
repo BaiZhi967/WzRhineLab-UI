@@ -43,9 +43,9 @@ Markdown 内容层、编辑器层和写作工作台的设计方案见 [2026-10-1
 
 [INSTALL](development/INSTALL.md) · [RELEASING](development/RELEASING.md) · [UPGRADING](development/UPGRADING.md) · [SIZE](development/SIZE.md) · [第三方许可证](development/THIRD-PARTY-LICENSES.md) · [示例应用](../examples/README.md)。
 
-API 参考（自动生成）：[tokens](api/tokens.md) · [react](api/react.md) · [patterns](api/patterns.md) · [effects](api/effects.md) · [agent-core](api/agent-core.md) · [agent](api/agent.md)。
+API 参考（自动生成）：[tokens](api/tokens.md) · [react](api/react.md) · [patterns](api/patterns.md) · [content](api/content.md) · [effects](api/effects.md) · [agent-core](api/agent-core.md) · [agent](api/agent.md)。
 
-组件文档：[表单](components/forms.md) · [字段](components/field.md) · [数据与导航](components/data-navigation.md) · [基础操作](components/icon-button-text.md) · [覆盖层](components/overlays.md) · [菜单与通知](components/popover-menu-toast.md) · [确认框](components/alert-dialog.md) · [抽屉](components/drawer.md) · [反馈](components/feedback.md) · [档案](components/archive.md) · [页面模式](components/patterns.md) · [动效](components/effects.md) · [效果底座](components/effect-foundations.md) · [文案](components/locale.md) · [高级交互](components/advanced.md) · [命令与选择](components/command.md)。
+组件文档：[表单](components/forms.md) · [字段](components/field.md) · [数据与导航](components/data-navigation.md) · [基础操作](components/icon-button-text.md) · [覆盖层](components/overlays.md) · [菜单与通知](components/popover-menu-toast.md) · [确认框](components/alert-dialog.md) · [抽屉](components/drawer.md) · [反馈](components/feedback.md) · [档案](components/archive.md) · [页面模式](components/patterns.md) · [Markdown 内容层](components/content.md) · [动效](components/effects.md) · [效果底座](components/effect-foundations.md) · [文案](components/locale.md) · [高级交互](components/advanced.md) · [命令与选择](components/command.md)。
 
 领域 UI 文档：[外壳](components/agent-shell.md) · [消息](components/agent-message.md) · [工具](components/agent-tools.md) · [输入](components/agent-composer.md) · [干预](components/agent-intervention.md) · [工作空间](components/agent-workspace.md)。
 

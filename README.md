@@ -29,6 +29,7 @@
 | [`@wzrhine/tokens`](https://www.npmjs.com/package/@wzrhine/tokens) | 设计令牌：`--rl-*` CSS 变量、类型化清单、对比度工具 | 34 |
 | [`@wzrhine/react`](https://www.npmjs.com/package/@wzrhine/react) | React 组件库（83 个组件，Base UI 底座） | 294 |
 | [`@wzrhine/patterns`](docs/components/patterns.md) | 页面模式（8 个组件）：主从布局、属性检查、查询工具区、已应用条件、视图切换、批量选择、资源网格、章节索引 | 32 |
+| [`@wzrhine/content`](docs/components/content.md) | 可选 Markdown 内容层：安全渲染、GFM、标题索引、代码块 | Planned |
 | [`@wzrhine/effects`](docs/components/effects.md) | 可选展示动效：解密 / 扫描 / 轨道 / 仪器对准 / 关系传导 / 标注线；共享几何与进度、动效播放器 | 48 |
 | [`@wzrhine/agent-core`](https://www.npmjs.com/package/@wzrhine/agent-core) | 框架无关 Agent 契约：view-model 与纯函数 | 138 |
 | [`@wzrhine/agent`](https://www.npmjs.com/package/@wzrhine/agent) | Agent UI 组件（87 个组件） | 400 |
