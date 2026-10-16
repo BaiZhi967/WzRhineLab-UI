@@ -17,6 +17,7 @@
   "dependencies": {
     "@base-ui/react": "1.9.0",
     "@wzrhine/agent": "workspace:*",
+    "@wzrhine/content": "workspace:*",
     "@wzrhine/patterns": "workspace:*",
     "@wzrhine/react": "workspace:*",
     "@wzrhine/tokens": "workspace:*",

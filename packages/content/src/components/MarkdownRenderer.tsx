@@ -69,7 +69,7 @@ export const MarkdownRenderer = React.forwardRef<HTMLElement, MarkdownRendererPr
     return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="loading" aria-busy="true"><span role="status" aria-busy="true" /></section>;
   }
   if (status === 'empty' || (status === 'ready' && source.trim() === '')) {
-    return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="empty"><div data-testid="rl-content-empty" /></section>;
+    return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="empty"><p data-testid="rl-content-empty">No content.</p></section>;
   }
   if (status === 'error') {
     return (

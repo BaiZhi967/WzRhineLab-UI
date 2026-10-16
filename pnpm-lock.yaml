@@ -16,6 +16,9 @@ importers:
       '@wzrhine/agent':
         specifier: workspace:*
         version: link:../../packages/agent
+      '@wzrhine/content':
+        specifier: workspace:*
+        version: link:../../packages/content
       '@wzrhine/patterns':
         specifier: workspace:*
         version: link:../../packages/patterns
