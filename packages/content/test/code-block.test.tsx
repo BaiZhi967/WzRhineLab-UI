@@ -38,7 +38,7 @@ describe('CodeBlock', () => {
   });
 
   it('announces copy failure and preserves the source text', async () => {
-    const onCopy = vi.fn().mockRejectedValue(new Error('clipboard')); 
+    const onCopy = vi.fn().mockRejectedValue(new Error('clipboard'));
     const user = userEvent.setup();
     renderCode({ code: 'keep me', onCopy });
     await user.click(screen.getByRole('button', { name: contentEnUS.code.copy }));

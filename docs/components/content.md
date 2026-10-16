@@ -74,4 +74,3 @@ const href = resolveMarkdownUrl(input, 'link');
 ## 已知限制
 
 当前包只负责只读内容层。编辑器、文档标签、保存状态、写作工作台和完整 WYSIWYM 将在后续 `@wzrhine/editor` 与 recipe 工作包中单独设计。
-

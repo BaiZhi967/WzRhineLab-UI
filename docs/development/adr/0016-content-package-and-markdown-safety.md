@@ -32,4 +32,3 @@ WzRhineLab-UI 需要统一呈现 Markdown 文章、笔记、代码、引用和�
 ## Verification
 
 实现必须覆盖：HTML 不执行、危险 URL 不激活、重复/CJK 标题稳定、长代码局部滚动、SSR/hydration、CSS 隔离、真实 tarball 安装、许可证和包体预算。
-

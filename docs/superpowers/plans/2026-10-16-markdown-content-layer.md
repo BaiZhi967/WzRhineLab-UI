@@ -382,4 +382,3 @@
 ## Execution Handoff
 
 This plan covers only the Markdown content layer. It does not implement `@wzrhine/editor`, document tabs, save status, `WritingWorkbench`, or a WYSIWYM engine. After this plan is accepted, implementation should start at Task 1 and keep each task independently reviewable. The final state should be `LibraryValidating` until the package has real build, tarball, browser, accessibility, and acceptance evidence.
-
