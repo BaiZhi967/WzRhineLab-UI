@@ -74,12 +74,12 @@ react-button 由 2.66 KB 增至约 2.92 KB，原因是统一实时减动订阅�
 | `patterns-list-detail` | 3.21 KB | 1.57 KB | 3 KB | 47.8% |
 | `patterns-query-toolbar` | 2.78 KB | 1.34 KB | 3 KB | 55.3% |
 | `patterns-css` | 10.60 KB | 1.87 KB | 3 KB | 37.8% |
-| `content-full` | 160.37 KB | 49.71 KB | 56 KB | 11.2% |
-| `content-markdown` | 159.71 KB | 49.46 KB | 56 KB | 11.7% |
-| `content-css` | 4.34 KB | 1.04 KB | 2 KB | 48.2% |
-| `editor-core` | 170.45 KB | 52.84 KB | 59 KB | 10.4% |
+| `content-full` | 161.15 KB | 50.06 KB | 56 KB | 10.6% |
+| `content-markdown` | 160.39 KB | 49.79 KB | 56 KB | 11.1% |
+| `content-css` | 3.91 KB | 0.97 KB | 2 KB | 51.6% |
+| `editor-core` | 171.34 KB | 53.13 KB | 59 KB | 10.0% |
 | `editor-codemirror` | 513.70 KB | 177.75 KB | 196 KB | 9.3% |
-| `editor-css` | 3.33 KB | 0.92 KB | 2 KB | 53.9% |
+| `editor-css` | 3.36 KB | 0.92 KB | 2 KB | 54.0% |
 | `effects-full` | 9.43 KB | 3.85 KB | 5 KB | 23.1% |
 | `effects-css` | 6.75 KB | 1.76 KB | 3 KB | 41.3% |
 | `agent-core` | 10.59 KB | 3.81 KB | 5 KB | 23.9% |
