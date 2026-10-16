@@ -1,0 +1,85 @@
+.rl-content-markdown {
+  max-inline-size: 72ch;
+  color: var(--rl-fg-primary);
+  font: var(--rl-type-body);
+  overflow-wrap: anywhere;
+}
+
+.rl-content-markdown > *:first-child {
+  margin-block-start: 0;
+}
+
+.rl-content-markdown > *:last-child {
+  margin-block-end: 0;
+}
+
+.rl-content-markdown h1,
+.rl-content-markdown h2,
+.rl-content-markdown h3,
+.rl-content-markdown h4,
+.rl-content-markdown h5,
+.rl-content-markdown h6 {
+  color: var(--rl-fg-primary);
+  scroll-margin-block-start: var(--rl-space-8);
+}
+
+.rl-content-markdown h1 { font: var(--rl-type-heading-1); }
+.rl-content-markdown h2 { font: var(--rl-type-heading-2); }
+.rl-content-markdown h3 { font: var(--rl-type-heading-3); }
+.rl-content-markdown h4,
+.rl-content-markdown h5,
+.rl-content-markdown h6 { font: var(--rl-type-label); }
+
+.rl-content-markdown a {
+  color: var(--rl-accent-text);
+  text-decoration-thickness: var(--rl-border-width);
+  text-underline-offset: var(--rl-space-1);
+}
+
+.rl-content-markdown blockquote {
+  margin-inline: 0;
+  padding-inline-start: var(--rl-space-4);
+  color: var(--rl-fg-muted);
+  border-inline-start: var(--rl-border-width-strong) solid var(--rl-accent);
+}
+
+.rl-content-markdown table {
+  display: block;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.rl-content-markdown th,
+.rl-content-markdown td {
+  padding: var(--rl-space-2) var(--rl-space-3);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+  text-align: start;
+  vertical-align: top;
+}
+
+.rl-content-markdown th {
+  background: var(--rl-bg-subtle);
+  font: var(--rl-type-label-sm);
+}
+
+.rl-content-markdown img {
+  max-inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--rl-radius-sm);
+}
+
+.rl-content-markdown__image-fallback {
+  display: inline-block;
+  padding: var(--rl-space-2) var(--rl-space-3);
+  color: var(--rl-fg-muted);
+  background: var(--rl-bg-subtle);
+  border: var(--rl-border-width) solid var(--rl-border-subtle);
+}
+
+.rl-content-markdown button {
+  color: var(--rl-fg-primary);
+  background: var(--rl-bg-surface);
+  border: var(--rl-border-width) solid var(--rl-border-default);
+  border-radius: var(--rl-radius-sm);
+}

@@ -1,0 +1,117 @@
+'use client';
+
+import * as React from 'react';
+import ReactMarkdown, { type Components } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { CodeBlock } from './CodeBlock.js';
+import { extractHeadings, type MarkdownHeading, type MarkdownHeadingDepth } from '../markdown/heading-index.js';
+import { resolveMarkdownUrl } from '../markdown/url-policy.js';
+import { useContentMessages } from '../provider/ContentMessages.js';
+
+export type MarkdownRenderStatus = 'ready' | 'loading' | 'empty' | 'error';
+
+export interface MarkdownImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'alt'> {
+  src: string;
+  alt: string;
+  title?: string;
+}
+
+export type MarkdownImageRenderer = (image: MarkdownImageProps) => React.ReactNode;
+
+export type MarkdownRendererProps = Omit<React.HTMLAttributes<HTMLElement>, 'children'> & {
+  source: string;
+  status?: MarkdownRenderStatus;
+  error?: React.ReactNode;
+  onRetry?: () => void;
+  retryLabel?: string;
+  components?: Partial<Components>;
+  onLinkActivate?: (href: string) => void;
+  renderImage?: MarkdownImageRenderer;
+};
+
+function childrenText(children: React.ReactNode): string {
+  if (Array.isArray(children)) return children.map(childrenText).join('');
+  if (typeof children === 'string' || typeof children === 'number') return String(children);
+  if (React.isValidElement<{ children?: React.ReactNode }>(children)) return childrenText(children.props.children);
+  return '';
+}
+
+function headingRenderer(depth: MarkdownHeadingDepth, headings: readonly MarkdownHeading[], cursor: { value: number }) {
+  return function Heading({ children, node: _node, ...props }: { children?: React.ReactNode; node?: unknown } & React.HTMLAttributes<HTMLHeadingElement>) {
+    const text = childrenText(children);
+    const heading = headings[cursor.value];
+    if (heading && heading.depth === depth) cursor.value += 1;
+    const Tag = `h${depth}` as keyof React.JSX.IntrinsicElements;
+    return React.createElement(Tag, { ...props, id: heading?.id }, children);
+  };
+}
+
+export const MarkdownRenderer = React.forwardRef<HTMLElement, MarkdownRendererProps>(function MarkdownRenderer(
+  {
+    source,
+    status = 'ready',
+    error,
+    onRetry,
+    retryLabel = 'Retry',
+    components,
+    onLinkActivate,
+    renderImage,
+    className,
+    ...rest
+  },
+  ref,
+) {
+  const messages = useContentMessages();
+  const headings = React.useMemo(() => extractHeadings(source), [source]);
+  const headingCursor = { value: 0 };
+
+  if (status === 'loading') {
+    return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="loading" aria-busy="true"><span role="status" aria-busy="true" /></section>;
+  }
+  if (status === 'empty' || (status === 'ready' && source.trim() === '')) {
+    return <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="empty"><div data-testid="rl-content-empty" /></section>;
+  }
+  if (status === 'error') {
+    return (
+      <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="error" role="alert">
+        {error}
+        {onRetry && <button type="button" onClick={onRetry}>{retryLabel}</button>}
+      </section>
+    );
+  }
+
+  const builtIns: Components = {
+    h1: headingRenderer(1, headings, headingCursor),
+    h2: headingRenderer(2, headings, headingCursor),
+    h3: headingRenderer(3, headings, headingCursor),
+    h4: headingRenderer(4, headings, headingCursor),
+    h5: headingRenderer(5, headings, headingCursor),
+    h6: headingRenderer(6, headings, headingCursor),
+    pre: ({ children }) => <>{children}</>,
+    code: ({ children, className: codeClassName, node: _node, ...props }) => {
+      const code = String(children).replace(/\n$/, '');
+      const language = codeClassName?.match(/language-([\w-]+)/)?.[1];
+      if (codeClassName || String(children).includes('\n')) return <CodeBlock code={code} language={language} />;
+      return <code {...props} className={codeClassName}>{children}</code>;
+    },
+    a: ({ href, children, node: _node, ...props }) => {
+      const safe = href ? resolveMarkdownUrl(href, 'link') : undefined;
+      if (!safe) return <span {...props}>{children}</span>;
+      return <a {...props} href={safe} onClick={(event) => { if (onLinkActivate) { event.preventDefault(); onLinkActivate(safe); } }}>{children}</a>;
+    },
+    img: ({ src, alt, title, node: _node, ...props }) => {
+      const safe = src ? resolveMarkdownUrl(src, 'image') : undefined;
+      if (!safe) return <span className="rl-content-markdown__image-fallback">{messages.image.unavailable}</span>;
+      const image: MarkdownImageProps = { ...props, src: safe, alt: alt ?? '', title };
+      return renderImage ? renderImage(image) : <img {...image} loading="lazy" decoding="async" />;
+    },
+  };
+
+  return (
+    <section {...rest} ref={ref} className={['rl-content-markdown', className].filter(Boolean).join(' ')} data-state="ready">
+      <ReactMarkdown remarkPlugins={[remarkGfm]} skipHtml urlTransform={(url, _key, _node) => resolveMarkdownUrl(url, 'link') ?? ''} components={{ ...builtIns, ...components }}>
+        {source}
+      </ReactMarkdown>
+    </section>
+  );
+});
