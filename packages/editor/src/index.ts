@@ -22,3 +22,5 @@ export { DocumentTabs } from './components/DocumentTabs.js';
 export type { DocumentTab, DocumentTabsProps } from './components/DocumentTabs.js';
 export { EditorToolbar } from './components/EditorToolbar.js';
 export type { EditorToolbarCommand, EditorToolbarProps } from './components/EditorToolbar.js';
+export { EditorSurface } from './components/EditorSurface.js';
+export type { EditorSurfaceProps } from './components/EditorSurface.js';

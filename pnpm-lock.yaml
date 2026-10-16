@@ -414,6 +414,13 @@ importers:
 
   packages/editor:
     dependencies:
+      '@wzrhine/content':
+        specifier: workspace:*
+        version: link:../content
+      '@wzrhine/tokens':
+        specifier: workspace:*
+        version: link:../tokens
+    devDependencies:
       '@codemirror/commands':
         specifier: ^6.8.1
         version: 6.11.1
@@ -429,13 +436,6 @@ importers:
       '@codemirror/view':
         specifier: ^6.36.5
         version: 6.43.14
-      '@wzrhine/content':
-        specifier: workspace:*
-        version: link:../content
-      '@wzrhine/tokens':
-        specifier: workspace:*
-        version: link:../tokens
-    devDependencies:
       '@testing-library/dom':
         specifier: 10.4.2
         version: 10.4.2

@@ -83,3 +83,27 @@
   color: var(--rl-fg-subtle);
   font: var(--rl-type-mono);
 }
+
+.rl-editor__surface {
+  position: relative;
+  min-block-size: var(--rl-space-16);
+  overflow: hidden;
+}
+
+.rl-editor__surface-host {
+  min-block-size: inherit;
+}
+
+.rl-editor__surface-error {
+  padding: var(--rl-space-4);
+  color: var(--rl-danger);
+  background: var(--rl-danger-subtle);
+}
+
+.rl-editor__surface-placeholder,
+.rl-editor__surface-fallback {
+  position: absolute;
+  inset: var(--rl-space-4);
+  color: var(--rl-fg-subtle);
+  pointer-events: none;
+}
